@@ -29,7 +29,8 @@
             Me.LabelSides = New System.Windows.Forms.Label()
             Me.ComboBox_sides = New System.Windows.Forms.ComboBox()
             Me.RadioBtn_Polygon = New System.Windows.Forms.RadioButton()
-            Me.RadioBtn_AnyShape = New System.Windows.Forms.RadioButton()
+            Me.RadioBtn_Draw = New System.Windows.Forms.RadioButton()
+            Me.RadioBtn_PickShape = New System.Windows.Forms.RadioButton()
             Me.Label2 = New System.Windows.Forms.Label()
             Me.TextBox_Depth = New System.Windows.Forms.TextBox()
             Me.BtnDraw = New System.Windows.Forms.Button()
@@ -54,7 +55,8 @@
             Me.GroupBox1.Controls.Add(Me.LabelSides)
             Me.GroupBox1.Controls.Add(Me.ComboBox_sides)
             Me.GroupBox1.Controls.Add(Me.RadioBtn_Polygon)
-            Me.GroupBox1.Controls.Add(Me.RadioBtn_AnyShape)
+            Me.GroupBox1.Controls.Add(Me.RadioBtn_Draw)
+            Me.GroupBox1.Controls.Add(Me.RadioBtn_PickShape)
             Me.GroupBox1.Location = New System.Drawing.Point(195, 12)
             Me.GroupBox1.Name = "GroupBox1"
             Me.GroupBox1.Size = New System.Drawing.Size(177, 113)
@@ -91,17 +93,26 @@
             Me.RadioBtn_Polygon.Text = "多边形"
             Me.RadioBtn_Polygon.UseVisualStyleBackColor = True
             '
-            'RadioBtn_AnyShape
+            'RadioBtn_Draw
             '
-            Me.RadioBtn_AnyShape.AutoSize = True
-            Me.RadioBtn_AnyShape.Checked = True
-            Me.RadioBtn_AnyShape.Location = New System.Drawing.Point(6, 62)
-            Me.RadioBtn_AnyShape.Name = "RadioBtn_AnyShape"
-            Me.RadioBtn_AnyShape.Size = New System.Drawing.Size(71, 16)
-            Me.RadioBtn_AnyShape.TabIndex = 0
-            Me.RadioBtn_AnyShape.TabStop = True
-            Me.RadioBtn_AnyShape.Text = "任意形状"
-            Me.RadioBtn_AnyShape.UseVisualStyleBackColor = True
+            Me.RadioBtn_Draw.AutoSize = True
+            Me.RadioBtn_Draw.Checked = True
+            Me.RadioBtn_Draw.Location = New System.Drawing.Point(6, 90)
+            Me.RadioBtn_Draw.Name = "RadioBtn_Draw"
+            Me.RadioBtn_Draw.Size = New System.Drawing.Size(71, 16)
+            Me.RadioBtn_Draw.TabIndex = 0
+            Me.RadioBtn_Draw.Text = "绘制轮廓"
+            Me.RadioBtn_Draw.UseVisualStyleBackColor = True
+            '
+            'RadioBtn_PickShape
+            '
+            Me.RadioBtn_PickShape.AutoSize = True
+            Me.RadioBtn_PickShape.Location = New System.Drawing.Point(6, 58)
+            Me.RadioBtn_PickShape.Name = "RadioBtn_PickShape"
+            Me.RadioBtn_PickShape.Size = New System.Drawing.Size(71, 16)
+            Me.RadioBtn_PickShape.TabIndex = 0
+            Me.RadioBtn_PickShape.Text = "选择轮廓"
+            Me.RadioBtn_PickShape.UseVisualStyleBackColor = True
             '
             'Label2
             '
@@ -265,7 +276,7 @@
         Friend WithEvents LabelSides As System.Windows.Forms.Label
         Friend WithEvents ComboBox_sides As System.Windows.Forms.ComboBox
         Friend WithEvents RadioBtn_Polygon As System.Windows.Forms.RadioButton
-        Friend WithEvents RadioBtn_AnyShape As System.Windows.Forms.RadioButton
+        Friend WithEvents RadioBtn_PickShape As System.Windows.Forms.RadioButton
         Friend WithEvents Label2 As System.Windows.Forms.Label
         Friend WithEvents TextBox_Depth As System.Windows.Forms.TextBox
         Friend WithEvents BtnDraw As System.Windows.Forms.Button
@@ -281,5 +292,6 @@
         Friend WithEvents Label1 As System.Windows.Forms.Label
         Friend WithEvents TextBox_SoilName As System.Windows.Forms.TextBox
         Friend WithEvents Label4 As System.Windows.Forms.Label
+        Friend WithEvents RadioBtn_Draw As RadioButton
     End Class
 End Namespace

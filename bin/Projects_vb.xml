@@ -468,11 +468,21 @@ Projects_vb
  </summary>
  <remarks></remarks>
 </member>
-<member name="F:OldW.Excavation.frm_DrawExcavation.Request.Draw">
+<member name="F:OldW.Excavation.frm_DrawExcavation.Request.SelectCurves">
  <summary>
- 绘制模型土体或者开挖土体
+ 在UI界面中选择已经绘制好的土体轮廓
  </summary>
  <remarks></remarks>
+</member>
+<member name="F:OldW.Excavation.frm_DrawExcavation.Request.DrawCurves">
+ <summary>
+ 通过UI界面绘制土体的轮廓
+ </summary>
+</member>
+<member name="F:OldW.Excavation.frm_DrawExcavation.Request.PolygonTemplate">
+ <summary>
+ 通过多边形自适应族来创建土体
+ </summary>
 </member>
 <member name="F:OldW.Excavation.frm_DrawExcavation.ExEvent">
  <summary>用来触发外部事件（通过其Raise方法） </summary>
