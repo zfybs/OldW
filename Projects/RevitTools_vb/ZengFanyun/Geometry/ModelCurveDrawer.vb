@@ -7,8 +7,9 @@ Imports std_ez
 Namespace rvtTools_ez
 
     ''' <summary>
-    ''' 在UI界面中绘制模型线，并将这些模型线保存在对应的列表中。
-    ''' 每次只能有一个实例正在绘制曲线。
+    ''' 在UI界面中按指定的要求绘制模型线，并将这些模型线保存在对应的列表中。
+    ''' 在绘制的过程中，可以指定所绘制的曲线集合符合指定的连续性条件，也可以直接绘制分散的模型线。
+    ''' 注意：每次只能有一个实例正在绘制曲线。
     ''' </summary>
     Public Class ModelCurveDrawer
 
@@ -21,7 +22,6 @@ Namespace rvtTools_ez
         ' Public Event DrawingComleted As Action(Of List(Of ModelCurve), FinishCondition)
 
 #Region "   ---   Types"
-
 
         ''' <summary>
         ''' 画线时的检查模式
@@ -79,6 +79,12 @@ Namespace rvtTools_ez
             ''' 由外部命令调用Cancel方法来取消绘制
             ''' </summary>
             CanceledByExternalCommand = 5
+
+            ''' <summary>
+            ''' 不能满足指定的连续性要求，比如本来要求曲线集合前后相连，而绘制的曲线并未相连。
+            ''' </summary>
+            RequirementCannotBeSatisfied
+
         End Enum
 
 #End Region
@@ -156,10 +162,8 @@ Namespace rvtTools_ez
         ''' <param name="CheckMode">所绘制的曲线要符合何种连续性条件</param>
         ''' <param name="CheckInTime">是否在每一步绘制时都检测所绘制的曲线是否符合指定的要求，如果为False，则在绘制操作退出后进行统一检测。</param>
         ''' <param name="BaseCurves">
-        ''' 
-        ''' 
-        ''' 
-        ''' 
+        ''' 在新绘制之前，先指定一组基准曲线集合，而新绘制的曲线将与基准曲线一起来进行连续性条件的检测。
+        ''' 当指定连续性条件为新绘制的曲线必须与上一条曲线相连时，基准曲线集合中的最后一条将作为“上一次绘制的曲线”。
         ''' </param>
         ''' <param name="Max">集合中最多绘制多少条曲线，如果不指定此属性的值，可默认可以绘制Interger.MaxValue</param>
         Public Sub New(ByVal uiApp As UIApplication,
@@ -174,6 +178,11 @@ Namespace rvtTools_ez
             Me.F_CheckMode = CheckMode
             Me.F_CheckInTime = CheckInTime
             Me.F_MaxCurves = Max
+
+            '对于要求首尾相连的，必须要每一次绘制时都进行检测。
+            If CheckMode = CurveCheckMode.Contiguous Then
+                Me.F_CheckInTime = True
+            End If
 
             ' 处理已经添加好的基准曲线集合
             Me.AddedModelCurves = BaseCurves
@@ -226,61 +235,70 @@ Namespace rvtTools_ez
             Dim doc As Document = rvtUiApp.ActiveUIDocument.Document
             Dim blnContine As Boolean = False
             Dim FinishCdt As FinishCondition = FinishCondition.UnDetected
+            Try
+                ' 对模型的操作是否是：绘制一条模型线
+                Dim blnDrawModelLine As Boolean
+                Dim elems As List(Of ElementId) = e.GetAddedElementIds
+                blnDrawModelLine = elems.Count = 1 AndAlso
+                                   e.GetDeletedElementIds.Count = 0 AndAlso
+                                   (TypeOf elems.Item(0).Element(e.GetDocument()) Is ModelCurve)
 
-            ' 对模型的操作是否是：绘制一条模型线
-            Dim blnDrawModelLine As Boolean
-            Dim elems As List(Of ElementId) = e.GetAddedElementIds
-            blnDrawModelLine = elems.Count = 1 AndAlso
-                               e.GetDeletedElementIds.Count = 0 AndAlso
-                               e.GetModifiedElementIds.Count = 0 AndAlso
-                               (TypeOf elems.Item(0).Element(e.GetDocument()) Is ModelCurve)
+                If blnDrawModelLine Then  ' 说明正在执行模型线的绘制操作
+                    ' 新添加的那一条模型线
+                    NewlyAddedCurve = DirectCast(elems.First.Element(doc), ModelCurve)
 
+                    ' 先将其添加进曲线集合
+                    AddedModelCurves.Add(NewlyAddedCurve)
 
-            If blnDrawModelLine Then  ' 说明正在执行模型线的绘制操作
-                ' 新添加的那一条模型线
-                Dim NewlyAddedCurve As ModelCurve = DirectCast(elems.First.Element(doc), ModelCurve)
+                    ' 检测当前集合中的曲线是否符合指定的连续性要求
+                    If Me.CheckInTime Then
+                        Dim curveValidated As Boolean = ValidateCurves()
+                        If curveValidated Then  ' 说明在新添加了这一条曲线后，集合中的曲线还是符合指定的连续性要求
+                            If AddedModelCurves.Count > Me.MaxCurves Then
+                                FinishCdt = FinishCondition.MaxReached
+                                blnContine = False
+                            Else
+                                blnContine = True
 
-                ' 先将其添加进曲线集合
-                AddedModelCurves.Add(NewlyAddedCurve)
-
-                ' 检测当前集合中的曲线是否符合指定的连续性要求
-                If Me.CheckInTime Then
-                    Dim curveValidated As Boolean = ValidateCurves()
-                    If curveValidated Then  ' 说明在新添加了这一条曲线后，集合中的曲线还是符合指定的连续性要求
-
+                            End If
+                        Else  ' 说明在新添加了这一条曲线后，集合中的曲线不符合指定的连续性要求了，但是在添加之前的曲线集合还是符合的。
+                            ' 删除刚绘制的模型线
+                            '  doc.Delete(NewlyAddedCurve.Id)
+                            AddedModelCurves.Remove(NewlyAddedCurve)
+                            '
+                            FinishCdt = FinishCondition.RequirementCannotBeSatisfied
+                            blnContine = False
+                        End If
+                    Else ' 说明不进行实时检测，而直接继续绘制
                         blnContine = True
-                    Else  ' 说明在新添加了这一条曲线后，集合中的曲线不符合指定的连续性要求了，但是在添加之前的曲线集合还是符合的。
-                        ' 删除刚绘制的模型线
-                        doc.Delete(NewlyAddedCurve.Id)
-                        AddedModelCurves.Remove(NewlyAddedCurve)
-                        '
-                        blnContine = False
                     End If
-                Else ' 说明不进行实时检测，而直接继续绘制
-                    blnContine = True
-                End If
-            Else  ' 说明已经没有在绘制模型线了
-                FinishCdt = FinishCondition.ShiftedToOtheredOperations
-                blnContine = False
-            End If
-
-
-            If blnContine Then  ' 还需要继续绘制
-
-                lastCurve = NewlyAddedCurve
-                ' 继续绘制
-                ActiveDraw()
-            Else     ' 不用再继续绘制了
-                ' 如果是实时检测，则这里不用再检测了，否则，必须进行最终的检测
-                If Not F_CheckInTime Then
-                    ValidateCurves()
+                Else  ' 说明已经没有在绘制模型线了
+                    FinishCdt = FinishCondition.ShiftedToOtheredOperations
+                    blnContine = False
                 End If
 
-                ' 绘制结束
-                DeactiveDraw()
-                Me.Finish(FinishCdt:=FinishCdt)
-            End If
+                ' 指示后续的操作
+                If blnContine Then  ' 还需要继续绘制
 
+                    lastCurve = NewlyAddedCurve
+                    ' 继续绘制
+                    '  ActiveDraw()
+                Else     ' 不用再继续绘制了
+                    ' 如果是实时检测，则这里不用再检测了，否则，必须进行最终的检测
+                    If Not F_CheckInTime Then
+                        ValidateCurves()
+                    End If
+
+                    ' 绘制结束
+                    Me.Finish(FinishCdt:=FinishCdt)
+                End If
+            Catch ex As Exception
+                MessageBox.Show("在绘制模型线及连续性判断时出问题啦~~~" & vbCrLf &
+                                       ex.Message & ex.GetType.FullName & vbCrLf &
+                                       ex.StackTrace)
+                '绘制结束
+                Me.Finish(FinishCondition.UnDetected)
+            End Try
         End Sub
 
 #Region "   ---   曲线绘制的激活、取消"
@@ -294,7 +312,9 @@ Namespace rvtTools_ez
         End Sub
 
         ''' <summary>
-        ''' 绘图结束后的操作
+        ''' 绘图结束后的操作。注意，此操作必须要放在Messagebox.Show（或者是其他通过ESC键就可以对窗口进行某些操作的情况，
+        ''' 比如关闭窗口等）之后。如果放在Messagebox.Show之前，则会模拟通过按下ESC键而将模态窗口关闭的操作，则模态窗口就只
+        ''' 会闪现一下，或者根本就看不见。
         ''' </summary>
         Private Shared Sub DeactiveDraw()
             ' 在Revit UI界面中退出绘制，即按下ESCAPE键
@@ -320,6 +340,8 @@ Namespace rvtTools_ez
         Private Sub Finish(Optional ByVal FinishCdt As FinishCondition = FinishCondition.UnDetected)
             RaiseEvent DrawingCompleted(AddedModelCurves, FinishCdt)
             Me.Dispose()
+            '
+            DeactiveDraw()
         End Sub
 
 #End Region
@@ -335,14 +357,19 @@ Namespace rvtTools_ez
             ' 根据不同的模式进行不同的检测
             Select Case Me.F_CheckMode
                 Case CurveCheckMode.Connected
+                    If CurvesFormator.GetContiguousCurvesFromModelCurves(Me.AddedModelCurves) IsNot Nothing Then
+                        blnValidated = True
+                    End If
 
                 Case CurveCheckMode.Contiguous
+                    If CurvesFormator.GetContiguousCurvesFromModelCurves({lastCurve, NewlyAddedCurve}) IsNot Nothing Then
+                        blnValidated = True
+                    End If
 
                 Case CurveCheckMode.Seperated
                     ' 不用检测，直接符合
                     blnValidated = True
             End Select
-
             Return blnValidated
         End Function
 

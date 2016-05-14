@@ -82,8 +82,9 @@ RevitTools_vb
 </member>
 <member name="T:rvtTools_ez.ModelCurveDrawer">
  <summary>
- 在UI界面中绘制模型线，并将这些模型线保存在对应的列表中。
- 每次只能有一个实例正在绘制曲线。
+ 在UI界面中按指定的要求绘制模型线，并将这些模型线保存在对应的列表中。
+ 在绘制的过程中，可以指定所绘制的曲线集合符合指定的连续性条件，也可以直接绘制分散的模型线。
+ 注意：每次只能有一个实例正在绘制曲线。
  </summary>
 </member>
 <member name="E:rvtTools_ez.ModelCurveDrawer.DrawingCompleted">
@@ -148,6 +149,11 @@ RevitTools_vb
  由外部命令调用Cancel方法来取消绘制
  </summary>
 </member>
+<member name="F:rvtTools_ez.ModelCurveDrawer.FinishCondition.RequirementCannotBeSatisfied">
+ <summary>
+ 不能满足指定的连续性要求，比如本来要求曲线集合前后相连，而绘制的曲线并未相连。
+ </summary>
+</member>
 <member name="P:rvtTools_ez.ModelCurveDrawer.AddedModelCurves">
  <summary>
  已经绘制的所有模型线
@@ -198,10 +204,8 @@ RevitTools_vb
  <param name="CheckMode">所绘制的曲线要符合何种连续性条件</param>
  <param name="CheckInTime">是否在每一步绘制时都检测所绘制的曲线是否符合指定的要求，如果为False，则在绘制操作退出后进行统一检测。</param>
  <param name="BaseCurves">
- 
- 
- 
- 
+ 在新绘制之前，先指定一组基准曲线集合，而新绘制的曲线将与基准曲线一起来进行连续性条件的检测。
+ 当指定连续性条件为新绘制的曲线必须与上一条曲线相连时，基准曲线集合中的最后一条将作为“上一次绘制的曲线”。
  </param>
  <param name="Max">集合中最多绘制多少条曲线，如果不指定此属性的值，可默认可以绘制Interger.MaxValue</param>
 </member>
@@ -229,7 +233,9 @@ RevitTools_vb
 </member>
 <member name="M:rvtTools_ez.ModelCurveDrawer.DeactiveDraw">
  <summary>
- 绘图结束后的操作
+ 绘图结束后的操作。注意，此操作必须要放在Messagebox.Show（或者是其他通过ESC键就可以对窗口进行某些操作的情况，
+ 比如关闭窗口等）之后。如果放在Messagebox.Show之前，则会模拟通过按下ESC键而将模态窗口关闭的操作，则模态窗口就只
+ 会闪现一下，或者根本就看不见。
  </summary>
 </member>
 <member name="M:rvtTools_ez.ModelCurveDrawer.Cancel">

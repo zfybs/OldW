@@ -5,6 +5,7 @@ Imports Forms = System.Windows.Forms
 Imports OldW.Soil
 Imports std_ez
 Imports System.ComponentModel
+Imports rvtTools_ez
 
 Namespace OldW.Excavation
 
@@ -75,10 +76,21 @@ Namespace OldW.Excavation
         Private Enum Request
 
             ''' <summary>
-            ''' 绘制模型土体或者开挖土体
+            ''' 在UI界面中选择已经绘制好的土体轮廓
             ''' </summary>
             ''' <remarks></remarks>
-            Draw
+            SelectCurves
+
+            ''' <summary>
+            ''' 通过UI界面绘制土体的轮廓
+            ''' </summary>
+            DrawCurves
+
+            ''' <summary>
+            ''' 通过多边形自适应族来创建土体
+            ''' </summary>
+            PolygonTemplate
+
         End Enum
 
 #End Region
@@ -108,6 +120,8 @@ Namespace OldW.Excavation
 
         ''' <summary> 开挖土体开始开挖的日期 </summary>
         Private StartedDate As Date
+
+        Private WithEvents Drawer As rvtTools_ez.ModelCurveDrawer
 
 #End Region
 
@@ -147,6 +161,14 @@ Namespace OldW.Excavation
 
         Protected Overrides Sub OnClosed(e As EventArgs)
             ' 保存的实例需要进行释放
+
+            '
+            If ModelCurveDrawer.IsBeenUsed AndAlso Me.Drawer IsNot Nothing Then
+                RemoveHandler Drawer.DrawingCompleted, AddressOf Drawer_DrawingCompleted
+                Drawer.Cancel()
+                Drawer = Nothing
+            End If
+            '
             Me.ExEvent.Dispose()
             Me.ExEvent = Nothing
 
@@ -158,7 +180,6 @@ Namespace OldW.Excavation
             MyBase.Hide()
             e.Cancel = True
         End Sub
-
 
         Public Function GetName() As String Implements IExternalEventHandler.GetName
             Return "绘制基坑的模型土体与开挖土体。"
@@ -187,6 +208,7 @@ Namespace OldW.Excavation
         End Sub
 
 #End Region
+
         ''' <summary>
         ''' Prompts to edit the revision and resave.
         ''' </summary>
@@ -206,8 +228,22 @@ Namespace OldW.Excavation
 #Region "   ---   执行操作 ExternalEvent.Raise 与 IExternalEventHandler.Execute"
 
         Private Sub BtnDraw_Click(sender As Object, e As EventArgs) Handles BtnDraw.Click
+            ' 提取开挖深度
+            If Me.Depth = 0 Then
+                MessageBox.Show("深度值不能为0。", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
 
-            Me.RequestPara = New RequestParameter(Request.Draw, e, sender)
+            '
+            If RadioBtn_Draw.Checked Then
+                Me.RequestPara = New RequestParameter(Request.DrawCurves, e, sender)
+            ElseIf RadioBtn_PickShape.Checked Then
+                Me.RequestPara = New RequestParameter(Request.SelectCurves, e, sender)
+            ElseIf RadioBtn_Polygon.Checked Then
+                Me.RequestPara = New RequestParameter(Request.SelectCurves, e, sender)
+            End If
+
+            '
             Me.ExEvent.Raise()
             Me.DozeOff()
         End Sub
@@ -226,18 +262,12 @@ Namespace OldW.Excavation
             Try  ' 由于在通过外部程序所引发的操作中，如果出现异常，Revit并不会给出任何提示或者报错，而是直接退出函数。所以这里要将整个操作放在一个Try代码块中，以处理可能出现的任何报错。
                 Dim uiDoc As UIDocument = New UIDocument(Document)
 
+
                 ' 开始执行具体的操作
                 Select Case RequestPara.Id  ' 判断具体要干什么
 
-                    Case Request.Draw
-
+                    Case Request.SelectCurves
                         ' -------------------------------------------------------------------------------------------------------------------------
-
-                        ' 提取开挖深度
-                        If Me.Depth = 0 Then
-                            MessageBox.Show("深度值不能为0。", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                            Exit Sub
-                        End If
 
                         Dim soil As Soil_Model
                         If Me.RadioBtn_ExcavSoil.Checked Then   ' 绘制开挖土体
@@ -302,18 +332,42 @@ Namespace OldW.Excavation
                         End If
                         ' -------------------------------------------------------------------------------------------------------------------------
 
+                    Case Request.DrawCurves
+
+                        Drawer = New ModelCurveDrawer(app, ModelCurveDrawer.CurveCheckMode.Connected, True)
+                        Drawer.Draw()
 
                 End Select
             Catch ex As Exception
                 MessageBox.Show("出错" & vbCrLf & ex.Message & vbCrLf & ex.TargetSite.Name & vbCrLf & ex.StackTrace,
                                 "外部事件执行出错", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Finally
-                ' 刷新Form，将Form中的Controls的Enable属性设置为True
-                Me.WarmUp()
+                If RequestPara.Id <> Request.DrawCurves Then
+                    ' 刷新Form，将Form中的Controls的Enable属性设置为True
+                    Me.WarmUp()
+                End If
             End Try
         End Sub
 
+        Private Sub CheckUI()
+
+        End Sub
 #End Region
+
+        Private Sub Drawer_DrawingCompleted(AddedCurves As List(Of ModelCurve), e As ModelCurveDrawer.FinishCondition) Handles Drawer.DrawingCompleted
+            Select Case e
+                Case ModelCurveDrawer.FinishCondition.RequirementMet
+                    MessageBox.Show("成功")
+
+                Case ModelCurveDrawer.FinishCondition.ShiftedToOtheredOperations
+                    MessageBox.Show("其他操作")
+
+                Case ModelCurveDrawer.FinishCondition.RequirementCannotBeSatisfied
+                    MessageBox.Show("不满足连续性要求")
+            End Select
+            '
+            Me.WarmUp()
+        End Sub
 
     End Class
 End Namespace

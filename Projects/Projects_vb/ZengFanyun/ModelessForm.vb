@@ -147,6 +147,7 @@ Namespace rvtTools_ez.Test
         Private Sub DozeOff()
             For Each c As Forms.Control In Me.Controls
                 c.Enabled = False
+                MessageBox.Show("哈哈")
             Next
         End Sub
 
@@ -190,11 +191,8 @@ Namespace rvtTools_ez.Test
                 Select Case RequestPara.Id  ' 判断具体要干什么
                     Case Request.Pick
 
-                        'AddHandler rvtApp.DocumentChanged, AddressOf app_DocumentChanged
-                        'ActiveDraw()
-
-                        Dim a As New ModelCurveDrawer(uiApp, ModelCurveDrawer.CurveCheckMode.Connected, True)
-                        a.Draw()
+                        Drawer = New ModelCurveDrawer(uiApp, ModelCurveDrawer.CurveCheckMode.Connected, True)
+                        Drawer.Draw()
 
                     Case Else
                 End Select
@@ -209,62 +207,21 @@ Namespace rvtTools_ez.Test
 
 #End Region
 
-        'Private Sub ActiveDraw()
-        '    uiApp.PostCommand(RevitCommandId.LookupPostableCommandId(PostableCommand.ModelLine))
-        'End Sub
-        'Private Sub DeactiveDraw()
-        '    WindowsUtil.keybd_event(Keys.Escape, 0, 0, 0)  ' 按下 ESCAPE键
-        '    WindowsUtil.keybd_event(Keys.NumLock, 0, &H2, 0)  ' 按键弹起
+        Private WithEvents Drawer As rvtTools_ez.ModelCurveDrawer
 
-        '    WindowsUtil.keybd_event(Keys.Escape, 0, 0, 0)
-        '    WindowsUtil.keybd_event(Keys.NumLock, 0, &H2, 0)
+        Private Sub Drawer_DrawingCompleted(AddedCurves As List(Of ModelCurve), e As ModelCurveDrawer.FinishCondition) Handles Drawer.DrawingCompleted
+            Select Case e
+                Case ModelCurveDrawer.FinishCondition.RequirementMet
+                    MessageBox.Show("成功")
 
-        'End Sub
+                Case ModelCurveDrawer.FinishCondition.ShiftedToOtheredOperations
+                    MessageBox.Show("其他操作")
 
+                Case ModelCurveDrawer.FinishCondition.RequirementCannotBeSatisfied
+                    MessageBox.Show("不满足连续性要求")
 
-        'Private lst As New List(Of ElementId)
-
-        '''' <summary>
-        '''' 
-        '''' </summary>
-        '''' <param name="sender">Application对象</param>
-        '''' <param name="e"></param>
-        'Private Sub app_DocumentChanged(sender As Object, e As DocumentChangedEventArgs)
-        '    Dim app = DirectCast(sender, Autodesk.Revit.ApplicationServices.Application)
-        '    Dim blnDrawModelLine As Boolean ' 对模型的操作是否是：绘制一条模型线
-        '    Dim elems As List(Of ElementId) = e.GetAddedElementIds
-        '    blnDrawModelLine = elems.Count = 1 AndAlso
-        '        e.GetDeletedElementIds.Count = 0 AndAlso
-        '        e.GetModifiedElementIds.Count = 0 AndAlso
-        '        (TypeOf elems.Item(0).Element(e.GetDocument()) Is ModelCurve)
-
-        '    If blnDrawModelLine Then
-        '        lst.Add(elems.First)
-        '        ActiveDraw()
-
-        '    Else
-
-        '        RemoveHandler rvtApp.DocumentChanged, AddressOf app_DocumentChanged
-
-        '    End If
-
-
-
-        '    Static i As Integer
-        '    i += 1
-        '    If i >= 2 Then
-
-        '        RemoveHandler rvtApp.DocumentChanged, AddressOf app_DocumentChanged
-
-
-        '        ListBox1.DataSource = lst
-        '        DeactiveDraw()
-
-        '    Else
-
-        '    End If
-
-        'End Sub
+            End Select
+        End Sub
 
     End Class
 End Namespace
