@@ -101,6 +101,7 @@
             Me.RadioBtn_Draw.Name = "RadioBtn_Draw"
             Me.RadioBtn_Draw.Size = New System.Drawing.Size(71, 16)
             Me.RadioBtn_Draw.TabIndex = 0
+            Me.RadioBtn_Draw.TabStop = True
             Me.RadioBtn_Draw.Text = "绘制轮廓"
             Me.RadioBtn_Draw.UseVisualStyleBackColor = True
             '
@@ -129,6 +130,7 @@
             Me.TextBox_Depth.Name = "TextBox_Depth"
             Me.TextBox_Depth.Size = New System.Drawing.Size(100, 21)
             Me.TextBox_Depth.TabIndex = 2
+            Me.TextBox_Depth.Text = "2"
             '
             'BtnDraw
             '
@@ -261,6 +263,8 @@
             Me.Controls.Add(Me.GroupBox1)
             Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
             Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
+            Me.MaximizeBox = False
+            Me.MinimizeBox = False
             Me.Name = "frm_DrawExcavation"
             Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
             Me.Text = "绘制土体"

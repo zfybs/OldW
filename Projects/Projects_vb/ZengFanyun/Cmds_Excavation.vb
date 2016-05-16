@@ -7,8 +7,10 @@ Imports rvtTools_ez.ExtensionMethods
 Imports OldW.DataManager
 Imports OldW.Excavation
 Imports Autodesk.Revit.DB.Events
+Imports System.Reflection
 
 Namespace OldW.Commands
+
     <Autodesk.Revit.Attributes.Transaction(Autodesk.Revit.Attributes.TransactionMode.Manual)>
     Public Class cmd_Excavation : Implements IExternalCommand
 

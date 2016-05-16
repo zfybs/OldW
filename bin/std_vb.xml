@@ -210,6 +210,22 @@ std_vb
  <param name="V"></param>
  <remarks></remarks>
 </member>
+<member name="M:std_ez.Utils.ShowEnumerableP(System.Collections.IEnumerable,System.String,System.String)">
+ <summary>
+ 将集合中的每一个元素的指定属性的ToString函数的结果组合到一个字符串中进行显示
+ </summary>
+ <param name="V"></param>
+ <param name="PropertyName">要读取的属性的名称，注意，此属性不能带参数。</param>
+ <remarks></remarks>
+</member>
+<member name="M:std_ez.Utils.ShowEnumerableF(System.Collections.IEnumerable,System.String,System.String)">
+ <summary>
+ 将集合中的每一个元素的指定字段的ToString函数的结果组合到一个字符串中进行显示
+ </summary>
+ <param name="V"></param>
+ <param name="FieldName">要读取的字段的名称。</param>
+ <remarks></remarks>
+</member>
 <member name="M:std_ez.Utils.String2Date(System.String,System.DateTime@)">
  <summary>
  将字符转换为日期。除了.NET能够识别的日期格式外，

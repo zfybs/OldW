@@ -11,6 +11,121 @@ RevitTools_vb
  激活本DLL所引用的那些DLLs
  </summary>
 </member>
+<member name="T:rvtTools_ez.CurvesFormator">
+ <summary>
+ 判断曲线集合是否满足指定的格式，或者将集合中的曲线进行标准化，比如形成连续曲线，投影到同一个平面中等。
+ </summary>
+</member>
+<member name="M:rvtTools_ez.CurvesFormator.GetContiguousCurvesFromSelectedCurveElements(Autodesk.Revit.DB.Document,System.Collections.Generic.IList{Autodesk.Revit.DB.Reference})">
+ <summary>
+ 从选择的Curve Elements中，获得连续排列的多段曲线（不一定要封闭）。
+ </summary>
+ <param name="doc">曲线所在文档</param>
+ <param name="SelectedCurves">多条曲线元素所对应的Reference，可以通过Selection.PickObjects返回。
+ 注意，SelectedCurves中每一条曲线都必须是有界的（IsBound），否则，其GetEndPoint会报错。</param>
+ <returns>如果输入的曲线可以形成连续的多段线，则返回重新排序后的多段线集合；
+ 如果输入的曲线不能形成连续的多段线，则返回Nothing！</returns>
+</member>
+<member name="M:rvtTools_ez.CurvesFormator.GetContiguousCurvesFromModelCurves(System.Collections.Generic.IList{Autodesk.Revit.DB.ModelCurve})">
+ <summary>
+ 从一组模型线中，获得连续排列的多段曲线（不一定要封闭）。
+ </summary>
+ <param name="ModelCurves">进行转换的模型线集合。
+ 注意，模型线集合中每一条曲线都必须是有界的（IsBound），否则，其GetEndPoint会报错。</param>
+ <returns>如果输入的曲线可以形成连续的多段线，则返回重新排序后的多段线集合；
+ 如果输入的曲线不能形成连续的多段线，则返回Nothing！</returns>
+</member>
+<member name="M:rvtTools_ez.CurvesFormator.GetContiguousCurvesFromCurves_OneDirection(System.Collections.Generic.IList{Autodesk.Revit.DB.Curve})">
+ <summary>
+ 从指定的Curve集合中中，获得连续排列的多段曲线（不一定要封闭）。如果不连续，则返回Nothing。
+ </summary>
+ <param name="curves">多条曲线元素所对应的集合
+ 注意，curves 集合中每一条曲线都必须是有界的（IsBound），否则，其 GetEndPoint 会报错。</param>
+ <returns>如果输入的曲线可以形成连续的多段线，则返回重新排序后的多段线集合；
+ 如果输入的曲线不能形成连续的多段线，则返回Nothing！</returns>
+</member>
+<member name="M:rvtTools_ez.CurvesFormator.GetContiguousCurvesFromCurves1(System.Collections.Generic.IList{Autodesk.Revit.DB.Curve})">
+ <summary>
+ 从指定的Curve集合中中，获得连续排列的多段曲线（不一定要封闭）。如果不连续，则返回Nothing。
+ </summary>
+ <param name="curves">多条曲线元素所对应的集合
+ 注意，curves 集合中每一条曲线都必须是有界的（IsBound），否则，其 GetEndPoint 会报错。</param>
+ <returns>如果输入的曲线可以形成连续的多段线，则返回重新排序后的多段线集合；
+ 如果输入的曲线不能形成连续的多段线，则返回Nothing！</returns>
+</member>
+<member name="M:rvtTools_ez.CurvesFormator.GetContiguousCurvesFromCurves2(System.Collections.Generic.IList{Autodesk.Revit.DB.Curve})">
+ <summary>
+ 从指定的Curve集合中中，获得连续排列的多段曲线（不一定要封闭）。如果不连续，则返回Nothing。
+ </summary>
+ <param name="curves">多条曲线元素所对应的集合
+ 注意，curves 集合中每一条曲线都必须是有界的（IsBound），否则，其 GetEndPoint 会报错。</param>
+ <returns>如果输入的曲线可以形成连续的多段线，则返回重新排序后的多段线集合；
+ 如果输入的曲线不能形成连续的多段线，则返回Nothing！</returns>
+ <remarks>GetContiguousCurvesFromCurves2与函数GetContiguousCurvesFromCurves2的功能完全相同，只是GetContiguousCurvesFromCurves1是
+ 通过数值的方法来实现，而GetContiguousCurvesFromCurves2是通过类与逻辑的判断来实现。所以GetContiguousCurvesFromCurves1的执行速度可能会快一点点，
+ 而GetContiguousCurvesFromCurves2的扩展性会好得多。</remarks>
+</member>
+<member name="T:rvtTools_ez.CurvesFormator.ContiguousCurves">
+ <summary>
+ 模拟一段从左向右的连续性曲线链集合，集合中的第一个元素表示最左边的曲线；end0 与 end1 分别代表整个连续曲线段的最左端点与最右端点。
+ </summary>
+</member>
+<member name="P:rvtTools_ez.CurvesFormator.ContiguousCurves.Curves">
+ <summary> 连续性曲线链，此集合中的曲线肯定是首尾相连的。且第一个元素表示最左边的那条曲线。 </summary>
+</member>
+<member name="F:rvtTools_ez.CurvesFormator.ContiguousCurves.end0">
+ <summary> 整个连续性曲线链的最左端点的坐标 </summary>
+</member>
+<member name="F:rvtTools_ez.CurvesFormator.ContiguousCurves.end1">
+ <summary> 整个连续性曲线链的最右端点的坐标 </summary>
+</member>
+<member name="M:rvtTools_ez.CurvesFormator.ContiguousCurves.#ctor(Autodesk.Revit.DB.Curve)">
+ <summary>
+ 从一条曲线开始构造连续曲线链
+ </summary>
+ <param name="BaseCurve"></param>
+</member>
+<member name="M:rvtTools_ez.CurvesFormator.ContiguousCurves.CheckForward(System.Collections.Generic.Dictionary{System.Int32,Autodesk.Revit.DB.Curve})">
+ <summary>
+ 从一组曲线中找到一条与连续链右端点相接的曲线，并且在适当的情况下，对搜索到的曲线进行反转。
+ </summary>
+ <param name="curves">进行搜索的曲线集合。在此函数中，可能会对连接到的那条曲线进行反转。
+ IDictionary中的键值表示每一条Curve的Id值，这个值并不一定是从1开始递增的。
+ </param>
+ <returns>
+ 与连续曲线链的最右端相连的那一条曲线在输入的曲线集合中所对应的Id键值。
+ 如果没有找到连接的曲线，则返回Nothing！</returns>
+</member>
+<member name="M:rvtTools_ez.CurvesFormator.ContiguousCurves.CheckBackward(System.Collections.Generic.Dictionary{System.Int32,Autodesk.Revit.DB.Curve})">
+ <summary>
+ 从一组曲线中找到一条与连续链左端点相接的曲线，并且在适当的情况下，对搜索到的曲线进行反转。
+ </summary>
+ <param name="curves">进行搜索的曲线集合。在此函数中，可能会对连接到的那条曲线进行反转。
+ IDictionary中的键值表示每一条Curve的Id值，这个值并不一定是从1开始递增的。</param>
+ <returns>与连续曲线链的最右端相连的那一条曲线在输入的曲线集合中所对应的Id键值。
+ 如果没有找到连接的曲线，则返回Nothing！</returns>
+</member>
+<member name="M:rvtTools_ez.CurvesFormator.ContiguousCurves.ConnectForward(Autodesk.Revit.DB.Curve)">
+ <summary>
+ 将曲线添加到连续曲线链的右端
+ </summary>
+ <param name="c">请自行确保添加的曲线是可以与当前的连续链首尾相接的。
+ 如果不能确保，请通过CheckForward函数进行检测。</param>
+</member>
+<member name="M:rvtTools_ez.CurvesFormator.ContiguousCurves.ConnectBackward(Autodesk.Revit.DB.Curve)">
+ <summary>
+ 将曲线添加到连续曲线链的左端
+ </summary>
+ <param name="c">请自行确保添加的曲线是可以与当前的连续链首尾相接的。
+ 如果不能确保，请通过CheckBackward函数进行检测。</param>
+</member>
+<member name="M:rvtTools_ez.CurvesFormator.IsInPlan(System.Collections.Generic.ICollection{Autodesk.Revit.DB.ModelCurve})">
+ <summary>
+ 曲线集合在一个平面上
+ </summary>
+ <param name="curves"></param>
+ <returns></returns>
+</member>
 <member name="T:rvtTools_ez.CurveLoopConstructor">
  <summary>
  通过各种方法来构造出封闭的曲线
@@ -35,51 +150,6 @@ RevitTools_vb
  </summary>
  <remarks></remarks>
 </member>
-<member name="M:rvtTools_ez.CurvesFormator.GetContiguousCurvesFromSelectedCurveElements_Preserved(Autodesk.Revit.DB.Document,System.Collections.Generic.IList{Autodesk.Revit.DB.Reference})">
- <summary>
- 从选择的Curve Elements中，获得连续排列的多段曲线（不一定要封闭）。作为测试代码保存，但是不进行实际调用
- </summary>
- <param name="doc">曲线所在文档</param>
- <param name="SelectedCurves">多条曲线元素所对应的Reference，可以通过Selection.PickObjects返回。
- 注意，SelectedCurves中每一条曲线都必须是有界的（IsBound），否则，其GetEndPoint会报错。</param>
- <returns>如果输入的曲线可以形成连续的多段线，则返回重新排序后的多段线集合；
- 如果输入的曲线不能形成连续的多段线，则返回Nothing！</returns>
-</member>
-<member name="M:rvtTools_ez.CurvesFormator.GetContiguousCurvesFromSelectedCurveElements(Autodesk.Revit.DB.Document,System.Collections.Generic.IList{Autodesk.Revit.DB.Reference})">
- <summary>
- 从选择的Curve Elements中，获得连续排列的多段曲线（不一定要封闭）。
- </summary>
- <param name="doc">曲线所在文档</param>
- <param name="SelectedCurves">多条曲线元素所对应的Reference，可以通过Selection.PickObjects返回。
- 注意，SelectedCurves中每一条曲线都必须是有界的（IsBound），否则，其GetEndPoint会报错。</param>
- <returns>如果输入的曲线可以形成连续的多段线，则返回重新排序后的多段线集合；
- 如果输入的曲线不能形成连续的多段线，则返回Nothing！</returns>
-</member>
-<member name="M:rvtTools_ez.CurvesFormator.GetContiguousCurvesFromModelCurves(System.Collections.Generic.IList{Autodesk.Revit.DB.ModelCurve})">
- <summary>
- 从一组模型线中，获得连续排列的多段曲线（不一定要封闭）。
- </summary>
- <param name="ModelCurves">进行转换的模型线集合。
- 注意，模型线集合中每一条曲线都必须是有界的（IsBound），否则，其GetEndPoint会报错。</param>
- <returns>如果输入的曲线可以形成连续的多段线，则返回重新排序后的多段线集合；
- 如果输入的曲线不能形成连续的多段线，则返回Nothing！</returns>
-</member>
-<member name="M:rvtTools_ez.CurvesFormator.GetContiguousCurvesFromCurves(System.Collections.Generic.IList{Autodesk.Revit.DB.Curve})">
- <summary>
- 从指定的Curve集合中中，获得连续排列的多段曲线（不一定要封闭）。如果不连续，则返回Nothing。
- </summary>
- <param name="curves">多条曲线元素所对应的集合
- 注意，curves 集合中每一条曲线都必须是有界的（IsBound），否则，其 GetEndPoint 会报错。</param>
- <returns>如果输入的曲线可以形成连续的多段线，则返回重新排序后的多段线集合；
- 如果输入的曲线不能形成连续的多段线，则返回Nothing！</returns>
-</member>
-<member name="M:rvtTools_ez.CurvesFormator.IsInPlan(System.Collections.Generic.ICollection{Autodesk.Revit.DB.ModelCurve})">
- <summary>
- 曲线集合在一个平面上
- </summary>
- <param name="curves"></param>
- <returns></returns>
-</member>
 <member name="T:rvtTools_ez.ModelCurveDrawer">
  <summary>
  在UI界面中按指定的要求绘制模型线，并将这些模型线保存在对应的列表中。
@@ -92,7 +162,8 @@ RevitTools_vb
  在模型线绘制完成时，触发此事件。
  </summary>
  <param name="AddedCurves">添加的模型线</param>
- <param name="e">完成绘制的触发条件</param>
+ <param name="FinishedInternally">画笔是否是由内部程序自己关闭的。如果是外部对象通过调用Cancel方法来取消绘制的，则其值为False。</param>
+ <param name="Succeeded">AddedCurves集合中的曲线集合是否满足指定的连续性条件</param>
 </member>
 <member name="T:rvtTools_ez.ModelCurveDrawer.CurveCheckMode">
  <summary>
@@ -104,11 +175,6 @@ RevitTools_vb
  所绘制的模型线并不要求相连，也就是不进行任何检测。
  </summary>
 </member>
-<member name="F:rvtTools_ez.ModelCurveDrawer.CurveCheckMode.Contiguous">
- <summary>
- 当前绘制的线条与上一条曲线是相连的，但是这两条曲线不一定是首尾相接，而也有可能是“首-首”或者是“尾-尾”相连。
- </summary>
-</member>
 <member name="F:rvtTools_ez.ModelCurveDrawer.CurveCheckMode.Connected">
  <summary>
  集合中的线条在整体上是连续的，但是线条之间的顺序可能是混乱的。
@@ -117,41 +183,6 @@ RevitTools_vb
 <member name="F:rvtTools_ez.ModelCurveDrawer.CurveCheckMode.InPlan">
  <summary>
  集合中的曲线在同一个平面上，但是并不一定是连续的
- </summary>
-</member>
-<member name="T:rvtTools_ez.ModelCurveDrawer.FinishCondition">
- <summary>
- 画笔是在什么样的情况下结束绘制的。
- </summary>
-</member>
-<member name="F:rvtTools_ez.ModelCurveDrawer.FinishCondition.UnDetected">
- <summary>
- 由于不明原因而引发绘制结束
- </summary>
-</member>
-<member name="F:rvtTools_ez.ModelCurveDrawer.FinishCondition.RequirementMet">
- <summary>
- 添加曲线成功，而且添加的曲线满足指定的连续性条件
- </summary>
-</member>
-<member name="F:rvtTools_ez.ModelCurveDrawer.FinishCondition.MaxReached">
- <summary>
- 添加曲线成功，而且曲线的数据达到了指定的最大数量
- </summary>
-</member>
-<member name="F:rvtTools_ez.ModelCurveDrawer.FinishCondition.ShiftedToOtheredOperations">
- <summary>
- 在Revit界面中，转去进行其他操作去了。比如去删除某些对象，或者绘制其他图形等操作。
- </summary>
-</member>
-<member name="F:rvtTools_ez.ModelCurveDrawer.FinishCondition.CanceledByExternalCommand">
- <summary>
- 由外部命令调用Cancel方法来取消绘制
- </summary>
-</member>
-<member name="F:rvtTools_ez.ModelCurveDrawer.FinishCondition.RequirementCannotBeSatisfied">
- <summary>
- 不能满足指定的连续性要求，比如本来要求曲线集合前后相连，而绘制的曲线并未相连。
  </summary>
 </member>
 <member name="P:rvtTools_ez.ModelCurveDrawer.AddedModelCurves">
@@ -191,9 +222,14 @@ RevitTools_vb
 <member name="F:rvtTools_ez.ModelCurveDrawer.NewlyAddedCurve">
  <summary> 刚刚新添加的曲线 </summary>
 </member>
-<member name="F:rvtTools_ez.ModelCurveDrawer.FinishCdt">
+<member name="F:rvtTools_ez.ModelCurveDrawer.FinishedInternally">
  <summary>
- 完成绘制的触发条件
+ 画笔是否是由内部程序自己关闭的。如果是外部对象通过调用Cancel方法来取消绘制的，则其值为False。
+ </summary>
+</member>
+<member name="F:rvtTools_ez.ModelCurveDrawer.Succeeded">
+ <summary>
+ AddedModelCurves 集合中的曲线集合是否满足指定的连续性条件
  </summary>
 </member>
 <member name="M:rvtTools_ez.ModelCurveDrawer.#ctor(Autodesk.Revit.UI.UIApplication,rvtTools_ez.ModelCurveDrawer.CurveCheckMode,System.Boolean,System.Collections.Generic.List{Autodesk.Revit.DB.ModelCurve},System.Int32)">
@@ -214,9 +250,9 @@ RevitTools_vb
  绘制完成或者从外部取消曲线绘制
  </summary>
 </member>
-<member name="M:rvtTools_ez.ModelCurveDrawer.Draw">
+<member name="M:rvtTools_ez.ModelCurveDrawer.SendDraw">
  <summary>
- 在UI界面中绘制模型线
+ 在UI界面中绘制模型线。此方法为异步操作，程序并不会等待SendDraw方法执行完成才继续向下执行。
  </summary>
 </member>
 <member name="M:rvtTools_ez.ModelCurveDrawer.app_DocumentChanged(System.Object,Autodesk.Revit.DB.Events.DocumentChangedEventArgs)">
@@ -243,131 +279,18 @@ RevitTools_vb
  取消模型线的绘制
  </summary>
 </member>
-<member name="M:rvtTools_ez.ModelCurveDrawer.Finish(rvtTools_ez.ModelCurveDrawer.FinishCondition)">
+<member name="M:rvtTools_ez.ModelCurveDrawer.Finish(System.Boolean,System.Boolean)">
  <summary>
- 绘制结束
+ 绘制完成，并关闭绘制模式
  </summary>
- <param name="FinishCdt">画笔是在什么样的情况下结束绘制的。</param>
+ <param name="FinishedInternally">画笔是否是由内部程序自己关闭的。如果是外部对象通过调用Cancel方法来取消绘制的，则其值为False。</param>
+ <param name="Succeeded">AddedModelCurves 集合中的曲线集合是否满足指定的连续性条件</param>
 </member>
 <member name="M:rvtTools_ez.ModelCurveDrawer.ValidateCurves">
  <summary>
  检测当前集合中的曲线是否符合指定的连续性要求
  </summary>
  <returns></returns>
-</member>
-<member name="T:rvtTools_ez.Test.Template_ModelessForm">
- <summary>
- 无模态窗口的模板
- 此窗口可以直接通过Form.Show来进行调用
- </summary>
- <remarks></remarks>
-</member>
-<member name="T:rvtTools_ez.Test.Template_ModelessForm.RequestParameter">
- <summary>
- 每一个外部事件调用时所提出的需求，为了在Execute方法中充分获取窗口的需求，
- 所以将调用外部事件的窗口控件以及对应的触发事件参数也传入Execute方法中。
- </summary>
- <remarks></remarks>
-</member>
-<member name="P:rvtTools_ez.Test.Template_ModelessForm.RequestParameter.sender">
- <summary> 引发Form事件控件对象 </summary>
-</member>
-<member name="P:rvtTools_ez.Test.Template_ModelessForm.RequestParameter.e">
- <summary> Form中的事件所对应的事件参数 </summary>
-</member>
-<member name="P:rvtTools_ez.Test.Template_ModelessForm.RequestParameter.Id">
- <summary> 具体的需求 </summary>
-</member>
-<member name="M:rvtTools_ez.Test.Template_ModelessForm.RequestParameter.#ctor(rvtTools_ez.Test.Template_ModelessForm.Request,System.EventArgs,System.Object)">
- <summary>
- 定义事件需求与窗口中引发此事件的控件对象及对应的事件参数
- </summary>
- <param name="RequestId">具体的需求</param>
- <param name="e">Form中的事件所对应的事件参数</param>
- <param name="sender">引发Form事件控件对象</param>
- <remarks></remarks>
-</member>
-<member name="T:rvtTools_ez.Test.Template_ModelessForm.Request">
- <summary>
- ModelessForm的操作需求，用来从窗口向IExternalEventHandler对象传递需求。
- </summary>
- <remarks></remarks>
-</member>
-<member name="F:rvtTools_ez.Test.Template_ModelessForm.Request.Pick">
- <summary>
- 与Revit用户界面进行交互。弥补了Form.ShowDialog不能进行Selection.PickObjects等操作的缺陷。
- </summary>
- <remarks></remarks>
-</member>
-<member name="F:rvtTools_ez.Test.Template_ModelessForm.Request.Delete">
- <summary>
- 开启Revit事务以修改Revit文档。弥补了Form.Show后开启事务时给出报错：
- “Starting a transaction from an external application running outside of APIcontext is not allowed.”的问题。
- </summary>
- <remarks></remarks>
-</member>
-<member name="F:rvtTools_ez.Test.Template_ModelessForm.ExEvent">
- <summary>用来触发外部事件（通过其Raise方法） </summary>
- <remarks>ExEvent属性是必须有的，它用来执行Raise方法以触发事件。</remarks>
-</member>
-<member name="F:rvtTools_ez.Test.Template_ModelessForm.RequestPara">
- <summary> Execute方法所要执行的需求 </summary>
- <remarks>在Form中要执行某一个操作时，先将对应的操作需求信息赋值为一个RequestId枚举值，然后再执行ExternalEvent.Raise()方法。
- 然后Revit会在会在下个闲置时间（idling time cycle）到来时调用IExternalEventHandler.Excute方法，在这个Execute方法中，
- 再通过RequestId来提取对应的操作需求，</remarks>
-</member>
-<member name="M:rvtTools_ez.Test.Template_ModelessForm.DozeOff">
- <summary> 在Revit执行相关操作时，禁用窗口中的控件 </summary>
-</member>
-<member name="M:rvtTools_ez.Test.Template_ModelessForm.WarmUp">
- <summary> 在外部事件RequestHandler中的Execute方法执行完成后，用来激活窗口中的控件 </summary>
-</member>
-<member name="M:rvtTools_ez.Test.Template_ModelessForm.Execute(Autodesk.Revit.UI.UIApplication)">
- <summary>
- 在执行ExternalEvent.Raise()方法之前，请先将操作需求信息赋值给其RequestHandler对象的RequestId属性。
- 当ExternalEvent.Raise后，Revit会在下个闲置时间（idling time cycle）到来时调用IExternalEventHandler.Execute方法的实现。
- </summary>
- <param name="app">此属性由Revit自动提供，其值不是Nothing，而是一个真实的UIApplication对象</param>
- <remarks>由于在通过外部程序所引发的操作中，如果出现异常，Revit并不会给出任何提示或者报错，
- 而是直接退出函数。所以要将整个操作放在一个Try代码块中，以处理可能出现的任何报错。</remarks>
-</member>
-<member name="T:rvtTools_ez.Test.Test_ExamplesCodes">
- <summary>
- 一些效果实现的示例代码
- </summary>
- <remarks></remarks>
-</member>
-<member name="M:rvtTools_ez.Test.Test_ExamplesCodes.GetGeometry">
- <summary>
- 返回Element的几何数据
- </summary>
- <remarks></remarks>
-</member>
-<member name="M:rvtTools_ez.Test.Test_ExamplesCodes.FindSupporting">
- <summary> 射线法：找到与梁相交的所有墙对象 </summary>
-</member>
-<member name="M:rvtTools_ez.Test.Test_ExamplesCodes.FindIntersectWallsByElement">
- <summary> 找到与某Element的几何实体相交的Elements </summary>
-</member>
-<member name="M:rvtTools_ez.Test.Test_ExamplesCodes.FindIntersectWallsByGeometry">
- <summary>ElementIntersectsSolidFilter: 找到与某Solid相交的Elements </summary>
-</member>
-<member name="M:rvtTools_ez.Test.Test_ExamplesCodes.ElementParameterFilter_FindOjbectsInSpecificRoom(Autodesk.Revit.UI.ExternalCommandData)">
- <summary>
- ElementParameterFilter 参数过滤器：找到一个房间内的所有对象
- </summary>
- <remarks>提示: 参数过滤条件可能比其他的类型过滤条件要快，但是这要视条件而定。毕竟这是一个慢过，使用时请按照过滤标准的复杂程度而异。</remarks>
-</member>
-<member name="M:rvtTools_ez.Test.Test_ExamplesCodes.ElementParameterFilter_FindRooms(Autodesk.Revit.DB.Document)">
- <summary>
- ElementParameterFilter参数过滤器 Creates an ElementParameter filter to find rooms whose area is greater than specified value
- </summary>
- <remarks>提示: 参数过滤条件可能比其他的类型过滤条件要快，但是这要视条件而定。毕竟这是一个慢过，使用时请按照过滤标准的复杂程度而异。</remarks>
-</member>
-<member name="M:rvtTools_ez.Test.ExternalApplication.NewRibbon(Autodesk.Revit.UI.UIControlledApplication)">
- <summary>
- 创建一个新的 Ribbon
- </summary>
 </member>
 <member name="T:rvtTools_ez.GeoHelper">
  <summary>
@@ -510,6 +433,125 @@ RevitTools_vb
  <param name="targetName"></param>
  <returns></returns>
  <remarks></remarks>
+</member>
+<member name="M:rvtTools_ez.rvtTools.Undo">
+ <summary>
+ 撤消 Revit 的操作
+ </summary>
+</member>
+<member name="T:rvtTools_ez.Test.Template_ModelessForm">
+ <summary>
+ 无模态窗口的模板
+ 此窗口可以直接通过Form.Show来进行调用
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="T:rvtTools_ez.Test.Template_ModelessForm.RequestParameter">
+ <summary>
+ 每一个外部事件调用时所提出的需求，为了在Execute方法中充分获取窗口的需求，
+ 所以将调用外部事件的窗口控件以及对应的触发事件参数也传入Execute方法中。
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="P:rvtTools_ez.Test.Template_ModelessForm.RequestParameter.sender">
+ <summary> 引发Form事件控件对象 </summary>
+</member>
+<member name="P:rvtTools_ez.Test.Template_ModelessForm.RequestParameter.e">
+ <summary> Form中的事件所对应的事件参数 </summary>
+</member>
+<member name="P:rvtTools_ez.Test.Template_ModelessForm.RequestParameter.Id">
+ <summary> 具体的需求 </summary>
+</member>
+<member name="M:rvtTools_ez.Test.Template_ModelessForm.RequestParameter.#ctor(rvtTools_ez.Test.Template_ModelessForm.Request,System.EventArgs,System.Object)">
+ <summary>
+ 定义事件需求与窗口中引发此事件的控件对象及对应的事件参数
+ </summary>
+ <param name="RequestId">具体的需求</param>
+ <param name="e">Form中的事件所对应的事件参数</param>
+ <param name="sender">引发Form事件控件对象</param>
+ <remarks></remarks>
+</member>
+<member name="T:rvtTools_ez.Test.Template_ModelessForm.Request">
+ <summary>
+ ModelessForm的操作需求，用来从窗口向IExternalEventHandler对象传递需求。
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="F:rvtTools_ez.Test.Template_ModelessForm.Request.Pick">
+ <summary>
+ 与Revit用户界面进行交互。弥补了Form.ShowDialog不能进行Selection.PickObjects等操作的缺陷。
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="F:rvtTools_ez.Test.Template_ModelessForm.Request.Delete">
+ <summary>
+ 开启Revit事务以修改Revit文档。弥补了Form.Show后开启事务时给出报错：
+ “Starting a transaction from an external application running outside of APIcontext is not allowed.”的问题。
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="F:rvtTools_ez.Test.Template_ModelessForm.ExEvent">
+ <summary>用来触发外部事件（通过其Raise方法） </summary>
+ <remarks>ExEvent属性是必须有的，它用来执行Raise方法以触发事件。</remarks>
+</member>
+<member name="F:rvtTools_ez.Test.Template_ModelessForm.RequestPara">
+ <summary> Execute方法所要执行的需求 </summary>
+ <remarks>在Form中要执行某一个操作时，先将对应的操作需求信息赋值为一个RequestId枚举值，然后再执行ExternalEvent.Raise()方法。
+ 然后Revit会在会在下个闲置时间（idling time cycle）到来时调用IExternalEventHandler.Excute方法，在这个Execute方法中，
+ 再通过RequestId来提取对应的操作需求，</remarks>
+</member>
+<member name="M:rvtTools_ez.Test.Template_ModelessForm.DozeOff">
+ <summary> 在Revit执行相关操作时，禁用窗口中的控件 </summary>
+</member>
+<member name="M:rvtTools_ez.Test.Template_ModelessForm.WarmUp">
+ <summary> 在外部事件RequestHandler中的Execute方法执行完成后，用来激活窗口中的控件 </summary>
+</member>
+<member name="M:rvtTools_ez.Test.Template_ModelessForm.Execute(Autodesk.Revit.UI.UIApplication)">
+ <summary>
+ 在执行ExternalEvent.Raise()方法之前，请先将操作需求信息赋值给其RequestHandler对象的RequestId属性。
+ 当ExternalEvent.Raise后，Revit会在下个闲置时间（idling time cycle）到来时调用IExternalEventHandler.Execute方法的实现。
+ </summary>
+ <param name="app">此属性由Revit自动提供，其值不是Nothing，而是一个真实的UIApplication对象</param>
+ <remarks>由于在通过外部程序所引发的操作中，如果出现异常，Revit并不会给出任何提示或者报错，
+ 而是直接退出函数。所以要将整个操作放在一个Try代码块中，以处理可能出现的任何报错。</remarks>
+</member>
+<member name="T:rvtTools_ez.Test.Test_ExamplesCodes">
+ <summary>
+ 一些效果实现的示例代码
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="M:rvtTools_ez.Test.Test_ExamplesCodes.GetGeometry">
+ <summary>
+ 返回Element的几何数据
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="M:rvtTools_ez.Test.Test_ExamplesCodes.FindSupporting">
+ <summary> 射线法：找到与梁相交的所有墙对象 </summary>
+</member>
+<member name="M:rvtTools_ez.Test.Test_ExamplesCodes.FindIntersectWallsByElement">
+ <summary> 找到与某Element的几何实体相交的Elements </summary>
+</member>
+<member name="M:rvtTools_ez.Test.Test_ExamplesCodes.FindIntersectWallsByGeometry">
+ <summary>ElementIntersectsSolidFilter: 找到与某Solid相交的Elements </summary>
+</member>
+<member name="M:rvtTools_ez.Test.Test_ExamplesCodes.ElementParameterFilter_FindOjbectsInSpecificRoom(Autodesk.Revit.UI.ExternalCommandData)">
+ <summary>
+ ElementParameterFilter 参数过滤器：找到一个房间内的所有对象
+ </summary>
+ <remarks>提示: 参数过滤条件可能比其他的类型过滤条件要快，但是这要视条件而定。毕竟这是一个慢过，使用时请按照过滤标准的复杂程度而异。</remarks>
+</member>
+<member name="M:rvtTools_ez.Test.Test_ExamplesCodes.ElementParameterFilter_FindRooms(Autodesk.Revit.DB.Document)">
+ <summary>
+ ElementParameterFilter参数过滤器 Creates an ElementParameter filter to find rooms whose area is greater than specified value
+ </summary>
+ <remarks>提示: 参数过滤条件可能比其他的类型过滤条件要快，但是这要视条件而定。毕竟这是一个慢过，使用时请按照过滤标准的复杂程度而异。</remarks>
+</member>
+<member name="M:rvtTools_ez.Test.ExternalApplication.NewRibbon(Autodesk.Revit.UI.UIControlledApplication)">
+ <summary>
+ 创建一个新的 Ribbon
+ </summary>
 </member>
 <member name="T:rvtTools_ez.ExtensionMethods">
  <summary>
