@@ -14,4 +14,3 @@ F:\Software\Revit\RevitDevelop\OldW\Projects\Projects_vb\obj\Debug\Projects_vb.p
 F:\Software\Revit\RevitDevelop\OldW\Projects\Projects_vb\obj\Debug\frm_DataImport.resources
 F:\Software\Revit\RevitDevelop\OldW\Projects\Projects_vb\obj\Debug\frm_DataExport.resources
 F:\Software\Revit\RevitDevelop\OldW\Projects\Projects_vb\obj\Debug\ConstructionReview.resources
-F:\Software\Revit\RevitDevelop\OldW\Projects\Projects_vb\obj\Debug\rvtTools_ez.Test.ModelessForm.resources

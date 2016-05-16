@@ -118,17 +118,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DllActivator_RevitTools_vb.vb" />
+    <Compile Include="ZengFanyun\Geometry\CurvesFormator_ContiguousCurves.vb" />
     <Compile Include="ZengFanyun\Geometry\CurveLoopConstructor.vb" />
     <Compile Include="ZengFanyun\Geometry\CurvesFormator.vb" />
     <Compile Include="ZengFanyun\Geometry\ModelCurveDrawer.vb" />
+    <Compile Include="ZengFanyun\Geometry\GeoHelper.vb" />
+    <Compile Include="ZengFanyun\rvtTools.vb" />
     <Compile Include="ZengFanyun\Template_ModelessForm.Designer.vb">
       <DependentUpon>Template_ModelessForm.vb</DependentUpon>
     </Compile>
     <Compile Include="ZengFanyun\Template_ModelessForm.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ZengFanyun\Geometry\GeoHelper.vb" />
-    <Compile Include="ZengFanyun\rvtTools.vb" />
     <Compile Include="ZengFanyun\Test_ExamplesCodes.vb" />
     <Compile Include="ZengFanyun\ExtensionMethods.vb" />
     <Compile Include="ZengFanyun\Test_Addin.vb" />

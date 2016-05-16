@@ -17,9 +17,9 @@ Namespace rvtTools_ez
         ''' 在模型线绘制完成时，触发此事件。
         ''' </summary>
         ''' <param name="AddedCurves">添加的模型线</param>
-        ''' <param name="e">完成绘制的触发条件</param>
-        Public Event DrawingCompleted(ByVal AddedCurves As List(Of ModelCurve), e As FinishCondition)
-        ' Public Event DrawingComleted As Action(Of List(Of ModelCurve), FinishCondition)
+        ''' <param name="FinishedInternally">画笔是否是由内部程序自己关闭的。如果是外部对象通过调用Cancel方法来取消绘制的，则其值为False。</param>
+        ''' <param name="Succeeded">AddedCurves集合中的曲线集合是否满足指定的连续性条件</param>
+        Public Event DrawingCompleted(ByVal AddedCurves As List(Of ModelCurve), FinishedInternally As Boolean， Succeeded As Boolean)
 
 #Region "   ---   Types"
 
@@ -34,56 +34,19 @@ Namespace rvtTools_ez
             Seperated = 1
 
             ''' <summary>
-            ''' 当前绘制的线条与上一条曲线是相连的，但是这两条曲线不一定是首尾相接，而也有可能是“首-首”或者是“尾-尾”相连。
-            ''' </summary>
-            Contiguous = 2
-
-            ''' <summary>
             ''' 集合中的线条在整体上是连续的，但是线条之间的顺序可能是混乱的。
             ''' </summary>
-            Connected = 4
+            Connected = 2
 
             ''' <summary>
             ''' 集合中的曲线在同一个平面上，但是并不一定是连续的
             ''' </summary>
-            InPlan = 8
+            InPlan = 4
 
-        End Enum
-
-        ''' <summary>
-        ''' 画笔是在什么样的情况下结束绘制的。
-        ''' </summary>
-        Public Enum FinishCondition
-
-            ''' <summary>
-            ''' 由于不明原因而引发绘制结束
-            ''' </summary>
-            UnDetected = 1
-
-            ''' <summary>
-            ''' 添加曲线成功，而且添加的曲线满足指定的连续性条件
-            ''' </summary>
-            RequirementMet = 2
-
-            ''' <summary>
-            ''' 添加曲线成功，而且曲线的数据达到了指定的最大数量
-            ''' </summary>
-            MaxReached = 3
-
-            ''' <summary>
-            ''' 在Revit界面中，转去进行其他操作去了。比如去删除某些对象，或者绘制其他图形等操作。
-            ''' </summary>
-            ShiftedToOtheredOperations = 4
-
-            ''' <summary>
-            ''' 由外部命令调用Cancel方法来取消绘制
-            ''' </summary>
-            CanceledByExternalCommand = 5
-
-            ''' <summary>
-            ''' 不能满足指定的连续性要求，比如本来要求曲线集合前后相连，而绘制的曲线并未相连。
-            ''' </summary>
-            RequirementCannotBeSatisfied
+            '''' <summary>
+            '''' 当前绘制的线条与上一条曲线是相连的，但是这两条曲线不一定是首尾相接，而也有可能是“首-首”或者是“尾-尾”相连。
+            '''' </summary>
+            'Contiguous = 2
 
         End Enum
 
@@ -147,9 +110,13 @@ Namespace rvtTools_ez
         Private NewlyAddedCurve As ModelCurve
 
         ''' <summary>
-        ''' 完成绘制的触发条件
+        ''' 画笔是否是由内部程序自己关闭的。如果是外部对象通过调用Cancel方法来取消绘制的，则其值为False。
         ''' </summary>
-        Private FinishCdt As FinishCondition
+        Private FinishedInternally As Boolean
+        ''' <summary>
+        ''' AddedModelCurves 集合中的曲线集合是否满足指定的连续性条件
+        ''' </summary>
+        Private Succeeded As Boolean
 
 #End Region
 
@@ -178,11 +145,7 @@ Namespace rvtTools_ez
             Me.F_CheckMode = CheckMode
             Me.F_CheckInTime = CheckInTime
             Me.F_MaxCurves = Max
-
-            '对于要求首尾相连的，必须要每一次绘制时都进行检测。
-            If CheckMode = CurveCheckMode.Contiguous Then
-                Me.F_CheckInTime = True
-            End If
+            Me.FinishedInternally = True
 
             ' 处理已经添加好的基准曲线集合
             Me.AddedModelCurves = BaseCurves
@@ -213,9 +176,9 @@ Namespace rvtTools_ez
 
         ' 绘图与判断处理
         ''' <summary>
-        ''' 在UI界面中绘制模型线
+        ''' 在UI界面中绘制模型线。此方法为异步操作，程序并不会等待SendDraw方法执行完成才继续向下执行。
         ''' </summary>
-        Public Sub Draw()
+        Public Sub SendDraw()
             If ModelCurveDrawer.IsBeenUsed Then
                 Throw New InvalidOperationException("有其他的对象正在绘制模型线，请等待其绘制完成后再次启动。")
             Else
@@ -231,74 +194,139 @@ Namespace rvtTools_ez
         ''' <param name="sender">Application对象</param>
         ''' <param name="e"></param>
         Private Sub app_DocumentChanged(sender As Object, e As DocumentChangedEventArgs)
-            '  Dim app = DirectCast(sender, Autodesk.Revit.ApplicationServices.Application)
-            Dim doc As Document = rvtUiApp.ActiveUIDocument.Document
-            Dim blnContine As Boolean = False
-            Dim FinishCdt As FinishCondition = FinishCondition.UnDetected
-            Try
-                ' 对模型的操作是否是：绘制一条模型线
-                Dim blnDrawModelLine As Boolean
-                Dim elems As List(Of ElementId) = e.GetAddedElementIds
-                blnDrawModelLine = elems.Count = 1 AndAlso
-                                   e.GetDeletedElementIds.Count = 0 AndAlso
-                                   (TypeOf elems.Item(0).Element(e.GetDocument()) Is ModelCurve)
+            MessageBox.Show(AddedModelCurves.Count)
+            If e.Operation = UndoOperation.TransactionCommitted OrElse
+                e.Operation = UndoOperation.TransactionUndone OrElse
+                e.Operation = UndoOperation.TransactionRedone Then
 
-                If blnDrawModelLine Then  ' 说明正在执行模型线的绘制操作
-                    ' 新添加的那一条模型线
-                    NewlyAddedCurve = DirectCast(elems.First.Element(doc), ModelCurve)
+                Dim doc As Document = e.GetDocument
 
-                    ' 先将其添加进曲线集合
-                    AddedModelCurves.Add(NewlyAddedCurve)
+                Try
 
-                    ' 检测当前集合中的曲线是否符合指定的连续性要求
-                    If Me.CheckInTime Then
-                        Dim curveValidated As Boolean = ValidateCurves()
-                        If curveValidated Then  ' 说明在新添加了这一条曲线后，集合中的曲线还是符合指定的连续性要求
-                            If AddedModelCurves.Count > Me.MaxCurves Then
-                                FinishCdt = FinishCondition.MaxReached
-                                blnContine = False
-                            Else
-                                blnContine = True
-
-                            End If
-                        Else  ' 说明在新添加了这一条曲线后，集合中的曲线不符合指定的连续性要求了，但是在添加之前的曲线集合还是符合的。
-                            ' 删除刚绘制的模型线
-                            '  doc.Delete(NewlyAddedCurve.Id)
-                            AddedModelCurves.Remove(NewlyAddedCurve)
-                            '
-                            FinishCdt = FinishCondition.RequirementCannotBeSatisfied
-                            blnContine = False
+                    ' 先考察添加的对象：如果添加了新对象，则要么是 DrawNewLines ，要么是 DrawOtherObjects
+                    Dim addedCount As Integer = 0
+                    Dim addedElement As Element
+                    For Each eid As ElementId In e.GetAddedElementIds
+                        addedElement = doc.GetElement(eid)
+                        If (TypeOf addedElement Is ModelCurve) Then
+                            AddedModelCurves.Add(DirectCast(addedElement, ModelCurve))
+                            addedCount += 1
                         End If
-                    Else ' 说明不进行实时检测，而直接继续绘制
-                        blnContine = True
+                    Next
+                    If addedCount > 0 Then ' 说明绘制了新的模型线
+                        ' 检测当前集合中的曲线是否符合指定的连续性要求
+                        If Me.CheckInTime Then
+                            Dim curveValidated As Boolean = ValidateCurves()
+                            If curveValidated Then  ' 说明在新添加了这一条曲线后，集合中的曲线还是符合指定的连续性要求
+                                Me.Succeeded = True
+
+                            Else  ' 说明在新添加了这一条曲线后，集合中的曲线不符合指定的连续性要求了，但是在添加之前的曲线集合还是符合的。
+                                Me.Succeeded = False
+                                If InquireUndo() Then
+
+                                    rvtTools.Undo()
+                                    Exit Sub
+                                Else
+                                    ' 绘制结束
+                                    Me.Finish(True, False)
+                                    Exit Sub
+                                End If
+                            End If
+                        Else ' 说明不进行实时检测，而直接继续绘制
+                            Me.Succeeded = True
+                        End If
+                        '
+                        Exit Sub
                     End If
-                Else  ' 说明已经没有在绘制模型线了
-                    FinishCdt = FinishCondition.ShiftedToOtheredOperations
-                    blnContine = False
-                End If
 
-                ' 指示后续的操作
-                If blnContine Then  ' 还需要继续绘制
+                    '
+                    ' 再考察删除对象的情况
+                    Dim deleted As List(Of ElementId) = e.GetDeletedElementIds
+                    If deleted.Count > 0 Then
 
-                    lastCurve = NewlyAddedCurve
-                    ' 继续绘制
-                    '  ActiveDraw()
-                Else     ' 不用再继续绘制了
-                    ' 如果是实时检测，则这里不用再检测了，否则，必须进行最终的检测
-                    If Not F_CheckInTime Then
-                        ValidateCurves()
+                        ' 先将被删除的曲线从曲线链集合中剔除掉
+                        Dim c As ModelCurve
+                        Dim id_Chain As Integer ' 曲线链中的元素下标
+                        Dim id_deleted As Integer  ' 删除的模型线集合中的元素下标
+                        For id_Chain = AddedModelCurves.Count - 1 To 0 Step -1  ' 曲线链中的元素下标
+                            c = AddedModelCurves.Item(id_Chain)
+                            id_deleted = deleted.IndexOf(c.Id)  ' 找到对应的项
+                            If id_deleted >= 0 Then
+                                deleted.RemoveAt(id_deleted)
+                                AddedModelCurves.RemoveAt(id_Chain)
+                            End If
+                        Next
+
+                        ' 检测剔除后的集合中的曲线是否符合指定的连续性要求
+                        If Me.CheckInTime Then
+                            Dim curveValidated As Boolean = ValidateCurves()
+                            If curveValidated Then  ' 说明在新添加了这一条曲线后，集合中的曲线还是符合指定的连续性要求
+                                Me.Succeeded = True
+                            Else  ' 说明在删除了某些曲线后，集合中的曲线不符合指定的连续性要求了
+                                Me.Succeeded = False
+                                If InquireUndo() Then
+
+                                    rvtTools.Undo()
+                                    Exit Sub
+                                Else
+                                    ' 绘制结束
+                                    Me.Finish(True, False)
+                                    Exit Sub
+                                End If
+                            End If
+                        Else ' 说明不进行实时检测，而直接继续绘制
+                            Me.Succeeded = True
+                        End If
+                        '
+                        Exit Sub
                     End If
 
-                    ' 绘制结束
-                    Me.Finish(FinishCdt:=FinishCdt)
-                End If
-            Catch ex As Exception
-                MessageBox.Show("在绘制模型线及连续性判断时出问题啦~~~" & vbCrLf &
-                                       ex.Message & ex.GetType.FullName & vbCrLf &
-                                       ex.StackTrace)
-                '绘制结束
-                Me.Finish(FinishCondition.UnDetected)
-            End Try
+                    ' 再考察修改对象的情况（因为在添加对象或者删除对象时，都有可能伴随有修改对象）：在没有添加新对象，只作了修改的情况下，要么是对
+                    Dim modifiedCount As Integer = 0
+                    Dim modifiedCountElement As Element
+                    For Each eid As ElementId In e.GetModifiedElementIds
+                        modifiedCountElement = doc.GetElement(eid)
+                        If (TypeOf modifiedCountElement Is ModelCurve) Then
+                            modifiedCount += 1
+                        End If
+                    Next
+                    If modifiedCount > 0 Then
+
+                        ' 检测修改后的集合中的曲线是否符合指定的连续性要求
+                        If Me.CheckInTime Then
+                            Dim curveValidated As Boolean = ValidateCurves()
+                            If curveValidated Then  ' 说明在新添加了这一条曲线后，集合中的曲线还是符合指定的连续性要求
+                                Me.Succeeded = True
+
+                            Else  ' 说明在删除了某些曲线后，集合中的曲线不符合指定的连续性要求了
+                                Me.Succeeded = False
+                                If InquireUndo() Then
+
+                                    rvtTools.Undo()
+                                    Exit Sub
+                                Else
+                                    ' 绘制结束
+                                    Me.Finish(True, False)
+                                    Exit Sub
+                                End If
+                            End If
+                        Else ' 说明不进行实时检测，而直接继续绘制
+                            Me.Succeeded = True
+
+                        End If
+                        '
+                        Exit Sub
+                    End If
+
+                Catch ex As Exception
+                    MessageBox.Show("在绘制模型线及连续性判断时出问题啦~~~" & vbCrLf &
+                                           ex.Message & ex.GetType.FullName & vbCrLf &
+                                           ex.StackTrace)
+                    '绘制结束
+                    Me.Finish(True, False)
+                End Try
+            End If
+
         End Sub
 
 #Region "   ---   曲线绘制的激活、取消"
@@ -316,29 +344,35 @@ Namespace rvtTools_ez
         ''' 比如关闭窗口等）之后。如果放在Messagebox.Show之前，则会模拟通过按下ESC键而将模态窗口关闭的操作，则模态窗口就只
         ''' 会闪现一下，或者根本就看不见。
         ''' </summary>
-        Private Shared Sub DeactiveDraw()
+        Private Sub DeactiveDraw()
             ' 在Revit UI界面中退出绘制，即按下ESCAPE键
-            WindowsUtil.keybd_event(Keys.Escape, 0, 0, 0)  ' 按下 ESCAPE键
-            WindowsUtil.keybd_event(Keys.NumLock, 0, &H2, 0)  ' 按键弹起
+            WindowsUtil.keybd_event(27, 0, 0, 0)  ' 按下 ESCAPE键
+            WindowsUtil.keybd_event(27, 0, &H2, 0)  ' 按键弹起
 
             ' 再按一次
-            WindowsUtil.keybd_event(Keys.Escape, 0, 0, 0)
-            WindowsUtil.keybd_event(Keys.NumLock, 0, &H2, 0)
+            WindowsUtil.keybd_event(27, 0, 0, 0)
+            WindowsUtil.keybd_event(27, 0, &H2, 0)
         End Sub
 
         ''' <summary>
         ''' 取消模型线的绘制
         ''' </summary>
         Public Sub Cancel()
-            Me.Finish(FinishCondition.CanceledByExternalCommand)
+            Me.FinishedInternally = False
+            ' 如果是实时检测，则这里不用再检测了，否则，必须进行最终的检测
+            If Not F_CheckInTime Then
+                Succeeded = ValidateCurves()
+            End If
+            Me.Finish(FinishedInternally, Succeeded)
         End Sub
 
         ''' <summary>
-        ''' 绘制结束
+        ''' 绘制完成，并关闭绘制模式
         ''' </summary>
-        ''' <param name="FinishCdt">画笔是在什么样的情况下结束绘制的。</param>
-        Private Sub Finish(Optional ByVal FinishCdt As FinishCondition = FinishCondition.UnDetected)
-            RaiseEvent DrawingCompleted(AddedModelCurves, FinishCdt)
+        ''' <param name="FinishedInternally">画笔是否是由内部程序自己关闭的。如果是外部对象通过调用Cancel方法来取消绘制的，则其值为False。</param>
+        ''' <param name="Succeeded">AddedModelCurves 集合中的曲线集合是否满足指定的连续性条件</param>
+        Private Sub Finish(ByVal FinishedInternally As Boolean, Succeeded As Boolean)
+            RaiseEvent DrawingCompleted(AddedModelCurves, FinishedInternally, Succeeded)
             Me.Dispose()
             '
             DeactiveDraw()
@@ -360,12 +394,8 @@ Namespace rvtTools_ez
                     If CurvesFormator.GetContiguousCurvesFromModelCurves(Me.AddedModelCurves) IsNot Nothing Then
                         blnValidated = True
                     End If
-
-                Case CurveCheckMode.Contiguous
-                    If CurvesFormator.GetContiguousCurvesFromModelCurves({lastCurve, NewlyAddedCurve}) IsNot Nothing Then
-                        blnValidated = True
-                    End If
-
+                Case CurveCheckMode.InPlan
+                    Return False
                 Case CurveCheckMode.Seperated
                     ' 不用检测，直接符合
                     blnValidated = True
@@ -373,7 +403,14 @@ Namespace rvtTools_ez
             Return blnValidated
         End Function
 
+        Private Function InquireUndo() As Boolean
+            Dim res As DialogResult = MessageBox.Show("当前操作使得绘制的模型线不满足要求，是否要撤消此操作？", "提示", MessageBoxButtons.YesNo,
+                                     MessageBoxIcon.Asterisk, MessageBoxDefaultButton.Button1)
+            If res = DialogResult.Yes Then
+                Return True
+            Else
+                Return False
+            End If
+        End Function
     End Class
-
-
 End Namespace

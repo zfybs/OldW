@@ -209,12 +209,6 @@
     <Compile Include="ZengFanyun\Excavation\frm_DrawExcavation.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ZengFanyun\ModelessForm.Designer.vb">
-      <DependentUpon>ModelessForm.vb</DependentUpon>
-    </Compile>
-    <Compile Include="ZengFanyun\ModelessForm.vb">
-      <SubType>Form</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ZengFanyun\ConstructionReview\ConstructionReview.resx">
@@ -243,9 +237,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ZengFanyun\Excavation\frm_DrawExcavation.resx">
       <DependentUpon>frm_DrawExcavation.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ZengFanyun\ModelessForm.resx">
-      <DependentUpon>ModelessForm.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

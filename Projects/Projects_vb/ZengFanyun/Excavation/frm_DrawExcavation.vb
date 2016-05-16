@@ -335,7 +335,7 @@ Namespace OldW.Excavation
                     Case Request.DrawCurves
 
                         Drawer = New ModelCurveDrawer(app, ModelCurveDrawer.CurveCheckMode.Connected, True)
-                        Drawer.Draw()
+                        Drawer.SendDraw()
 
                 End Select
             Catch ex As Exception
@@ -354,20 +354,15 @@ Namespace OldW.Excavation
         End Sub
 #End Region
 
-        Private Sub Drawer_DrawingCompleted(AddedCurves As List(Of ModelCurve), e As ModelCurveDrawer.FinishCondition) Handles Drawer.DrawingCompleted
-            Select Case e
-                Case ModelCurveDrawer.FinishCondition.RequirementMet
-                    MessageBox.Show("成功")
-
-                Case ModelCurveDrawer.FinishCondition.ShiftedToOtheredOperations
-                    MessageBox.Show("其他操作")
-
-                Case ModelCurveDrawer.FinishCondition.RequirementCannotBeSatisfied
-                    MessageBox.Show("不满足连续性要求")
-            End Select
+        Private Sub Drawer_DrawingCompleted(AddedCurves As List(Of ModelCurve), FinishedInternally As Boolean, Succeeded As Boolean) Handles Drawer.DrawingCompleted
+            If Succeeded Then
+                MessageBox.Show("成功")
+            Else
+                MessageBox.Show("不满足连续性要求")
+            End If
             '
             Me.WarmUp()
-        End Sub
 
+        End Sub
     End Class
 End Namespace
