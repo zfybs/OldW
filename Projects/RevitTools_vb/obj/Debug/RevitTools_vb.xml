@@ -16,44 +16,17 @@ RevitTools_vb
  判断曲线集合是否满足指定的格式，或者将集合中的曲线进行标准化，比如形成连续曲线，投影到同一个平面中等。
  </summary>
 </member>
-<member name="M:rvtTools_ez.CurvesFormator.GetContiguousCurvesFromSelectedCurveElements(Autodesk.Revit.DB.Document,System.Collections.Generic.IList{Autodesk.Revit.DB.Reference})">
- <summary>
- 从选择的Curve Elements中，获得连续排列的多段曲线（不一定要封闭）。
- </summary>
- <param name="doc">曲线所在文档</param>
- <param name="SelectedCurves">多条曲线元素所对应的Reference，可以通过Selection.PickObjects返回。
- 注意，SelectedCurves中每一条曲线都必须是有界的（IsBound），否则，其GetEndPoint会报错。</param>
- <returns>如果输入的曲线可以形成连续的多段线，则返回重新排序后的多段线集合；
- 如果输入的曲线不能形成连续的多段线，则返回Nothing！</returns>
-</member>
-<member name="M:rvtTools_ez.CurvesFormator.GetContiguousCurvesFromModelCurves(System.Collections.Generic.IList{Autodesk.Revit.DB.ModelCurve})">
- <summary>
- 从一组模型线中，获得连续排列的多段曲线（不一定要封闭）。
- </summary>
- <param name="ModelCurves">进行转换的模型线集合。
- 注意，模型线集合中每一条曲线都必须是有界的（IsBound），否则，其GetEndPoint会报错。</param>
- <returns>如果输入的曲线可以形成连续的多段线，则返回重新排序后的多段线集合；
- 如果输入的曲线不能形成连续的多段线，则返回Nothing！</returns>
-</member>
 <member name="M:rvtTools_ez.CurvesFormator.GetContiguousCurvesFromCurves_OneDirection(System.Collections.Generic.IList{Autodesk.Revit.DB.Curve})">
  <summary>
- 从指定的Curve集合中中，获得连续排列的多段曲线（不一定要封闭）。如果不连续，则返回Nothing。
+ 从指定的Curve集合中中，获得连续排列的多段曲线（不一定要封闭）。
+ 此方法必须保证集合中的第一个元素为连续曲线链中的最左端的那一根曲线。
  </summary>
  <param name="curves">多条曲线元素所对应的集合
  注意，curves 集合中每一条曲线都必须是有界的（IsBound），否则，其 GetEndPoint 会报错。</param>
  <returns>如果输入的曲线可以形成连续的多段线，则返回重新排序后的多段线集合；
  如果输入的曲线不能形成连续的多段线，则返回Nothing！</returns>
 </member>
-<member name="M:rvtTools_ez.CurvesFormator.GetContiguousCurvesFromCurves1(System.Collections.Generic.IList{Autodesk.Revit.DB.Curve})">
- <summary>
- 从指定的Curve集合中中，获得连续排列的多段曲线（不一定要封闭）。如果不连续，则返回Nothing。
- </summary>
- <param name="curves">多条曲线元素所对应的集合
- 注意，curves 集合中每一条曲线都必须是有界的（IsBound），否则，其 GetEndPoint 会报错。</param>
- <returns>如果输入的曲线可以形成连续的多段线，则返回重新排序后的多段线集合；
- 如果输入的曲线不能形成连续的多段线，则返回Nothing！</returns>
-</member>
-<member name="M:rvtTools_ez.CurvesFormator.GetContiguousCurvesFromCurves2(System.Collections.Generic.IList{Autodesk.Revit.DB.Curve})">
+<member name="M:rvtTools_ez.CurvesFormator.GetContiguousCurvesFromCurves(System.Collections.Generic.IList{Autodesk.Revit.DB.Curve})">
  <summary>
  从指定的Curve集合中中，获得连续排列的多段曲线（不一定要封闭）。如果不连续，则返回Nothing。
  </summary>
@@ -119,12 +92,28 @@ RevitTools_vb
  <param name="c">请自行确保添加的曲线是可以与当前的连续链首尾相接的。
  如果不能确保，请通过CheckBackward函数进行检测。</param>
 </member>
-<member name="M:rvtTools_ez.CurvesFormator.IsInPlan(System.Collections.Generic.ICollection{Autodesk.Revit.DB.ModelCurve})">
+<member name="M:rvtTools_ez.CurvesFormator.IsInOnePlan(System.Collections.Generic.ICollection{Autodesk.Revit.DB.Curve})">
  <summary>
- 曲线集合在一个平面上
+ 曲线集合在同一个平面上，而不限定是哪一个法向的平面
  </summary>
  <param name="curves"></param>
  <returns></returns>
+</member>
+<member name="M:rvtTools_ez.CurvesFormator.IsInOnePlan(System.Collections.Generic.ICollection{Autodesk.Revit.DB.Curve},Autodesk.Revit.DB.XYZ)">
+ <summary>
+ 曲线集合中的所有曲线是否在指定法向的平面上
+ </summary>
+ <param name="curves"></param>
+ <param name="planNormal">指定平面的法向向量</param>
+ <returns></returns>
+</member>
+<member name="M:rvtTools_ez.CurvesFormator.InPlan(Autodesk.Revit.DB.Curve,Autodesk.Revit.DB.XYZ)">
+ <summary>
+ 指定的曲线是否位于指定的平面内。
+ </summary>
+ <param name="c"></param>
+ <param name="planNormal"></param>
+ <returns>空间三维曲线可能并不会在任何一个平面内，此时其自然是返回False。</returns>
 </member>
 <member name="T:rvtTools_ez.CurveLoopConstructor">
  <summary>
@@ -150,6 +139,16 @@ RevitTools_vb
  </summary>
  <remarks></remarks>
 </member>
+<member name="M:rvtTools_ez.CurveLoopConstructor.GetContiguousCurvesFromSelectedCurveElements(Autodesk.Revit.DB.Document,System.Collections.Generic.IList{Autodesk.Revit.DB.Reference})">
+ <summary>
+ 从选择的Curve Elements中，获得连续排列的多段曲线（不一定要封闭）。
+ </summary>
+ <param name="doc">曲线所在文档</param>
+ <param name="SelectedCurves">多条曲线元素所对应的Reference，可以通过Selection.PickObjects返回。
+ 注意，SelectedCurves中每一条曲线都必须是有界的（IsBound），否则，其GetEndPoint会报错。</param>
+ <returns>如果输入的曲线可以形成连续的多段线，则返回重新排序后的多段线集合；
+ 如果输入的曲线不能形成连续的多段线，则返回Nothing！</returns>
+</member>
 <member name="T:rvtTools_ez.ModelCurveDrawer">
  <summary>
  在UI界面中按指定的要求绘制模型线，并将这些模型线保存在对应的列表中。
@@ -162,7 +161,7 @@ RevitTools_vb
  在模型线绘制完成时，触发此事件。
  </summary>
  <param name="AddedCurves">添加的模型线</param>
- <param name="FinishedInternally">画笔是否是由内部程序自己关闭的。如果是外部对象通过调用Cancel方法来取消绘制的，则其值为False。</param>
+ <param name="FinishedExternally">画笔是否是由外部程序强制关闭的。如果是外部对象通过调用Cancel方法来取消绘制的，则其值为 True。</param>
  <param name="Succeeded">AddedCurves集合中的曲线集合是否满足指定的连续性条件</param>
 </member>
 <member name="T:rvtTools_ez.ModelCurveDrawer.CurveCheckMode">
@@ -180,12 +179,27 @@ RevitTools_vb
  集合中的线条在整体上是连续的，但是线条之间的顺序可能是混乱的。
  </summary>
 </member>
-<member name="F:rvtTools_ez.ModelCurveDrawer.CurveCheckMode.InPlan">
+<member name="F:rvtTools_ez.ModelCurveDrawer.CurveCheckMode.Closed">
  <summary>
- 集合中的曲线在同一个平面上，但是并不一定是连续的
+ 绘制封闭的曲线集合。可以通过连续曲线链的左端点与右端点是否重合来判断
  </summary>
 </member>
-<member name="P:rvtTools_ez.ModelCurveDrawer.AddedModelCurves">
+<member name="F:rvtTools_ez.ModelCurveDrawer.CurveCheckMode.HorizontalPlan">
+ <summary>
+ 集合中的曲线在水平面上，但是并不一定是连续的。
+ </summary>
+</member>
+<member name="F:rvtTools_ez.ModelCurveDrawer.CurvesState.Invalid">
+ <summary> 当前的曲线不满足检查要求，应该退出或者撤消绘制 </summary>
+</member>
+<member name="F:rvtTools_ez.ModelCurveDrawer.CurvesState.Validating">
+ <summary> 当前的曲线还未满足检查要求，但是还可以继续绘制。
+ 比如要求绘制一个封闭的曲线链，则在未封闭的过程中，只要其是连续的，就还可以继续绘制。 </summary>
+</member>
+<member name="F:rvtTools_ez.ModelCurveDrawer.CurvesState.Validated">
+ <summary> 当前的曲线已经满足了指定的要求，但此时并不一定要退出。 </summary>
+</member>
+<member name="P:rvtTools_ez.ModelCurveDrawer.AddedModelCurvesId">
  <summary>
  已经绘制的所有模型线
  </summary>
@@ -216,23 +230,7 @@ RevitTools_vb
 <member name="P:rvtTools_ez.ModelCurveDrawer.IsBeenUsed">
  <summary> 模型线绘制器是否正在使用中。 </summary>
 </member>
-<member name="F:rvtTools_ez.ModelCurveDrawer.lastCurve">
- <summary> 上一条曲线 </summary>
-</member>
-<member name="F:rvtTools_ez.ModelCurveDrawer.NewlyAddedCurve">
- <summary> 刚刚新添加的曲线 </summary>
-</member>
-<member name="F:rvtTools_ez.ModelCurveDrawer.FinishedInternally">
- <summary>
- 画笔是否是由内部程序自己关闭的。如果是外部对象通过调用Cancel方法来取消绘制的，则其值为False。
- </summary>
-</member>
-<member name="F:rvtTools_ez.ModelCurveDrawer.Succeeded">
- <summary>
- AddedModelCurves 集合中的曲线集合是否满足指定的连续性条件
- </summary>
-</member>
-<member name="M:rvtTools_ez.ModelCurveDrawer.#ctor(Autodesk.Revit.UI.UIApplication,rvtTools_ez.ModelCurveDrawer.CurveCheckMode,System.Boolean,System.Collections.Generic.List{Autodesk.Revit.DB.ModelCurve},System.Int32)">
+<member name="M:rvtTools_ez.ModelCurveDrawer.#ctor(Autodesk.Revit.UI.UIApplication,rvtTools_ez.ModelCurveDrawer.CurveCheckMode,System.Boolean,System.Collections.Generic.List{Autodesk.Revit.DB.ElementId},System.Int32)">
  <summary>
  构造函数
  </summary>
@@ -241,7 +239,6 @@ RevitTools_vb
  <param name="CheckInTime">是否在每一步绘制时都检测所绘制的曲线是否符合指定的要求，如果为False，则在绘制操作退出后进行统一检测。</param>
  <param name="BaseCurves">
  在新绘制之前，先指定一组基准曲线集合，而新绘制的曲线将与基准曲线一起来进行连续性条件的检测。
- 当指定连续性条件为新绘制的曲线必须与上一条曲线相连时，基准曲线集合中的最后一条将作为“上一次绘制的曲线”。
  </param>
  <param name="Max">集合中最多绘制多少条曲线，如果不指定此属性的值，可默认可以绘制Interger.MaxValue</param>
 </member>
@@ -283,14 +280,25 @@ RevitTools_vb
  <summary>
  绘制完成，并关闭绘制模式
  </summary>
- <param name="FinishedInternally">画笔是否是由内部程序自己关闭的。如果是外部对象通过调用Cancel方法来取消绘制的，则其值为False。</param>
+ <param name="FinishedExternally">画笔是否是由外部程序强制关闭的。如果是外部对象通过调用Cancel方法来取消绘制的，则其值为 True。</param>
  <param name="Succeeded">AddedModelCurves 集合中的曲线集合是否满足指定的连续性条件</param>
 </member>
-<member name="M:rvtTools_ez.ModelCurveDrawer.ValidateCurves">
+<member name="M:rvtTools_ez.ModelCurveDrawer.ValidateCurves(System.Boolean@)">
  <summary>
  检测当前集合中的曲线是否符合指定的连续性要求
  </summary>
+ <param name="continueDraw">在检查连续性后是否要继续绘制</param>
  <returns></returns>
+</member>
+<member name="M:rvtTools_ez.ModelCurveDrawer.RefreshUI(rvtTools_ez.ModelCurveDrawer.CurvesState,System.Boolean)">
+ <summary>
+ 根据当前曲线的连续性状态，以及是否可以继续绘制，来作出相应的UI更新
+ </summary>
+ <param name="cs"></param>
+ <param name="ContinueDraw"></param>
+</member>
+<member name="M:rvtTools_ez.ModelCurveDrawer.InquireUndo">
+ <summary> 询问用户是否要撤消操作 </summary>
 </member>
 <member name="T:rvtTools_ez.GeoHelper">
  <summary>
@@ -300,8 +308,16 @@ RevitTools_vb
 <member name="F:rvtTools_ez.GeoHelper.VertexTolerance">
  <summary>
  进行点的距离比较时的容差。
- Revit中，Application.VertexTolerance属性值返回的值为：0.0005233832795，
+ Revit中，Application.VertexTolerance 属性值返回的值为：0.0005233832795，
  也就是说，如果两个点的距离小于这个值，就认为这两个点是重合的。
+ </summary>
+</member>
+<member name="F:rvtTools_ez.GeoHelper.AngleTolerance">
+ <summary>
+ 进行点的距离比较时的容差。
+ Revit中，Application.AngleTolerance 属性值返回的值为：0.00174532925199433，
+ 也就是说，如果两个角度的区别小于这个值，就认为这两个角度是相同的的。
+ Two angle measurements closer than this value are considered identical. 
  </summary>
 </member>
 <member name="M:rvtTools_ez.GeoHelper.GetBottomFace(Autodesk.Revit.DB.FaceArray)">

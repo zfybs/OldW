@@ -121,7 +121,10 @@ Namespace OldW.Excavation
         ''' <summary> 开挖土体开始开挖的日期 </summary>
         Private StartedDate As Date
 
-        Private WithEvents Drawer As rvtTools_ez.ModelCurveDrawer
+        ''' <summary>
+        ''' 用来绘制封闭的模型线
+        ''' </summary>
+        Private WithEvents ClosedCurveDrawer As rvtTools_ez.ModelCurveDrawer
 
 #End Region
 
@@ -163,10 +166,10 @@ Namespace OldW.Excavation
             ' 保存的实例需要进行释放
 
             '
-            If ModelCurveDrawer.IsBeenUsed AndAlso Me.Drawer IsNot Nothing Then
-                RemoveHandler Drawer.DrawingCompleted, AddressOf Drawer_DrawingCompleted
-                Drawer.Cancel()
-                Drawer = Nothing
+            If ModelCurveDrawer.IsBeenUsed AndAlso Me.ClosedCurveDrawer IsNot Nothing Then
+                RemoveHandler ClosedCurveDrawer.DrawingCompleted, AddressOf Drawer_DrawingCompleted
+                ClosedCurveDrawer.Cancel()
+                ClosedCurveDrawer = Nothing
             End If
             '
             Me.ExEvent.Dispose()
@@ -334,8 +337,8 @@ Namespace OldW.Excavation
 
                     Case Request.DrawCurves
 
-                        Drawer = New ModelCurveDrawer(app, ModelCurveDrawer.CurveCheckMode.Connected, True)
-                        Drawer.SendDraw()
+                        ClosedCurveDrawer = New ModelCurveDrawer(app, ModelCurveDrawer.CurveCheckMode.Closed, True)
+                        ClosedCurveDrawer.SendDraw()
 
                 End Select
             Catch ex As Exception
@@ -354,7 +357,7 @@ Namespace OldW.Excavation
         End Sub
 #End Region
 
-        Private Sub Drawer_DrawingCompleted(AddedCurves As List(Of ModelCurve), FinishedInternally As Boolean, Succeeded As Boolean) Handles Drawer.DrawingCompleted
+        Private Sub Drawer_DrawingCompleted(AddedCurves As List(Of ElementId), FinishedInternally As Boolean, Succeeded As Boolean) Handles ClosedCurveDrawer.DrawingCompleted
             If Succeeded Then
                 MessageBox.Show("成功")
             Else
@@ -363,6 +366,11 @@ Namespace OldW.Excavation
             '
             Me.WarmUp()
 
+        End Sub
+
+        Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+            Dim uidoc As UIDocument = New UIDocument(Document)
+            uidoc.Selection.SetElementIds(Me.ClosedCurveDrawer.AddedModelCurvesId)
         End Sub
     End Class
 End Namespace
