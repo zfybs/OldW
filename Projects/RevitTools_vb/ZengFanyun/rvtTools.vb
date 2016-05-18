@@ -164,9 +164,6 @@ Namespace rvtTools_ez
             WindowsUtil.keybd_event(27, 0, 0, 0)  ' 按下 ESCAPE键
             WindowsUtil.keybd_event(27, 0, &H2, 0)  ' 按键弹起
 
-            WindowsUtil.keybd_event(27, 0, 0, 0) ' 再按一次
-            WindowsUtil.keybd_event(27, 0, &H2, 0)
-
             ' 第二步，按下 Ctrl + Z
             ' 在Revit UI界面中退出绘制
             WindowsUtil.keybd_event(17, 0, 0, 0)  ' 按下 Control 键

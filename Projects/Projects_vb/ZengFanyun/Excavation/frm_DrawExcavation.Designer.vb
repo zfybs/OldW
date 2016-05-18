@@ -46,6 +46,7 @@
             Me.RadioBtn_ExcavSoil = New System.Windows.Forms.RadioButton()
             Me.RadioBtn_ModelSoil = New System.Windows.Forms.RadioButton()
             Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+            Me.Button1 = New System.Windows.Forms.Button()
             Me.GroupBox1.SuspendLayout()
             Me.GroupBox2.SuspendLayout()
             Me.SuspendLayout()
@@ -250,12 +251,22 @@
             Me.RadioBtn_ModelSoil.Text = "模型土体"
             Me.RadioBtn_ModelSoil.UseVisualStyleBackColor = True
             '
+            'Button1
+            '
+            Me.Button1.Location = New System.Drawing.Point(201, 164)
+            Me.Button1.Name = "Button1"
+            Me.Button1.Size = New System.Drawing.Size(75, 23)
+            Me.Button1.TabIndex = 4
+            Me.Button1.Text = "Button1"
+            Me.Button1.UseVisualStyleBackColor = True
+            '
             'frm_DrawExcavation
             '
             Me.AcceptButton = Me.BtnDraw
             Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
             Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
             Me.ClientSize = New System.Drawing.Size(386, 199)
+            Me.Controls.Add(Me.Button1)
             Me.Controls.Add(Me.BtnDraw)
             Me.Controls.Add(Me.TextBox_Depth)
             Me.Controls.Add(Me.Label2)
@@ -297,5 +308,6 @@
         Friend WithEvents TextBox_SoilName As System.Windows.Forms.TextBox
         Friend WithEvents Label4 As System.Windows.Forms.Label
         Friend WithEvents RadioBtn_Draw As RadioButton
+        Friend WithEvents Button1 As Button
     End Class
 End Namespace

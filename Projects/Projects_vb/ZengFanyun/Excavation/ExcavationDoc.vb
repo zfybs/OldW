@@ -265,7 +265,7 @@ Namespace OldW.Excavation
                     End If
                 Else
                     ' 对于选择了多条曲线的情况
-                    Dim cs As List(Of Curve) = CurvesFormator.GetContiguousCurvesFromSelectedCurveElements(Doc, Boundaries)
+                    Dim cs As List(Of Curve) = CurveLoopConstructor.GetContiguousCurvesFromSelectedCurveElements(Doc, Boundaries)
                     If cs IsNot Nothing Then
                         For Each c As Curve In cs
                             cvLoop.Append(c)

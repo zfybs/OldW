@@ -500,6 +500,11 @@ Projects_vb
 <member name="F:OldW.Excavation.frm_DrawExcavation.StartedDate">
  <summary> 开挖土体开始开挖的日期 </summary>
 </member>
+<member name="F:OldW.Excavation.frm_DrawExcavation._ClosedCurveDrawer">
+ <summary>
+ 用来绘制封闭的模型线
+ </summary>
+</member>
 <member name="M:OldW.Excavation.frm_DrawExcavation.DozeOff">
  <summary> 在Revit执行相关操作时，禁用窗口中的控件 </summary>
 </member>
