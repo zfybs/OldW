@@ -226,7 +226,7 @@ std_vb
  <param name="FieldName">要读取的字段的名称。</param>
  <remarks></remarks>
 </member>
-<member name="M:std_ez.Utils.String2Date(System.String,System.DateTime@)">
+<member name="M:std_ez.Utils.String2Date(System.String,System.Nullable{System.DateTime}@)">
  <summary>
  将字符转换为日期。除了.NET能够识别的日期格式外，
  还增加了20160406（ 即 2016/04/06），以及 201604061330（即 2016/04/06 13:30）

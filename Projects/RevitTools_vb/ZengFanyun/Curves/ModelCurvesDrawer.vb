@@ -8,10 +8,9 @@ Namespace rvtTools_ez
 
     ''' <summary>
     ''' 在UI界面中按指定的要求绘制模型线，并将这些模型线保存在对应的列表中。
-    ''' 在绘制的过程中，可以指定所绘制的曲线集合符合指定的连续性条件，也可以直接绘制分散的模型线。
-    ''' 注意：每次只能有一个实例正在绘制曲线。
+    ''' 在绘制完成后，必须手动执行 Dispose 方法，以清空数据，以及取消事件的关联。
     ''' </summary>
-    Public Class ModelCurveDrawer
+    Public Class ModelCurvesDrawer
 
         ''' <summary>
         ''' 在模型线绘制完成时，触发此事件。
@@ -22,34 +21,6 @@ Namespace rvtTools_ez
         Public Event DrawingCompleted(ByVal AddedCurves As List(Of ElementId), FinishedExternally As Boolean， Succeeded As Boolean)
 
 #Region "   ---   Types"
-
-        ''' <summary>
-        ''' 画线时的检查模式
-        ''' </summary>
-        <Flags()> Public Enum CurveCheckMode
-
-            ''' <summary>
-            ''' 所绘制的模型线并不要求相连，也就是不进行任何检测。
-            ''' </summary>
-            Seperated = 0
-
-            ''' <summary>
-            ''' 集合中的线条在整体上是连续的，但是线条之间的顺序可能是混乱的。
-            ''' </summary>
-            Connected = 1
-
-            ''' <summary>
-            ''' 绘制封闭的曲线集合。可以通过连续曲线链的左端点与右端点是否重合来判断
-            ''' </summary>
-            Closed = 2
-
-            ''' <summary>
-            ''' 集合中的曲线在水平面上，但是并不一定是连续的。
-            ''' </summary>
-            HorizontalPlan = 4
-
-        End Enum
-
 
         Public Enum CurvesState
 
@@ -64,16 +35,10 @@ Namespace rvtTools_ez
             Validated
 
         End Enum
+
 #End Region
 
 #Region "   ---   Properties"
-
-        ' Public Property AddedModelCurves As List(Of ModelCurve)
-        ''' <summary>
-        ''' 已经绘制的所有模型线
-        ''' </summary>
-        ''' <returns></returns>
-        Public Property AddedModelCurvesId As List(Of ElementId)
 
         Private F_CheckMode As CurveCheckMode
         ''' <summary>
@@ -97,20 +62,8 @@ Namespace rvtTools_ez
             End Get
         End Property
 
-        ''' <summary>
-        ''' 集合中最多绘制多少条曲线
-        ''' </summary>
-        Private F_MaxCurves As Integer
-        ''' <summary>
-        ''' 集合中最多绘制多少条曲线，如果不指定此属性的值，可默认可以绘制Interger.MaxValue
-        ''' </summary>
-        Public ReadOnly Property MaxCurves As Integer
-            Get
-                Return F_MaxCurves
-            End Get
-        End Property
-
-        ''' <summary> 模型线绘制器是否正在使用中。 </summary>
+        ''' <summary> 模型线绘制器是否正在使用中。
+        ''' 注意：每次只能有一个实例正在绘制曲线。</summary>
         Public Shared Property IsBeenUsed As Boolean
 #End Region
 
@@ -119,6 +72,13 @@ Namespace rvtTools_ez
         Private rvtUiApp As UIApplication
         Private rvtApp As Autodesk.Revit.ApplicationServices.Application
         Private doc As Document
+
+        ' Public Property AddedModelCurves As List(Of ModelCurve)
+        ''' <summary>
+        ''' 已经绘制的所有模型线
+        ''' </summary>
+        ''' <returns></returns>
+        Private AddedModelCurvesId As List(Of ElementId)
 
 #End Region
 
@@ -133,57 +93,89 @@ Namespace rvtTools_ez
         ''' <param name="BaseCurves">
         ''' 在新绘制之前，先指定一组基准曲线集合，而新绘制的曲线将与基准曲线一起来进行连续性条件的检测。
         ''' </param>
-        ''' <param name="Max">集合中最多绘制多少条曲线，如果不指定此属性的值，可默认可以绘制Interger.MaxValue</param>
         Public Sub New(ByVal uiApp As UIApplication,
                        ByVal CheckMode As CurveCheckMode,
                        ByVal CheckInTime As Boolean,
-                       Optional ByVal BaseCurves As List(Of ElementId) = Nothing,
-                       Optional Max As Integer = Integer.MaxValue)
+                       Optional ByVal BaseCurves As List(Of ElementId) = Nothing)
 
             ' 变量初始化
             rvtUiApp = uiApp
             rvtApp = uiApp.Application
             Me.F_CheckMode = CheckMode
             Me.F_CheckInTime = CheckInTime
-            Me.F_MaxCurves = Max
 
             ' 处理已经添加好的基准曲线集合
             Me.AddedModelCurvesId = BaseCurves
             If Me.AddedModelCurvesId Is Nothing Then
                 Me.AddedModelCurvesId = New List(Of ElementId)
             End If
+            '
+            AddHandler rvtApp.DocumentChanged, AddressOf app_DocumentChanged
+        End Sub
+
+        ' 绘图与判断处理
+        ''' <summary>
+        ''' 在UI界面中绘制模型线。此方法为异步操作，程序并不会等待 PostDraw 方法执行完成才继续向下执行。
+        ''' </summary>
+        Public Sub PostDraw()
+            If ModelCurvesDrawer.IsBeenUsed Then
+                Throw New InvalidOperationException("有其他的对象正在绘制模型线，请等待其绘制完成后再次启动。")
+            Else
+
+                ActiveDraw()
+                ModelCurvesDrawer.IsBeenUsed = True
+            End If
         End Sub
 
         ''' <summary>
-        ''' 绘制完成或者从外部取消曲线绘制
+        ''' 取消模型线的绘制
         ''' </summary>
-        Private Sub Dispose()
+        Public Sub Cancel()
+            ' 最后再检测一次
+            Dim blnContinueDraw As Boolean
+            Dim cs As CurvesState = ValidateCurves(blnContinueDraw)
+            Call RefreshUI(cs, blnContinueDraw)
 
+            If cs = CurvesState.Validated Then
+                Me.Finish(True, True)
+            Else
+                ' 不管是 Validating 还是 Invalid，说明在此刻都没有成功
+                Me.Finish(True, Succeeded:=False)
+            End If
+        End Sub
+
+        ''' <summary>
+        ''' 绘制完成，并关闭绘制模式
+        ''' </summary>
+        ''' <param name="FinishedExternally">画笔是否是由外部程序强制关闭的。如果是外部对象通过调用Cancel方法来取消绘制的，则其值为 True。</param>
+        ''' <param name="Succeeded">AddedModelCurves 集合中的曲线集合是否满足指定的连续性条件</param>
+        Private Sub Finish(ByVal FinishedExternally As Boolean, Succeeded As Boolean)
+
+            ' 注意以下几步操作的先后顺序
+            '
+            ModelCurvesDrawer.IsBeenUsed = False
+            RaiseEvent DrawingCompleted(AddedModelCurvesId, FinishedExternally, Succeeded)
+
+            ' 数据清空
+            AddedModelCurvesId = New List(Of ElementId)
+            DeactiveDraw()
+        End Sub
+
+        Public Sub Dispose()
+            ' 注意以下几步操作的先后顺序
+            '
             RemoveHandler rvtApp.DocumentChanged, AddressOf app_DocumentChanged
-
-            ModelCurveDrawer.IsBeenUsed = False
+            ModelCurvesDrawer.IsBeenUsed = False
 
             ' 变量清空
             rvtUiApp = Nothing
             rvtApp = Nothing
             AddedModelCurvesId = Nothing
+            '
+            DeactiveDraw()
         End Sub
 
 #End Region
-
-        ' 绘图与判断处理
-        ''' <summary>
-        ''' 在UI界面中绘制模型线。此方法为异步操作，程序并不会等待SendDraw方法执行完成才继续向下执行。
-        ''' </summary>
-        Public Sub SendDraw()
-            If ModelCurveDrawer.IsBeenUsed Then
-                Throw New InvalidOperationException("有其他的对象正在绘制模型线，请等待其绘制完成后再次启动。")
-            Else
-                AddHandler rvtApp.DocumentChanged, AddressOf app_DocumentChanged
-                ActiveDraw()
-                ModelCurveDrawer.IsBeenUsed = True
-            End If
-        End Sub
 
         ''' <summary>
         ''' DocumentChanged事件，并针对不同的绘制情况而进行不同的处理
@@ -283,17 +275,12 @@ Namespace rvtTools_ez
                     MessageBox.Show("在绘制模型线及连续性判断时出问题啦~~~" & vbCrLf &
                                            ex.Message & ex.GetType.FullName & vbCrLf &
                                            ex.StackTrace)
-                    If InquireUndo() Then
-                        rvtTools.Undo()
-                    Else
-                        ' 结束绘制
-                        Me.Finish(False, False)
-                    End If
+                    ' 结束绘制
+                    Me.Finish(False, False)
                 End Try
             End If
 
         End Sub
-
 
 #Region "   ---   曲线绘制的激活、取消"
 
@@ -318,35 +305,6 @@ Namespace rvtTools_ez
             ' 再按一次
             WindowsUtil.keybd_event(27, 0, 0, 0)
             WindowsUtil.keybd_event(27, 0, &H2, 0)
-        End Sub
-
-        ''' <summary>
-        ''' 取消模型线的绘制
-        ''' </summary>
-        Public Sub Cancel()
-            ' 最后再检测一次
-            Dim blnContinueDraw As Boolean
-            Dim cs As CurvesState = ValidateCurves(blnContinueDraw)
-            Call RefreshUI(cs, blnContinueDraw)
-
-            If cs = CurvesState.Validated Then
-                Me.Finish(True, True)
-            Else
-                ' 不管是 Validating 还是 Invalid，说明在此刻都没有成功
-                Me.Finish(True, Succeeded:=False)
-            End If
-        End Sub
-
-        ''' <summary>
-        ''' 绘制完成，并关闭绘制模式
-        ''' </summary>
-        ''' <param name="FinishedExternally">画笔是否是由外部程序强制关闭的。如果是外部对象通过调用Cancel方法来取消绘制的，则其值为 True。</param>
-        ''' <param name="Succeeded">AddedModelCurves 集合中的曲线集合是否满足指定的连续性条件</param>
-        Private Sub Finish(ByVal FinishedExternally As Boolean, Succeeded As Boolean)
-            RaiseEvent DrawingCompleted(AddedModelCurvesId, FinishedExternally, Succeeded)
-            Me.Dispose()
-            '
-            DeactiveDraw()
         End Sub
 
 #End Region
@@ -447,14 +405,6 @@ Namespace rvtTools_ez
             End Select
         End Sub
 
-        Private Sub shows(ByVal cs As List(Of Curve))
-            Dim a As New List(Of XYZ)
-            For Each c As Curve In cs
-                a.Add(c.GetEndPoint(0))
-                a.Add(c.GetEndPoint(1))
-            Next
-            Utils.ShowEnumerable(a)
-        End Sub
 #End Region
 
         ''' <summary> 询问用户是否要撤消操作 </summary>

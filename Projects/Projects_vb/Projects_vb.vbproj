@@ -153,6 +153,9 @@
     <Compile Include="ZengFanyun\DataTransfer\frm_DataExport.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ZengFanyun\Excavation\frm_DrawExcavationHandler.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="ZengFanyun\Excavation\Soil_Element.vb" />
     <Compile Include="ZengFanyun\Excavation\frm_ExcavationInfo.Designer.vb">
       <DependentUpon>frm_ExcavationInfo.vb</DependentUpon>

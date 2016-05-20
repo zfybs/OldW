@@ -74,7 +74,7 @@ Namespace std_ez
         ''' </summary>
         ''' <param name="text">要转换为日期的字符。</param>
         ''' <returns></returns>
-        Public Shared Function String2Date(ByVal text As String, ByRef ResultedDate As Date) As Boolean
+        Public Shared Function String2Date(ByVal text As String, ByRef ResultedDate As Nullable(Of Date)) As Boolean
             Dim blnSucceed As Boolean
             ' 模式1. 正常的日期格式
             If Date.TryParse(text, ResultedDate) Then
@@ -89,6 +89,7 @@ Namespace std_ez
                                             Integer.Parse(text.Substring(6, 2)))
                     Return True
                 Catch ex As Exception
+                    ResultedDate = Nothing
                     Return False
                 End Try
             End If
@@ -103,6 +104,7 @@ Namespace std_ez
                                             Integer.Parse(text.Substring(10, 2)), 0)
                     Return True
                 Catch ex As Exception
+                    ResultedDate = Nothing
                     Return False
                 End Try
             End If

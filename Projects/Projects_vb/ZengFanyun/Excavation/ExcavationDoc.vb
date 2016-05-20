@@ -52,15 +52,13 @@ Namespace OldW.Excavation
         ''' <summary>
         ''' 创建模型土体，此土体单元在模型中应该只有一个。
         ''' </summary>
-        ''' <param name="CreateMultipli">是否要在一个族中创建多个实体</param>
+        ''' <param name="CurveArrArr">要进行拉伸的平面轮廓（可以由多个封闭的曲线组成）</param>
         ''' <param name="Depth">模型土体的深度，单位为m，数值为正表示向下的深度，反之表示向上的高度。</param>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Public Function CreateModelSoil(ByVal Depth As Double, Optional ByVal CreateMultipli As Boolean = False) As Soil_Model
+        Public Function CreateModelSoil(ByVal Depth As Double, ByVal CurveArrArr As CurveArrArray) As Soil_Model
             Dim SM As Soil_Model = Nothing
 
-            ' 获得用来创建实体的模型线
-            Dim CurveArrArr As CurveArrArray = GetLoopedCurveArray(CreateMultipli)
             If (Not CurveArrArr.IsEmpty) Then
                 ' 构造一个族文档
                 Dim FamilyDoc As Document = CreateSoilFamily()
@@ -131,17 +129,18 @@ Namespace OldW.Excavation
         ''' </summary>
         ''' <param name="p_ModelSoil">在创建开挖土体之前，请先确保已经创建好了模型土体。
         ''' 在此方法中，模型土体对象并不起任何作用，只是用来确保模型土体对象已经创建。</param>
-        ''' <param name="CreateMultipli">在一个实体中是否可以有多个分隔的轮廓面</param>
+        ''' <param name="CurveArrArr"> 要进行拉伸的平面轮廓（可以由多个封闭的曲线组成） </param>
         ''' <param name="Depth">开挖土体的深度，单位为m，数值为正表示向下的深度，反之表示向上的高度。</param>
         ''' <param name="DesiredName">此开挖土体实例的名称（推荐以开挖完成的日期）。如果此名称已经被使用，则以默认的名称来命名。</param>
         ''' <returns></returns>
-        Public Function CreateExcavationSoil(ByVal p_ModelSoil As Soil_Model, ByVal Depth As Double, ByVal CreateMultipli As Boolean, ByVal DesiredName As String) As Soil_Excav
+        Public Function CreateExcavationSoil(ByVal p_ModelSoil As Soil_Model, ByVal Depth As Double,
+                                             ByVal CurveArrArr As CurveArrArray, ByVal DesiredName As String) As Soil_Excav
 
             Dim SE As Soil_Excav = Nothing
             If Me.ModelSoil IsNot Nothing Then
 
                 ' 获得用来创建实体的模型线
-                Dim CurveArrArr As CurveArrArray = GetLoopedCurveArray(CreateMultipli)
+
                 If (Not CurveArrArr.IsEmpty) Then
                     ' 构造一个族文档
                     Dim FamDoc As Document = CreateSoilFamily()
@@ -216,114 +215,6 @@ Namespace OldW.Excavation
                 Return FamDoc
             End If
         End Function
-
-        ' 几何创建
-        ''' <summary> 从模型中获取要创建开挖土体的边界线 </summary>
-        ''' <param name="CreateMultipli">在一个实体中是否可以有多个分隔的轮廓面</param>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Private Function GetLoopedCurveArray(ByVal CreateMultipli As Boolean) As CurveArrArray
-            Dim Profiles As New CurveArrArray  ' 每一次创建开挖土体时，在NewExtrusion方法中，要创建的实体的轮廓
-            Dim blnStop As Boolean
-            Do
-                blnStop = True
-                Dim cvLoop As CurveLoop = GetLoopCurve()
-                ' 检验并添加
-                If cvLoop.Count > 0 Then
-                    Dim cvArr As New CurveArray
-                    For Each c As Curve In cvLoop
-                        cvArr.Append(c)
-                    Next
-                    Profiles.Append(cvArr)
-
-                    ' 是否要继续添加
-                    If CreateMultipli Then
-                        Dim res As DialogResult = MessageBox.Show("曲线添加成功，是否还要继续添加？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-                        If res = DialogResult.Yes Then
-                            blnStop = False
-                        End If
-                    End If
-                End If
-            Loop Until blnStop
-            Return Profiles
-        End Function
-        ''' <summary>
-        ''' 获取一组连续封闭的模型线
-        ''' </summary>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Private Function GetLoopCurve() As CurveLoop
-            Dim Boundaries As List(Of Reference) = New UIDocument(Doc).Selection.PickObjects(ObjectType.Element, New CurveSelectionFilter, "选择一组封闭的模型线。")
-            Dim cvLoop As New CurveLoop
-            Try
-                If Boundaries.Count = 1 Then  ' 要么是封闭的圆或圆弧，要么就不封闭
-                    Dim c As Curve = DirectCast(Doc.GetElement(Boundaries.Item(0)), ModelCurve).GeometryCurve
-                    If ((TypeOf c Is Arc) OrElse (TypeOf c Is Ellipse)) AndAlso (Not c.IsBound) Then
-                        cvLoop.Append(c)
-                    Else
-                        Throw New InvalidOperationException("选择的一条圆弧线或者椭圆线并不封闭。")
-                    End If
-                Else
-                    ' 对于选择了多条曲线的情况
-                    Dim cs As List(Of Curve) = CurveLoopConstructor.GetContiguousCurvesFromSelectedCurveElements(Doc, Boundaries)
-                    If cs IsNot Nothing Then
-                        For Each c As Curve In cs
-                            cvLoop.Append(c)
-                        Next
-                    Else
-
-                        ' 显示出选择的每一条线的两个端点
-                        Dim nn As Integer = Boundaries.Count
-                        Dim c As Curve
-                        Dim cvs As New List(Of String)
-                        cvs.Add("当前选择的曲线的端点：")
-                        For i = 0 To nn - 1
-                            c = TryCast(Doc.GetElement(Boundaries(i)), CurveElement).GeometryCurve
-                            cvs.Add(c.GetEndPoint(0).ToString & vbCrLf & c.GetEndPoint(1).ToString &
-                                    vbCrLf & "------------------------------")
-                        Next
-                        Utils.ShowEnumerable(cvs, "选择的曲线不连续")
-                        Throw New InvalidOperationException("所选择的曲线不连续。")
-                    End If
-
-                    If cvLoop.IsOpen Then
-                        Throw New InvalidOperationException("所选择的曲线不能形成封闭的曲线。")
-                    ElseIf Not cvLoop.HasPlane Then
-                        Throw New InvalidOperationException("所选择的曲线不在同一个平面上。")
-                    Else
-                        Return cvLoop
-                    End If
-                End If
-            Catch ex As Exception
-                Dim res As DialogResult = MessageBox.Show(ex.Message & " 点击是以重新选择，点击否以退出绘制。" & vbCrLf & "当前选择的曲线条数为：" & Boundaries.Count & "条。" &
-                                                          vbCrLf & ex.StackTrace, "Warnning", MessageBoxButtons.OKCancel)
-                If res = DialogResult.OK Then
-                    cvLoop = GetLoopCurve()
-                Else
-                    cvLoop = New CurveLoop
-                    Return cvLoop
-                End If
-            End Try
-            Return cvLoop
-        End Function
-        ''' <summary>
-        ''' 曲线选择过滤器
-        ''' </summary>
-        ''' <remarks></remarks>
-        Private Class CurveSelectionFilter
-            Implements ISelectionFilter
-            Public Function AllowElement(element As Element) As Boolean Implements ISelectionFilter.AllowElement
-                Dim bln As Boolean = False
-                If (TypeOf element Is ModelCurve) Then
-                    Return True
-                End If
-                Return bln
-            End Function
-
-            Public Function AllowReference(refer As Reference, point As XYZ) As Boolean Implements ISelectionFilter.AllowReference
-                Return False
-            End Function
-        End Class
 
         ''' <summary>
         ''' 绘制拉伸实体，并将其深度值与具体参数关联起来。
@@ -409,7 +300,7 @@ Namespace OldW.Excavation
                     DimDepth.FamilyLabel = Para_Depth
                     trans.Commit()
                 Catch ex As Exception
-                    MessageBox.Show("创建拉伸实体与参数关联出错。" & vbCrLf & ex.Message & vbCrLf & ex.TargetSite.Name, "Error", _
+                    MessageBox.Show("创建拉伸实体与参数关联出错。" & vbCrLf & ex.Message & vbCrLf & ex.TargetSite.Name, "Error",
                                     MessageBoxButtons.OK, MessageBoxIcon.Error)
                     trans.RollBack()
                 End Try
