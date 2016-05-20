@@ -28,6 +28,9 @@ Public Class OldWDocument
         End Get
     End Property
 
+    ''' <summary> 每一个OldWDocument对象都绑定了一个Revit的 UIDocument 对象。 </summary>
+    Protected uiDoc As UIDocument
+
     ''' <summary>
     ''' OldWDocument中保存的与基坑开挖有关的信息
     ''' </summary>
@@ -46,6 +49,7 @@ Public Class OldWDocument
     Protected Friend Sub New(ByVal Doc As Document)
         If Doc.IsValidObject Then
             Me.Doc = Doc
+            Me.uiDoc = New UIDocument(Doc)
         Else
             Throw New ArgumentException("The specified document to construct an instance of OldWDocument is not a valid object")
         End If
