@@ -121,6 +121,7 @@
     <Compile Include="ZengFanyun\Curves\ClosedCurvesDrawer.vb" />
     <Compile Include="ZengFanyun\Curves\CurveCheckEnums.vb" />
     <Compile Include="ZengFanyun\Curves\CurvesFormator_ContiguousCurves.vb" />
+    <Compile Include="ZengFanyun\GrammerTest.vb" />
     <Compile Include="ZengFanyun\Curves\ModelCurvesSelector.vb" />
     <Compile Include="ZengFanyun\Curves\CurvesFormator.vb" />
     <Compile Include="ZengFanyun\Curves\ModelCurvesDrawer.vb" />

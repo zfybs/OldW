@@ -79,14 +79,14 @@ Public Class OldWApplication
     ''' OldWApplication类在整个程序中只有一个实例，为了保证这一点，会在Create方法中进行判断，
     ''' 看在程序中是否已经存在对应的OldWApplication实例，如果有，则直接返回，如果没有，则创建一个新的。
     ''' </summary>
-    ''' <param name="App"></param>
+    ''' <param name="app"></param>
     ''' <returns>返回程序中唯一的那一个OldWApplication对象，如果不能正常返回，则抛出异常。</returns>
     ''' <remarks>由于OldWApplication中，对Revit的Application对象进行了很多事件处理，
     ''' 所以，如果程序中有n个OldWApplication实例，那么，每一次触发Revit的Application中的事件，
     ''' 在OldWApplication中，每一个实例都会对此事件进行一次操作，这会极大地造成程序的混乱。</remarks>
-    Friend Shared Function Create(ByVal App As Autodesk.Revit.ApplicationServices.Application) As OldWApplication
+    Friend Shared Function Create(ByVal app As Autodesk.Revit.ApplicationServices.Application) As OldWApplication
         If Not IsLoaded Then
-            LoadedApplication = New OldWApplication(App)
+            LoadedApplication = New OldWApplication(app)
             IsLoaded = True
             Return LoadedApplication
         Else  ' 直接返回现有的
@@ -94,7 +94,7 @@ Public Class OldWApplication
                 Return LoadedApplication
             Else
                 MessageBox.Show("在程序测试中，出现上一个外部命令的Application对象的IsValidObject属性为False的情况，请及时调试并解决", "warnning")
-                LoadedApplication = New OldWApplication(App)
+                LoadedApplication = New OldWApplication(app)
                 Return LoadedApplication
             End If
         End If

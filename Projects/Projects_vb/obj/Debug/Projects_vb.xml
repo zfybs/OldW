@@ -703,7 +703,7 @@ Projects_vb
  找到距离此测斜管最近的土体开挖面的标高值
  </summary>
  <param name="SoilElement">模型中的土体单元，即此测斜管附近的开挖土体单元</param>
- <returns></returns>
+ <returns>如果没有找到对应的标高值，则返回Nothing</returns>
  <remarks></remarks>
 </member>
 <member name="M:OldW.Instrumentation.Instrum_Incline.FindBottomPoint(Autodesk.Revit.DB.XYZ,System.Boolean,Autodesk.Revit.DB.FamilyInstance,Autodesk.Revit.DB.ReferenceIntersector)">
@@ -825,7 +825,7 @@ Projects_vb
  OldWApplication类在整个程序中只有一个实例，为了保证这一点，会在Create方法中进行判断，
  看在程序中是否已经存在对应的OldWApplication实例，如果有，则直接返回，如果没有，则创建一个新的。
  </summary>
- <param name="App"></param>
+ <param name="app"></param>
  <returns>返回程序中唯一的那一个OldWApplication对象，如果不能正常返回，则抛出异常。</returns>
  <remarks>由于OldWApplication中，对Revit的Application对象进行了很多事件处理，
  所以，如果程序中有n个OldWApplication实例，那么，每一次触发Revit的Application中的事件，
