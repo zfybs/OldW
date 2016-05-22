@@ -7,4 +7,3 @@ F:\Software\Revit\RevitDevelop\OldW\Projects\std_ez\obj\Debug\std_vb.vbproj.Gene
 F:\Software\Revit\RevitDevelop\OldW\Projects\std_ez\obj\Debug\std_vb.dll
 F:\Software\Revit\RevitDevelop\OldW\Projects\std_ez\obj\Debug\std_vb.xml
 F:\Software\Revit\RevitDevelop\OldW\Projects\std_ez\obj\Debug\std_vb.pdb
-F:\Software\Revit\RevitDevelop\OldW\Projects\std_ez\obj\Debug\std_vb.vbprojResolveAssemblyReference.cache

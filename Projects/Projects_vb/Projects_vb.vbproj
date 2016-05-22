@@ -153,6 +153,9 @@
     <Compile Include="ZengFanyun\DataTransfer\frm_DataExport.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ZengFanyun\Excavation\frm_DrawExcavationHandler.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="ZengFanyun\Excavation\Soil_Element.vb" />
     <Compile Include="ZengFanyun\Excavation\frm_ExcavationInfo.Designer.vb">
       <DependentUpon>frm_ExcavationInfo.vb</DependentUpon>
@@ -209,12 +212,6 @@
     <Compile Include="ZengFanyun\Excavation\frm_DrawExcavation.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ZengFanyun\Template_ModelessForm.Designer.vb">
-      <DependentUpon>Template_ModelessForm.vb</DependentUpon>
-    </Compile>
-    <Compile Include="ZengFanyun\Template_ModelessForm.vb">
-      <SubType>Form</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ZengFanyun\ConstructionReview\ConstructionReview.resx">
@@ -243,9 +240,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ZengFanyun\Excavation\frm_DrawExcavation.resx">
       <DependentUpon>frm_DrawExcavation.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ZengFanyun\Template_ModelessForm.resx">
-      <DependentUpon>Template_ModelessForm.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -12,10 +12,18 @@ Namespace rvtTools_ez
 
         ''' <summary>
         ''' 进行点的距离比较时的容差。
-        ''' Revit中，Application.VertexTolerance属性值返回的值为：0.0005233832795，
+        ''' Revit中，Application.VertexTolerance 属性值返回的值为：0.0005233832795，
         ''' 也就是说，如果两个点的距离小于这个值，就认为这两个点是重合的。
         ''' </summary>
         Public Const VertexTolerance As Double = 0.0005
+
+        ''' <summary>
+        ''' 进行点的距离比较时的容差。
+        ''' Revit中，Application.AngleTolerance 属性值返回的值为：0.00174532925199433，
+        ''' 也就是说，如果两个角度的区别小于这个值，就认为这两个角度是相同的的。
+        ''' Two angle measurements closer than this value are considered identical. 
+        ''' </summary>
+        Public Const AngleTolerance As Double = 0.0015
 
         ''' <summary>
         ''' Find the bottom face of a face array.

@@ -40,9 +40,9 @@ Namespace OldW.Instrumentation
         ''' 找到距离此测斜管最近的土体开挖面的标高值
         ''' </summary>
         ''' <param name="SoilElement">模型中的土体单元，即此测斜管附近的开挖土体单元</param>
-        ''' <returns></returns>
+        ''' <returns>如果没有找到对应的标高值，则返回Nothing</returns>
         ''' <remarks></remarks>
-        Public Function FindAdjacentEarthElevation(SoilElement As FamilyInstance) As Double
+        Public Function FindAdjacentEarthElevation(SoilElement As FamilyInstance) As Nullable(Of double)
 
             ' 将测斜管的底部端点作为原点
             Dim Length As Double = Monitor.Symbol.LookupParameter("深度").AsDouble  ' 测斜管长度
@@ -57,7 +57,7 @@ Namespace OldW.Instrumentation
             view3d = TryCast(Doc.ActiveView, View3D)
             If view3d Is Nothing Then
                 TaskDialog.Show("3D view", "current view should be 3D view")
-                Return Result.Failed
+                Return nothing
             End If
 
             ' 将土体单元作为搜索相交面的目标，搜索其中所有的相交面

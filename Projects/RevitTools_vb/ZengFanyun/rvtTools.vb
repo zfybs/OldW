@@ -154,5 +154,24 @@ Namespace rvtTools_ez
 
 #End Region
 
+        ''' <summary>
+        ''' 撤消 Revit 的操作
+        ''' </summary>
+        Public Shared Sub Undo()
+
+            ' 第一步，先取消当前的所有操作
+            ' 在Revit UI界面中退出绘制，即按下ESCAPE键
+            WindowsUtil.keybd_event(27, 0, 0, 0)  ' 按下 ESCAPE键
+            WindowsUtil.keybd_event(27, 0, &H2, 0)  ' 按键弹起
+
+            ' 第二步，按下 Ctrl + Z
+            ' 在Revit UI界面中退出绘制
+            WindowsUtil.keybd_event(17, 0, 0, 0)  ' 按下 Control 键
+            WindowsUtil.keybd_event(90, 0, 0, 0)  ' 按下 Z 键
+
+            WindowsUtil.keybd_event(90, 0, 2, 0)
+            WindowsUtil.keybd_event(17, 0, 2, 0)  ' 按键弹起
+
+        End Sub
     End Class
 End Namespace

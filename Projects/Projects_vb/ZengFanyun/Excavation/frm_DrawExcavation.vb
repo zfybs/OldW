@@ -1,10 +1,9 @@
-﻿Imports System
-Imports Autodesk.Revit.UI
-Imports Autodesk.Revit.DB
-Imports Forms = System.Windows.Forms
+﻿Imports Forms = System.Windows.Forms
 Imports OldW.Soil
 Imports std_ez
 Imports System.ComponentModel
+Imports rvtTools_ez
+Imports System.Threading
 
 Namespace OldW.Excavation
 
@@ -18,70 +17,6 @@ Namespace OldW.Excavation
 
 #Region "   ---   Declarations"
 
-#Region "   ---   Types"
-
-        ''' <summary>
-        ''' 每一个外部事件调用时所提出的需求，为了在Execute方法中充分获取窗口的需求，
-        ''' 所以将调用外部事件的窗口控件以及对应的触发事件参数也传入Execute方法中。
-        ''' </summary>
-        ''' <remarks></remarks>
-        Private Class RequestParameter
-
-            Private F_sender As Object
-            ''' <summary> 引发Form事件控件对象 </summary>
-            Public ReadOnly Property sender As Object
-                Get
-                    Return F_sender
-                End Get
-            End Property
-
-            Private F_e As EventArgs
-            ''' <summary> Form中的事件所对应的事件参数 </summary>
-            Public ReadOnly Property e As EventArgs
-                Get
-                    Return F_e
-                End Get
-            End Property
-
-            Private F_Id As Request
-            ''' <summary> 具体的需求 </summary>
-            Public ReadOnly Property Id As Request
-                Get
-                    Return F_Id
-                End Get
-            End Property
-
-
-            ''' <summary>
-            ''' 定义事件需求与窗口中引发此事件的控件对象及对应的事件参数
-            ''' </summary>
-            ''' <param name="RequestId">具体的需求</param>
-            ''' <param name="e">Form中的事件所对应的事件参数</param>
-            ''' <param name="sender">引发Form事件控件对象</param>
-            ''' <remarks></remarks>
-            Public Sub New(ByVal RequestId As Request, Optional e As EventArgs = Nothing, Optional ByVal sender As Object = Nothing)
-                With Me
-                    .F_sender = sender
-                    .F_e = e
-                    .F_Id = RequestId
-                End With
-            End Sub
-        End Class
-
-        ''' <summary>
-        ''' ModelessForm的操作需求，用来从窗口向IExternalEventHandler对象传递需求。
-        ''' </summary>
-        ''' <remarks></remarks>
-        Private Enum Request
-
-            ''' <summary>
-            ''' 绘制模型土体或者开挖土体
-            ''' </summary>
-            ''' <remarks></remarks>
-            Draw
-        End Enum
-
-#End Region
 
 #Region "   ---   Fields"
 
@@ -97,21 +32,21 @@ Namespace OldW.Excavation
 
         Private Document As Document
 
-
         Public ExcavDoc As ExcavationDoc
 
         ''' <summary> 要绘制的模型的深度，单位为m </summary>
         Private Depth As Double
 
         ''' <summary> 开挖土体开挖完成的日期 </summary>
-        Private CompletedDate As Date
+        Private CompletedDate As Nullable(Of Date)
 
         ''' <summary> 开挖土体开始开挖的日期 </summary>
-        Private StartedDate As Date
+        Private StartedDate As Nullable(Of Date)
 
-#End Region
-
-#Region "   ---   Properties"
+        ''' <summary>
+        ''' 为开挖土体或者模型墙体预设的名称
+        ''' </summary>
+        Private DesiredName As String
 
 #End Region
 
@@ -135,7 +70,8 @@ Namespace OldW.Excavation
             TextBox_SoilName.DataBindings.Add("Enabled", RadioBtn_ExcavSoil, "Checked", False, DataSourceUpdateMode.OnPropertyChanged)
             LabelSides.DataBindings.Add("Enabled", RadioBtn_Polygon, "Checked", False, DataSourceUpdateMode.OnPropertyChanged)
             ComboBox_sides.DataBindings.Add("Enabled", RadioBtn_Polygon, "Checked", False, DataSourceUpdateMode.OnPropertyChanged)
-
+            btn_DrawCurves.DataBindings.Add("Enabled", RadioBtn_Draw, "Checked", False, DataSourceUpdateMode.OnPropertyChanged)
+            drawnCurveArrArr = Nothing
             '
             Me.ExcavDoc = ExcavDoc
             Me.Document = ExcavDoc.Document
@@ -145,32 +81,32 @@ Namespace OldW.Excavation
             Me.ExEvent = ExternalEvent.Create(Me)
         End Sub
 
-        Protected Overrides Sub OnClosed(e As EventArgs)
+        Private Sub frm_DrawExcavation_Closed(sender As Object, e As EventArgs) Handles Me.Closed
             ' 保存的实例需要进行释放
+            If ModelCurvesDrawer.IsBeenUsed AndAlso Me.ClosedCurveDrawer IsNot Nothing Then
+                RemoveHandler ClosedCurveDrawer.DrawingCompleted, AddressOf ClosedCurveDrawer_DrawingCompleted
+                ' ClosedCurveDrawer.cancel()
+                ClosedCurveDrawer = Nothing
+            End If
+            '
             Me.ExEvent.Dispose()
             Me.ExEvent = Nothing
-
         End Sub
-
-        Protected Overrides Sub OnClosing(e As CancelEventArgs)
-            ' MyBase.OnClosing(e)
-            ' 不关闭，只隐藏
-            MyBase.Hide()
-            e.Cancel = True
-        End Sub
-
 
         Public Function GetName() As String Implements IExternalEventHandler.GetName
             Return "绘制基坑的模型土体与开挖土体。"
         End Function
 
+        Protected Overrides Sub OnClosing(e As CancelEventArgs)
+            MyBase.OnClosing(e)
+        End Sub
 #End Region
 
 #Region "   ---   界面效果与事件响应"
 
         ''' <summary> 在Revit执行相关操作时，禁用窗口中的控件 </summary>
         Private Sub DozeOff()
-            Me.BtnDraw.Enabled = False
+            Me.BtnModeling.Enabled = False
         End Sub
 
         ''' <summary> 在外部事件RequestHandler中的Execute方法执行完成后，用来激活窗口中的控件 </summary>
@@ -187,31 +123,76 @@ Namespace OldW.Excavation
         End Sub
 
 #End Region
-        ''' <summary>
-        ''' Prompts to edit the revision and resave.
-        ''' </summary>
-        ''' <param name="application"></param>
-        Private Sub PromptToEditRevisionsAndResave(application As UIApplication)
-            Dim Binding As AddInCommandBinding
-            Dim id As RevitCommandId = RevitCommandId.LookupPostableCommandId(PostableCommand.SheetIssuesOrRevisions)
-            Binding = application.CreateAddInCommandBinding(id)
-            AddHandler Binding.BeforeExecuted, AddressOf EventHandlerSub
-            ' Post the revision editing command
-            application.PostCommand(id)
-        End Sub
-        Sub EventHandlerSub()
 
-        End Sub
 
 #Region "   ---   执行操作 ExternalEvent.Raise 与 IExternalEventHandler.Execute"
 
-        Private Sub BtnDraw_Click(sender As Object, e As EventArgs) Handles BtnDraw.Click
-
-            Me.RequestPara = New RequestParameter(Request.Draw, e, sender)
+        ' 绘制模型线
+        Private Sub btn_DrawCurves_Click(sender As Object, e As EventArgs) Handles btn_DrawCurves.Click
+            Me.RequestPara = New RequestParameter(Request.DrawCurves, e, sender)
             Me.ExEvent.Raise()
             Me.DozeOff()
         End Sub
+        '删除模型线
+        Private Sub Btn_ClearCurves_Click(sender As Object, e As EventArgs) Handles Btn_ClearCurves.Click
+            Me.RequestPara = New RequestParameter(Request.DeleteCurves, e, sender)
+            Me.ExEvent.Raise()
+            Me.DozeOff()
+        End Sub
+        ' 建模
+        Private Sub BtnModeling_Click(sender As Object, e As EventArgs) Handles BtnModeling.Click
 
+            Dim blnDraw As Boolean = CheckUI()
+            If blnDraw Then
+                Me.RequestPara = New RequestParameter(Request.StartModeling, e, sender)
+                '
+                Me.ExEvent.Raise()
+                Me.DozeOff()
+            End If
+            '
+        End Sub
+
+        ''' <summary>
+        ''' 对窗口中的数据进行检测，并判断是否可以进行绘制
+        ''' </summary>
+        Private Function CheckUI() As Boolean
+            Dim blnDraw As Boolean = True
+            ' 提取开挖深度
+            If Me.Depth = 0 Then
+                MessageBox.Show("深度值不能为0。", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Return False
+            End If
+
+            Dim strDate As String
+
+            ' 提取开始开挖的时间
+
+            strDate = Me.TextBox_StartedDate.Text
+            If Not String.IsNullOrEmpty(strDate) Then
+                If Utils.String2Date(strDate, Me.StartedDate) Then  ' 说明不能直接转化为日期
+
+                Else
+                    MessageBox.Show("请输入正确格式的开挖完成日期。", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Return False
+                End If
+            End If
+
+            strDate = Me.TextBox_CompletedDate.Text
+            If Not String.IsNullOrEmpty(strDate) Then
+                If Utils.String2Date(strDate, Me.CompletedDate) Then  ' 说明不能直接转化为日期
+                    DesiredName = Me.CompletedDate.Value.ToShortDateString
+                Else
+                    MessageBox.Show("请输入正确格式的开挖完成日期。", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Return False
+                End If
+            End If
+
+            ' 是否有指定开挖土体的名称
+            If Not String.IsNullOrEmpty(Me.TextBox_SoilName.Text) Then
+                DesiredName = Me.TextBox_SoilName.Text
+            End If
+            Return blnDraw
+        End Function
 
         ''为每一项操作执行具体的实现
         ''' <summary>
@@ -221,87 +202,80 @@ Namespace OldW.Excavation
         ''' <param name="app">此属性由Revit自动提供，其值不是Nothing，而是一个真实的UIApplication对象</param>
         ''' <remarks>由于在通过外部程序所引发的操作中，如果出现异常，Revit并不会给出任何提示或者报错，
         ''' 而是直接退出函数。所以要将整个操作放在一个Try代码块中，以处理可能出现的任何报错。</remarks>
-        Public Sub Execute(app As UIApplication) Implements IExternalEventHandler.Execute
+        Public Sub Execute(uiApp As UIApplication) Implements IExternalEventHandler.Execute
 
             Try  ' 由于在通过外部程序所引发的操作中，如果出现异常，Revit并不会给出任何提示或者报错，而是直接退出函数。所以这里要将整个操作放在一个Try代码块中，以处理可能出现的任何报错。
                 Dim uiDoc As UIDocument = New UIDocument(Document)
 
+
                 ' 开始执行具体的操作
                 Select Case RequestPara.Id  ' 判断具体要干什么
 
-                    Case Request.Draw
-
+                    Case Request.DrawCurves
                         ' -------------------------------------------------------------------------------------------------------------------------
 
-                        ' 提取开挖深度
-                        If Me.Depth = 0 Then
-                            MessageBox.Show("深度值不能为0。", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                            Exit Sub
-                        End If
+                        ' 先确定模型土体或者开挖土体的轮廓曲线
+                        drawnCurveArrArr = Nothing
 
-                        Dim soil As Soil_Model
-                        If Me.RadioBtn_ExcavSoil.Checked Then   ' 绘制开挖土体
+                        ' 绘制轮廓
+                        Me.ClosedCurveDrawer = New ClosedCurvesDrawer(uiApp, True, Nothing)
+                        Me.ClosedCurveDrawer.PostDraw()
 
-                            soil = Me.ExcavDoc.FindSoilModel()
-                            Dim DesiredName As String = ""
-                            Dim strDate As String
+                        ' 由于 PostDraw 是异步操作，所以这里不能直接获得绘制好的模型线
+                        ' 而是要在 Drawer_DrawingCompleted 事件中来构造土体的轮廓线
+                        Exit Sub
 
-                            ' 提取开始开挖的时间
-                            Dim blnHasStartedDate As Boolean = False
-                            Dim blnHasCompletedDate As Boolean = False
-
-                            strDate = Me.TextBox_StartedDate.Text
-                            If Not String.IsNullOrEmpty(strDate) Then
-                                If Utils.String2Date(strDate, Me.StartedDate) Then  ' 说明不能直接转化为日期
-                                    blnHasStartedDate = True
-                                Else
-                                    MessageBox.Show("请输入正确格式的开挖完成日期。", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                                    Exit Sub
-                                End If
-                            End If
-
-                            strDate = Me.TextBox_CompletedDate.Text
-                            If Not String.IsNullOrEmpty(strDate) Then
-                                If Utils.String2Date(strDate, Me.CompletedDate) Then  ' 说明不能直接转化为日期
-                                    blnHasCompletedDate = True
-                                    DesiredName = Me.CompletedDate.ToShortDateString
-                                Else
-                                    MessageBox.Show("请输入正确格式的开挖完成日期。", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                                    Exit Sub
-                                End If
-                            End If
-
-                            ' 是否有指定开挖土体的名称
-                            If Not String.IsNullOrEmpty(Me.TextBox_SoilName.Text) Then
-                                DesiredName = Me.TextBox_SoilName.Text
-                            End If
-
-                            ' 绘制开挖模型
-                            Dim ex As Soil_Excav = Me.ExcavDoc.CreateExcavationSoil(soil, Me.Depth, True, DesiredName)
-
-                            ' 设置开挖开始或者完成的时间
-                            If blnHasStartedDate OrElse blnHasCompletedDate Then
-                                Using t As New Transaction(Document, "设置开挖开始或者完成的时间")
-                                    t.Start()
-                                    If blnHasStartedDate Then
-                                        ex.SetExcavatedDate(t, True, StartedDate)
-                                    End If
-                                    If blnHasCompletedDate Then
-                                        ex.SetExcavatedDate(t, False, CompletedDate)
-                                    End If
+                    Case Request.DeleteCurves
+                        If drawnCurveArrArr IsNot Nothing Then
+                            ' 删除模型线
+                            Using t As New Transaction(Document, "删除绘制好的模型线。")
+                                Dim elemIds As New List(Of ElementId)
+                                t.Start()
+                                Try
+                                    For Each ca As List(Of ElementId) In DrawnCurveIds
+                                        For Each cid As ElementId In ca
+                                            elemIds.Add(cid)
+                                        Next
+                                    Next
+                                    Document.Delete(elemIds)
                                     t.Commit()
-                                End Using
+                                Catch ex As Exception
+                                    t.RollBack()
+                                End Try
+                            End Using
+
+                            ' 清空数据
+                            drawnCurveArrArr = Nothing
+                        End If
+                    Case Request.StartModeling  ' 通过 多边形的族样板 来直接放置土体模型 
+                        ' 考虑不同的建模方式
+                        ' -------------------------------------------------------------------------------------------------------------------------
+                        If Me.RadioBtn_Draw.Checked = True Then
+                            If Me.drawnCurveArrArr IsNot Nothing Then
+
+                                ' 根据选择好的轮廓线来进行土体的建模
+                                Call DrawSoilFromCurve(drawnCurveArrArr)
+                            Else
+                                MessageBox.Show("请先绘制好要进行建模的封闭轮廓。")
                             End If
+                            ' -------------------------------------------------------------------------------------------------------------------------
+                        ElseIf Me.RadioBtn_PickShape.Checked = True Then
 
-                            ' 将开挖土体在模型土体中隐藏起来
-                            soil.RemoveSoil(ex)
+                            ' 先确定模型土体或者开挖土体的轮廓曲线
+                            Dim CurveArrArr As CurveArrArray = Nothing
 
-                        Else    ' 绘制模型土体
-                            soil = Me.ExcavDoc.CreateModelSoil(Me.Depth, True)
+                            ' 选择轮廓
+                            Dim cs As New ClosedCurveSelector(uiDoc, True)
+                            CurveArrArr = cs.SendSelect()
+
+                            ' 根据选择好的轮廓线来进行土体的建模
+                            Call DrawSoilFromCurve(CurveArrArr)
+
+                            ' -------------------------------------------------------------------------------------------------------------------------
+                        ElseIf Me.RadioBtn_Polygon.Checked = True Then
+
 
                         End If
-                        ' -------------------------------------------------------------------------------------------------------------------------
-
 
                 End Select
             Catch ex As Exception
@@ -311,6 +285,98 @@ Namespace OldW.Excavation
                 ' 刷新Form，将Form中的Controls的Enable属性设置为True
                 Me.WarmUp()
             End Try
+        End Sub
+
+        ''' <summary>
+        ''' 根据绘制或者选择出来的土体轮廓模型线来进行模型土体或者开挖土体的建模
+        ''' </summary>
+        ''' <param name="CurveArrArr"></param>
+        Private Sub DrawSoilFromCurve(ByVal CurveArrArr As CurveArrArray)
+
+            Dim soil As Soil_Model
+
+            If Me.RadioBtn_ExcavSoil.Checked Then   ' 绘制开挖土体
+
+                soil = Me.ExcavDoc.FindSoilModel()
+                Dim ex As Soil_Excav = Me.ExcavDoc.CreateExcavationSoil(soil, Me.Depth, CurveArrArr, DesiredName)
+
+                ' 设置开挖开始或者完成的时间
+                If (Me.StartedDate IsNot Nothing) OrElse (Me.CompletedDate IsNot Nothing) Then
+                    Using t As New Transaction(Document, "设置开挖开始或者完成的时间")
+                        t.Start()
+                        If (Me.StartedDate IsNot Nothing) Then
+                            ex.SetExcavatedDate(t, True, StartedDate.Value)
+                        End If
+                        If (Me.CompletedDate IsNot Nothing) Then
+                            ex.SetExcavatedDate(t, False, CompletedDate.Value)
+                        End If
+                        t.Commit()
+                    End Using
+                End If
+
+                ' 将开挖土体在模型土体中隐藏起来
+                soil.RemoveSoil(ex)
+
+            Else    ' 绘制模型土体
+                ' 获得用来创建实体的模型线
+                soil = Me.ExcavDoc.CreateModelSoil(Me.Depth, CurveArrArr)
+
+            End If
+
+        End Sub
+
+#End Region
+
+#Region "   ---   绘制土体轮廓 "
+
+        ''' <summary>
+        ''' 用来绘制封闭的模型线
+        ''' </summary>
+        Private WithEvents ClosedCurveDrawer As ClosedCurvesDrawer
+
+        ' 绘制好的模型线
+        Private DrawnCurveIds As List(Of List(Of ElementId))
+        Private F_drawnCurveArrArr As CurveArrArray
+        ''' <summary>
+        ''' 通过界面绘制出来的模型线
+        ''' </summary>
+        Private Property drawnCurveArrArr As CurveArrArray
+            Get
+                Return F_drawnCurveArrArr
+            End Get
+            Set(value As CurveArrArray)
+                If value Is Nothing Then
+                    Me.CheckBox_DrawSucceeded.Checked = False
+                    Btn_ClearCurves.Enabled = False
+                Else
+                    Me.CheckBox_DrawSucceeded.Checked = True
+                    Btn_ClearCurves.Enabled = True
+                End If
+                F_drawnCurveArrArr = value
+            End Set
+        End Property
+
+        Private Sub ClosedCurveDrawer_DrawingCompleted(AddedCurves As List(Of List(Of ElementId)), FinishedExternally As Boolean,
+                                                       Succeeded As Boolean) Handles ClosedCurveDrawer.DrawingCompleted
+            If Succeeded Then
+                ' 构造土体轮廓
+                drawnCurveArrArr = New CurveArrArray
+                Dim c As ModelCurve
+                '
+                For Each cs As List(Of ElementId) In AddedCurves
+                    Dim CurveArr As New CurveArray
+                    For Each cid As ElementId In cs
+                        c = DirectCast(Me.Document.GetElement(cid), ModelCurve)
+                        CurveArr.Append(c.GeometryCurve)
+                    Next
+                    drawnCurveArrArr.Append(CurveArr)
+                Next
+                DrawnCurveIds = AddedCurves
+            Else
+                drawnCurveArrArr = Nothing
+                '
+                Me.WarmUp()
+            End If
         End Sub
 
 #End Region

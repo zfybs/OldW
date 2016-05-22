@@ -9,6 +9,9 @@ Namespace std_ez
     ''' <remarks></remarks>
     Public Class Utils
 
+#Region "弹框显示集合中的某些属性或者字段的值"
+
+
         ''' <summary>
         ''' 将集合中的每一个元素的ToString函数的结果组合到一个字符串中进行显示
         ''' </summary>
@@ -23,12 +26,55 @@ Namespace std_ez
         End Sub
 
         ''' <summary>
+        ''' 将集合中的每一个元素的指定属性的ToString函数的结果组合到一个字符串中进行显示
+        ''' </summary>
+        ''' <param name="V"></param>
+        ''' <param name="PropertyName">要读取的属性的名称，注意，此属性不能带参数。</param>
+        ''' <remarks></remarks>
+        Public Shared Sub ShowEnumerableP(ByVal V As IEnumerable, ByVal PropertyName As String, Optional ByVal Title As String = "集合中的元素")
+            Dim str As String = ""
+            Dim tp As Type
+            Dim MdInfo As Reflection.MethodInfo
+            Dim res As String
+            For Each obj As Object In V
+                tp = obj.GetType
+                MdInfo = tp.GetProperty(PropertyName).GetMethod
+                res = MdInfo.Invoke(obj, Nothing).ToString()
+                '
+                str = str & res & vbCrLf
+            Next
+            MessageBox.Show(str, Title, MessageBoxButtons.OK, MessageBoxIcon.Information)
+        End Sub
+
+        ''' <summary>
+        ''' 将集合中的每一个元素的指定字段的ToString函数的结果组合到一个字符串中进行显示
+        ''' </summary>
+        ''' <param name="V"></param>
+        ''' <param name="FieldName">要读取的字段的名称。</param>
+        ''' <remarks></remarks>
+        Public Shared Sub ShowEnumerableF(ByVal V As IEnumerable, ByVal FieldName As String, Optional ByVal Title As String = "集合中的元素")
+            Dim str As String = ""
+            Dim tp As Type
+
+            Dim res As String
+            For Each obj As Object In V
+                tp = obj.GetType
+                res = tp.GetField(FieldName).GetValue(obj).ToString
+                '
+                str = str & res & vbCrLf
+            Next
+            MessageBox.Show(str, Title, MessageBoxButtons.OK, MessageBoxIcon.Information)
+        End Sub
+
+#End Region
+
+        ''' <summary>
         ''' 将字符转换为日期。除了.NET能够识别的日期格式外，
         ''' 还增加了20160406（ 即 2016/04/06），以及 201604061330（即 2016/04/06 13:30）
         ''' </summary>
         ''' <param name="text">要转换为日期的字符。</param>
         ''' <returns></returns>
-        Public Shared Function String2Date(ByVal text As String, ByRef ResultedDate As Date) As Boolean
+        Public Shared Function String2Date(ByVal text As String, ByRef ResultedDate As Nullable(Of Date)) As Boolean
             Dim blnSucceed As Boolean
             ' 模式1. 正常的日期格式
             If Date.TryParse(text, ResultedDate) Then
@@ -43,6 +89,7 @@ Namespace std_ez
                                             Integer.Parse(text.Substring(6, 2)))
                     Return True
                 Catch ex As Exception
+                    ResultedDate = Nothing
                     Return False
                 End Try
             End If
@@ -57,6 +104,7 @@ Namespace std_ez
                                             Integer.Parse(text.Substring(10, 2)), 0)
                     Return True
                 Catch ex As Exception
+                    ResultedDate = Nothing
                     Return False
                 End Try
             End If
