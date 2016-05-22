@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{97868DC1-2F53-4874-A7BD-69D36B2D7D47}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OldW</RootNamespace>
+    <AssemblyName>Projects</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\..\bin\Projects.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>F:\Software\Revit\RevitDevelop\OldW\bin\Projects_cs.xml</DocumentationFile>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="RevitAPI">
+      <HintPath>D:\Program Files (x86)\Civil Engineering\Autodesk Revit 2016\RevitAPI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RevitAPIUI">
+      <HintPath>D:\Program Files (x86)\Civil Engineering\Autodesk Revit 2016\RevitAPIUI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DllActivator_Projects.cs" />
+    <Compile Include="ZengFanyun\Analysis.cs" />
+    <Compile Include="ZengFanyun\cmds_Analyses.cs" />
+    <Compile Include="ZengFanyun\cmds_Excavation.cs" />
+    <Compile Include="ZengFanyun\cmds_Monitoring.cs" />
+    <Compile Include="ZengFanyun\cmds_test.cs" />
+    <Compile Include="ZengFanyun\ConstructionReview\ConstructionReview.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ZengFanyun\ConstructionReview\ConstructionReview.Designer.cs">
+      <DependentUpon>ConstructionReview.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ZengFanyun\DataTransfer\frm_DataExport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ZengFanyun\DataTransfer\frm_DataExport.Designer.cs">
+      <DependentUpon>frm_DataExport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ZengFanyun\DataTransfer\frm_DataImport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ZengFanyun\DataTransfer\frm_DataImport.Designer.cs">
+      <DependentUpon>frm_DataImport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ZengFanyun\Excavation\ExcavationDoc.cs" />
+    <Compile Include="ZengFanyun\Excavation\frm_DrawExcavation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ZengFanyun\Excavation\frm_DrawExcavation.Designer.cs">
+      <DependentUpon>frm_DrawExcavation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ZengFanyun\Excavation\frm_DrawExcavationHandler.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ZengFanyun\Excavation\frm_ExcavationInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ZengFanyun\Excavation\frm_ExcavationInfo.Designer.cs">
+      <DependentUpon>frm_ExcavationInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ZengFanyun\Excavation\Soil_Element.cs" />
+    <Compile Include="ZengFanyun\Excavation\Soil_Excav.cs" />
+    <Compile Include="ZengFanyun\Excavation\Soil_Model.cs" />
+    <Compile Include="ZengFanyun\Instrumentations\Chart_MonitorData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ZengFanyun\Instrumentations\Chart_MonitorData.Designer.cs">
+      <DependentUpon>Chart_MonitorData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ZengFanyun\Instrumentations\ElementDataManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ZengFanyun\Instrumentations\ElementDataManager.Designer.cs">
+      <DependentUpon>ElementDataManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ZengFanyun\Instrumentations\Instrumentation.cs" />
+    <Compile Include="ZengFanyun\Instrumentations\Instrum_ColumnHeave.cs" />
+    <Compile Include="ZengFanyun\Instrumentations\Instrum_GroundSettlement.cs" />
+    <Compile Include="ZengFanyun\Instrumentations\Instrum_Incline.cs" />
+    <Compile Include="ZengFanyun\Instrumentations\Instrum_Line.cs" />
+    <Compile Include="ZengFanyun\Instrumentations\Instrum_Point.cs" />
+    <Compile Include="ZengFanyun\Instrumentations\Instrum_StrutAxialForce.cs" />
+    <Compile Include="ZengFanyun\Instrumentations\MonitorData.cs" />
+    <Compile Include="ZengFanyun\OldWApplication.cs" />
+    <Compile Include="ZengFanyun\OldWDocument.cs" />
+    <Compile Include="ZengFanyun\OldWProjectInfo.cs" />
+    <Compile Include="ZhangWei\FormSetWarning.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ZhangWei\FormSetWarning.Designer.cs">
+      <DependentUpon>FormSetWarning.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ZhangWei\SetFamilyForce.cs" />
+    <Compile Include="ZhangWei\SetFamilyIncli.cs" />
+    <Compile Include="ZhangWei\SetFamilySettlement.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ZhangWei\SetWarning.cs" />
+    <Compile Include="ZhangWei\WarningType.cs" />
+    <Compile Include="ZhangWei\WarningValue.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ZengFanyun\ConstructionReview\ConstructionReview.resx">
+      <DependentUpon>ConstructionReview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ZengFanyun\DataTransfer\frm_DataExport.resx">
+      <DependentUpon>frm_DataExport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ZengFanyun\DataTransfer\frm_DataImport.resx">
+      <DependentUpon>frm_DataImport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ZengFanyun\Excavation\frm_DrawExcavation.resx">
+      <DependentUpon>frm_DrawExcavation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ZengFanyun\Excavation\frm_ExcavationInfo.resx">
+      <DependentUpon>frm_ExcavationInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ZengFanyun\Instrumentations\Chart_MonitorData.resx">
+      <DependentUpon>Chart_MonitorData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ZengFanyun\Instrumentations\ElementDataManager.resx">
+      <DependentUpon>ElementDataManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ZhangWei\FormSetWarning.resx">
+      <DependentUpon>FormSetWarning.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OldWGlobalcs\OldWGlobal.csproj">
+      <Project>{bbd5d960-44ab-45d2-a0ac-e352094cd8e5}</Project>
+      <Name>OldWGlobal</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RevitTools\RevitTools.csproj">
+      <Project>{13378ff8-0b99-4a4e-8529-db04f4b8ec4d}</Project>
+      <Name>RevitTools</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\std\std.csproj">
+      <Project>{74d48009-1ece-4791-ba11-111ed062879c}</Project>
+      <Name>std</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
