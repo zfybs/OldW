@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "OldWRibbonTab", "Projects\OldWApplication\OldWRibbonTab.vbproj", "{788BE225-2D55-41C6-B055-DDA5923139EA}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "OldWGlobal", "Projects\OldWGlobal\OldWGlobal.vbproj", "{CEA033BE-8FEC-48C5-98DC-785CED58B5FB}"
@@ -16,6 +18,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "std_cs", "Projects\std_cs\std_cs.csproj", "{74D48009-1ECE-4791-BA11-111ED062879C}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "std_vb", "Projects\std_ez\std_vb.vbproj", "{6813ADA3-8041-4C64-BBA9-F799922C4595}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projects_vb2cs", "Projects\Projects_vb2cs\Projects_vb2cs.csproj", "{87BD1472-F37B-41CB-B867-05AB643FA105}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -121,6 +125,18 @@ Global
 		{6813ADA3-8041-4C64-BBA9-F799922C4595}.Release|x64.Build.0 = Release|x64
 		{6813ADA3-8041-4C64-BBA9-F799922C4595}.Release|x86.ActiveCfg = Release|x86
 		{6813ADA3-8041-4C64-BBA9-F799922C4595}.Release|x86.Build.0 = Release|x86
+		{87BD1472-F37B-41CB-B867-05AB643FA105}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87BD1472-F37B-41CB-B867-05AB643FA105}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87BD1472-F37B-41CB-B867-05AB643FA105}.Debug|x64.ActiveCfg = Debug|x64
+		{87BD1472-F37B-41CB-B867-05AB643FA105}.Debug|x64.Build.0 = Debug|x64
+		{87BD1472-F37B-41CB-B867-05AB643FA105}.Debug|x86.ActiveCfg = Debug|x86
+		{87BD1472-F37B-41CB-B867-05AB643FA105}.Debug|x86.Build.0 = Debug|x86
+		{87BD1472-F37B-41CB-B867-05AB643FA105}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87BD1472-F37B-41CB-B867-05AB643FA105}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87BD1472-F37B-41CB-B867-05AB643FA105}.Release|x64.ActiveCfg = Release|x64
+		{87BD1472-F37B-41CB-B867-05AB643FA105}.Release|x64.Build.0 = Release|x64
+		{87BD1472-F37B-41CB-B867-05AB643FA105}.Release|x86.ActiveCfg = Release|x86
+		{87BD1472-F37B-41CB-B867-05AB643FA105}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

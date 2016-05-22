@@ -300,7 +300,7 @@ Namespace OldW.Excavation
                     DimDepth.FamilyLabel = Para_Depth
                     trans.Commit()
                 Catch ex As Exception
-                    MessageBox.Show("创建拉伸实体与参数关联出错。" & vbCrLf & ex.Message & vbCrLf & ex.TargetSite.Name, "Error",
+                    MessageBox.Show("创建拉伸实体与参数关联出错。" & vbCrLf & ex.Message & vbCrLf & ex.StackTrace, "Error",
                                     MessageBoxButtons.OK, MessageBoxIcon.Error)
                     trans.RollBack()
                 End Try
