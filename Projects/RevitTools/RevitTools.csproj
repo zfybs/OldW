@@ -88,36 +88,36 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DllActivator_RevitTools.cs" />
-    <Compile Include="ZengFanyun\Curves\ClosedCurvesDrawer.cs" />
-    <Compile Include="ZengFanyun\Curves\ClosedCurveSelector.cs" />
-    <Compile Include="ZengFanyun\Curves\CurveCheckEnums.cs" />
-    <Compile Include="ZengFanyun\Curves\CurvesFormator.cs" />
-    <Compile Include="ZengFanyun\Curves\CurvesFormator_ContiguousCurves.cs" />
-    <Compile Include="ZengFanyun\Curves\ModelCurvesDrawer.cs" />
-    <Compile Include="ZengFanyun\Curves\ModelCurvesSelector.cs" />
-    <Compile Include="ZengFanyun\ExtensionMethods.cs" />
-    <Compile Include="ZengFanyun\GeoHelper.cs" />
-    <Compile Include="ZengFanyun\GrammerTest.cs" />
-    <Compile Include="ZengFanyun\rvtTools.cs" />
-    <Compile Include="ZengFanyun\Template_ModelessForm.cs">
+    <Compile Include="Curves\ClosedCurvesDrawer.cs" />
+    <Compile Include="Curves\ClosedCurveSelector.cs" />
+    <Compile Include="Curves\CurveCheckEnums.cs" />
+    <Compile Include="Curves\CurvesFormator.cs" />
+    <Compile Include="Curves\CurvesFormator_ContiguousCurves.cs" />
+    <Compile Include="Curves\ModelCurvesDrawer.cs" />
+    <Compile Include="Curves\ModelCurvesSelector.cs" />
+    <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="GeoHelper.cs" />
+    <Compile Include="Tests_Templates\classTemplate.cs" />
+    <Compile Include="Tests_Templates\Test_Grammer.cs" />
+    <Compile Include="rvtTools.cs" />
+    <Compile Include="Tests_Templates\Template_ModelessForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ZengFanyun\Template_ModelessForm.Designer.cs">
+    <Compile Include="Tests_Templates\Template_ModelessForm.Designer.cs">
       <DependentUpon>Template_ModelessForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="ZengFanyun\Test_Addin.cs" />
-    <Compile Include="ZengFanyun\Test_ExamplesCodes.cs" />
-    <Compile Include="ZhangWei\ExtensionRevitLib.cs" />
-    <Compile Include="ZhangWei\FilterTools.cs" />
+    <Compile Include="Tests_Templates\Test_Addin.cs" />
+    <Compile Include="Tests_Templates\Test_ExamplesCodes.cs" />
+    <Compile Include="FilterTools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ZengFanyun\Template_ModelessForm.resx">
+    <EmbeddedResource Include="Tests_Templates\Template_ModelessForm.resx">
       <DependentUpon>Template_ModelessForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OldWGlobalcs\OldWGlobal.csproj">
+    <ProjectReference Include="..\OldWGlobal\OldWGlobal.csproj">
       <Project>{bbd5d960-44ab-45d2-a0ac-e352094cd8e5}</Project>
       <Name>OldWGlobal</Name>
     </ProjectReference>
@@ -125,6 +125,9 @@
       <Project>{74d48009-1ece-4791-ba11-111ed062879c}</Project>
       <Name>std</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ZhangWei\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
