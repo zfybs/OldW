@@ -15,7 +15,7 @@ namespace OldW.DllActivator
 		/// </summary>
 		public void ActivateReferences()
 		{
-			IDllActivator dat = default(IDllActivator);
+			IDllActivator dat;
 			//
 			dat = new DllActivator_std();
 			dat.ActivateReferences();

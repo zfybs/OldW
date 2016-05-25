@@ -9,7 +9,7 @@ namespace OldW.DllActivator
         void IDllActivator.ActivateReferences()
         {
             IDllActivator dat;
-            dat = new DllActivator_std();
+            dat = new DllActivator_OldWGlobal();
             dat.ActivateReferences();
             
             //

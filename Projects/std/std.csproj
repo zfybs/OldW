@@ -79,21 +79,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="classTemplate.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="IDllActivator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Test.cs" />
-    <Compile Include="ZengFanyun\eZDataGridView.cs">
+    <Compile Include="UserControls\eZDataGridView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ZengFanyun\LstbxDisplayAndItem.cs" />
+    <Compile Include="UserControls\LstbxDisplayAndItem.cs" />
     <Compile Include="ZengFanyun\Serializer.cs" />
+    <Compile Include="ZengFanyun\TimeHelper.cs" />
     <Compile Include="ZengFanyun\Utils.cs" />
     <Compile Include="ZengFanyun\WindowsUtil.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ZengFanyun\eZDataGridView.resx">
+    <EmbeddedResource Include="UserControls\eZDataGridView.resx">
       <DependentUpon>eZDataGridView.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>

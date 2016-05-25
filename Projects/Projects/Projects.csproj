@@ -89,113 +89,113 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DllActivator_Projects.cs" />
-    <Compile Include="ZengFanyun\Analysis.cs" />
-    <Compile Include="ZengFanyun\cmds_Analyses.cs" />
-    <Compile Include="ZengFanyun\cmds_Excavation.cs" />
-    <Compile Include="ZengFanyun\cmds_Monitoring.cs" />
-    <Compile Include="ZengFanyun\cmds_test.cs" />
-    <Compile Include="ZengFanyun\ConstructionReview\ConstructionReview.cs">
+    <Compile Include="Instrumentations\nsDefinition.cs" />
+    <Compile Include="Warnings\Analysis.cs" />
+    <Compile Include="Commands\cmds_Analyses.cs" />
+    <Compile Include="Commands\cmds_Excavation.cs" />
+    <Compile Include="Commands\cmds_Monitoring.cs" />
+    <Compile Include="Commands\cmds_test.cs" />
+    <Compile Include="ConstructionReview\ConstructionReview.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ZengFanyun\ConstructionReview\ConstructionReview.Designer.cs">
+    <Compile Include="ConstructionReview\ConstructionReview.Designer.cs">
       <DependentUpon>ConstructionReview.cs</DependentUpon>
     </Compile>
-    <Compile Include="ZengFanyun\DataTransfer\frm_DataExport.cs">
+    <Compile Include="DataTransfer\frm_DataExport.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ZengFanyun\DataTransfer\frm_DataExport.Designer.cs">
+    <Compile Include="DataTransfer\frm_DataExport.Designer.cs">
       <DependentUpon>frm_DataExport.cs</DependentUpon>
     </Compile>
-    <Compile Include="ZengFanyun\DataTransfer\frm_DataImport.cs">
+    <Compile Include="DataTransfer\frm_DataImport.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ZengFanyun\DataTransfer\frm_DataImport.Designer.cs">
+    <Compile Include="DataTransfer\frm_DataImport.Designer.cs">
       <DependentUpon>frm_DataImport.cs</DependentUpon>
     </Compile>
-    <Compile Include="ZengFanyun\Excavation\ExcavationDoc.cs" />
-    <Compile Include="ZengFanyun\Excavation\frm_DrawExcavation.cs">
+    <Compile Include="Excavation\ExcavationDoc.cs" />
+    <Compile Include="Excavation\frm_DrawExcavation.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ZengFanyun\Excavation\frm_DrawExcavation.Designer.cs">
+    <Compile Include="Excavation\frm_DrawExcavation.Designer.cs">
       <DependentUpon>frm_DrawExcavation.cs</DependentUpon>
     </Compile>
-    <Compile Include="ZengFanyun\Excavation\frm_DrawExcavationHandler.cs">
+    <Compile Include="Excavation\frm_DrawExcavationHandler.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ZengFanyun\Excavation\frm_ExcavationInfo.cs">
+    <Compile Include="Excavation\frm_ExcavationInfo.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ZengFanyun\Excavation\frm_ExcavationInfo.Designer.cs">
+    <Compile Include="Excavation\frm_ExcavationInfo.Designer.cs">
       <DependentUpon>frm_ExcavationInfo.cs</DependentUpon>
     </Compile>
-    <Compile Include="ZengFanyun\Excavation\Soil_Element.cs" />
-    <Compile Include="ZengFanyun\Excavation\Soil_Excav.cs" />
-    <Compile Include="ZengFanyun\Excavation\Soil_Model.cs" />
-    <Compile Include="ZengFanyun\Instrumentations\Chart_MonitorData.cs">
+    <Compile Include="Excavation\Soil_Element.cs" />
+    <Compile Include="Excavation\Soil_Excav.cs" />
+    <Compile Include="Excavation\Soil_Model.cs" />
+    <Compile Include="Instrumentations\Chart_MonitorData.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ZengFanyun\Instrumentations\Chart_MonitorData.Designer.cs">
+    <Compile Include="Instrumentations\Chart_MonitorData.Designer.cs">
       <DependentUpon>Chart_MonitorData.cs</DependentUpon>
     </Compile>
-    <Compile Include="ZengFanyun\Instrumentations\ElementDataManager.cs">
+    <Compile Include="Instrumentations\ElementDataManager.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ZengFanyun\Instrumentations\ElementDataManager.Designer.cs">
+    <Compile Include="Instrumentations\ElementDataManager.Designer.cs">
       <DependentUpon>ElementDataManager.cs</DependentUpon>
     </Compile>
-    <Compile Include="ZengFanyun\Instrumentations\Instrumentation.cs" />
-    <Compile Include="ZengFanyun\Instrumentations\Instrum_ColumnHeave.cs" />
-    <Compile Include="ZengFanyun\Instrumentations\Instrum_GroundSettlement.cs" />
-    <Compile Include="ZengFanyun\Instrumentations\Instrum_Incline.cs" />
-    <Compile Include="ZengFanyun\Instrumentations\Instrum_Line.cs" />
-    <Compile Include="ZengFanyun\Instrumentations\Instrum_Point.cs" />
-    <Compile Include="ZengFanyun\Instrumentations\Instrum_StrutAxialForce.cs" />
-    <Compile Include="ZengFanyun\Instrumentations\MonitorData.cs" />
-    <Compile Include="ZengFanyun\OldWApplication.cs" />
-    <Compile Include="ZengFanyun\OldWDocument.cs" />
-    <Compile Include="ZengFanyun\OldWProjectInfo.cs" />
-    <Compile Include="ZhangWei\FormSetWarning.cs">
+    <Compile Include="Instrumentations\Instrumentation.cs" />
+    <Compile Include="Instrumentations\Instrum_ColumnHeave.cs" />
+    <Compile Include="Instrumentations\Instrum_GroundSettlement.cs" />
+    <Compile Include="Instrumentations\Instrum_Incline.cs" />
+    <Compile Include="Instrumentations\Instrum_Line.cs" />
+    <Compile Include="Instrumentations\Instrum_Point.cs" />
+    <Compile Include="Instrumentations\Instrum_StrutAxialForce.cs" />
+    <Compile Include="OldWApplication.cs" />
+    <Compile Include="OldWDocument.cs" />
+    <Compile Include="OldWProjectInfo.cs" />
+    <Compile Include="Warnings\FormSetWarning.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ZhangWei\FormSetWarning.Designer.cs">
+    <Compile Include="Warnings\FormSetWarning.Designer.cs">
       <DependentUpon>FormSetWarning.cs</DependentUpon>
     </Compile>
-    <Compile Include="ZhangWei\SetFamilyForce.cs" />
-    <Compile Include="ZhangWei\SetFamilyIncli.cs" />
-    <Compile Include="ZhangWei\SetFamilySettlement.cs" />
+    <Compile Include="MonitorPlacement\SetFamilyForce.cs" />
+    <Compile Include="MonitorPlacement\SetFamilyIncli.cs" />
+    <Compile Include="MonitorPlacement\SetFamilySettlement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ZhangWei\SetWarning.cs" />
-    <Compile Include="ZhangWei\WarningType.cs" />
-    <Compile Include="ZhangWei\WarningValue.cs" />
+    <Compile Include="Warnings\SetWarning.cs" />
+    <Compile Include="Warnings\WarningType.cs" />
+    <Compile Include="Warnings\WarningValue.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ZengFanyun\ConstructionReview\ConstructionReview.resx">
+    <EmbeddedResource Include="ConstructionReview\ConstructionReview.resx">
       <DependentUpon>ConstructionReview.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ZengFanyun\DataTransfer\frm_DataExport.resx">
+    <EmbeddedResource Include="DataTransfer\frm_DataExport.resx">
       <DependentUpon>frm_DataExport.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ZengFanyun\DataTransfer\frm_DataImport.resx">
+    <EmbeddedResource Include="DataTransfer\frm_DataImport.resx">
       <DependentUpon>frm_DataImport.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ZengFanyun\Excavation\frm_DrawExcavation.resx">
+    <EmbeddedResource Include="Excavation\frm_DrawExcavation.resx">
       <DependentUpon>frm_DrawExcavation.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ZengFanyun\Excavation\frm_ExcavationInfo.resx">
+    <EmbeddedResource Include="Excavation\frm_ExcavationInfo.resx">
       <DependentUpon>frm_ExcavationInfo.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ZengFanyun\Instrumentations\Chart_MonitorData.resx">
+    <EmbeddedResource Include="Instrumentations\Chart_MonitorData.resx">
       <DependentUpon>Chart_MonitorData.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ZengFanyun\Instrumentations\ElementDataManager.resx">
+    <EmbeddedResource Include="Instrumentations\ElementDataManager.resx">
       <DependentUpon>ElementDataManager.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ZhangWei\FormSetWarning.resx">
+    <EmbeddedResource Include="Warnings\FormSetWarning.resx">
       <DependentUpon>FormSetWarning.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OldWGlobalcs\OldWGlobal.csproj">
+    <ProjectReference Include="..\OldWGlobal\OldWGlobal.csproj">
       <Project>{bbd5d960-44ab-45d2-a0ac-e352094cd8e5}</Project>
       <Name>OldWGlobal</Name>
     </ProjectReference>

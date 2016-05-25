@@ -9,61 +9,332 @@
             激活本DLL所引用的那些DLLs
             </summary>
         </member>
-        <member name="F:OldW.DataManager.Chart_MonitorData.Chart">
-            <summary> 数据图表 </summary>
+        <member name="T:OldW.Instrumentations.InstrumentationType">
+            <summary>
+            监测仪器的族名称（也是族文件的名称），同时也作为监测仪器的类型判断
+            </summary>
+            <remarks>从枚举值返回对应的枚举字符的方法：GlobalSettings.InstrumentationType.沉降测点.ToString</remarks>
         </member>
-        <member name="M:OldW.DataManager.Chart_MonitorData.#ctor(OldW.GlobalSettings.InstrumentationType)">
+        <member name="F:OldW.Instrumentations.InstrumentationType.其他">
+            <summary> 并不是任何一种已经识别的测点类型 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumentationType.墙体测斜">
+            <summary> 比如地下连续墙的水平位移 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumentationType.地表隆沉">
+            <summary> 比如基坑外地表的垂直位移 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumentationType.支撑轴力">
+            <summary> 比如基坑中支撑的轴力 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumentationType.立柱隆沉">
+            <summary> 比如基坑中立柱的垂直位移 </summary>
+        </member>
+        <member name="T:OldW.Instrumentations.Instrumentation">
+            <summary>
+            监测测点：包括线测点（测斜管）或点测点（地表沉降、立柱隆起、支撑轴力）等
+            </summary>
+            <remarks>
+            对于点测点而言，其监测数据是在不同的时间记录的，每一个时间上都只有一个数据。所以其监测数据是一个两列的表格，第一列为时间，第二列为监测数据。
+            对于线测点而言（比如测斜管），在每一个时间上都有两列数据，用来记录这一时间上，线测点中每一个位置的监测值。
+            </remarks>
+        </member>
+        <member name="P:OldW.Instrumentations.Instrumentation.Monitor">
+            <summary>
+            监测仪器，对于点测点，其包括地表沉降、立柱隆起、支撑轴力等；
+            对于线测点，包括测斜管
+            </summary>
+        </member>
+        <member name="P:OldW.Instrumentations.Instrumentation.Type">
+            <summary> 监测点的测点类型，也是测点所属的族的名称 </summary>
+        </member>
+        <member name="P:OldW.Instrumentations.Instrumentation.Name">
+            <summary> 每一个测点的名称，比如 CX1，LZ2等 </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrumentation.#ctor(Autodesk.Revit.DB.FamilyInstance,OldW.Instrumentations.InstrumentationType)">
             <summary>
             构造函数
             </summary>
-            <param name="Type">窗口的标题：监测类型</param>
+            <param name="Instrumentation">所有类型的监测仪器，包括线测点（测斜管）或点测点（地表沉降、立柱隆起、支撑轴力）等</param>
+            <param name="Type">监测点的测点类型，也是测点所属的族的名称</param>
             <remarks></remarks>
         </member>
-        <member name="M:OldW.DataManager.Chart_MonitorData.SetupChart">
+        <member name="M:OldW.Instrumentations.Instrumentation.Lookup(Autodesk.Revit.DB.Document,System.Collections.Generic.ICollection{Autodesk.Revit.DB.ElementId})">
             <summary>
-            图表的初始化
+            从指定的Element集合中，找出所有的监测点元素
             </summary>
-        </member>
-        <member name="T:OldW.DataManager.ElementDataManager">
-            <summary>
-            模型中的测点的监测数据的添加，删除，导入导出等
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="F:OldW.DataManager.ElementDataManager.ActiveElement">
-            <summary> 当前活动的图元 </summary>
-        </member>
-        <member name="F:OldW.DataManager.ElementDataManager.ActiveMonitorData">
-            <summary> 当前活动的图元中所保存的监测数据 </summary>
-        </member>
-        <member name="M:OldW.DataManager.ElementDataManager.#ctor(System.Collections.Generic.ICollection{Autodesk.Revit.DB.ElementId},Autodesk.Revit.DB.Document)">
-            <summary>
-            构造函数
-            </summary>
-            <param name="eleidCollection">所有要进行处理的测点元素的Id集合</param>
-            <param name="document"></param>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.DataManager.ElementDataManager.SaveTableToElement(System.Object,System.EventArgs)">
-            <summary>
-            将表格中的数据保存到Element的对应参数中。
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.DataManager.ElementDataManager.FillTableWithElementData(Autodesk.Revit.DB.Element,System.Windows.Forms.DataGridView)">
-            <summary>
-            将元素的数据写入表格
-            </summary>
-            <param name="ele"></param>
-            <param name="Table"></param>
+            <param name="Elements"> 要进行搜索过滤的Element集合</param>
             <returns></returns>
             <remarks></remarks>
         </member>
-        <member name="M:OldW.DataManager.ElementDataManager.DrawData(OldW.Instrumentation.MonitorData_Point)">
+        <member name="M:OldW.Instrumentations.Instrumentation.getMonitorName">
             <summary>
-            绘制图表
+            提取测点的名称，比如“CX1”。此参数是在测点族的设计时添加进去的，而不是通过API添加的。
             </summary>
-            <param name="Data"></param>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrumentation.getMonitorDataString">
+            <summary>
+            提取测点监测数据所对应的序列化字符。即测点族中“监测数据”参数中的字符。
+            如果要提取监测数据为对应的数据类，可以去调用具体派生类的 GetMonitorData 函数
+            </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrumentation.setMonitorDataString(Autodesk.Revit.DB.Transaction,System.String)">
+            <summary>
+            将测点数据类序列化之后的字符保存到测点对象的参数中。
+            </summary>
+        </member>
+        <member name="T:OldW.Instrumentations.Instrum_ColumnHeave">
+            <summary>
+            测点_立柱垂直位移
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_ColumnHeave.#ctor(Autodesk.Revit.DB.FamilyInstance)">
+            <summary> 构造函数 </summary>
+            <param name="ColumnHeaveElement">立柱垂直位移测点所对应的图元</param>
+        </member>
+        <member name="T:OldW.Instrumentations.Instrum_GroundSettlement">
+            <summary>
+            测点_地表垂直位移
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_GroundSettlement.#ctor(Autodesk.Revit.DB.FamilyInstance)">
+            <summary> 构造函数 </summary>
+            <param name="GroundSettlementElement">地表垂直位移测点所对应的图元</param>
+        </member>
+        <member name="T:OldW.Instrumentations.Instrum_Incline">
+            <summary>
+            测点_测斜管
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="F:OldW.Instrumentations.Instrum_Incline._isInsideEarth">
+            <summary> 测斜管的位置是在模型中的开挖土体的内部还是外部，即测斜管与开挖土体的Element是否相交。 </summary>
+            <remarks>True if the inclinometer is inside the excavation earth,
+            and False if the inclinometer is outside the excavation earth.</remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_Incline.#ctor(Autodesk.Revit.DB.FamilyInstance)">
+            <summary> 构造函数 </summary>
+            <param name="inclinometerElement">测斜管所对应的图元</param>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_Incline.FindAdjacentEarthElevation(Autodesk.Revit.DB.FamilyInstance)">
+            <summary>
+            找到距离此测斜管最近的土体开挖面的标高值
+            </summary>
+            <param name="SoilElement">模型中的土体单元，即此测斜管附近的开挖土体单元</param>
+            <returns>如果没有找到对应的标高值，则返回 null</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_Incline.FindBottomPoint(Autodesk.Revit.DB.XYZ,System.Boolean,Autodesk.Revit.DB.FamilyInstance,Autodesk.Revit.DB.ReferenceIntersector)">
+            <summary>
+            搜索一个底部坐标点，有了此点后，只要向上发射一条射线，即可以找到此时的开挖面
+            </summary>
+            <param name="ptInclinometerBottom">测斜管的底部坐标点</param>
+            <param name="IsInside">测斜管是否在开挖土体Element的内部</param>
+            <param name="Earth">开挖墙体单元</param>
+            <param name="IntersectedEarth">用来搜索相交面的开挖土体</param>
+            <returns></returns>
+            <remarks>  如果测斜管就在土体内部，那么测斜管的底部点就可以直接用来向上发射射线了。
+            如果测斜管在土体外部，那么需要以测斜管的底部点为中心，向四周发射多条射线，
+            这些射线分别都与土体相交，找到距离土体最近的那一条射线所对应的相交点与相交面，然后将相交点向面内偏移一点点，即可以作为寻找开挖面的射线的原点了。</remarks>
+        </member>
+        <member name="T:OldW.Instrumentations.Instrum_Line">
+            <summary>
+            所有类型的线监测，包括测斜管
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="P:OldW.Instrumentations.Instrum_Line.MonitorData">
+            <summary>
+            线测点的整个施工阶段中的监测数据
+            </summary>
+            <value></value>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_Line.#ctor(Autodesk.Revit.DB.FamilyInstance,OldW.Instrumentations.InstrumentationType)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="MonitorLine">所有类型的监测管线，包括测斜管，但不包括地表沉降、立柱隆起、支撑轴力等</param>
+            <param name="Type">监测点的测点类型，也是测点所属的族的名称</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_Line.Lookup(Autodesk.Revit.DB.Document,System.Collections.Generic.ICollection{Autodesk.Revit.DB.ElementId})">
+            <summary>
+            从指定的Element集合中，找出所有的点测点元素
+            </summary>
+            <param name="Elements"> 要进行搜索过滤的Element集合</param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:OldW.Instrumentations.Instrum_Line.MonitorData_Line">
+            <summary>
+            线测点中的每一天的监测数据
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="T:OldW.Instrumentations.Instrum_Line.MonitorData_Length">
+             <summary>
+            
+             </summary>
+             <remarks></remarks>
+        </member>
+        <member name="T:OldW.Instrumentations.Instrum_Point">
+            <summary>
+            所有类型的监测点，包括地表沉降、立柱隆起、支撑轴力等，但不包括测斜管
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="P:OldW.Instrumentations.Instrum_Point.MonitorData">
+            <summary>
+            点测点的整个施工阶段中的监测数据
+            </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_Point.#ctor(Autodesk.Revit.DB.FamilyInstance,OldW.Instrumentations.InstrumentationType)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="MonitorPoint">所有类型的监测点，包括地表沉降、立柱隆起、支撑轴力等，但不包括测斜管</param>
+            <param name="Type">监测点的测点类型，也是测点所属的族的名称</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_Point.Lookup(Autodesk.Revit.DB.Document,System.Collections.Generic.ICollection{Autodesk.Revit.DB.ElementId})">
+            <summary>
+            从指定的Element集合中，找出所有的点测点元素
+            </summary>
+            <param name="Elements"> 要进行搜索过滤的Element集合</param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_Point.GetMonitorData">
+            <summary>
+            将测点对象中的监测数据提取为具体的序列化类
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_Point.SetMonitorData(Autodesk.Revit.DB.Transaction,OldW.Instrumentations.Instrum_Point.MonitorData_Point)">
+            <summary>
+            将监测数据以序列化字符串保存到对应的Parameter对象中。
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="T:OldW.Instrumentations.Instrum_Point.MonitorData_Point">
+            <summary> 监测数据类，表示点测点中的每一天的监测数据
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="T:OldW.Instrumentations.Instrum_StrutAxialForce">
+            <summary>
+            测点_支撑轴力
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_StrutAxialForce.#ctor(Autodesk.Revit.DB.FamilyInstance)">
+            <summary> 构造函数 </summary>
+            <param name="StrutAxialForceElement"> 支撑轴力测点所对应的图元</param>
+        </member>
+        <member name="M:OldW.SafetyWarning.FormSetWarning.getFormValve">
+            <summary>
+            读取界面上的值，创建WarningValue对象
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.SafetyWarning.FormSetWarning.updatecbInput">
+            <summary>
+            更新cbInput
+            </summary>
+        </member>
+        <member name="M:OldW.SafetyWarning.FormSetWarning.checkNum(System.Windows.Forms.TextBox@,System.Windows.Forms.KeyPressEventArgs@)">
+            <summary>
+            判断输入是否合理
+            </summary>
+            <param name="tb"></param>
+            <param name="e"></param>
+        </member>
+        <member name="F:OldW.SafetyWarning.FormSetWarning.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OldW.SafetyWarning.FormSetWarning.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OldW.SafetyWarning.FormSetWarning.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:OldW.SafetyWarning.WarningSumVelo.sum">
+            <summary>
+            累计值
+            </summary>
+        </member>
+        <member name="F:OldW.SafetyWarning.WarningSumVelo.velo">
+            <summary>
+            速率
+            </summary>
+        </member>
+        <member name="T:OldW.SafetyWarning.WarningIncli">
+            <summary>
+            测斜警戒值
+            </summary>
+        </member>
+        <member name="T:OldW.SafetyWarning.WarningGSetle">
+            <summary>
+            地表沉降警戒值
+            </summary>
+        </member>
+        <member name="T:OldW.SafetyWarning.WarningForce">
+            <summary>
+            轴力警戒值
+            </summary>
+        </member>
+        <member name="F:OldW.SafetyWarning.WarningForce.ratio">
+            <summary>
+            系数
+            </summary>
+        </member>
+        <member name="T:OldW.SafetyWarning.WarningValue">
+            <summary>
+            警戒值设定类
+            </summary>
+        </member>
+        <member name="F:OldW.SafetyWarning.WarningValue.name">
+            <summary>
+            警戒值设定的名称
+            </summary>
+        </member>
+        <member name="F:OldW.SafetyWarning.WarningValue.rate">
+            <summary>
+            警戒值设定的等级
+            </summary>
+        </member>
+        <member name="F:OldW.SafetyWarning.WarningValue.warningForc">
+            <summary>
+            轴力警戒值
+            </summary>
+        </member>
+        <member name="F:OldW.SafetyWarning.WarningValue.warningGSetle">
+            <summary>
+            地表沉降警戒值
+            </summary>
+        </member>
+        <member name="F:OldW.SafetyWarning.WarningValue.warningIncli">
+            <summary>
+            测斜警戒值
+            </summary>
+        </member>
+        <member name="M:OldW.SafetyWarning.WarningValue.getId">
+            <summary>
+            返回该警戒值设定的ID
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:OldW.Commands.cmd_ViewStage">
             <summary> 查看指定日期的开挖工况 </summary>
@@ -90,6 +361,76 @@
             <summary>
             test command
             </summary>
+        </member>
+        <member name="F:OldW.DataManager.Chart_MonitorData.Chart">
+            <summary> 数据图表 </summary>
+        </member>
+        <member name="M:OldW.DataManager.Chart_MonitorData.#ctor(OldW.Instrumentations.InstrumentationType)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="Type">窗口的标题：监测类型</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.DataManager.Chart_MonitorData.SetupChart">
+            <summary>
+            图表的初始化
+            </summary>
+        </member>
+        <member name="T:OldW.DataManager.ElementDataManager">
+            <summary>
+            模型中的测点的监测数据的添加，删除，导入导出等
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="F:OldW.DataManager.ElementDataManager.ActiveInstru">
+            <summary> 当前活动的测点对象 </summary>
+        </member>
+        <member name="F:OldW.DataManager.ElementDataManager.ActiveMonitorData">
+            <summary> 当前活动的图元中所保存的监测数据 </summary>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.#ctor(System.Collections.Generic.ICollection{OldW.Instrumentations.Instrumentation},Autodesk.Revit.DB.Document)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="eleIdCollection">所有要进行处理的测点元素的Id集合</param>
+            <param name="document"></param>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.fillCombobox(System.Collections.Generic.ICollection{OldW.Instrumentations.Instrumentation})">
+            <summary>
+            将指定的测点集合对象添加到组合列表框中
+            </summary>
+            <param name="elementCollection"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.ComboBox1_SelectedIndexChanged(System.Object,System.EventArgs)">
+            <summary>
+            在组合框中改变了选择的测点后，去更新DataGridView中的数据为指定测点的监测数据。
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.SaveTableToElement(System.Object,System.EventArgs)">
+            <summary>
+            将表格中的数据保存到Element的对应参数中。
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.FillTableWithElementData(OldW.Instrumentations.Instrumentation,System.Windows.Forms.DataGridView)">
+            <summary>
+            将元素的数据写入表格
+            </summary>
+            <param name="ele"></param>
+            <param name="table"></param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DrawData(OldW.Instrumentations.Instrum_Point.MonitorData_Point)">
+            <summary>
+            绘制图表
+            </summary>
+            <param name="Data"></param>
         </member>
         <member name="T:OldW.Excavation.ExcavationDoc">
             <summary>
@@ -120,7 +461,7 @@
             <returns></returns>
             <remarks></remarks>
         </member>
-        <member name="M:OldW.Excavation.ExcavationDoc.CreateExcavationSoil(OldW.Soil.Soil_Model,System.Double,Autodesk.Revit.DB.CurveArrArray,System.String)">
+        <member name="M:OldW.Excavation.ExcavationDoc.CreateExcavationSoil(OldW.Excavation.Soil_Model,System.Double,Autodesk.Revit.DB.CurveArrArray,System.String)">
             <summary>
             创建开挖土体，此土体单元在模型中可以有很多个。
             </summary>
@@ -185,7 +526,7 @@
             <returns>如果找到有效的土体单元，则返回对应的Soil_Model，否则返回Nothing</returns>
             <remarks></remarks>
         </member>
-        <member name="M:OldW.Excavation.ExcavationDoc.FindExcavSoils(OldW.Soil.Soil_Model)">
+        <member name="M:OldW.Excavation.ExcavationDoc.FindExcavSoils(OldW.Excavation.Soil_Model)">
             <summary>
             搜索文档中与模型土体位于同一个Group中的所有的开挖土体。
             </summary>
@@ -431,16 +772,16 @@
         <member name="M:OldW.Excavation.frm_ExcavationInfo.GetExcavSoilInfo">
             <summary> 将模型中的开挖土体信息同步到列表中 </summary>
         </member>
-        <member name="T:OldW.Soil.Soil_Element">
+        <member name="T:OldW.Excavation.Soil_Element">
             <summary>
             土体单元对象。一个土体单元的族实例，必须满足的条件有：1. 族的名称限制；2. 实例类别为“场地”。
             </summary>
             <remarks></remarks>
         </member>
-        <member name="P:OldW.Soil.Soil_Element.Soil">
+        <member name="P:OldW.Excavation.Soil_Element.Soil">
             <summary> 土体单元所对应的族实例对象 </summary>
         </member>
-        <member name="M:OldW.Soil.Soil_Element.IsSoildElement(Autodesk.Revit.DB.Document,Autodesk.Revit.DB.ElementId,System.String@)">
+        <member name="M:OldW.Excavation.Soil_Element.IsSoildElement(Autodesk.Revit.DB.Document,Autodesk.Revit.DB.ElementId,System.String@)">
             <summary>
             对于一个单元进行全面的检测，以判断其是否为一个模型土体单元或者开挖土体单元。
             </summary>
@@ -450,27 +791,27 @@
             <returns>如果检查通过，则可以直接通过Create静态方法来创建对应的模型土体</returns>
             <remarks>一个土体单元的族实例，必须满足的条件有：1. 族的名称限制；2. 实例类别为“场地”。</remarks>
         </member>
-        <member name="T:OldW.Soil.Soil_Excav">
+        <member name="T:OldW.Excavation.Soil_Excav">
             <summary> 用来模拟分块开挖的土体元素。 </summary>
             <remarks></remarks>
         </member>
-        <member name="F:OldW.Soil.Soil_Excav.F_ModelSoil">
+        <member name="F:OldW.Excavation.Soil_Excav.F_ModelSoil">
             <summary> 开挖土体单元所附着的模型土体 </summary>
         </member>
-        <member name="P:OldW.Soil.Soil_Excav.ModelSoil">
+        <member name="P:OldW.Excavation.Soil_Excav.ModelSoil">
             <summary> 开挖土体单元所附着的模型土体 </summary>
         </member>
-        <member name="P:OldW.Soil.Soil_Excav.CompletedDate">
+        <member name="P:OldW.Excavation.Soil_Excav.CompletedDate">
             <summary>
             每一个开挖土体都有一个开挖完成的时间。由于记录的不完整，这个时间可能暂时不知道，但是后期要可以指定。
             </summary>
         </member>
-        <member name="P:OldW.Soil.Soil_Excav.StartedDate">
+        <member name="P:OldW.Excavation.Soil_Excav.StartedDate">
             <summary>
             每一个开挖土体都有一个开始开挖的时间。由于记录的不完整，这个时间可能暂时不知道，但是后期要可以指定。
             </summary>
         </member>
-        <member name="M:OldW.Soil.Soil_Excav.#ctor(Autodesk.Revit.DB.FamilyInstance,OldW.Soil.Soil_Model)">
+        <member name="M:OldW.Excavation.Soil_Excav.#ctor(Autodesk.Revit.DB.FamilyInstance,OldW.Excavation.Soil_Model)">
             <summary>
             构造函数：用来模拟分块开挖的土体元素。
             </summary>
@@ -478,7 +819,7 @@
             <param name="BindedModelSoil">开挖土体单元所附着的模型土体。</param>
             <remarks></remarks>
         </member>
-        <member name="M:OldW.Soil.Soil_Excav.IsExcavationModel(Autodesk.Revit.DB.Document,Autodesk.Revit.DB.ElementId,System.String@)">
+        <member name="M:OldW.Excavation.Soil_Excav.IsExcavationModel(Autodesk.Revit.DB.Document,Autodesk.Revit.DB.ElementId,System.String@)">
             <summary>
             对于一个单元进行全面的检测，以判断其是否为一个开挖土体单元。
             </summary>
@@ -488,7 +829,7 @@
             <returns>如果检查通过，则可以直接通过Create静态方法来创建对应的模型土体</returns>
             <remarks></remarks>
         </member>
-        <member name="M:OldW.Soil.Soil_Excav.Create(Autodesk.Revit.DB.FamilyInstance,OldW.Soil.Soil_Model)">
+        <member name="M:OldW.Excavation.Soil_Excav.Create(Autodesk.Revit.DB.FamilyInstance,OldW.Excavation.Soil_Model)">
             <summary>
             创建开挖土体。除非是在API中创建出来，否则。在创建之前，请先通过静态方法IsExcavationModel来判断此族实例是否可以转换为Soil_Model对象。
             否则，在程序运行过程中可能会出现各种报错。
@@ -498,7 +839,7 @@
             <returns></returns>
             <remarks></remarks>
         </member>
-        <member name="M:OldW.Soil.Soil_Excav.SetExcavatedDate(Autodesk.Revit.DB.Document,System.Boolean,System.Collections.Generic.Dictionary{OldW.Soil.Soil_Excav,System.DateTime})">
+        <member name="M:OldW.Excavation.Soil_Excav.SetExcavatedDate(Autodesk.Revit.DB.Document,System.Boolean,System.Collections.Generic.Dictionary{OldW.Excavation.Soil_Excav,System.DateTime})">
             <summary>
             为多个开挖土体设置对应的开挖完成的时间
             </summary>
@@ -506,7 +847,7 @@
             <param name="Soil_Date">一个字典集合，其中包括要进行日期设置的所有开挖土体。土体开挖完成的时间，可以精确到分钟</param>
             <remarks></remarks>
         </member>
-        <member name="M:OldW.Soil.Soil_Excav.SetExcavatedDate(Autodesk.Revit.DB.Transaction,System.Boolean,System.Nullable{System.DateTime})">
+        <member name="M:OldW.Excavation.Soil_Excav.SetExcavatedDate(Autodesk.Revit.DB.Transaction,System.Boolean,System.Nullable{System.DateTime})">
             <summary>
             为开挖土体设置对应的开挖完成的时间
             </summary>
@@ -515,13 +856,13 @@
             <param name="ResDate">土体开挖开始或者完成的时间，可以精确到分钟。如果要清空日期字符，则设置其为Nothing。</param>
             <remarks></remarks>
         </member>
-        <member name="M:OldW.Soil.Soil_Excav.GetExcavatedDate(System.Boolean)">
+        <member name="M:OldW.Excavation.Soil_Excav.GetExcavatedDate(System.Boolean)">
             <summary>
             从开挖土体的单元中读取开挖完成的日期
             </summary>
             <param name="Started">如果要提取土体开始开挖的时间，则设置为True，反之则是提取土体开挖完成的时间</param>
         </member>
-        <member name="M:OldW.Soil.Soil_Excav.GetElevation(System.Boolean)">
+        <member name="M:OldW.Excavation.Soil_Excav.GetElevation(System.Boolean)">
             <summary>
             得到开挖土体的顶面或者底面的在模型中的标高
             </summary>
@@ -529,16 +870,16 @@
             <returns>指定表面的标高值（单位为m）。the elevation of the specified surface, in the unit of meter.</returns>
             <remarks>不用Element.Geometry（）方法，因为此方法包含大量的数据结构转换，太消耗CPU。而应使用GetBoundingBox与GetTransform等方法。</remarks>
         </member>
-        <member name="M:OldW.Soil.Soil_Excav.GetName">
+        <member name="M:OldW.Excavation.Soil_Excav.GetName">
             <summary> 获取开挖土体的名称，这里取的是族实例所对应的族类型的名称 </summary>
         </member>
-        <member name="T:OldW.Soil.Soil_Model">
+        <member name="T:OldW.Excavation.Soil_Model">
             <summary>
             基坑中的开挖土体，整个模型中，只有一个土体元素
             </summary>
             <remarks></remarks>
         </member>
-        <member name="P:OldW.Soil.Soil_Model.Group">
+        <member name="P:OldW.Excavation.Soil_Model.Group">
             <summary>
             此模型土体所位于的组。
             注意：所有的土体开挖模型都会位于此组中，如果将开挖土体从此组中移除，则有会被识别为开挖土体。
@@ -547,7 +888,7 @@
             <returns></returns>
             <remarks></remarks>
         </member>
-        <member name="M:OldW.Soil.Soil_Model.#ctor(OldW.Excavation.ExcavationDoc,Autodesk.Revit.DB.FamilyInstance)">
+        <member name="M:OldW.Excavation.Soil_Model.#ctor(OldW.Excavation.ExcavationDoc,Autodesk.Revit.DB.FamilyInstance)">
             <summary>
             构造函数：不要直接通过New Soil_Model来创建此对象，而应该用 OldWDocument.GetSoilModel，或者是Create静态方法来从模型中返回。
             </summary>
@@ -555,7 +896,7 @@
             <param name="ModelSoil">模型中的开挖土体单元</param>
             <remarks></remarks>
         </member>
-        <member name="M:OldW.Soil.Soil_Model.IsSoildModel(Autodesk.Revit.DB.Document,Autodesk.Revit.DB.ElementId,System.String@)">
+        <member name="M:OldW.Excavation.Soil_Model.IsSoildModel(Autodesk.Revit.DB.Document,Autodesk.Revit.DB.ElementId,System.String@)">
             <summary>
             对于一个单元进行全面的检测，以判断其是否为一个模型土体单元。
             </summary>
@@ -565,7 +906,7 @@
             <returns>如果检查通过，则可以直接通过Create静态方法来创建对应的模型土体</returns>
             <remarks></remarks>
         </member>
-        <member name="M:OldW.Soil.Soil_Model.Create(OldW.Excavation.ExcavationDoc,Autodesk.Revit.DB.FamilyInstance)">
+        <member name="M:OldW.Excavation.Soil_Model.Create(OldW.Excavation.ExcavationDoc,Autodesk.Revit.DB.FamilyInstance)">
             <summary>
             创建模型土体。除非是在API中创建出来，否则。在创建之前，请先通过静态方法IsSoildModel来判断此族实例是否可以转换为Soil_Model对象。否则，在程序运行过程中可能会出现各种报错。
             </summary>
@@ -574,309 +915,26 @@
             <returns></returns>
             <remarks></remarks>
         </member>
-        <member name="M:OldW.Soil.Soil_Model.RemoveSoil(OldW.Soil.Soil_Excav)">
+        <member name="M:OldW.Excavation.Soil_Model.RemoveSoil(OldW.Excavation.Soil_Excav)">
             <summary>
             从当前的开挖状态中，移除指定的一块土，用来模拟土体的开挖
             </summary>
             <param name="SoilToRemove"></param>
             <remarks></remarks>
         </member>
-        <member name="M:OldW.Soil.Soil_Model.RemoveSoils(System.Collections.Generic.List{OldW.Soil.Soil_Excav})">
+        <member name="M:OldW.Excavation.Soil_Model.RemoveSoils(System.Collections.Generic.List{OldW.Excavation.Soil_Excav})">
             <summary>
             从当前的开挖状态中，移除指定的一块土，用来模拟土体的开挖
             </summary>
             <param name="SoilsToRemove"></param>
             <remarks></remarks>
         </member>
-        <member name="M:OldW.Soil.Soil_Model.FillSoil(OldW.Soil.Soil_Excav)">
+        <member name="M:OldW.Excavation.Soil_Model.FillSoil(OldW.Excavation.Soil_Excav)">
             <summary>
             从当前的开挖状态中，添加进指定的一块土，用来模拟土方的回填，或者反向回滚开挖状态
             </summary>
             <param name="SoilToRemove"></param>
             <remarks></remarks>
-        </member>
-        <member name="T:OldW.Instrumentation.Instrumentation">
-            <summary>
-            监测测点：包括线测点（测斜管）或点测点（地表沉降、立柱隆起、支撑轴力）等
-            </summary>
-            <remarks>
-            对于点测点而言，其监测数据是在不同的时间记录的，每一个时间上都只有一个数据。所以其监测数据是一个两列的表格，第一列为时间，第二列为监测数据。
-            对于线测点而言（比如测斜管），在每一个时间上都有两列数据，用来记录这一时间上，线测点中每一个位置的监测值。
-            </remarks>
-        </member>
-        <member name="P:OldW.Instrumentation.Instrumentation.Monitor">
-            <summary>
-            监测仪器，对于点测点，其包括地表沉降、立柱隆起、支撑轴力等；
-            对于线测点，包括测斜管
-            </summary>
-            <value></value>
-            <returns></returns>
-            <remarks></remarks>
-        </member>
-        <member name="P:OldW.Instrumentation.Instrumentation.Type">
-            <summary> 监测点的测点类型，也是测点所属的族的名称 </summary>
-        </member>
-        <member name="P:OldW.Instrumentation.Instrumentation.Name">
-            <summary> 每一个测点的名称，比如 CX1，LZ2等 </summary>
-        </member>
-        <member name="M:OldW.Instrumentation.Instrumentation.#ctor(Autodesk.Revit.DB.FamilyInstance,OldW.GlobalSettings.InstrumentationType)">
-            <summary>
-            构造函数
-            </summary>
-            <param name="Instrumentation">所有类型的监测仪器，包括线测点（测斜管）或点测点（地表沉降、立柱隆起、支撑轴力）等</param>
-            <param name="Type">监测点的测点类型，也是测点所属的族的名称</param>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.Instrumentation.Instrumentation.FilterInstrumentations(Autodesk.Revit.DB.Document,System.Collections.Generic.ICollection{Autodesk.Revit.DB.ElementId})">
-            <summary>
-            从指定的Element集合中，找出所有的监测点元素
-            </summary>
-            <param name="Elements"> 要进行搜索过滤的Element集合</param>
-            <returns></returns>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.Instrumentation.Instrumentation.FilterInstru_Point(Autodesk.Revit.DB.Document,System.Collections.Generic.ICollection{Autodesk.Revit.DB.ElementId})">
-            <summary>
-            从指定的Element集合中，找出所有的点测点元素
-            </summary>
-            <param name="Elements"> 要进行搜索过滤的Element集合</param>
-            <returns></returns>
-            <remarks></remarks>
-        </member>
-        <member name="T:OldW.Instrumentation.Instrum_ColumnHeave">
-            <summary>
-            测点_立柱垂直位移
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.Instrumentation.Instrum_ColumnHeave.#ctor(Autodesk.Revit.DB.FamilyInstance)">
-            <summary> 构造函数 </summary>
-            <param name="ColumnHeaveElement">立柱垂直位移测点所对应的图元</param>
-        </member>
-        <member name="T:OldW.Instrumentation.Instrum_GroundSettlement">
-            <summary>
-            测点_地表垂直位移
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.Instrumentation.Instrum_GroundSettlement.#ctor(Autodesk.Revit.DB.FamilyInstance)">
-            <summary> 构造函数 </summary>
-            <param name="GroundSettlementElement">地表垂直位移测点所对应的图元</param>
-        </member>
-        <member name="T:OldW.Instrumentation.Instrum_Incline">
-            <summary>
-            测点_测斜管
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="F:OldW.Instrumentation.Instrum_Incline._isInsideEarth">
-            <summary> 测斜管的位置是在模型中的开挖土体的内部还是外部，即测斜管与开挖土体的Element是否相交。 </summary>
-            <remarks>True if the inclinometer is inside the excavation earth,
-            and False if the inclinometer is outside the excavation earth.</remarks>
-        </member>
-        <member name="M:OldW.Instrumentation.Instrum_Incline.#ctor(Autodesk.Revit.DB.FamilyInstance)">
-            <summary> 构造函数 </summary>
-            <param name="inclinometerElement">测斜管所对应的图元</param>
-        </member>
-        <member name="M:OldW.Instrumentation.Instrum_Incline.FindAdjacentEarthElevation(Autodesk.Revit.DB.FamilyInstance)">
-            <summary>
-            找到距离此测斜管最近的土体开挖面的标高值
-            </summary>
-            <param name="SoilElement">模型中的土体单元，即此测斜管附近的开挖土体单元</param>
-            <returns>如果没有找到对应的标高值，则返回 null</returns>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.Instrumentation.Instrum_Incline.FindBottomPoint(Autodesk.Revit.DB.XYZ,System.Boolean,Autodesk.Revit.DB.FamilyInstance,Autodesk.Revit.DB.ReferenceIntersector)">
-            <summary>
-            搜索一个底部坐标点，有了此点后，只要向上发射一条射线，即可以找到此时的开挖面
-            </summary>
-            <param name="ptInclinometerBottom">测斜管的底部坐标点</param>
-            <param name="IsInside">测斜管是否在开挖土体Element的内部</param>
-            <param name="Earth">开挖墙体单元</param>
-            <param name="IntersectedEarth">用来搜索相交面的开挖土体</param>
-            <returns></returns>
-            <remarks>  如果测斜管就在土体内部，那么测斜管的底部点就可以直接用来向上发射射线了。
-            如果测斜管在土体外部，那么需要以测斜管的底部点为中心，向四周发射多条射线，
-            这些射线分别都与土体相交，找到距离土体最近的那一条射线所对应的相交点与相交面，然后将相交点向面内偏移一点点，即可以作为寻找开挖面的射线的原点了。</remarks>
-        </member>
-        <member name="T:OldW.Instrumentation.Instrum_Line">
-            <summary>
-            所有类型的线监测，包括测斜管
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="P:OldW.Instrumentation.Instrum_Line.MonitorData">
-            <summary>
-            线测点的整个施工阶段中的监测数据
-            </summary>
-            <value></value>
-            <returns></returns>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.Instrumentation.Instrum_Line.#ctor(Autodesk.Revit.DB.FamilyInstance,OldW.GlobalSettings.InstrumentationType)">
-            <summary>
-            构造函数
-            </summary>
-            <param name="MonitorLine">所有类型的监测管线，包括测斜管，但不包括地表沉降、立柱隆起、支撑轴力等</param>
-            <param name="Type">监测点的测点类型，也是测点所属的族的名称</param>
-            <remarks></remarks>
-        </member>
-        <member name="T:OldW.Instrumentation.Instrum_Point">
-            <summary>
-            所有类型的监测点，包括地表沉降、立柱隆起、支撑轴力等，但不包括测斜管
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="P:OldW.Instrumentation.Instrum_Point.MonitorData">
-            <summary>
-            点测点的整个施工阶段中的监测数据
-            </summary>
-            <value></value>
-            <returns></returns>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.Instrumentation.Instrum_Point.#ctor(Autodesk.Revit.DB.FamilyInstance,OldW.GlobalSettings.InstrumentationType)">
-            <summary>
-            构造函数
-            </summary>
-            <param name="MonitorPoint">所有类型的监测点，包括地表沉降、立柱隆起、支撑轴力等，但不包括测斜管</param>
-            <param name="Type">监测点的测点类型，也是测点所属的族的名称</param>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.Instrumentation.Instrum_Point.SaveData">
-            <summary>
-            将监测数据以序列化字符串保存到对应的Parameter对象中。
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="T:OldW.Instrumentation.Instrum_StrutAxialForce">
-            <summary>
-            测点_支撑轴力
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.Instrumentation.Instrum_StrutAxialForce.#ctor(Autodesk.Revit.DB.FamilyInstance)">
-            <summary> 构造函数 </summary>
-            <param name="StrutAxialForceElement"> 支撑轴力测点所对应的图元</param>
-        </member>
-        <member name="T:OldW.Instrumentation.MonitorData_Point">
-             <summary>
-            
-             </summary>
-             <remarks></remarks>
-        </member>
-        <member name="T:OldW.Instrumentation.MonitorData_Line">
-            <summary>
-            线测点中的每一天的监测数据
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="T:OldW.Instrumentation.MonitorData_Length">
-             <summary>
-            
-             </summary>
-             <remarks></remarks>
-        </member>
-        <member name="M:OldW.Modeling.FormSetWarning.getFormValve">
-            <summary>
-            读取界面上的值，创建WarningValue对象
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:OldW.Modeling.FormSetWarning.updatecbInput">
-            <summary>
-            更新cbInput
-            </summary>
-        </member>
-        <member name="M:OldW.Modeling.FormSetWarning.checkNum(System.Windows.Forms.TextBox@,System.Windows.Forms.KeyPressEventArgs@)">
-            <summary>
-            判断输入是否合理
-            </summary>
-            <param name="tb"></param>
-            <param name="e"></param>
-        </member>
-        <member name="F:OldW.Modeling.FormSetWarning.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:OldW.Modeling.FormSetWarning.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="M:OldW.Modeling.FormSetWarning.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="F:OldW.Modeling.WarningSumVelo.sum">
-            <summary>
-            累计值
-            </summary>
-        </member>
-        <member name="F:OldW.Modeling.WarningSumVelo.velo">
-            <summary>
-            速率
-            </summary>
-        </member>
-        <member name="T:OldW.Modeling.WarningIncli">
-            <summary>
-            测斜警戒值
-            </summary>
-        </member>
-        <member name="T:OldW.Modeling.WarningGSetle">
-            <summary>
-            地表沉降警戒值
-            </summary>
-        </member>
-        <member name="T:OldW.Modeling.WarningForce">
-            <summary>
-            轴力警戒值
-            </summary>
-        </member>
-        <member name="F:OldW.Modeling.WarningForce.ratio">
-            <summary>
-            系数
-            </summary>
-        </member>
-        <member name="T:OldW.Modeling.WarningValue">
-            <summary>
-            警戒值设定类
-            </summary>
-        </member>
-        <member name="F:OldW.Modeling.WarningValue.name">
-            <summary>
-            警戒值设定的名称
-            </summary>
-        </member>
-        <member name="F:OldW.Modeling.WarningValue.rate">
-            <summary>
-            警戒值设定的等级
-            </summary>
-        </member>
-        <member name="F:OldW.Modeling.WarningValue.warningForc">
-            <summary>
-            轴力警戒值
-            </summary>
-        </member>
-        <member name="F:OldW.Modeling.WarningValue.warningGSetle">
-            <summary>
-            地表沉降警戒值
-            </summary>
-        </member>
-        <member name="F:OldW.Modeling.WarningValue.warningIncli">
-            <summary>
-            测斜警戒值
-            </summary>
-        </member>
-        <member name="M:OldW.Modeling.WarningValue.getId">
-            <summary>
-            返回该警戒值设定的ID
-            </summary>
-            <returns></returns>
         </member>
         <member name="T:OldWApplication">
             <summary>

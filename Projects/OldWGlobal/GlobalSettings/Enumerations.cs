@@ -1,0 +1,4 @@
+namespace OldW.GlobalSettings
+{
+
+}

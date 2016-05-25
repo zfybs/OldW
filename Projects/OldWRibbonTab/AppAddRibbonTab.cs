@@ -160,7 +160,7 @@ namespace OldW
         {
             // Create a new push button
             string str = Path.Combine(Path_Dlls, Dll_Projects);
-            PushButton pushButton = panel.AddItem(new PushButtonData("DataEdit", "导入数据", str, "OldW.Commands.cmd_DataEdit")) as PushButton;
+            PushButton pushButton = panel.AddItem(new PushButtonData("DataEdit", "导入数据", str, "OldW.Commands.cmd_ElementDataManager")) as PushButton;
             // Set ToolTip
             pushButton.ToolTip = "导入到导出监测数据";
             // Set Contextual help
