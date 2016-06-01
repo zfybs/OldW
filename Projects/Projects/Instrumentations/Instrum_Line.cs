@@ -17,7 +17,7 @@ namespace OldW.Instrumentations
         /// <summary>
         /// 线测点的整个施工阶段中的监测数据
         /// </summary>
-        /// <value></value>
+        /// <Value></Value>
         /// <returns></returns>
         /// <remarks></remarks>
         public SortedDictionary<DateTime, Dictionary<float, object>> MonitorData { get; set; }

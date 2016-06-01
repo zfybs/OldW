@@ -30,18 +30,6 @@ namespace std_zw
         }
 
         /// <summary>
-        /// Clears collection and adds range of items into it.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="collection"></param>
-        /// <param name="items"></param>
-        public static void ClearAndAddRange<T>(this ICollection<T> collection, IEnumerable<T> items)
-        {
-            collection.Clear();
-            collection.AddRange(items);
-        }
-
-        /// <summary>
         /// Strong-typed object cloning for objects that implement <see cref="ICloneable"/>
         /// </summary>
         /// <typeparam name="T"></typeparam>

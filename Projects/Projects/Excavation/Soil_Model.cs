@@ -21,7 +21,7 @@ namespace OldW.Excavation
 		/// 此模型土体所位于的组。
 		/// 注意：所有的土体开挖模型都会位于此组中，如果将开挖土体从此组中移除，则有会被识别为开挖土体。
 		/// </summary>
-		/// <value></value>
+		/// <Value></Value>
 		/// <returns></returns>
 		/// <remarks></remarks>
 public Group Group

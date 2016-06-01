@@ -4,17 +4,125 @@
         <name>std</name>
     </assembly>
     <members>
+        <member name="F:std.DAL.DataAccess.ConnectString">
+            private static string ConnectString = "server=(local)\\sqlexpress;database=Book;user=sa;pwd=1234";//数据库连接字符串
+        </member>
+        <member name="M:std.DAL.DataAccess.GetDataSetByTableName(System.String)">
+            <summary>
+            根据表名获取数据集的表
+            </summary>
+            <param name="table"></param>
+            <returns></returns>
+        </member>
+        <member name="M:std.DAL.DataAccess.GetDataSetBySql(System.String)">
+            <summary>
+            根据Sql语句获取数据集对象
+            </summary>
+            <param name="sql"></param>
+            <returns></returns>
+        </member>
+        <member name="M:std.DAL.DataAccess.GetDataReaderByID(System.Int32)">
+            <summary>
+            根据id值获取DataReader对象
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:std.DAL.DataAccess.UpdateDataTable(System.String)">
+            <summary>
+            更新数据
+            </summary>
+            <param name="sql"></param>
+            <returns></returns>
+        </member>
+        <member name="M:std.DAL.DataAccess.UpdateDataSet(System.Data.DataSet,System.String)">
+            <summary>
+            根据数据集和sql语句更新数据库
+            </summary>
+            <param name="ds"></param>
+            <param name="sql"></param>
+        </member>
+        <member name="T:std.DAL.DataTableHelper">
+            <summary>
+            与 DataTable 相关的格式转换等操作
+            </summary>
+        </member>
+        <member name="M:std.DAL.DataTableHelper.FillDataTable``1(System.Collections.Generic.IList{``0})">
+            <summary>
+            将实体类中所有的非[Browsable(false)]属性转换成DataTable
+            </summary>
+            <param name="modelList">实体类集合。如果集合中元素个数为0，则可以成功创建出一个空表格。</param>
+            <typeparam name="TEntityClass">数据表所对应的实体类，
+            只有实体类中的属性Property才会被创建为数据表中的对应字段，而且此Property不能有[Browsable(false)]标记。</typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:std.DAL.DataTableHelper.FillDataTable``1(System.Collections.Generic.IList{``0},System.String[])">
+            <summary>
+            将实体类中的指定名称的非[Browsable(false)]属性转换成DataTable
+            </summary>
+            <param name="modelList">实体类集合。如果集合中元素个数为0，则可以成功创建出一个空表格。</param>
+            <param name="fieldName">要从实体类中提取成为数据表字段的属性名称（区分大小写）</param>
+            <typeparam name="TEntityClass">数据表所对应的实体类，
+            只有实体类中的属性Property才会被创建为数据表中的对应字段，而且此Property不能有[Browsable(false)]标记。</typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:std.DAL.DataTableHelper.GetPropertiesForTableField``1">
+            <summary>
+            将指定实体类中的属性进行甄别，以选择出其中可以作为表格字段的属性。
+            字段只能对应于属性Property，而且其不能有[Browsable(false)]标记。
+            </summary>
+            <typeparam name="TEntityClass">数据表所对应的实体类</typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:std.DAL.DataTableHelper.GetPropertiesForTableField``1(System.String[])">
+            <summary>
+            将指定实体类中的指定名称的属性转换为DataTable中的字段对象
+            字段只能对应于属性Property，而且其不能有[Browsable(false)]标记。
+            </summary>
+            <param name="fieldName">要从实体类中提取成为数据表字段的属性名称（区分大小写）</param>
+            <typeparam name="TEntityClass">数据表所对应的实体类</typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:std.DAL.DBHelper.ExecuteCommand(System.String)">
+            <summary>
+            执行无参SQL语句
+            </summary>
+        </member>
+        <member name="M:std.DAL.DBHelper.ExecuteCommand(System.String,System.Data.SqlClient.SqlParameter[])">
+            <summary>
+            执行带参SQL语句
+            </summary>
+        </member>
+        <member name="M:std.DAL.DBHelper.GetScalar(System.String)">
+            <summary>
+            执行无参SQL语句，并返回执行记录数
+            </summary>
+        </member>
+        <member name="M:std.DAL.DBHelper.GetScalar(System.String,System.Data.SqlClient.SqlParameter[])">
+            <summary>
+            执行有参SQL语句，并返回执行记录数
+            </summary>
+        </member>
+        <member name="M:std.DAL.DBHelper.GetReader(System.String)">
+            <summary>
+            执行无参SQL语句，并返回SqlDataReader
+            </summary>
+        </member>
+        <member name="M:std.DAL.DBHelper.GetReader(System.String,System.Data.SqlClient.SqlParameter[])">
+            <summary>
+            执行有参SQL语句，并返回SqlDataReader
+            </summary>
+        </member>
+        <member name="M:std.DAL.DBHelper.GetDataSet(System.String)">
+            <summary>
+            执行有参SQL语句，返回DataTable
+            </summary>
+            <param name="safeSql"></param>
+            <returns></returns>
+        </member>
         <member name="M:std_zw.ExtensionMethods.AddRange``1(System.Collections.Generic.ICollection{``0},System.Collections.Generic.IEnumerable{``0})">
             <summary>
             Adds range of items into collection.
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="collection"></param>
-            <param name="items"></param>
-        </member>
-        <member name="M:std_zw.ExtensionMethods.ClearAndAddRange``1(System.Collections.Generic.ICollection{``0},System.Collections.Generic.IEnumerable{``0})">
-            <summary>
-            Clears collection and adds range of items into it.
             </summary>
             <typeparam name="T"></typeparam>
             <param name="collection"></param>
@@ -52,9 +160,15 @@
         </member>
         <member name="T:std_ez.eZDataGridView">
             <summary>
-            自定义控件：DataGridView，向其中增加了：插入行、删除行、显示行号等功能
+            自定义控件：DataGridView，向其中增加了：插入行、删除行、显示行号等功能.
+            此控件不支持表格内容的复制粘贴，如果要用此功能，请用其派生类<see cref="T:std_ez.eZDataGridViewPaste"/> 
             </summary>
             <remarks></remarks>
+        </member>
+        <member name="M:std_ez.eZDataGridView.#ctor">
+            <summary>
+            构造函数
+            </summary>
         </member>
         <member name="M:std_ez.eZDataGridView.myDataGridView_RowsNumberChanged(System.Object,System.Object)">
             <summary>
@@ -98,12 +212,26 @@
         </member>
         <member name="M:std_ez.eZDataGridView.myDataGridView_KeyDown(System.Object,System.Windows.Forms.KeyEventArgs)">
             <summary>
+            如下按下 Delete ，则将表格中的选中的单元格中的数据清除 </summary>
+        </member>
+        <member name="T:std_ez.eZDataGridViewPaste">
+            <summary>
+            支持复制粘贴功能的表格控件
+            </summary>
+        </member>
+        <member name="M:std_ez.eZDataGridViewPaste.#ctor">
+            <summary>
+            构造函数
+            </summary>
+        </member>
+        <member name="M:std_ez.eZDataGridViewPaste.myDataGridView_KeyDown(System.Object,System.Windows.Forms.KeyEventArgs)">
+            <summary>
             如下按下Ctrl+V，则将表格中的数据粘贴到DataGridView控件中
             </summary>
             <remarks>DataGridView表格的索引：行号：表头为-1，第一行为0，列号：表示行编号的列为-1，第一个数据列的列号为0.
             DataGridView.Rows.Count与DataGridView.Columns.Count均只计算数据区域，而不包含表头与列头。</remarks>
         </member>
-        <member name="M:std_ez.eZDataGridView.PasteFromTable(System.Int32,System.Int32)">
+        <member name="M:std_ez.eZDataGridViewPaste.PasteFromTable(System.Int32,System.Int32)">
             <summary> 将表格中的数据粘贴到DataGridView控件中 </summary>
             <param name="startRow">粘贴的起始单元格的行位置</param>
             <param name="startCol">粘贴的起始单元格的列位置</param>

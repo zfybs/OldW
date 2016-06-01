@@ -79,10 +79,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DAL\DataAccess.cs" />
+    <Compile Include="DAL\DataTableHelper.cs" />
+    <Compile Include="DAL\DBHelper.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="IDllActivator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserControls\eZDataGridView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserControls\eZDataGridViewPaste.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UserControls\LstbxDisplayAndItem.cs" />
@@ -95,6 +101,12 @@
     <EmbeddedResource Include="UserControls\eZDataGridView.resx">
       <DependentUpon>eZDataGridView.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\eZDataGridViewPaste.resx">
+      <DependentUpon>eZDataGridViewPaste.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

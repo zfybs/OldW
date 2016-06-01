@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using OldW.GlobalSettings;
@@ -15,22 +16,22 @@ namespace OldW.Instrumentations
     {
         #region    ---   Properties
 
-        private MonitorData_Point monitorData;
+        private List<MonitorData_Point> _monitorData;
 
         /// <summary>
         /// 点测点的整个施工阶段中的监测数据
         /// </summary>
-        public MonitorData_Point MonitorData
+        public List<MonitorData_Point> MonitorData
         {
             get
             {
-                if (monitorData == null)
+                if (_monitorData == null)
                 {
-                    monitorData = GetMonitorData();
+                    _monitorData = GetMonitorData();
                 }
-                return this.monitorData;
+                return this._monitorData;
             }
-            set { this.monitorData = value; }
+            set { this._monitorData = value; }
         }
 
         #endregion
@@ -70,19 +71,15 @@ namespace OldW.Instrumentations
         /// 将测点对象中的监测数据提取为具体的序列化类
         /// </summary>
         /// <returns></returns>
-        public MonitorData_Point GetMonitorData()
+        public List<MonitorData_Point> GetMonitorData()
         {
             string strData = base.getMonitorDataString();
-            MonitorData_Point mData = null;
+            List<MonitorData_Point> mData = null;
             if (strData.Length > 0)
             {
                 try
                 {
-                    mData = (MonitorData_Point) StringSerializer.Decode64(strData);
-                    if ((mData.arrDate == null) || (mData.arrValue == null))
-                    {
-                        throw new Exception();
-                    }
+                    mData = (List<MonitorData_Point>)StringSerializer.Decode64(strData);
                     return mData;
                 }
                 catch (Exception)
@@ -100,7 +97,7 @@ namespace OldW.Instrumentations
         /// 将监测数据以序列化字符串保存到对应的Parameter对象中。
         /// </summary>
         /// <remarks></remarks>
-        public bool SetMonitorData(Transaction tran, MonitorData_Point data)
+        public bool SetMonitorData(Transaction tran, List<MonitorData_Point> data)
         {
             this.MonitorData = data;
             if (data != null)
@@ -116,23 +113,6 @@ namespace OldW.Instrumentations
                 return false;
             }
         }
-
-        /// <summary> 监测数据类，表示点测点中的每一天的监测数据
-        /// </summary>
-        /// <remarks></remarks>
-        [Serializable()]
-        public class MonitorData_Point
-        {
-            public DateTime[] arrDate { get; set; }
-            public Single?[] arrValue { get; set; }
-
-            public MonitorData_Point(DateTime[] ArrayDate, Single?[] ArrayValue)
-            {
-                this.arrDate = ArrayDate;
-                this.arrValue = ArrayValue;
-            }
-        }
         #endregion
-        
     }
 }
