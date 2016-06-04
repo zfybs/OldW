@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace std_zw
+namespace stdOldW
 {
     public static class ExtensionMethods
     {
@@ -27,18 +27,6 @@ namespace std_zw
             {
                 collection.Add(item);
             }
-        }
-
-        /// <summary>
-        /// Clears collection and adds range of items into it.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="collection"></param>
-        /// <param name="items"></param>
-        public static void ClearAndAddRange<T>(this ICollection<T> collection, IEnumerable<T> items)
-        {
-            collection.Clear();
-            collection.AddRange(items);
         }
 
         /// <summary>

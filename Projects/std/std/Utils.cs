@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace std_ez
+namespace stdOldW
 {
     /// <summary>
     /// 提供一些基础性的操作工具
@@ -90,6 +90,28 @@ namespace std_ez
         }
 
         /// <summary>
+        /// 返回Nullable所对应的泛型。如果不是Nullable泛型，则返回null。
+        /// </summary>
+        /// <param name="typeIn"></param>
+        /// <returns></returns>
+        public static Type GetNullableGenericArgurment(Type typeIn)
+        {
+            // We need to check whether the property is NULLABLE
+            if (typeIn.IsGenericType && typeIn.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                // If it is NULLABLE, then get the underlying type. eg if "Nullable<int>" then this will return just "int"
+                return typeIn.GetGenericArguments()[0];
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        #region 与 DllDirectory 的设置相关的API函数
+
+
+        /// <summary>
         /// 将指定的文件夹添加到此程序的DLL文件的搜索路径中。
         /// 这个函数只用来在开发时用于AddinManager调试之用，在最终的Release版本中，此函数中的内容可以直接删除。
         /// </summary>
@@ -145,5 +167,6 @@ namespace std_ez
             /// <summary> 指定搜索的路径 </summary>
             LOAD_WITH_ALTERED_SEARCH_PATH = 0x8
         }
+        #endregion
     }
 }

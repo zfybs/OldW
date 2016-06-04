@@ -4,12 +4,12 @@ using System;
 
 #endregion
 
-namespace std_ez
+namespace stdOldW
 {
     /// <summary>
     /// 与时间数据相关的操作，比如日期与字符、整数之间的相互转换等。
     /// </summary>
-    public static class TimeHelper
+    public static class DateTimeHelper
     {
         /// <summary> 将精确到分钟的时间数据保存为对应的32位整数 </summary>
         /// <param name="dt">精确度为分钟，更精细的数据将被忽略。

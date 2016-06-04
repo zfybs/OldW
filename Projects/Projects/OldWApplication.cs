@@ -26,7 +26,7 @@ public class OldWApplication
 	/// <summary>
 	/// 当前正在运行的Revit的Application程序对象
 	/// </summary>
-	/// <value></value>
+	/// <Value></Value>
 	/// <returns></returns>
 	/// <remarks>在每一次通过IExternalCommand接口执行的外部命令中，都可以从中提取出一个Application对象，
 	/// 从变量上来说，每次的这个Application之间都是 not equal的，但是，这些Application对象都是代表Revit当前正在运行的应用程序，即其本质上是相同的。</remarks>

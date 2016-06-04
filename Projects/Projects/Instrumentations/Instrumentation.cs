@@ -99,7 +99,7 @@ namespace OldW.Instrumentations
                     FamilyInstance fi = FEI.Current as FamilyInstance;
                     if (fi != null)
                     {
-                        // 一个Element所对应的族的名称
+                        // 一个Element所对应的族的名称（而不是族类型的名称）
                         strName = Convert.ToString(fi.Symbol.FamilyName);
                         InstrumentationType Tp = default(InstrumentationType);
                         if (Enum.TryParse(value: strName, result: out Tp))

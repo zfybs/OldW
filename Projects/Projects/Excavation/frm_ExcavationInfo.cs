@@ -292,7 +292,7 @@ private OldW.Excavation.Soil_Model SoilModel
 			buttonColumn.Text = "同步";
 			buttonColumn.Width = 50;
 			// Use the Text property for the button text for all cells rather
-			// than using each cell's value as the text for its own button.
+			// than using each cell's Value as the text for its own button.
 			buttonColumn.UseColumnTextForButtonValue = true;
 			DataGridView1.Columns.Add(buttonColumn);
 			

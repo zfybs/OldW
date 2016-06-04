@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using OldW.GlobalSettings;
-using std_ez;
+using stdOldW;
 
 namespace OldW
 {

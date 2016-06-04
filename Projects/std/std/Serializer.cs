@@ -3,7 +3,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace std_ez
+namespace stdOldW
 {
     /// <summary>
     /// 将任意一个有 Serializable标记的类以二进制转换器将类中所有数据与字符串间的相互序列化。

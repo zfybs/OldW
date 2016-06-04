@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
-using OldW.GlobalSettings;
-using OldW.Instrumentations;
+using Autodesk.Revit.UI;
+using stdOldW;
 
 namespace OldW.Instrumentations
 {
@@ -17,10 +17,8 @@ namespace OldW.Instrumentations
         /// <summary>
         /// 线测点的整个施工阶段中的监测数据
         /// </summary>
-        /// <value></value>
-        /// <returns></returns>
-        /// <remarks></remarks>
-        public SortedDictionary<DateTime, Dictionary<float, object>> MonitorData { get; set; }
+        private MonitorData_Line _monitorData;
+
 
         #endregion
 
@@ -57,53 +55,63 @@ namespace OldW.Instrumentations
             return lines;
         }
 
-        public MonitorData_Line GetData()
+        #region   ---   监测数据的提取与保存
+
+        /// <summary>
+        /// 将测点对象中的监测数据提取为具体的序列化类。
+        /// 其中包括线测点的每一个子节点的数据，以及整个线测点在整个施工过程中所有的测点数据。
+        /// </summary>
+        /// <returns>如果在派生类中将此方法进行重写，则一定要对应地对 <see cref="SetMonitorData"/> 方法进行重写。</returns>
+        public virtual MonitorData_Line GetMonitorData()
         {
+            if (_monitorData != null)
+            {
+                return _monitorData;
+            }
+
+            string strData = base.getMonitorDataString();
+            MonitorData_Line mData = null;
+            if (strData.Length > 0)
+            {
+                try
+                {
+                    mData = (MonitorData_Line)StringSerializer.Decode64(strData);
+                    return mData;
+                }
+                catch (Exception)
+                {
+                    TaskDialog.Show("Error",
+                        this.Monitor.Name + " (" + this.Monitor.Id.IntegerValue.ToString() + ")" + " 中的监测数据不能正确地提取。",
+                        TaskDialogCommonButtons.Ok, TaskDialogResult.Ok);
+                    return null;
+                }
+            }
             return null;
         }
 
-        #region   ---   监测数据类
-        
         /// <summary>
-        /// 线测点中的每一天的监测数据
+        /// 将监测数据以序列化字符串保存到对应的Parameter对象中。
         /// </summary>
-        /// <remarks></remarks>
-        [System.Serializable()]
-        public class MonitorData_Line
+        /// <remarks>如果在派生类中将此方法进行重写，则一定要对应地对 <see cref="GetMonitorData"/> 方法进行重写。</remarks>
+        public virtual bool SetMonitorData(Transaction tran, MonitorData_Line data)
         {
-            private SortedDictionary<DateTime, MonitorData_Length> AllData;
-            public SortedDictionary<DateTime, MonitorData_Length> Data
-            {
-                get
-                {
-                    return AllData;
-                }
-            }
 
-            public MonitorData_Line(SortedDictionary<DateTime, MonitorData_Length> AllData)
+            if (data != null)
             {
-                this.AllData = AllData;
+                // 将数据序列化为字符串
+                string strData = StringSerializer.Encode64(data);
+                base.setMonitorDataString(tran, strData);
+
+                // 将数据在类实例中保存下来
+                _monitorData = data;
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        [System.Serializable()]
-        public class MonitorData_Length
-        {
-
-            public float[] arrDistance { get; set; }
-            public object[] arrValue { get; set; }
-            public MonitorData_Length(float[] ArrayDistance, object[] ArrayValue)
-            {
-                MonitorData_Length with_1 = this;
-                with_1.arrDistance = ArrayDistance;
-                with_1.arrValue = ArrayValue;
-            }
-        }
         #endregion
-
     }
 }

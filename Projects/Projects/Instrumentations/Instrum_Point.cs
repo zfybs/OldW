@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using OldW.GlobalSettings;
-using std_ez;
+using stdOldW;
 
 namespace OldW.Instrumentations
 {
@@ -15,23 +16,10 @@ namespace OldW.Instrumentations
     {
         #region    ---   Properties
 
-        private MonitorData_Point monitorData;
-
         /// <summary>
         /// 点测点的整个施工阶段中的监测数据
         /// </summary>
-        public MonitorData_Point MonitorData
-        {
-            get
-            {
-                if (monitorData == null)
-                {
-                    monitorData = GetMonitorData();
-                }
-                return this.monitorData;
-            }
-            set { this.monitorData = value; }
-        }
+        private List<MonitorData_Point> _monitorData;
 
         #endregion
 
@@ -69,20 +57,20 @@ namespace OldW.Instrumentations
         /// <summary>
         /// 将测点对象中的监测数据提取为具体的序列化类
         /// </summary>
-        /// <returns></returns>
-        public MonitorData_Point GetMonitorData()
+        /// <returns>如果在派生类中将此方法进行重写，则一定要对应地对 <see cref="SetMonitorData"/> 方法进行重写。</returns>
+        public virtual List<MonitorData_Point> GetMonitorData()
         {
+            if (_monitorData != null)
+            {
+                return _monitorData;
+            }
             string strData = base.getMonitorDataString();
-            MonitorData_Point mData = null;
+            List<MonitorData_Point> mData = null;
             if (strData.Length > 0)
             {
                 try
                 {
-                    mData = (MonitorData_Point) StringSerializer.Decode64(strData);
-                    if ((mData.arrDate == null) || (mData.arrValue == null))
-                    {
-                        throw new Exception();
-                    }
+                    mData = (List<MonitorData_Point>)StringSerializer.Decode64(strData);
                     return mData;
                 }
                 catch (Exception)
@@ -99,16 +87,18 @@ namespace OldW.Instrumentations
         /// <summary>
         /// 将监测数据以序列化字符串保存到对应的Parameter对象中。
         /// </summary>
-        /// <remarks></remarks>
-        public bool SetMonitorData(Transaction tran, MonitorData_Point data)
+        /// <remarks>如果在派生类中将此方法进行重写，则一定要对应地对 <see cref="GetMonitorData"/> 方法进行重写。</remarks>
+        public virtual bool SetMonitorData(Transaction tran, List<MonitorData_Point> data)
         {
-            this.MonitorData = data;
+
             if (data != null)
             {
                 // 将数据序列化为字符串
                 string strData = StringSerializer.Encode64(data);
                 base.setMonitorDataString(tran, strData);
-                Parameter para = Monitor.get_Parameter(Constants.SP_MonitorData_Guid);
+
+                // 将数据在类实例中保存下来
+                _monitorData = data;
                 return true;
             }
             else
@@ -116,23 +106,6 @@ namespace OldW.Instrumentations
                 return false;
             }
         }
-
-        /// <summary> 监测数据类，表示点测点中的每一天的监测数据
-        /// </summary>
-        /// <remarks></remarks>
-        [Serializable()]
-        public class MonitorData_Point
-        {
-            public DateTime[] arrDate { get; set; }
-            public Single?[] arrValue { get; set; }
-
-            public MonitorData_Point(DateTime[] ArrayDate, Single?[] ArrayValue)
-            {
-                this.arrDate = ArrayDate;
-                this.arrValue = ArrayValue;
-            }
-        }
         #endregion
-        
     }
 }

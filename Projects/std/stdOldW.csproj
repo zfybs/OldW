@@ -7,8 +7,8 @@
     <ProjectGuid>{74D48009-1ECE-4791-BA11-111ED062879C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>std</RootNamespace>
-    <AssemblyName>std</AssemblyName>
+    <RootNamespace>stdOldW</RootNamespace>
+    <AssemblyName>stdOldW</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -20,7 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\bin\std.xml</DocumentationFile>
+    <DocumentationFile>..\..\bin\stdOldW.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -52,7 +52,7 @@
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\..\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>..\..\bin\std.xml</DocumentationFile>
+    <DocumentationFile>..\..\bin\stdOldW.xml</DocumentationFile>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
@@ -79,22 +79,36 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="DAL\DataAccess.cs" />
+    <Compile Include="DAL\DataTableHelper.cs" />
+    <Compile Include="DAL\DBHelper.cs" />
+    <Compile Include="std\AssemblyCompiler.cs" />
+    <Compile Include="WinFormHelper\OwnerWindow.cs" />
+    <Compile Include="std\ExtensionMethods.cs" />
     <Compile Include="IDllActivator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UserControls\eZDataGridView.cs">
+    <Compile Include="WinFormHelper\eZDataGridView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UserControls\LstbxDisplayAndItem.cs" />
-    <Compile Include="ZengFanyun\Serializer.cs" />
-    <Compile Include="ZengFanyun\TimeHelper.cs" />
-    <Compile Include="ZengFanyun\Utils.cs" />
-    <Compile Include="ZengFanyun\WindowsUtil.cs" />
+    <Compile Include="WinFormHelper\eZDataGridViewPaste.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="WinFormHelper\LstbxDisplayAndItem.cs" />
+    <Compile Include="std\Serializer.cs" />
+    <Compile Include="std\DateTimeHelper.cs" />
+    <Compile Include="std\Utils.cs" />
+    <Compile Include="WinFormHelper\WindowsUtil.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="UserControls\eZDataGridView.resx">
+    <EmbeddedResource Include="WinFormHelper\eZDataGridView.resx">
       <DependentUpon>eZDataGridView.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="WinFormHelper\eZDataGridViewPaste.resx">
+      <DependentUpon>eZDataGridViewPaste.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

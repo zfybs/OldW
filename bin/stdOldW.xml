@@ -1,0 +1,562 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>stdOldW</name>
+    </assembly>
+    <members>
+        <member name="F:OldW.DAL.DataAccess.ConnectString">
+            private static string ConnectString = "server=(local)\\sqlexpress;database=Book;user=sa;pwd=1234";//数据库连接字符串
+        </member>
+        <member name="M:OldW.DAL.DataAccess.GetDataSetByTableName(System.String)">
+            <summary>
+            根据表名获取数据集的表
+            </summary>
+            <param name="table"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.DAL.DataAccess.GetDataSetBySql(System.String)">
+            <summary>
+            根据Sql语句获取数据集对象
+            </summary>
+            <param name="sql"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.DAL.DataAccess.GetDataReaderByID(System.Int32)">
+            <summary>
+            根据id值获取DataReader对象
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.DAL.DataAccess.UpdateDataTable(System.String)">
+            <summary>
+            更新数据
+            </summary>
+            <param name="sql"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.DAL.DataAccess.UpdateDataSet(System.Data.DataSet,System.String)">
+            <summary>
+            根据数据集和sql语句更新数据库
+            </summary>
+            <param name="ds"></param>
+            <param name="sql"></param>
+        </member>
+        <member name="T:OldW.DAL.DataTableHelper">
+            <summary>
+            与 DataTable 相关的格式转换等操作
+            </summary>
+        </member>
+        <member name="M:OldW.DAL.DataTableHelper.FillDataTable``1(System.Collections.Generic.IList{``0})">
+            <summary>
+            将实体类中所有的非[Browsable(false)]属性转换成DataTable
+            </summary>
+            <param name="modelList">实体类集合。如果集合中元素个数为0，则可以成功创建出一个空表格。</param>
+            <typeparam name="TEntityClass">数据表所对应的实体类，
+            只有实体类中的属性Property才会被创建为数据表中的对应字段，而且此Property不能有[Browsable(false)]标记。</typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.DAL.DataTableHelper.FillDataTable``1(System.Collections.Generic.IList{``0},System.String[])">
+            <summary>
+            将实体类中的指定名称的非[Browsable(false)]属性转换成DataTable
+            </summary>
+            <param name="modelList">实体类集合。如果集合中元素个数为0，则可以成功创建出一个空表格。</param>
+            <param name="fieldName">要从实体类中提取成为数据表字段的属性名称（区分大小写）</param>
+            <typeparam name="TEntityClass">数据表所对应的实体类，
+            只有实体类中的属性Property才会被创建为数据表中的对应字段，而且此Property不能有[Browsable(false)]标记。</typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.DAL.DataTableHelper.GetPropertiesForTableField``1">
+            <summary>
+            将指定实体类中的属性进行甄别，以选择出其中可以作为表格字段的属性。
+            字段只能对应于属性Property，而且其不能有[Browsable(false)]标记。
+            </summary>
+            <typeparam name="TEntityClass">数据表所对应的实体类</typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.DAL.DataTableHelper.GetPropertiesForTableField``1(System.String[])">
+            <summary>
+            将指定实体类中的指定名称的属性转换为DataTable中的字段对象
+            字段只能对应于属性Property，而且其不能有[Browsable(false)]标记。
+            </summary>
+            <param name="fieldName">要从实体类中提取成为数据表字段的属性名称（区分大小写）</param>
+            <typeparam name="TEntityClass">数据表所对应的实体类</typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.DAL.DBHelper.ExecuteCommand(System.String)">
+            <summary>
+            执行无参SQL语句
+            </summary>
+        </member>
+        <member name="M:OldW.DAL.DBHelper.ExecuteCommand(System.String,System.Data.SqlClient.SqlParameter[])">
+            <summary>
+            执行带参SQL语句
+            </summary>
+        </member>
+        <member name="M:OldW.DAL.DBHelper.GetScalar(System.String)">
+            <summary>
+            执行无参SQL语句，并返回执行记录数
+            </summary>
+        </member>
+        <member name="M:OldW.DAL.DBHelper.GetScalar(System.String,System.Data.SqlClient.SqlParameter[])">
+            <summary>
+            执行有参SQL语句，并返回执行记录数
+            </summary>
+        </member>
+        <member name="M:OldW.DAL.DBHelper.GetReader(System.String)">
+            <summary>
+            执行无参SQL语句，并返回SqlDataReader
+            </summary>
+        </member>
+        <member name="M:OldW.DAL.DBHelper.GetReader(System.String,System.Data.SqlClient.SqlParameter[])">
+            <summary>
+            执行有参SQL语句，并返回SqlDataReader
+            </summary>
+        </member>
+        <member name="M:OldW.DAL.DBHelper.GetDataSet(System.String)">
+            <summary>
+            执行有参SQL语句，返回DataTable
+            </summary>
+            <param name="safeSql"></param>
+            <returns></returns>
+        </member>
+        <member name="T:OldW.DllActivator.IDllActivator">
+            <summary>
+            用于在IExternalCommand.Execute方法中，将整个项目的所有dll加载到进程中。
+            以避免出现在后面出现无法加载文件或者程序集的问题。
+            此接口是专门为AddinManager在调试时设计的，在最终软件发布之前，此接口以及所有与之相关的类以及调用方法都可以删除。
+            </summary>
+            <remarks>在每一次调用Execute方法的开关，都可以用如下代码来将对应项目的所有引用激活。
+            DllActivator.DllActivator_Projects dat = new DllActivator.DllActivator_Projects();
+            dat.ActivateReferences();
+            </remarks>
+        </member>
+        <member name="M:OldW.DllActivator.IDllActivator.ActivateReferences">
+            <summary> 激活本DLL所引用的那些DLLs </summary>
+        </member>
+        <member name="T:OldW.DllActivator.DllActivator_std">
+            <summary> </summary>
+        </member>
+        <member name="M:OldW.DllActivator.DllActivator_std.ActivateReferences">
+            <summary>
+            激活本DLL所引用的那些DLLs
+            </summary>
+        </member>
+        <member name="T:stdOldW.AssemblyCompiler">
+            <summary>
+            动态编译程序集
+            </summary>
+        </member>
+        <member name="F:stdOldW.AssemblyCompiler.CodeUnit">
+            <summary>
+            源代码的架构
+            </summary>
+        </member>
+        <member name="F:stdOldW.AssemblyCompiler.ReferenceDlls">
+            <summary>
+            要引用的Dll的路径名称，比如"System.dll"
+            </summary>
+        </member>
+        <member name="F:stdOldW.AssemblyCompiler.AssemblyFullName">
+            <summary>
+            编译生成的Assembly的绝对路径
+            </summary>
+        </member>
+        <member name="F:stdOldW.AssemblyCompiler._compilerResults">
+            <summary> 在执行了CompileAssembly方法后所得到的编译结果 </summary>
+        </member>
+        <member name="P:stdOldW.AssemblyCompiler.CompilerResults">
+            <summary> 在执行了CompileAssembly方法后所得到的编译结果 </summary>
+        </member>
+        <member name="M:stdOldW.AssemblyCompiler.#ctor(System.CodeDom.CodeCompileUnit,System.String[])">
+            <summary>
+            编译出对应的 CompilerResults 对象，可以通过CompilerResults.CompiledAssembly属性来返回编译成功的Assembly对象。
+            </summary>
+            <param name="codeUnit">源代码的架构</param>
+            <param name="referenceDlls">要引用的Dll的路径名称，比如"System.dll"</param>
+            <returns></returns>
+        </member>
+        <member name="M:stdOldW.AssemblyCompiler.CompileAssembly(System.String)">
+            <summary>
+            编译出对应的 CompilerResults 对象，可以通过CompilerResults.CompiledAssembly属性来返回编译成功的Assembly对象。
+            </summary>
+            <param name="dllFileName">最后要编译成的程序集的路径，比如"MyAssembly.dll"或者"MyAssembly.exe"</param>
+            <returns></returns>
+        </member>
+        <member name="M:stdOldW.AssemblyCompiler.CompileUnit">
+            <summary>
+            示例代码：生成CodeDOM图，这一步是最复杂的部分，后面生成代码与编译都是以这里的东西为蓝本
+            </summary>
+            <returns>此函数仅为示例，并不在此类中执行。外部代码可以参数本函数来创建出对应的 CodeCompileUnit 源代码结构 </returns>
+        </member>
+        <member name="M:stdOldW.AssemblyCompiler.DeleteAssembly">
+            <summary> 删除编译生成的程序集文件 </summary>
+        </member>
+        <member name="T:stdOldW.WinFormHelper.OwnerWindow">
+            <summary> 将任意一个窗体作为Form的父窗口，并用在Form.Show(IWin32Window)中 </summary>
+        </member>
+        <member name="P:stdOldW.WinFormHelper.OwnerWindow.Handle">
+            <summary> 父窗口的句柄值 </summary>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.OwnerWindow.#ctor(System.IntPtr)">
+            <summary> 构造函数 </summary>
+            <param name="Handle">作为父窗体的窗口句柄值</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.OwnerWindow.CreateFromProcessName(System.String)">
+            <summary> 通过当前运行的进程名称来获得对应的主窗体 </summary>
+            <param name="ProcessName">当前运行的进程名称，此名称可以通过“Windows任务管理器 -> 进程”进行查看。</param>
+        </member>
+        <member name="T:stdOldW.WinFormHelper.eZDataGridView">
+            <summary>
+            自定义控件：DataGridView，向其中增加了：插入行、删除行、显示行号等功能.
+            此控件不支持表格内容的复制粘贴，如果要用此功能，请用其派生类<see cref="T:stdOldW.WinFormHelper.eZDataGridViewPaste"/> 
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.eZDataGridView.#ctor">
+            <summary>
+            构造函数
+            </summary>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.eZDataGridView.myDataGridView_RowsNumberChanged(System.Object,System.Object)">
+            <summary>
+            行数改变时的事件：显示行号
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+            <remarks></remarks>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.eZDataGridView.RowsResizable(System.Object,System.Windows.Forms.DataGridViewRowsAddedEventArgs)">
+            <summary>
+            设置新添加的一行的Resizable属性为False
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+            <remarks></remarks>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.eZDataGridView.InsertRow(System.Object,System.EventArgs)">
+            <summary>
+            插入一行
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+            <remarks></remarks>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.eZDataGridView.RemoveOneRow(System.Object,System.EventArgs)">
+            <summary>
+            移除一行
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+            <remarks></remarks>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.eZDataGridView.RemoveMultipleRows(System.Object,System.EventArgs)">
+            <summary>
+            移除多行
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+            <remarks></remarks>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.eZDataGridView.myDataGridView_KeyDown(System.Object,System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            如下按下 Delete ，则将表格中的选中的单元格中的数据清除 </summary>
+        </member>
+        <member name="T:stdOldW.WinFormHelper.eZDataGridViewPaste">
+            <summary>
+            支持复制粘贴功能的表格控件
+            </summary>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.eZDataGridViewPaste.#ctor">
+            <summary>
+            构造函数
+            </summary>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.eZDataGridViewPaste.myDataGridView_KeyDown(System.Object,System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            如下按下Ctrl+V，则将表格中的数据粘贴到DataGridView控件中
+            </summary>
+            <remarks>DataGridView表格的索引：行号：表头为-1，第一行为0，列号：表示行编号的列为-1，第一个数据列的列号为0.
+            DataGridView.Rows.Count与DataGridView.Columns.Count均只计算数据区域，而不包含表头与列头。</remarks>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.eZDataGridViewPaste.PasteFromTable(System.Int32,System.Int32)">
+            <summary> 将表格中的数据粘贴到DataGridView控件中（通过先添加全部行，再为添加的行赋值的方式） </summary>
+            <param name="startRow">粘贴的起始单元格的行位置</param>
+            <param name="startCol">粘贴的起始单元格的列位置</param>
+            <remarks>DataGridView表格的索引：行号：表头为-1，第一行为0，列号：表示行编号的列为-1，第一个数据列的列号为0.
+            DataGridView.Rows.Count与DataGridView.Columns.Count均只计算数据区域，而不包含表头与列头。总行数包括最后一行空数据行。</remarks>
+        </member>
+        <member name="T:stdOldW.WinFormHelper.LstbxValue`1">
+            <summary>
+            用来作为ListControl类的.Add方法中的Item参数的类。通过指定ListControl类的DisplayMember属性，来设置列表框中显示的文本。
+            </summary>
+            <remarks>
+            保存数据时：
+             With ListBoxWorksheetsName
+                  .DisplayMember = LstbxDisplayAndItem.DisplayMember
+                  .ValueMember = LstbxDisplayAndItem.ValueMember
+                  .DataSource = arrSheetsName   '  Dim arrSheetsName(0 To sheetsCount - 1) As LstbxDisplayAndItem
+             End With
+            提取数据时：
+             Try
+                 Me.F_shtMonitorData = DirectCast(Me.ListBoxWorksheetsName.SelectedValue, Worksheet)
+             Catch ex As Exception
+                 Me.F_shtMonitorData = Nothing
+             End Try
+            或者是：
+             Dim lst As LstbxDisplayAndItem = Me.ComboBoxOpenedWorkbook.SelectedItem
+             Try
+                Dim Wkbk As Workbook = DirectCast(lst.Value, Workbook)
+             Catch ex ...
+            </remarks>
+            <typeparam name="Tval">Value属性所对应的类型</typeparam>
+        </member>
+        <member name="F:stdOldW.WinFormHelper.LstbxValue`1.DisplayMember">
+            <summary>
+            在列表框中进行显示的文本
+            </summary>
+            <remarks>此常数的值代表此类中代表要在列表框中显示的文本的属性名，即"DisplayedText"</remarks>
+        </member>
+        <member name="F:stdOldW.WinFormHelper.LstbxValue`1.ValueMember">
+            <summary>
+            列表框中每一项对应的值（任何类型的值）
+            </summary>
+            <remarks>此常数的值代表此类中代表列表框中的每一项绑定的数据的属性名，即"Value"</remarks>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.LstbxValue`1.#ctor(System.String,`0)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="DisplayedText">用来显示在列表的UI界面中的文本</param>
+            <param name="Value">列表项对应的值</param>
+            <remarks></remarks>
+        </member>
+        <member name="T:stdOldW.WinFormHelper.LstbxValue`1.NothingInListBox">
+            <summary>
+            列表框中用来表示“什么也没有”。
+            1、在声明时：listControl控件.Items.Add(New LstbxDisplayAndItem(" 无", NothingInListBox.None))
+            2、在选择列表项时：listControl控件.SelectedValue = NothingInListBox.None
+            3、在读取列表中的数据时，作出判断：If Not LstbxItem.Value.Equals(NothingInListBox.None) Then ...
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="F:stdOldW.WinFormHelper.LstbxValue`1.NothingInListBox.None">
+            <summary>
+            什么也没有选择
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="T:stdOldW.WinFormHelper.WindowsUtil">
+            <summary>
+            与窗口操作相关的函数，以及鼠标、键盘的操作命令
+            </summary>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.WindowsUtil.keybd_event(System.Byte,System.Byte,System.UInt32,System.UIntPtr)">
+             <summary>
+             向任意进程发送键盘消息
+             </summary>
+             <param name="bVk">按键的虚拟键值，如回车键为vk_return, tab键为vk_tab,可以参考常用模拟键的键值对照表，也可以通过System.Windows.Forms.Keys枚举来查看。</param>
+             <param name="bScan">扫描码，一般不用设置，用0代替就行；</param>
+             <param name="dwFlags">选项标志，如果为keydown则置0即可，如果为keyup则设成数值2，即常数 KEYEVENTF_KEYUP；</param>
+             <param name="dwExtraInfo">一般也是置0即可。</param>
+             <remarks>
+              调用案例1：
+             keybd_event(System.Windows.Forms.Keys.Escape, 0, 0, 0)  ' 按下 ESCAPE键
+             keybd_event(System.Windows.Forms.Keys.NumLock, 0, KEYEVENTF_KEYUP, 0)  ' 按键弹起，其中 KEYEVENTF_KEYUP=2
+              调用案例2：    模拟按下 'ALT+F4'键
+             keybd_event(18, 0, 0, 0);
+             keybd_event(115, 0, 0, 0);
+             keybd_event(115, 0, KEYEVENTF_KEYUP, 0);
+             keybd_event(18, 0, KEYEVENTF_KEYUP, 0);
+            </remarks>
+        </member>
+        <member name="M:stdOldW.ExtensionMethods.AddRange``1(System.Collections.Generic.ICollection{``0},System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Adds range of items into collection.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="collection"></param>
+            <param name="items"></param>
+        </member>
+        <member name="M:stdOldW.ExtensionMethods.Clone``1(``0)">
+            <summary>
+            Strong-typed object cloning for objects that implement <see cref="T:System.ICloneable"/>
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="T:stdOldW.StringSerializer">
+            <summary>
+            将任意一个有 Serializable标记的类以二进制转换器将类中所有数据与字符串间的相互序列化。
+            即可以将类中的数据（包括数组）序列化为字符，还可以将序列化的字符反序列化为一个类。
+            </summary>
+        </member>
+        <member name="M:stdOldW.StringSerializer.Encode64(System.Object)">
+            <summary>
+            Encode arbitrary .NET serialisable object
+            into binary data encodes as base64 string.
+            </summary>
+        </member>
+        <member name="M:stdOldW.StringSerializer.Decode64(System.String)">
+            <summary>
+            Decode arbitrary .NET serialisable object
+            from binary data encoded as base64 string.
+            </summary>
+        </member>
+        <member name="T:stdOldW.StringSerializer.ZengfyLinkBinder">
+            <summary>
+            为了解决SerializationException，方法之一是确保此assembly放置在与acad.exe 或 revit.exe相同的文件夹中，
+            另一个方法就是实现一个像这样的类。
+            </summary>
+            <remarks>
+             Resolve System.Runtime.Serialization.SerializationException, Message =
+            "Unable to find assembly 'StoreData, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null'."
+            One solution is to ensure that assembly resides in same directory as acad.exe or revit.exe,
+            the other is to implement a class such as this, cf.
+            http://www.codeproject.com/soap/Serialization_Samples.asp
+            </remarks>
+        </member>
+        <member name="T:stdOldW.BinarySerializer">
+            <summary>
+            在.NET中，我们可以将对象序列化从而保存对象的状态到内存或者磁盘文件中，或者分布式应用程序中用于系统通信，，这样就有可能做出一个“对象数据库”了。
+            一般来说，二进制序列化的效率要高，所获得的字节数最小。
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:stdOldW.BinarySerializer.EnCode(System.IO.Stream,System.Object)">
+            <summary>
+            将任意一个声明为Serializable的类或者其List等集合中的数据，以二进制的格式保存到对应的流文件中。
+            </summary>
+            <param name="fs">推荐使用FileStream对象。此方法中不会对Stream对象进行Close。</param>
+            <param name="Data">要进行保存的可序列化对象</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:stdOldW.BinarySerializer.DeCode(System.IO.Stream)">
+            <summary>
+            从二进制流文件中，将其中的二进制数据反序列化为对应的类或集合对象。
+            </summary>
+            <param name="fs">推荐使用FileStream对象。此方法中不会对Stream对象进行Close。</param>
+            <returns>此二进制流文件所对应的可序列化对象</returns>
+            <remarks></remarks>
+        </member>
+        <member name="T:stdOldW.DateTimeHelper">
+            <summary>
+            与时间数据相关的操作，比如日期与字符、整数之间的相互转换等。
+            </summary>
+        </member>
+        <member name="M:stdOldW.DateTimeHelper.Time2Int(System.DateTime)">
+            <summary> 将精确到分钟的时间数据保存为对应的32位整数 </summary>
+            <param name="dt">精确度为分钟，更精细的数据将被忽略。
+            由于32位数值的限制，能够识别的最大日期为4770年11月24日(23时59分)。即（2^20-1）所对应的日期。</param>
+            <returns></returns>
+        </member>
+        <member name="M:stdOldW.DateTimeHelper.Int2Time(System.Int32)">
+            <summary>
+            将由 Time2Int 函数生成的整数值再转换回日期数据。返回的最大日期为4770年11月24日(23时59分) ，精度为分钟。
+            </summary>
+            <param name="intValue">输入的整数值并没有明显的物理含义，
+            请确保这个值是通过<see cref="M:stdOldW.DateTimeHelper.Time2Int(System.DateTime)"/>函数生成的。否则给出的结果不可预知，因为其中涉及到复杂的位运算操作。</param>
+            <returns>返回的最大日期为4770年11月24日(23时59分) </returns>
+        </member>
+        <member name="M:stdOldW.DateTimeHelper.String2Date(System.String,System.Nullable{System.DateTime}@)">
+            <summary>
+            将字符转换为日期。除了.NET能够识别的日期格式外，
+            还增加了20160406（ 即 2016/04/06），以及 201604061330（即 2016/04/06 13:30）
+            </summary>
+            <param name="text">要转换为日期的字符。</param>
+            <param name="resultedDate">字符所对应的日期。如果不能转换为日期，则返回Null</param>
+            <returns></returns>
+        </member>
+        <member name="T:stdOldW.Utils">
+            <summary>
+            提供一些基础性的操作工具
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:stdOldW.Utils.ShowEnumerable(System.Collections.IEnumerable,System.String)">
+            <summary>
+            将集合中的每一个元素的ToString函数的结果组合到一个字符串中进行显示
+            </summary>
+            <param name="V"></param>
+            <remarks></remarks>
+        </member>
+        <member name="M:stdOldW.Utils.ShowEnumerableP(System.Collections.IEnumerable,System.String,System.String)">
+            <summary>
+            将集合中的每一个元素的指定属性的ToString函数的结果组合到一个字符串中进行显示
+            </summary>
+            <param name="V"></param>
+            <param name="PropertyName">要读取的属性的名称，注意，此属性不能带参数。</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:stdOldW.Utils.ShowEnumerableF(System.Collections.IEnumerable,System.String,System.String)">
+            <summary>
+            将集合中的每一个元素的指定字段的ToString函数的结果组合到一个字符串中进行显示
+            </summary>
+            <param name="V"></param>
+            <param name="FieldName">要读取的字段的名称。</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:stdOldW.Utils.ShowDebugCatch(System.Exception,System.String,System.String)">
+            <summary>
+            在调试阶段，为每一种报错显示对应的报错信息及出错位置。
+            在软件发布前，应将此方法中的内容修改为常规的报错提醒。
+            </summary>
+            <param name="ex"> Catch 块中的 Exception 对象</param>
+            <param name="message">报错信息提示</param>
+            <param name="title"> 报错对话框的标题 </param>
+        </member>
+        <member name="M:stdOldW.Utils.GetNullableGenericArgurment(System.Type)">
+            <summary>
+            返回Nullable所对应的泛型。如果不是Nullable泛型，则返回null。
+            </summary>
+            <param name="typeIn"></param>
+            <returns></returns>
+        </member>
+        <member name="M:stdOldW.Utils.SetDllDirectory(System.String)">
+            <summary>
+            将指定的文件夹添加到此程序的DLL文件的搜索路径中。
+            这个函数只用来在开发时用于AddinManager调试之用，在最终的Release版本中，此函数中的内容可以直接删除。
+            </summary>
+            <param name="SearchPath">要添加的文件夹路径</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:stdOldW.Utils.SetDllDirectoryW(System.String)">
+            <summary>
+            将指定的文件夹添加到此程序的DLL文件的搜索路径中.
+            adds a directory to the search path used to locate DLLs for the application.
+            </summary>
+            <param name="lpPathName">要添加的文件夹路径</param>
+            <remarks>Pretty straight-forward to use. Obviously, is usually going to be called before calling LoadLibraryEx().
+            另外,在PInvoke中,只有SetDllDirectory这个函数,但是它的真实的名称是SetDllDirectoryW.</remarks>
+        </member>
+        <member name="M:stdOldW.Utils.LoadLibraryEx(System.String,System.IntPtr,stdOldW.Utils.LoadLibraryFlags)">
+            <summary>
+            装载指定的动态链接库，并为当前进程把它映射到地址空间。一旦载入，就可以访问库内保存的资源。一旦不需要，用FreeLibrary函数释放DLL
+            </summary>
+            <param name="lpFileName">指定要载入的动态链接库的名称。采用与CreateProcess函数的lpCommandLine参数指定的同样的搜索顺序</param>
+            <param name="hReservedNull">未用，设为零</param>
+            <param name="dwFlags"></param>
+            <returns>成功则返回库模块的句柄，零表示失败。会设置GetLastError</returns>
+            <remarks>参考 http://www.pinvoke.net/default.aspx/kernel32/LoadLibraryEx.html .
+            If you only want to load resources from the library, specify LoadLibraryFlags.LoadLibraryAsDatafile as dwFlags.
+            In this case, nothing is done to execute or prepare to execute the mapped file.</remarks>
+        </member>
+        <member name="T:stdOldW.Utils.LoadLibraryFlags">
+            <summary>
+            用在 LoadLibraryEx 函数中
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="F:stdOldW.Utils.LoadLibraryFlags.DONT_RESOLVE_DLL_REFERENCES">
+            <summary> 不对DLL进行初始化，仅用于NT </summary>
+        </member>
+        <member name="F:stdOldW.Utils.LoadLibraryFlags.LOAD_LIBRARY_AS_DATAFILE">
+            <summary> 不准备DLL执行。如装载一个DLL只是为了访问它的资源，就可以改善一部分性能 </summary>
+        </member>
+        <member name="F:stdOldW.Utils.LoadLibraryFlags.LOAD_WITH_ALTERED_SEARCH_PATH">
+            <summary> 指定搜索的路径 </summary>
+        </member>
+    </members>
+</doc>

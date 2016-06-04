@@ -121,9 +121,9 @@
       <Project>{bbd5d960-44ab-45d2-a0ac-e352094cd8e5}</Project>
       <Name>OldWGlobal</Name>
     </ProjectReference>
-    <ProjectReference Include="..\std\std.csproj">
+    <ProjectReference Include="..\std\stdOldW.csproj">
       <Project>{74d48009-1ece-4791-ba11-111ed062879c}</Project>
-      <Name>std</Name>
+      <Name>stdOldW</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
