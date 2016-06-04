@@ -5,16 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using std_ez;
+using stdOldW.WinFormHelper;
 
-namespace std_ez
+namespace stdOldW.WinFormHelper
 {
     /// <summary>
     /// 支持复制粘贴功能的表格控件
     /// </summary>
-    public class eZDataGridViewPaste : std_ez.eZDataGridView
+    public class eZDataGridViewPaste : eZDataGridView
     {
-
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -22,8 +21,6 @@ namespace std_ez
         {
             this.KeyDown += new KeyEventHandler(myDataGridView_KeyDown);
         }
-
-        #region   ---  数据的复制与粘贴
 
         /// <summary>
         /// 如下按下Ctrl+V，则将表格中的数据粘贴到DataGridView控件中
@@ -37,11 +34,7 @@ namespace std_ez
             {
                 var a = this.SelectedCells;
                 var count = a.Count;
-                //Dim s As String = "行号" & vbTab & "列号" & vbCrLf
-                //For i = 0 To count - 1
-                //    s = s & a.Item(i).RowIndex & vbTab & a.Item(i).ColumnIndex & vbCrLf
-                //Next
-                //MessageBox.Show(s)
+
                 if (count != 1)
                 {
                     MessageBox.Show("请选择某一个单元格，来作为粘贴的起始位置。", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -52,7 +45,7 @@ namespace std_ez
             }
         }
 
-        /// <summary> 将表格中的数据粘贴到DataGridView控件中 </summary>
+        /// <summary> 将表格中的数据粘贴到DataGridView控件中（通过先添加全部行，再为添加的行赋值的方式） </summary>
         /// <param name="startRow">粘贴的起始单元格的行位置</param>
         /// <param name="startCol">粘贴的起始单元格的列位置</param>
         /// <remarks>DataGridView表格的索引：行号：表头为-1，第一行为0，列号：表示行编号的列为-1，第一个数据列的列号为0.
@@ -76,7 +69,7 @@ namespace std_ez
 
             if (rowsToAdd > 0)
             {
-                if (this.DataSource is IBindingList)
+                if (DataSource is IBindingList)
                 {
                     IBindingList ds = (IBindingList)this.DataSource;
 
@@ -88,10 +81,13 @@ namespace std_ez
                         // 所以这里进行判断，并且当其被选中时就先取消这一行的选择。
                         CurrentCell = null;
                     }
+
                     for (int i = 0; i < rowsToAdd; i++)
                     {
+                        // BindingList.AddNew方法会触发其 AddingNew 事件，用户必须手动在此事件中定义要实例化的初始变量。
                         ds.AddNew();
                     }
+
                     CurrentCell = Rows[startRow].Cells[startCol];
                 }
                 else
@@ -104,30 +100,53 @@ namespace std_ez
             endCol = startCol + writeColsCount <= this.Columns.Count
                 ? startCol + writeColsCount - 1
                 : this.Columns.Count - 1;
-            //
-            string strline = "";
-            string[] strs = null;
+
+
+            //  每一列的要进行检测的数据类型
+            Type tp;
+            Type[] checkedTypes = new Type[endCol - startCol + 1];
+
+            for (int c = startCol; c <= endCol; c++)
+            {
+                tp = Columns[c].ValueType;
+                // 如果某列的ValueType为Nullable<>的话，则要对其所指定的泛型进行检测，
+                // 因为在为Rows[r].Cells[c].Value赋值时，字符"1.2"不能转换为float，而会被转换为null，
+                // 但实际上1.2是一个合法的float值。所以这里要通过Convert.ChangeType来进行显式检验。
+                checkedTypes[c - startCol] = Utils.GetNullableGenericArgurment(tp) ?? tp;
+            }
+
+            // 当前操作的单元格的坐标
+            int rowIndex = 0, colIndex = 0;
+            object value;
             try
             {
-                for (int r = startRow; r <= endRow; r++)
+                // 数据赋值与检测
+                string strline = "";
+                string[] strs = null;
+                for (rowIndex = startRow; rowIndex <= endRow; rowIndex++)
                 {
-                    strline = lines[r - startRow];
+                    // 一条记录中的数据
+                    strline = lines[rowIndex - startRow];
                     strs = strline.Split('\t'); //在每一行的单元格间，作为单元格的分隔的字符为"\t",即水平换行符
 
-                    for (int c = startCol; c <= endCol; c++)
+                    for (colIndex = startCol; colIndex <= endCol; colIndex++)
                     {
+                        // Convert.ChangeType 用来检查字符所对应的值是否可以转换为对应字段列的数据类型，如果不能转换，则会报错。
+                        value = !string.IsNullOrEmpty(strs[colIndex - startCol])
+                            ? Convert.ChangeType(strs[colIndex - startCol], checkedTypes[colIndex - startCol])
+                            : null;
+
                         // 在修改单元格数据时，即使添加的数据不符合此列字段的数据格式，也不会报错，而是会直接取消对于此单元格的赋值，转而继续进行下一个单元格的赋值操作。
-                        this.Rows[r].Cells[c].Value = strs[c - startCol];
-                        SetSelectedCellCore(c, r, true);
+                        this.Rows[rowIndex].Cells[colIndex].Value = value;
+
+                        SetSelectedCellCore(colIndex, rowIndex, true);  // 选中此单元格
                     }
                 }
             }
             catch (Exception ex)
             {
-                Utils.ShowDebugCatch(ex, "粘贴数据出错");
+                Utils.ShowDebugCatch(ex, $"粘贴数据出错,出错的单元格为第 {rowIndex + 1} 行,第 {colIndex + 1} 列）");
             }
         }
-
-        #endregion
     }
 }

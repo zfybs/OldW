@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projects", "Projects\Projec
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevitTools", "Projects\RevitTools\RevitTools.csproj", "{13378FF8-0B99-4A4E-8529-DB04F4B8EC4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "std", "Projects\std\std.csproj", "{74D48009-1ECE-4791-BA11-111ED062879C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stdOldW", "Projects\std\stdOldW.csproj", "{74D48009-1ECE-4791-BA11-111ED062879C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OldWGlobal", "Projects\OldWGlobal\OldWGlobal.csproj", "{BBD5D960-44AB-45D2-A0AC-E352094CD8E5}"
 EndProject

@@ -32,30 +32,19 @@ namespace OldW.GlobalSettings
             }
         }
 
-        /// <summary>
-        /// Solution文件所在的文件夹
-        /// </summary>
+        /// <summary> Solution文件所在的文件夹 </summary>
         private static readonly string Path_Solution = new DirectoryInfo(Path_Dlls).Parent.FullName;
 
-        /// <summary>
-        /// Resources 文件所在的文件夹
-        /// </summary>
+        /// <summary> Resources 文件所在的文件夹 </summary>
         private static readonly string Path_Resources = Path.Combine(Path_Solution, "Resources");
 
-        /// <summary>
-        /// 存放图标的文件夹
-        /// </summary>
+        /// <summary> 存放图标的文件夹 </summary>
         private static readonly string Path_icons = Path.Combine(Path_Resources, "icons");
 
-        /// <summary>
-        /// 存放族与族共享参数的文件夹
-        /// </summary>
+        /// <summary> 存放族与族共享参数的文件夹 </summary>
         public static readonly string Path_family = Path.Combine(Path_Resources, "Family");
 
-        /// <summary>
-        /// 存放数据文件
-        /// </summary>
-        /// <remarks></remarks>
+        /// <summary> 存放数据文件的文件夹 </summary>
         public static readonly string Path_data = Path.Combine(Path_Resources, "Data");
 
         /// <summary>
@@ -65,9 +54,13 @@ namespace OldW.GlobalSettings
         /// 然后通过application.OpenSharedParameterFile方法来返回对应的DefinitionFile对象。</remarks>
         public static readonly string Path_SharedParametersFile =Path.Combine(Path_family, "global.txt");
 
-        /// <summary>
-        /// 监测警戒规范的绝对文件路径
-        /// </summary>
+        /// <summary> 监测警戒规范的绝对文件路径 </summary>
         public static readonly string Path_WarningValueUsing =Path.Combine(Path_data, "WarningValueUsing.dat");
+
+        /// <summary> 存入不同节点数的线测点的实体类所对应的dll的绝对文件夹路径 </summary>
+        /// <remarks> 此文件夹中存放了多个dll文件，分别代表监测数据处理中的线测点所对应的实体类。
+        /// 比如“Nodes_3.dll”表示线测点中有三个节点，对应的类中有四个属性，第一个属性为日期。 </remarks>
+        public static readonly string Path_DataGridViewLineMonitorEntityClass = Path.Combine(Path_data, "DataGridViewLineMonitorEntityClass");
+
     }
 }

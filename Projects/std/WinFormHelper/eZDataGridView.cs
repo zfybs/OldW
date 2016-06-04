@@ -4,11 +4,11 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace std_ez
+namespace stdOldW.WinFormHelper
 {
     /// <summary>
     /// 自定义控件：DataGridView，向其中增加了：插入行、删除行、显示行号等功能.
-    /// 此控件不支持表格内容的复制粘贴，如果要用此功能，请用其派生类<see cref="std_ez.eZDataGridViewPaste"/> 
+    /// 此控件不支持表格内容的复制粘贴，如果要用此功能，请用其派生类<see cref="eZDataGridViewPaste"/> 
     /// </summary>
     /// <remarks></remarks>
     public class eZDataGridView : DataGridView
@@ -29,6 +29,7 @@ namespace std_ez
         {
             InitializeComponent();
             this.KeyDown += new KeyEventHandler(myDataGridView_KeyDown);
+            this.AllowUserToAddRows = true;
         }
 
         [DebuggerStepThrough()]
@@ -45,10 +46,10 @@ namespace std_ez
             this.ToolStripMenuItemInsert = new ToolStripMenuItem();
             this.ToolStripMenuItemInsert.Click += new EventHandler(this.InsertRow);
             this.ToolStripMenuItemRemove = new ToolStripMenuItem();
-            this.ToolStripMenuItemRemove.Click += new EventHandler(this.RemoveRow);
+            this.ToolStripMenuItemRemove.Click += new EventHandler(RemoveOneRow);
             this.CMS_DeleteRows = new ContextMenuStrip(this.components);
             this.ToolStripMenuItemRemoveRows = new ToolStripMenuItem();
-            this.ToolStripMenuItemRemoveRows.Click += new EventHandler(this.ToolStripMenuItemRemoveRows_Click);
+            this.ToolStripMenuItemRemoveRows.Click += new EventHandler(this.RemoveMultipleRows);
             this.CMS_RowHeader.SuspendLayout();
             this.CMS_DeleteRows.SuspendLayout();
             ((ISupportInitialize)this).BeginInit();
@@ -93,7 +94,6 @@ namespace std_ez
             this.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.RowTemplate.Height = 23;
             this.RowTemplate.Resizable = DataGridViewTriState.False;
-            this.ScrollBars = ScrollBars.Vertical;
             this.Size = new Size(346, 110);
             this.CMS_RowHeader.ResumeLayout(false);
             this.CMS_DeleteRows.ResumeLayout(false);
@@ -230,7 +230,7 @@ namespace std_ez
         /// <param name="sender"></param>
         /// <param name="e"></param>
         /// <remarks></remarks>
-        private void RemoveRow(object sender, EventArgs e)
+        private void RemoveOneRow(object sender, EventArgs e)
         {
             var Row = this.SelectedRows[0];
             if (Row.Index < this.Rows.Count - 1)
@@ -246,7 +246,7 @@ namespace std_ez
         /// <param name="sender"></param>
         /// <param name="e"></param>
         /// <remarks></remarks>
-        private void ToolStripMenuItemRemoveRows_Click(object sender, EventArgs e)
+        private void RemoveMultipleRows(object sender, EventArgs e)
         {
             //下面的 For Each 是从下往上索引的，即前面的Row对象的index的值大于后面的Index的值
             foreach (DataGridViewRow Row in this.SelectedRows)
@@ -260,6 +260,7 @@ namespace std_ez
         }
 
         #endregion
+
 
         #region   ---  单元格数据的删除
         /// <summary>

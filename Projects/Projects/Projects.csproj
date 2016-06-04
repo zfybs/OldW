@@ -89,6 +89,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DllActivator_Projects.cs" />
+    <Compile Include="Instrumentations\ElementDataManager_Line.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Instrumentations\ElementDataManager_Point.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Instrumentations\nsDefinition.cs" />
     <Compile Include="Warnings\Analysis.cs" />
     <Compile Include="Commands\cmds_Analyses.cs" />
@@ -203,9 +209,9 @@
       <Project>{13378ff8-0b99-4a4e-8529-db04f4b8ec4d}</Project>
       <Name>RevitTools</Name>
     </ProjectReference>
-    <ProjectReference Include="..\std\std.csproj">
+    <ProjectReference Include="..\std\stdOldW.csproj">
       <Project>{74d48009-1ece-4791-ba11-111ed062879c}</Project>
-      <Name>std</Name>
+      <Name>stdOldW</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

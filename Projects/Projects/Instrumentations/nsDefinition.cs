@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关的一些接口、枚举等的定义
 {
@@ -47,6 +48,51 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
         {
             this.Date = Date;
             this.Value = Value;
+        }
+    }
+
+
+    /// <summary>
+    /// 线测点中的每一天的监测数据
+    /// </summary>
+    /// <remarks></remarks>
+    [Serializable()]
+    public class MonitorData_Line
+    {
+        /// <summary>
+        /// 线测点上的每一个子节点的深度（相对于线测点的顶端或起点而言）
+        /// </summary>
+        public Single[] Nodes { get; set; }
+
+        private readonly SortedDictionary<DateTime, float?[]> _monitorData;
+        /// <summary>
+        /// 测斜管在每一天的监测数据。其中，SortedDictionary 中的Value项 为一个数组，
+        /// 它代表对应的日期下，Depths中每一个深度处所对应的监测数据值，
+        /// 所以，此数组中元素的个数必须要与Depths数组中元素的个数相同。
+        /// </summary>
+        public SortedDictionary<DateTime, float?[]> MonitorData
+        {
+            get { return _monitorData; }
+        }
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="nodes">线测点上的每一个子节点的深度（相对于线测点的顶端或起点而言）</param>
+        public MonitorData_Line(Single[] nodes)
+        {
+            _monitorData = new SortedDictionary<DateTime, float?[]>();
+            Nodes = nodes;
+        }
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="nodes">线测点上的每一个子节点的深度（相对于线测点的顶端或起点而言）</param>
+        /// <param name="monitoredData">已经记录好的监测数据</param>
+        public MonitorData_Line(Single[] nodes, SortedDictionary<DateTime, float?[]> monitoredData)
+        {
+            _monitorData = monitoredData;
+            Nodes = nodes;
         }
     }
 }

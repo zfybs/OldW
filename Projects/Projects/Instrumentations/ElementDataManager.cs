@@ -6,7 +6,8 @@ using System.Linq;
 using System.Windows.Forms;
 using Autodesk.Revit.DB;
 using OldW.Instrumentations;
-using std_ez;
+using stdOldW;
+using stdOldW.WinFormHelper;
 
 namespace OldW.DataManager
 {
@@ -16,17 +17,39 @@ namespace OldW.DataManager
     /// <remarks></remarks>
     public partial class ElementDataManager
     {
+
+        #region   ---  Types
+
+        /// <summary> 当前操作的测点模式，比如是线测点（测斜管）、点测点等 </summary>
+        private enum MonitorMode
+        {
+            /// <summary> 点测点，比如地表沉降、立柱垂直位移测点等 </summary>
+            MonitorPoint,
+
+            /// <summary> 线测点，比如测斜管 </summary>
+            MonitorLine
+        }
+
+        #endregion
+
+        #region   ---  Properties
+
+        private readonly DgvPoint Dgv_Point;
+        private readonly DgvLine Dgv_Line;
+
+        #endregion
+
         #region   ---  Fields
 
-        private Document doc;
+        private readonly Document doc;
 
         /// <summary> 当前活动的测点对象 </summary>
-        private Instrumentation ActiveInstru;
+        private Instrumentation _activeInstru;
 
-        /// <summary>
-        /// 与表格数据进行绑定的点测点监测数据集合
-        /// </summary>
-        private BindingList<DgvBindingPointData> monitorData = new BindingList<DgvBindingPointData>();
+        private readonly List<Instrum_ColumnHeave> instColumnHeave = new List<Instrum_ColumnHeave>();
+        private readonly List<Instrum_GroundSettlement> instGroundSettlement = new List<Instrum_GroundSettlement>();
+        private readonly List<Instrum_Incline> instIncline = new List<Instrum_Incline>();
+        private readonly List<Instrum_StrutAxialForce> instStrutAxialForce = new List<Instrum_StrutAxialForce>();
 
         #endregion
 
@@ -41,54 +64,168 @@ namespace OldW.DataManager
             InitializeComponent();
             // --------------------------------
             this.doc = document;
-            this.cmbx_elements.DisplayMember = LstbxValue<Instrumentation>.DisplayMember;
-            this.cmbx_elements.ValueMember = LstbxValue<Instrumentation>.ValueMember;
-            if (eleIdCollection.Count > 0)
-            {
-                this.cmbx_elements.DataSource = fillCombobox(eleIdCollection);
-            }
-            ConstructDataGridView();
+
+            // 属性绑定
+            btnSetNodes.DataBindings.Add("Enabled", checkBox_incline, "Checked", false,
+                DataSourceUpdateMode.OnPropertyChanged);
+
+            // 事件绑定
+            checkBox_incline.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
+            checkBox_columnheave.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
+            checkBox_groundsettlement.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
+            checkBox_strutaxisforce.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
+
+            //
+            Dgv_Point=new DgvPoint(document,DataGridView_pointMonitor);
+            Dgv_Line=new DgvLine(document,DataGridView_LineMonitor);
+            // --------------------------------
+            // 根据不同的选择情况来进行不同的初始化
+            InitializeUI(eleIdCollection);
         }
 
-        #region    ---   表格控件 DataGridView
+        /// <summary>
+        /// 根据不同的选择情况来进行不同的初始化
+        ///  </summary>
+        /// <param name="eleIdCollection"></param>
+        private void InitializeUI(ICollection<Instrumentation> eleIdCollection)
+        {
+            foreach (Instrumentation inst in eleIdCollection)
+            {
+                if (inst is Instrum_ColumnHeave)
+                {
+                    instColumnHeave.Add((Instrum_ColumnHeave)inst);
+                }
+                else if (inst is Instrum_GroundSettlement)
+                {
+                    instGroundSettlement.Add((Instrum_GroundSettlement)inst);
+                }
+                else if (inst is Instrum_Incline)
+                {
+                    instIncline.Add((Instrum_Incline)inst);
+                }
+                else if (inst is Instrum_StrutAxialForce)
+                {
+                    instStrutAxialForce.Add((Instrum_StrutAxialForce)inst);
+                }
+            }
+            // 复选框的启用与否
+            checkBox_columnheave.Enabled = (instColumnHeave.Count != 0);
+            checkBox_groundsettlement.Enabled = (instGroundSettlement.Count != 0);
+            checkBox_incline.Enabled = (instIncline.Count != 0);
+            checkBox_strutaxisforce.Enabled = (instStrutAxialForce.Count != 0);
+
+            //
+            btnActivateDatagridview.Enabled = false;
+        }
+
+        private void ShiftToPoint()
+        {
+            DataGridView_LineMonitor.Visible = false;
+            DataGridView_pointMonitor.Visible = true;
+
+            // 调整窗口大小
+            Width = DataGridView_pointMonitor.Width + DataGridView_pointMonitor.Left + 29;
+        }
+
+        private void ShiftToLine()
+        {
+            DataGridView_LineMonitor.Visible = true;
+            DataGridView_pointMonitor.Visible = false;
+
+            // 调整窗口大小
+
+            DataGridView_LineMonitor.Width = 600;
+            Width = DataGridView_LineMonitor.Width + DataGridView_LineMonitor.Left + 29;
+        }
+
+        #region    ---   CheckBox 与 Datagridview 控件的激活
+
+
+        /// <summary> 当前操作的测点模式，比如是线测点（测斜管）、点测点等 </summary>
+        private MonitorMode activeMonitorMode;
+        
+        private void checkBox_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox cbx = (CheckBox)sender;
+            if (!cbx.Checked)
+            {
+                return;
+            }
+            btnActivateDatagridview.Enabled = true;
+
+            GroupBox gbx = (GroupBox)cbx.Parent;
+            // 线测点模式
+            if (gbx.Name == groupBoxLines.Name)
+            {
+                activeMonitorMode = MonitorMode.MonitorLine;
+                // 禁用点测点的复选框
+                foreach (var VARIABLE in groupBoxPoints.Controls)
+                {
+                    if (VARIABLE is CheckBox)
+                    {
+                        ((CheckBox)VARIABLE).Checked = false;
+                    }
+                }
+            }
+            // 点测点模式
+            else if (gbx.Name == groupBoxPoints.Name)
+            {
+                activeMonitorMode = MonitorMode.MonitorPoint;
+
+                // 禁用线测点的复选框
+                foreach (var VARIABLE in groupBoxLines.Controls)
+                {
+                    if (VARIABLE is CheckBox)
+                    {
+                        ((CheckBox)VARIABLE).Checked = false;
+                    }
+                }
+            }
+
+        }
 
         /// <summary>
-        /// 创建 DataGridView 为点测点监测数据类型
+        /// 激活 Datagridview 控件
         /// </summary>
-        private void ConstructDataGridView()
+        public void btnActivateDatagridview_Click(object sender, EventArgs e)
         {
-            //-------------------- 设置数据源的集合 -------------------------------------
-            monitorData.AllowNew = true;
-            monitorData.AddingNew += monitorData_AddingNew;
+            List<Instrumentation> inst = new List<Instrumentation>();
+            switch (activeMonitorMode)
+            {
+                case MonitorMode.MonitorPoint:
+                    {
+                        if (checkBox_columnheave.Checked)
+                        {
+                            inst.AddRange(instColumnHeave);
+                        }
+                        if (checkBox_groundsettlement.Checked)
+                        {
+                            inst.AddRange(instGroundSettlement);
+                        }
+                        if (checkBox_strutaxisforce.Checked)
+                        {
+                            inst.AddRange(instStrutAxialForce);
+                        }
 
-            //-------------------- 设置数据源的集合 -------------------------------------
+                        // 切换 Datagridview
+                        ShiftToPoint();
+                        break;
+                    }
+                case MonitorMode.MonitorLine:
+                    {
+                        if (checkBox_incline.Checked)
+                        {
+                            inst.AddRange(instIncline);
+                        }
 
-            // 如果AutoGenerateColumns 为False，那么当设置DataSource 后，用户必须要手动为指定的属性值添加数据列。
-            DataGrid_pointMonitor.AutoGenerateColumns = false;
-            DataGrid_pointMonitor.AutoSize = false;
-            DataGrid_pointMonitor.AllowUserToAddRows = true;
-
-
-            DataGrid_pointMonitor.DataSource = monitorData;
-
-            //-------- 将已有的数据源集合中的每一个元素的不同属性在不同的列中显示出来 -------
-
-
-            // Initialize and add a text box column.
-            // 先创建一个列，然后将列中的数据与数据源集合中的某个属性相关联即可。
-            DataGridViewColumn column = new DataGridViewTextBoxColumn();
-            column.DataPropertyName = "Date";
-            // 此列所对应的数据源中的元素中的哪一个属性的名称
-            column.Name = "日期";
-            DataGrid_pointMonitor.Columns.Add(column);
-
-            // Initialize and add a text box column.
-            // 先创建一个列，然后将列中的数据与数据源集合中的某个属性相关联即可。
-            column = new DataGridViewTextBoxColumn();
-            column.DataPropertyName = "Value";
-            // 此列所对应的数据源中的元素中的哪一个属性的名称
-            column.Name = "数据";
-            DataGrid_pointMonitor.Columns.Add(column);
+                        // 切换 Datagridview
+                        ShiftToLine();
+                        break;
+                    }
+            }
+            btnActivateDatagridview.Enabled = false;
+            // 填充
+            FillCombobox(inst);
         }
 
         #endregion
@@ -100,20 +237,28 @@ namespace OldW.DataManager
         /// </summary>
         /// <param name="elementCollection"></param>
         /// <returns></returns>
-        private LstbxValue<Instrumentation>[] fillCombobox(ICollection<Instrumentation> elementCollection)
+        private void FillCombobox(ICollection<Instrumentation> elementCollection)
         {
-            int c = elementCollection.Count;
-            LstbxValue<Instrumentation>[] arr = new LstbxValue<Instrumentation>[c - 1 + 1];
-            int i = 0;
-            foreach (Instrumentation eleid in elementCollection)
+            if (elementCollection.Count > 0)
             {
-                arr[i] =
-                    new LstbxValue<Instrumentation>(
-                        eleid.Monitor.Name + "( " + eleid.getMonitorName() + " ):" +
-                        eleid.Monitor.Id.IntegerValue.ToString(), eleid);
-                i++;
+                int c = elementCollection.Count;
+                LstbxValue<Instrumentation>[] arr = new LstbxValue<Instrumentation>[c - 1 + 1];
+                int i = 0;
+                foreach (Instrumentation eleid in elementCollection)
+                {
+                    arr[i] =
+                        new LstbxValue<Instrumentation>(
+                            eleid.Monitor.Name + "( " + eleid.getMonitorName() + " ):" +
+                            eleid.Monitor.Id.IntegerValue.ToString(), eleid);
+                    i++;
+                }
+
+                // ComboBox设置
+                this.cmbx_elements.DisplayMember = LstbxValue<Instrumentation>.DisplayMember;
+                this.cmbx_elements.ValueMember = LstbxValue<Instrumentation>.ValueMember;
+
+                this.cmbx_elements.DataSource = arr;
             }
-            return arr;
         }
 
         /// <summary>
@@ -124,13 +269,33 @@ namespace OldW.DataManager
         public void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             Instrumentation ele = (Instrumentation)cmbx_elements.SelectedValue;
-            this.ActiveInstru = ele;
-            FillTableWithElementData(ele, this.DataGrid_pointMonitor);
+            try
+            {
+                this._activeInstru = ele;
+                switch (activeMonitorMode)
+                {
+                    case MonitorMode.MonitorPoint:
+                        {
+                            Dgv_Point.ShiftToNewElement((Instrum_Point)ele);
+                            //  FillTableWithElementData(ele, this.DataGridView_pointMonitor);
+                            break;
+                        }
+                    case MonitorMode.MonitorLine:
+                        {
+                            Dgv_Line.ShiftToNewElement((Instrum_Line)ele);
+                            break;
+                        }
+                }
+            }
+            catch (Exception ex)
+            {
+                Utils.ShowDebugCatch(ex, "SelectedIndexChanged时出错。");
+            }
+
+
         }
 
         #endregion
-
-        #region    ---   DataGridView中的数据与监测参数值之间的交互
 
         /// <summary>
         /// 将表格中的数据保存到Element的对应参数中。
@@ -138,136 +303,51 @@ namespace OldW.DataManager
         /// <remarks></remarks>
         public void SaveTableToElement(object sender, EventArgs e)
         {
-            // 将表格数据构造为监测数据类，并将其保存到测点对象中
-            if (ActiveInstru is Instrum_Point)
-            {
-                Instrum_Point pt = (Instrum_Point)ActiveInstru;
 
-                using (Transaction tran = new Transaction(doc, "保存表格中的数据到Element的参数中"))
-                {
-                    tran.Start();
-                    try
+            switch (activeMonitorMode)
+            {
+                case MonitorMode.MonitorPoint:
                     {
-                        pt.SetMonitorData(tran, ConvertBindingList(monitorData));
-                        tran.Commit();
+                        Dgv_Point.SaveTableToElement();
+                        break;
                     }
-                    catch (Exception ex)
+                case MonitorMode.MonitorLine:
                     {
-                        Utils.ShowDebugCatch(ex, "无法保存监测数据到对象参数中。");
-                        tran.RollBack();
+                        Dgv_Line.SaveTableToElement();
+                        break;
                     }
-                }
             }
+
         }
-
-        /// <summary>
-        /// 将元素的数据从Revit中提取出来并写入表格
-        /// </summary>
-        /// <param name="ele">要进行数据提取的监测单元</param>
-        /// <param name="table"></param>
-        /// <returns></returns>
-        /// <remarks></remarks>
-        private void FillTableWithElementData(Instrumentation ele, DataGridView table)
-        {
-            //   table.Rows.Clear();  // 先将列表中的数据清空
-            if (ele is Instrum_Point)
-            {
-                Instrum_Point pt = ele as Instrum_Point;
-                List<MonitorData_Point> ptData;
-                ptData = pt.GetMonitorData() ?? new List<MonitorData_Point>();
-                FillBindingList(ptData, ref monitorData);
-            }
-        }
-
-        /// <summary> 将 DataGridView 控件中绑定的数据集合转换为实体类 <see cref="MonitorData_Point"/> 的集合。 </summary>
-        /// <remarks> BindingList 中的元素如果有测点的监测日期为null，则进行剔除。</remarks>
-        private List<MonitorData_Point> ConvertBindingList(BindingList<DgvBindingPointData> monitorDataSet)
-        {
-            return (from variable in monitorDataSet
-                    where variable.Date != null
-                    select new MonitorData_Point(variable.Date.Value, variable.Value)).ToList();
-        }
-
-        /// <summary> 将 实体类 <see cref="MonitorData_Point"/> 的集合中的数据填充到 BindingList 集合中。</summary>
-        private void FillBindingList(List<MonitorData_Point> monitorDataSet, ref BindingList<DgvBindingPointData> pts)
-        {
-            pts.Clear();
-            foreach (var variable in monitorDataSet)
-            {
-                pts.Add(new DgvBindingPointData(variable.Date, variable.Value));
-            }
-        }
-
-        /// <summary> 用来绑定到 DataGridView 的DataSource属性的监测数据类，表示点测点中的每一天的监测数据 </summary>
-        /// <remarks>如果属性中包含有[System.ComponentModel.Browsable(false)]，则不计入表格项 </remarks>
-        public class DgvBindingPointData
-        {
-            /// <summary>
-            /// 监测日期
-            /// </summary>
-            public DateTime? Date { get; set; }
-
-            /// <summary>
-            /// 监测数据，如果当天没有数据，则为null
-            /// </summary>
-            public Single? Value { get; set; }
-
-            /// <summary>
-            /// 构造函数
-            /// </summary>
-            /// <param name="Date"></param>
-            /// <param name="Value"></param>
-            public DgvBindingPointData(DateTime? Date, Single? Value)
-            {
-                this.Date = Date;
-                this.Value = Value;
-            }
-        }
-
-        #endregion
-
-        #region    ---   绘制监测曲线图
-
-        /// <summary>
-        /// 绘制图表
-        /// </summary>
-        /// <param name="data"></param>
-        private Chart_MonitorData DrawData(BindingList<DgvBindingPointData> data)
-        {
-            Chart_MonitorData Chart1 = new Chart_MonitorData(InstrumentationType.地表隆沉);
-
-            var pts = ConvertBindingList(data);
-
-            Chart1.Series.Points.DataBind(pts, "Date", "Value", "");
-
-            Chart1.Show();
-            return Chart1;
-        }
-
-        #endregion
 
         #region    ---   事件处理
 
-        /// <summary>
-        /// 表格中输入的数据不能进行正常转换时的异常处理
-        /// </summary>
-        public void MyDataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
-        {
-            if ((e.Context & DataGridViewDataErrorContexts.Parsing) != 0)
-            {
-                Type tp = DataGrid_pointMonitor.Columns[e.ColumnIndex].ValueType;
-                MessageBox.Show("输入的数据不能转换为指定类型的数据: \n\r " + tp.Name, 
-                    "数据格式转换出错。", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                e.ThrowException = false;
-            }
-        }
-
+ 
         /// <summary>
         ///  绘制监测曲线图
         /// </summary>
         public void btnDraw_Click(object sender, EventArgs e)
         {
-            DrawData(monitorData);
+            switch (activeMonitorMode)
+            {
+                case MonitorMode.MonitorPoint:
+                    {
+                        Dgv_Point.DrawData();
+                        //  FillTableWithElementData(ele, this.DataGridView_pointMonitor);
+                        break;
+                    }
+                case MonitorMode.MonitorLine:
+                    {
+
+                        break;
+                    }
+            }
+        }
+
+        /// <summary> 设置线测点的节点信息 </summary>
+        public void btnSetNodes_Click(object sender, EventArgs e)
+        {
+            Dgv_Line.ChangeNodes();
         }
 
         /// <summary>
@@ -275,13 +355,9 @@ namespace OldW.DataManager
         /// </summary>
         private void DataGrid_pointMonitor_Resize(object sender, EventArgs e)
         {
-            this.Size = new Size(DataGrid_pointMonitor.Width + 120, Size.Height);
+            this.Size = new Size(DataGridView_pointMonitor.Width + 120, Size.Height);
         }
 
-        private void monitorData_AddingNew(object sender, AddingNewEventArgs e)
-        {
-            e.NewObject = new DgvBindingPointData(null, null);
-        }
 
         #endregion
     }

@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace std.DAL
+namespace OldW.DAL
 {
     /// <summary>
     /// 与 DataTable 相关的格式转换等操作

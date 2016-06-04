@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace std_zw
+namespace stdOldW
 {
     public static class ExtensionMethods
     {

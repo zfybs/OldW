@@ -1,33 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace std.DAL
+namespace OldW.DAL
 {
     public static class DBHelper
     {
         //数据库连接属性
         private static SqlConnection connection;
+
         public static SqlConnection Connection
         {
             get
             {
-                string connectionString = @"Data Source=(local)\SQLZFY;AttachDbFilename=F:\Software\Programming\VB.NET\zengfy笔记\零基础学C# 源代码\C17\HotelManage\db\HotelManager.mdf;Integrated Security=True;User Instance=True";
+                string connectionString =
+                    @"Data Source=(local)\SQLZFY;AttachDbFilename=F:\Software\Programming\VB.NET\zengfy笔记\零基础学C# 源代码\C17\HotelManage\db\HotelManager.mdf;Integrated Security=True;User Instance=True";
                 //string connectionString = @"Data Source=(local)\SQLEXPRESS;Initial Catalog=HotelManager;uid=sa;pwd=1234";
                 if (connection == null)
                 {
                     connection = new SqlConnection(connectionString);
                     connection.Open();
                 }
-                else if (connection.State == System.Data.ConnectionState.Closed)
+                else if (connection.State == ConnectionState.Closed)
                 {
                     connection.Open();
                 }
-                else if (connection.State == System.Data.ConnectionState.Broken)
+                else if (connection.State == ConnectionState.Broken)
                 {
                     connection.Close();
                     connection.Open();
@@ -35,6 +33,7 @@ namespace std.DAL
                 return connection;
             }
         }
+
         /// <summary>
         /// 执行无参SQL语句
         /// </summary>
@@ -44,6 +43,7 @@ namespace std.DAL
             int result = cmd.ExecuteNonQuery();
             return result;
         }
+
         /// <summary>
         /// 执行带参SQL语句
         /// </summary>
@@ -53,6 +53,7 @@ namespace std.DAL
             cmd.Parameters.AddRange(values);
             return cmd.ExecuteNonQuery();
         }
+
         /// <summary>
         /// 执行无参SQL语句，并返回执行记录数
         /// </summary>
@@ -62,6 +63,7 @@ namespace std.DAL
             int result = Convert.ToInt32(cmd.ExecuteScalar());
             return result;
         }
+
         /// <summary>
         /// 执行有参SQL语句，并返回执行记录数
         /// </summary>
@@ -72,6 +74,7 @@ namespace std.DAL
             int result = Convert.ToInt32(cmd.ExecuteScalar());
             return result;
         }
+
         /// <summary>
         /// 执行无参SQL语句，并返回SqlDataReader
         /// </summary>
@@ -81,6 +84,7 @@ namespace std.DAL
             SqlDataReader reader = cmd.ExecuteReader();
             return reader;
         }
+
         /// <summary>
         /// 执行有参SQL语句，并返回SqlDataReader
         /// </summary>
@@ -91,6 +95,7 @@ namespace std.DAL
             SqlDataReader reader = cmd.ExecuteReader();
             return reader;
         }
+
         /// <summary>
         /// 执行有参SQL语句，返回DataTable
         /// </summary>
@@ -104,8 +109,5 @@ namespace std.DAL
             da.Fill(ds);
             return ds.Tables[0];
         }
-
-
-
     }
 }

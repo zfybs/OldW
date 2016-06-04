@@ -7,7 +7,7 @@ using System.Windows.Forms;
 // End of VB project level imports
 
 using Forms = System.Windows.Forms;
-using std_ez;
+using stdOldW;
 using System.ComponentModel;
 using rvtTools;
 using Autodesk.Revit.DB;
@@ -196,7 +196,7 @@ namespace OldW.Excavation
 			strDate = this.TextBox_StartedDate.Text;
 			if (!string.IsNullOrEmpty(strDate))
 			{
-				if (TimeHelper.String2Date(strDate, ref this.StartedDate)) // 说明不能直接转化为日期
+				if (DateTimeHelper.String2Date(strDate, ref this.StartedDate)) // 说明不能直接转化为日期
 				{
 					
 				}
@@ -210,7 +210,7 @@ namespace OldW.Excavation
 			strDate = this.TextBox_CompletedDate.Text;
 			if (!string.IsNullOrEmpty(strDate))
 			{
-				if (TimeHelper.String2Date(strDate, ref this.CompletedDate)) // 说明不能直接转化为日期
+				if (DateTimeHelper.String2Date(strDate, ref this.CompletedDate)) // 说明不能直接转化为日期
 				{
 					DesiredName = System.Convert.ToString(this.CompletedDate.Value.ToShortDateString());
 				}
