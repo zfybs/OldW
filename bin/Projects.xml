@@ -49,6 +49,27 @@
             <param name="assemblyData"></param>
             <param name="entityName"> 实体类的名称 </param>
         </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.TableBindedData.GetEntityClass">
+            <summary>
+            返回此测点所对应的实体类
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.TableBindedData.GetMonitorData(System.Int32[],System.DateTime[]@)">
+            <summary>
+            返回指定数据行的监测数据
+            </summary>
+            <param name="rowIndexes"> 要提取的数据在BindingList中的行号
+            （正常情况下其值应该与Datagridview中的行号相同，但是如果出现不同，以Bindinglist为准） </param>
+            <param name="date"> 指定行中所对应的时间数据 </param>
+            <returns> 指定行中所对应的监测数据 </returns>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.TableBindedData.CreateInstance">
+            <summary>
+            生成一个实体类的实例对象
+            </summary>
+            <returns></returns>
+        </member>
         <member name="F:OldW.DataManager.ElementDataManager.DgvLine.CompiledAssemlies">
             <summary>
             已经编译好的实体类对象
@@ -115,7 +136,7 @@
             <summary> 将指定单元中的监测数据参数中的监测数据提取出来并 填充到 BindingList 集合中。</summary>
             <param name="monitorDataSet"> 某线测点的监测数据 </param>
         </member>
-        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.FillBindingListFromList(System.ComponentModel.BindingList{System.Object})">
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.FillBindingListFromList(System.ComponentModel.BindingList{System.Object},OldW.DataManager.ElementDataManager.DgvLine.TableBindedData)">
             <summary> 将Datagridview的DataSource进行重新绑定，并刷新事件AddingNew事件关联。</summary>
             <param name="sourceData"> 用来填充 Datagridview 的数据集合  </param>
         </member>
@@ -147,7 +168,7 @@
             </summary>
             <returns>此函数仅为示例，并不在此类中执行。外部代码可以参数本函数来创建出对应的 CodeCompileUnit 源代码结构 </returns>
         </member>
-        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.DrawData(OldW.Instrumentations.MonitorData_Line)">
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.DrawData">
             <summary>
             绘制图表
             </summary>
@@ -331,6 +352,14 @@
             <summary>
             图表的初始化
             </summary>
+        </member>
+        <member name="M:OldW.DataManager.Chart_MonitorData.AddLineSeries(System.String,System.String)">
+            <summary>
+            添加一条监测曲线，并设置曲线的基本样式
+            </summary>
+            <param name="seriesName"></param>
+            <param name="chartAreaName"></param>
+            <returns></returns>
         </member>
         <member name="T:OldW.Instrumentations.InstrumentationType">
             <summary>

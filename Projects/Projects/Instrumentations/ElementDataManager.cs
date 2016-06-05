@@ -338,7 +338,7 @@ namespace OldW.DataManager
                     }
                 case MonitorMode.MonitorLine:
                     {
-
+                        Dgv_Line.DrawData();
                         break;
                     }
             }

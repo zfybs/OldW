@@ -31,7 +31,6 @@ namespace OldW.DataManager
 		[System.Diagnostics.DebuggerStepThrough()]private void InitializeComponent()
 		{
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.Chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             ((System.ComponentModel.ISupportInitialize)(this.Chart)).BeginInit();
             this.SuspendLayout();
@@ -44,12 +43,6 @@ namespace OldW.DataManager
             this.Chart.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Chart.Location = new System.Drawing.Point(0, 0);
             this.Chart.Name = "Chart";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.EmptyPointStyle.IsValueShownAsLabel = true;
-            series1.MarkerStyle = System.Windows.Forms.DataVisualization.Charting.MarkerStyle.Circle;
-            series1.Name = "Series1";
-            this.Chart.Series.Add(series1);
             this.Chart.Size = new System.Drawing.Size(634, 362);
             this.Chart.TabIndex = 0;
             this.Chart.Text = "Chart1";

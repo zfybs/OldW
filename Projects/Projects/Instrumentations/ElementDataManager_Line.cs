@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 using Autodesk.Revit.DB;
 using OldW.GlobalSettings;
 using OldW.Instrumentations;
@@ -27,6 +28,8 @@ namespace OldW.DataManager
             /// </summary>
             private class TableBindedData
             {
+                #region    ---   属性
+
                 /// <summary> 线测点对象 </summary>
                 public readonly Instrum_Line Monitor;
 
@@ -47,6 +50,8 @@ namespace OldW.DataManager
 
                 /// <summary> Datagridview 所绑定 表示线测点监测数据的实体类的名称，其所在的命名空间保存在常数 <see cref="NamespaceName"/> 中</summary>
                 public string EntityName;
+
+                #endregion
 
                 /// <summary>
                 /// 构造函数
@@ -70,6 +75,68 @@ namespace OldW.DataManager
                     this.Assembly = assemblyData;
                     this.EntityName = entityName;
                 }
+
+                #region    ---   方法
+
+                /// <summary>
+                /// 返回此测点所对应的实体类
+                /// </summary>
+                /// <returns></returns>
+                public Type GetEntityClass()
+                {
+                    return Assembly.GetType(NamespaceName + "." + EntityName);
+                }
+
+                /// <summary>
+                /// 返回指定数据行的监测数据
+                /// </summary>
+                /// <param name="rowIndexes"> 要提取的数据在BindingList中的行号
+                /// （正常情况下其值应该与Datagridview中的行号相同，但是如果出现不同，以Bindinglist为准） </param>
+                /// <param name="date"> 指定行中所对应的时间数据 </param>
+                /// <returns> 指定行中所对应的监测数据 </returns>
+                public float?[][] GetMonitorData(int[] rowIndexes, out DateTime[] date)
+                {
+                    if (DatagridViewData == null || DatagridViewData.Count == 0)
+                    {
+                        throw new NullReferenceException();
+                    }
+
+                    int daysCount = rowIndexes.Length;
+                    Type tp = GetEntityClass();
+                    PropertyInfo[] props = tp.GetProperties();
+
+                    //
+                    float?[][] AllData = new float?[daysCount][];
+                    date = new DateTime[daysCount];
+                    int row;
+                    for (int day = 0; day < daysCount; day++)
+                    {
+                        row = rowIndexes[day];
+                        object value = DatagridViewData[row]; // 一天的所有数据
+
+                        // 提取日期数据
+                        date[day] = (DateTime)props[0].GetValue(value);
+
+                        // 提取监测数据
+                        float?[] oneDayData = new float?[Nodes.Length];
+                        for (int i = 1; i <= Nodes.Length; i++)
+                        { // 提取每一个属性中对应的值，第一个属性为日期，不进行提取
+                            oneDayData[i - 1] = (float?)props[i].GetValue(value);
+                        }
+                        AllData[day] = oneDayData;
+                    }
+                    return AllData;
+                }
+
+                /// <summary>
+                /// 生成一个实体类的实例对象
+                /// </summary>
+                /// <returns></returns>
+                public object CreateInstance()
+                {
+                    return Assembly.CreateInstance(NamespaceName + "." + EntityName);
+                }
+                #endregion
             }
 
             #endregion
@@ -170,7 +237,7 @@ namespace OldW.DataManager
                     ChangeColumns(tbd.Nodes.Length, tbd.Nodes);
 
                     // 填充 Datagridview （直接用上次打开时的数据）
-                    FillBindingListFromList(tbd.DatagridViewData);
+                    FillBindingListFromList(tbd.DatagridViewData, tbd);
                     // 
                     activeInstruId = eid;
                 }
@@ -302,7 +369,7 @@ namespace OldW.DataManager
 
                     // 重新绑定数据集合
                     BindingList<object> newDataSource = GetNewConstructedDataSource(tbd, assemblyData, entityName);
-                    FillBindingListFromList(newDataSource);
+                    FillBindingListFromList(newDataSource, tbd);
 
                     // 将新的数据存储起来（必须要执行）
                     tbd.Assembly = assemblyData;
@@ -322,8 +389,7 @@ namespace OldW.DataManager
             private SortedDictionary<DateTime, float?[]> ConvertBindingList(TableBindedData bindedAssembly)
             {
                 SortedDictionary<DateTime, float?[]> data = new SortedDictionary<DateTime, float?[]>();
-                Assembly ass = bindedAssembly.Assembly;
-                Type tp = ass.GetType(NamespaceName + "." + bindedAssembly.EntityName);
+                Type tp = bindedAssembly.GetEntityClass();
                 PropertyInfo[] props = tp.GetProperties();
 
                 //
@@ -356,10 +422,7 @@ namespace OldW.DataManager
                 BindingList<object> bindedList = new BindingList<object>() { AllowNew = true };
                 // bindedList.Clear();
 
-                Assembly ass = monitorDataSet.Assembly;
-                string className = NamespaceName + "." + monitorDataSet.EntityName;
-                Type tp = ass.GetType(className);
-
+                Type tp = monitorDataSet.GetEntityClass();
                 // 根据实体类型构造表格
                 PropertyInfo[] props = tp.GetProperties(); // 类型的所有属性，其中第一个为日期，后面的为每一个子节点
                 ChangeColumns(props.Length - 1, monitorDataSet.Nodes);
@@ -372,7 +435,7 @@ namespace OldW.DataManager
                 foreach (var oneDayValues in ml.MonitorData)
                 {
                     // 设置日期属性
-                    EntityInstance = ass.CreateInstance(className);
+                    EntityInstance = monitorDataSet.CreateInstance();
                     dt = oneDayValues.Key;
                     props[0].SetValue(EntityInstance, dt);
 
@@ -390,18 +453,27 @@ namespace OldW.DataManager
                 monitorDataSet.DatagridViewData = bindedList;
 
                 // 刷新DataGridView中的数据集合
-                FillBindingListFromList(bindedList);
+                FillBindingListFromList(bindedList, monitorDataSet);
             }
 
             /// <summary> 将Datagridview的DataSource进行重新绑定，并刷新事件AddingNew事件关联。</summary>
             /// <param name="sourceData"> 用来填充 Datagridview 的数据集合  </param>
-            private void FillBindingListFromList(BindingList<object> sourceData)
+            private void FillBindingListFromList(BindingList<object> sourceData, TableBindedData tbd)
             {
                 // 取消上一个绑定集合的事件关联
                 BindingList<object> bindedData = (BindingList<object>)dataGridViewLine.DataSource;
                 bindedData.AddingNew -= bindedTableData_AddingNew;
 
                 // 绑定新的集合
+                if (sourceData.Count == 0)
+                {
+                    /*  只有在对DataSource属性进行赋值、或者是修改DataGridViewColumn. DataPropertyName时，才会改变表格中数据列的绑定关系。
+                     *  除此之外，对于在BindingList< Object>集合中还没有元素的情况下赋值给DataSource的情况，
+                     *  DataGridView会根据在BindingList.Add()方法（而不是AddNew方法或者AddingNew事件）中添加的第一个元素值（不能是null）的具体类型还创建数据列的绑定关系。
+                     */
+                    sourceData.Add(tbd.CreateInstance());
+                }
+
                 dataGridViewLine.DataSource = sourceData;
                 // 重新关联新的事件
                 sourceData.AddingNew += bindedTableData_AddingNew;
@@ -631,16 +703,48 @@ namespace OldW.DataManager
             /// 绘制图表
             /// </summary>
             /// <param name="data"></param>
-            public Chart_MonitorData DrawData(MonitorData_Line data)
+            public Chart_MonitorData DrawData()
             {
-                Chart_MonitorData Chart1 = new Chart_MonitorData(InstrumentationType.地表隆沉);
+                if (activeInstruId != null)
+                {
+                    //  根据不同的节点数的线测点类型，创建不同的实体类的初始值。
 
-                // var pts = ConvertBindingList(data);
+                    TableBindedData monitorDataSet = OpenedTableSet[activeInstruId];
 
-                // Chart1.Series.Points.DataBind(pts, "Date", "Value", "");
+                    int daysCount = dataGridViewLine.SelectedRows.Count;
+                    if (daysCount == 0)
+                    {
+                        MessageBox.Show("请先选择至少一行监测数据", "提示");
+                        return null;
+                    }
+                    int[] rowIndexes = new int[daysCount];
+                    for (int i = 0; i < daysCount; i++)
+                    {
+                        rowIndexes[i] = dataGridViewLine.SelectedRows[i].Index;
+                    }
 
-                Chart1.Show();
-                return Chart1;
+                    // 所有指定的日期的监测数据
+                    DateTime[] allDate;
+                    float?[][] allData = monitorDataSet.GetMonitorData(rowIndexes, out allDate);
+
+                    // 绘图
+                    Chart_MonitorData Chart1 = new Chart_MonitorData(InstrumentationType.墙体测斜);
+                    // 设置图例
+                    Chart1.Chart.Legends.Clear();
+                    Chart1.Chart.Legends.Add(new Legend("legendd"));
+
+                    // 添加监测曲线
+                    Series s;
+                    for (int i = 0; i < daysCount; i++)
+                    {
+                        s = Chart1.AddLineSeries(allDate[i].ToShortDateString());  // $"系列{i}"
+                        s.Points.DataBindXY(monitorDataSet.Nodes, allData[i]);
+                    }
+
+                    Chart1.Show();
+                    return Chart1;
+                }
+                return null;
             }
 
             #endregion
@@ -668,10 +772,10 @@ namespace OldW.DataManager
                     //  根据不同的节点数的线测点类型，创建不同的实体类的初始值。
 
                     TableBindedData monitorDataSet = OpenedTableSet[activeInstruId];
-                    object entityInstance =
-                        monitorDataSet.Assembly.CreateInstance(NamespaceName + "." + monitorDataSet.EntityName);
+                    object entityInstance = monitorDataSet.CreateInstance();
+
                     e.NewObject = entityInstance;
-                    }
+                }
             }
 
             #endregion

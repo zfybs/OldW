@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 using Autodesk.Revit.DB;
 using OldW.DataManager;
 using OldW.Instrumentations;
@@ -148,7 +149,8 @@ namespace OldW.DataManager
 
                 var pts = ConvertBindingList(bindedTableData);
 
-                Chart1.Series.Points.DataBind(pts, "Date", "Value", "");
+                Series s1= Chart1.AddLineSeries("Series1");
+                s1.Points.DataBind(pts, "Date", "Value", "");
 
                 Chart1.Show();
                 return Chart1;

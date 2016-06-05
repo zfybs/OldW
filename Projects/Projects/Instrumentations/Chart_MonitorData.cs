@@ -3,7 +3,6 @@ using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using OldW.Instrumentations;
 
-
 namespace OldW.DataManager
 {
     public partial class Chart_MonitorData
@@ -17,7 +16,6 @@ namespace OldW.DataManager
         /// <summary> 数据图表 </summary>
         internal Chart Chart;
 
-        internal Series Series;
 
         #endregion
 
@@ -45,12 +43,13 @@ namespace OldW.DataManager
                 case InstrumentationType.墙体测斜:
                     Chart.Size = new Size(400, 650);
                     break;
-
                 case InstrumentationType.地表隆沉:
                     Chart.Size = new Size(650, 400);
                     break;
-
                 case InstrumentationType.支撑轴力:
+                    Chart.Size = new Size(650, 400);
+                    break;
+                case InstrumentationType.立柱隆沉:
                     Chart.Size = new Size(650, 400);
                     break;
             }
@@ -61,9 +60,29 @@ namespace OldW.DataManager
         /// </summary>
         private void SetupChart()
         {
-            this.Series = Chart.Series["Series1"];
+           
+        }
+
+        /// <summary>
+        /// 添加一条监测曲线，并设置曲线的基本样式
+        /// </summary>
+        /// <param name="seriesName"></param>
+        /// <param name="chartAreaName"></param>
+        /// <returns></returns>
+        public Series AddLineSeries(string seriesName, string chartAreaName = "ChartArea1")
+        {
+            Series series1 = new Series();
+            series1.ChartArea = chartAreaName;
+            series1.Name = seriesName;
+            
+            // 格式属性
+            series1.ChartType = SeriesChartType.Line;
+            series1.MarkerStyle = MarkerStyle.Circle;
+
             // 不显示空数据点的默认数值
-            Series.EmptyPointStyle.IsValueShownAsLabel=false;
+            series1.EmptyPointStyle.IsValueShownAsLabel = false;
+            this.Chart.Series.Add(series1);
+            return series1;
         }
 
         #endregion
