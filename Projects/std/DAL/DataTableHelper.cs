@@ -1,20 +1,20 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace OldW.DAL
+namespace stdOldW.DAL
 {
     /// <summary>
     /// 与 DataTable 相关的格式转换等操作
     /// </summary>
     public static class DataTableHelper
     {
+        #region 将实体类集合转换为 DataTable
+
         /// <summary>
         /// 将实体类中所有的非[Browsable(false)]属性转换成DataTable
         /// </summary>
@@ -150,5 +150,75 @@ namespace OldW.DAL
             }
             return p;
         }
+
+        #endregion
+
+        #region 将表格打印为格式化的字符
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="columnName"></param>
+        /// <returns></returns>
+        public static IList<Object> GetValue(DataTable table, string columnName)
+        {
+            List<Object> ls = table.AsEnumerable().Select(r => r[columnName]).ToList();
+            return ls;
+        } 
+        #endregion
+
+        #region 将表格打印为格式化的字符
+
+        /// <summary>
+        /// 将表格打印为格式化的字符
+        /// </summary>
+        /// <param name="table">要打印的表格</param>
+        /// <param name="label">表格的标题</param>
+        /// <returns></returns>
+        public static StringBuilder PrintTableOrView(DataTable table, string label)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            // 标题
+            sb.Append(label + "\n");
+
+            // 列名
+            sb.Append("记录行");
+            foreach (DataColumn col in table.Columns)
+            {
+                sb.Append("\t" + col.ColumnName);
+            }
+            sb.Append("\n");
+
+            // 添加数据
+            for (int i = 0; i < table.Rows.Count; i++)
+            {
+                // 一行数据，手动添加一列“Id”
+                sb.Append(i + 1);
+
+                for (int j = 0; j < table.Columns.Count; j++)
+                {
+                    sb.Append("\t" + table.Rows[i][j].ToString());
+                }
+                sb.Append("\n");
+            }
+            return sb;
+        }
+
+        /// <summary>
+        /// 将表格视图打印为格式化的字符
+        /// </summary>
+        /// <param name="table">要打印的表格视图</param>
+        /// <param name="label">视图的标题</param>
+        /// <returns></returns>
+        public static StringBuilder PrintTableOrView(DataView view, string label)
+        {
+            DataTable table = view.ToTable();
+            return PrintTableOrView(table, label);
+        }
+
+        #endregion
     }
 }

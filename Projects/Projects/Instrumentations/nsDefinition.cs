@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+
 
 namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关的一些接口、枚举等的定义
 {
@@ -9,11 +12,14 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
     /// <remarks>从枚举值返回对应的枚举字符的方法：GlobalSettings.InstrumentationType.沉降测点.ToString</remarks>
     public enum InstrumentationType
     {
-        /// <summary> 并不是任何一种已经识别的测点类型 </summary>
-        其他,
+        /// <summary> 并不是任何一种已经标记或者特殊处理过的点测点类型 </summary>
+        点测点,
+
+        /// <summary> 并不是任何一种已经标记或者特殊处理过的线测点类型 </summary>
+        线测点,
 
         /// <summary> 比如地下连续墙的水平位移 </summary>
-        墙体测斜,
+        测斜,
 
         /// <summary> 比如基坑外地表的垂直位移 </summary>
         地表隆沉,
@@ -65,6 +71,7 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
         public Single[] Nodes { get; set; }
 
         private readonly SortedDictionary<DateTime, float?[]> _monitorData;
+
         /// <summary>
         /// 测斜管在每一天的监测数据。其中，SortedDictionary 中的Value项 为一个数组，
         /// 它代表对应的日期下，Depths中每一个深度处所对应的监测数据值，
@@ -84,6 +91,7 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
             _monitorData = new SortedDictionary<DateTime, float?[]>();
             Nodes = nodes;
         }
+
         /// <summary>
         /// 构造函数
         /// </summary>

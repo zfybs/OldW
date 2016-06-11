@@ -28,7 +28,7 @@ namespace OldW.Instrumentations
         /// <param name="MonitorLine">所有类型的监测管线，包括测斜管，但不包括地表沉降、立柱隆起、支撑轴力等</param>
         /// <param name="Type">监测点的测点类型，也是测点所属的族的名称</param>
         /// <remarks></remarks>
-        public Instrum_Line(FamilyInstance MonitorLine, InstrumentationType Type = InstrumentationType.墙体测斜)
+        public Instrum_Line(FamilyInstance MonitorLine, InstrumentationType Type = InstrumentationType.测斜)
             : base(MonitorLine, Type)
         {
         }
