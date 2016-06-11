@@ -50,6 +50,7 @@ namespace stdOldW.WinFormHelper
         public string DisplayedText
         {
             get { return _DisplayedText; }
+            set { _DisplayedText = value; }
         }
 
         /// <summary>

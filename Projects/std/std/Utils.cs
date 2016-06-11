@@ -35,7 +35,7 @@ namespace stdOldW
         /// <param name="V"></param>
         /// <param name="PropertyName">要读取的属性的名称，注意，此属性不能带参数。</param>
         /// <remarks></remarks>
-        public static void ShowEnumerableP(IEnumerable V, string PropertyName, string Title = "集合中的元素")
+        public static void ShowEnumerableProperty(IEnumerable V, string PropertyName, string Title = "集合中的元素")
         {
             string str = "";
             Type tp = default(Type);
@@ -58,7 +58,7 @@ namespace stdOldW
         /// <param name="V"></param>
         /// <param name="FieldName">要读取的字段的名称。</param>
         /// <remarks></remarks>
-        public static void ShowEnumerableF(IEnumerable V, string FieldName, string Title = "集合中的元素")
+        public static void ShowEnumerableField(IEnumerable V, string FieldName, string Title = "集合中的元素")
         {
             string str = "";
             Type tp = default(Type);

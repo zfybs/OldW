@@ -79,9 +79,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DAL\DataAccess.cs" />
+    <Compile Include="DAL\SqlDataSetHelper.cs" />
     <Compile Include="DAL\DataTableHelper.cs" />
-    <Compile Include="DAL\DBHelper.cs" />
+    <Compile Include="DAL\SqlModelHelper.cs" />
+    <Compile Include="DAL\ExcelDBHelper.cs" />
     <Compile Include="std\AssemblyCompiler.cs" />
     <Compile Include="WinFormHelper\OwnerWindow.cs" />
     <Compile Include="std\ExtensionMethods.cs" />

@@ -25,7 +25,7 @@ namespace OldW.Instrumentations
 
         /// <summary> 构造函数 </summary>
         /// <param name="inclinometerElement">测斜管所对应的图元</param>
-        public Instrum_Incline(FamilyInstance inclinometerElement) : base(inclinometerElement, InstrumentationType.墙体测斜)
+        public Instrum_Incline(FamilyInstance inclinometerElement) : base(inclinometerElement, InstrumentationType.测斜)
         {
         }
 
@@ -78,7 +78,7 @@ namespace OldW.Instrumentations
         /// </summary>
         /// <param name="ptInclinometerBottom">测斜管的底部坐标点</param>
         /// <param name="IsInside">测斜管是否在开挖土体Element的内部</param>
-        /// <param name="Earth">开挖墙体单元</param>
+        /// <param name="Earth">开挖土体单元</param>
         /// <param name="IntersectedEarth">用来搜索相交面的开挖土体</param>
         /// <returns></returns>
         /// <remarks>  如果测斜管就在土体内部，那么测斜管的底部点就可以直接用来向上发射射线了。

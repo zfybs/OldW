@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
+
 
 namespace stdOldW
 {
     public static class ExtensionMethods
     {
         #region "--------Icollection"
+
         /// <summary>
-        /// Adds range of items into collection.
+        /// 将某集合中的元素添加到另一个集合中去
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="collection"></param>
@@ -20,7 +19,7 @@ namespace stdOldW
         {
             if (items == null)
             {
-                System.Diagnostics.Debug.WriteLine("Do extension metody AddRange byly poslany items == null");
+                Debug.WriteLine("Do extension metody AddRange byly poslany items == null");
                 return;
             }
             foreach (var item in items)
@@ -39,6 +38,7 @@ namespace stdOldW
         {
             return (T)(obj as ICloneable).Clone();
         }
+
         #endregion
     }
 }
