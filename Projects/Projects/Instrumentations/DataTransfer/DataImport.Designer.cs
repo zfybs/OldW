@@ -23,15 +23,13 @@ namespace OldW.DataManager
             }
         }
 
-        //Required by the Windows Form Designer
-        private System.ComponentModel.Container components = null;
-
         //NOTE: The following procedure is required by the Windows Form Designer
         //It can be modified using the Windows Form Designer.
         //Do not modify it using the code editor.
         [System.Diagnostics.DebuggerStepThrough()]
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.Label2 = new System.Windows.Forms.Label();
             this.ButtonImport = new System.Windows.Forms.Button();
             this.dataGridViewExcel = new System.Windows.Forms.DataGridView();
@@ -39,6 +37,10 @@ namespace OldW.DataManager
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.buttonMapping = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.buttonCheckMultiple = new System.Windows.Forms.Button();
+            this.buttonUnCheckMultiple = new System.Windows.Forms.Button();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.labelProgress = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewExcel)).BeginInit();
             this.SuspendLayout();
             // 
@@ -60,6 +62,7 @@ namespace OldW.DataManager
             this.ButtonImport.TabIndex = 3;
             this.ButtonImport.Text = "导入 -->";
             this.ButtonImport.UseVisualStyleBackColor = true;
+            this.ButtonImport.Click += new System.EventHandler(this.ButtonImport_Click);
             // 
             // dataGridViewExcel
             // 
@@ -91,7 +94,7 @@ namespace OldW.DataManager
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(416, 21);
             this.textBox1.TabIndex = 6;
-            this.textBox1.Text = "F:\\Software\\Revit\\RevitDevelop\\OldW\\bin\\SQL监测数据.xlsx";
+            this.textBox1.Text = "F:\\Software\\Revit\\RevitDevelop\\OldW\\bin\\OldW监测.xlsx";
             // 
             // buttonMapping
             // 
@@ -111,18 +114,59 @@ namespace OldW.DataManager
             this.progressBar1.Size = new System.Drawing.Size(649, 10);
             this.progressBar1.TabIndex = 7;
             // 
+            // buttonCheckMultiple
+            // 
+            this.buttonCheckMultiple.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCheckMultiple.Location = new System.Drawing.Point(55, 487);
+            this.buttonCheckMultiple.Name = "buttonCheckMultiple";
+            this.buttonCheckMultiple.Size = new System.Drawing.Size(20, 23);
+            this.buttonCheckMultiple.TabIndex = 3;
+            this.buttonCheckMultiple.Text = "√";
+            this.toolTip1.SetToolTip(this.buttonCheckMultiple, "勾选所有表格中选中的数据行");
+            this.buttonCheckMultiple.UseVisualStyleBackColor = true;
+            this.buttonCheckMultiple.Visible = false;
+            this.buttonCheckMultiple.Click += new System.EventHandler(this.buttonCheckMultiple_Click);
+            // 
+            // buttonUnCheckMultiple
+            // 
+            this.buttonUnCheckMultiple.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonUnCheckMultiple.Location = new System.Drawing.Point(75, 487);
+            this.buttonUnCheckMultiple.Name = "buttonUnCheckMultiple";
+            this.buttonUnCheckMultiple.Size = new System.Drawing.Size(20, 23);
+            this.buttonUnCheckMultiple.TabIndex = 3;
+            this.buttonUnCheckMultiple.Text = "×";
+            this.toolTip1.SetToolTip(this.buttonUnCheckMultiple, "取消勾选所有表格中选中的数据行");
+            this.buttonUnCheckMultiple.UseVisualStyleBackColor = true;
+            this.buttonUnCheckMultiple.Visible = false;
+            this.buttonUnCheckMultiple.Click += new System.EventHandler(this.buttonUnCheckMultiple_Click);
+            // 
+            // labelProgress
+            // 
+            this.labelProgress.AutoSize = true;
+            this.labelProgress.Location = new System.Drawing.Point(274, 495);
+            this.labelProgress.Name = "labelProgress";
+            this.labelProgress.Size = new System.Drawing.Size(29, 12);
+            this.labelProgress.TabIndex = 8;
+            this.labelProgress.Text = "100%";
+            this.labelProgress.Visible = false;
+            // 
             // DataImport
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(649, 526);
+            this.Controls.Add(this.labelProgress);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.dataGridViewExcel);
             this.Controls.Add(this.buttonMapping);
             this.Controls.Add(this.buttonChooseFile);
+            this.Controls.Add(this.buttonUnCheckMultiple);
+            this.Controls.Add(this.buttonCheckMultiple);
             this.Controls.Add(this.ButtonImport);
             this.Controls.Add(this.Label2);
+            this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(665, 565);
             this.Name = "DataImport";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "数据导入";
@@ -132,6 +176,7 @@ namespace OldW.DataManager
             this.PerformLayout();
 
         }
+
         internal Label Label2;
         internal Button ButtonImport;
         private DataGridView dataGridViewExcel;
@@ -139,7 +184,11 @@ namespace OldW.DataManager
         private TextBox textBox1;
         internal Button buttonMapping;
         private ProgressBar progressBar1;
-
+        internal Button buttonCheckMultiple;
+        internal Button buttonUnCheckMultiple;
+        private ToolTip toolTip1;
+        private System.ComponentModel.IContainer components;
+        private Label labelProgress;
     }
 
 }

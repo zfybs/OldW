@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.OleDb;
 using System.Runtime.CompilerServices;
 using Autodesk.Revit.DB;
 using OldW.GlobalSettings;
@@ -41,9 +42,6 @@ namespace OldW.Instrumentations
         {
             get { return F_Type; }
         }
-
-        /// <summary> 每一个测点的名称，比如 CX1，LZ2等 </summary>
-        public string Name { get; set; }
 
         #endregion
 
@@ -119,17 +117,36 @@ namespace OldW.Instrumentations
                     {
                         switch (Tp)
                         {
-                            case InstrumentationType.测斜:
-                                Instrus.Add(new Instrum_Incline(fi));
+                            case InstrumentationType.墙体测斜:
+                                Instrus.Add(new Instrum_WallIncline(fi));
                                 break;
-                            case InstrumentationType.支撑轴力:
-                                Instrus.Add(new Instrum_StrutAxialForce(fi));
+                            case InstrumentationType.土体测斜:
+                                Instrus.Add(new Instrum_Line(fi, InstrumentationType.土体测斜));
                                 break;
+
+                            case InstrumentationType.墙顶位移:
+                                Instrus.Add(new Instrum_WallTop(fi));
+                                break;
+
                             case InstrumentationType.地表隆沉:
                                 Instrus.Add(new Instrum_GroundSettlement(fi));
                                 break;
                             case InstrumentationType.立柱隆沉:
                                 Instrus.Add(new Instrum_ColumnHeave(fi));
+                                break;
+
+                            case InstrumentationType.支撑轴力:
+                                Instrus.Add(new Instrum_StrutAxialForce(fi));
+                                break;
+                            case InstrumentationType.水位:
+                                Instrus.Add(new Instrum_Point(fi, InstrumentationType.水位));
+                                break;
+
+                            case InstrumentationType.其他线测点:
+                                Instrus.Add(new Instrum_Line(fi, InstrumentationType.其他线测点));
+                                break;
+                            case InstrumentationType.其他点测点:
+                                Instrus.Add(new Instrum_Point(fi, InstrumentationType.其他点测点));
                                 break;
                         }
 
@@ -184,6 +201,17 @@ namespace OldW.Instrumentations
             Parameter para = Monitor.get_Parameter(Constants.SP_MonitorData_Guid);
             para.Set(dataString);
         }
+
+        #endregion
+
+        #region   ---   与Excel数据库的数据交互
+
+        /// <summary> 从Excel中导入监测数据 </summary>
+        /// <param name="tran"> 已经start的Revit事务 </param>
+        /// <param name="conn">连接到Excel工作簿</param>
+        /// <param name="sheetName">监测数据所在的Excel工作表，表名称中应该包含后缀$ </param>
+        /// <param name="fieldName">监测数据在工作表中的哪个字段下。对于线测点，其fieldName是不必要的。</param>
+        public abstract void ImportFromExcel(Transaction tran, OleDbConnection conn, string sheetName, string fieldName);
 
         #endregion
     }

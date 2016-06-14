@@ -43,7 +43,7 @@ namespace OldW
 
     public class AppAddRibbonTab : IExternalApplication
     {
-      #region   ---  文件路径
+        #region   ---  文件路径
 
         /// <summary> Application的Dll所对应的路径，也就是“bin”文件夹的目录。 </summary>
         private string Path_Dlls;
@@ -64,8 +64,8 @@ namespace OldW
         /// <summary> 本程序集的Dll的名称 </summary>
         private const string Dll_RibbonTab = "OldWRibbonTab.dll";
 
-        #endregion 
-        
+        #endregion
+
         /// <summary>
         ///  构造函数
         /// </summary>
@@ -74,7 +74,6 @@ namespace OldW
             Path_Dlls = (new Microsoft.VisualBasic.ApplicationServices.ConsoleApplicationBase()).Info.DirectoryPath;
             Path_icons = Path.Combine(new DirectoryInfo(Path_Dlls).Parent.FullName, "Resources\\icons");
         }
-
 
         /// <summary> Ribbon界面设计 </summary>
         public Result OnStartup(UIControlledApplication application)
@@ -87,7 +86,7 @@ namespace OldW
             RibbonPanel ribbonPanelModeling = application.CreateRibbonPanel(tabName, "开挖");
             AddPushButtonExcavation(ribbonPanelModeling);
             AddPushButtonExcavationInfo(ribbonPanelModeling);
-            
+
             // 监测数据面板
             RibbonPanel ribbonPanelData = application.CreateRibbonPanel(tabName, "监测");
             AddSplitButtonModeling(ribbonPanelData);
@@ -128,22 +127,54 @@ namespace OldW
         {
             // 创建一个SplitButton
             SplitButtonData splitButtonData = new SplitButtonData("ModelingMonitor", "监测建模");
-            SplitButton splitButton = panel.AddItem(splitButtonData) as SplitButton;
+            SplitButton splitButton = (SplitButton)panel.AddItem(splitButtonData);
+            PushButton pushButton = null;
 
-            // 创建一个沉降pushButton加到SplitButton的下拉列表里
-            PushButton pushButton = splitButton.AddPushButton(new PushButtonData("ModelingSettlement", "沉降", Path.Combine(Path_Dlls, Dll_Projects), "OldW.Commands.cmd_SetFamilySettlement"));
-            pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "MonitorSet_32.png"))); //36*36的大小
-            pushButton.ToolTip = "放置沉降测点模型";
-
-            // 创建一个轴力pushButton加到SplitButton的下拉列表里
-            pushButton = splitButton.AddPushButton(new PushButtonData("ModelingForce", "轴力", Path.Combine(Path_Dlls, Dll_Projects), "OldW.Commands.cmd_SetFamilyForce"));
-            pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "MonitorForce_32.png"))); //36*36的大小
-            pushButton.ToolTip = "放置轴力测点模型";
-
-            // 创建一个测斜pushButton加到SplitButton的下拉列表里
-            pushButton = splitButton.AddPushButton(new PushButtonData("ModelingIncli", "测斜", Path.Combine(Path_Dlls, Dll_Projects), "OldW.Commands.cmd_SetFamilyIncli"));
+            // 1、创建一个测斜pushButton加到SplitButton的下拉列表里
+            pushButton = splitButton.AddPushButton(new PushButtonData("WallIncline", "墙体测斜", Path.Combine(Path_Dlls, Dll_Projects), "OldW.Commands.cmd_PlaceWallIncline"));
             pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "MonitorIncli_32.png"))); //36*36的大小
-            pushButton.ToolTip = "放置测斜测点模型";
+            pushButton.ToolTip = "墙体测斜";
+
+            // 2、创建一个测斜pushButton加到SplitButton的下拉列表里
+            pushButton = splitButton.AddPushButton(new PushButtonData("SoilIncline", "土体测斜", Path.Combine(Path_Dlls, Dll_Projects), "OldW.Commands.cmd_PlaceSoilIncline"));
+            pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "MonitorIncli_32.png"))); //36*36的大小
+            pushButton.ToolTip = "土体测斜";
+
+            // 3、创建一个测斜pushButton加到SplitButton的下拉列表里
+            pushButton = splitButton.AddPushButton(new PushButtonData("WallTop", "墙顶位移", Path.Combine(Path_Dlls, Dll_Projects), "OldW.Commands.cmd_PlaceWallTop"));
+            pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "WallTop_32.png"))); //36*36的大小
+            pushButton.ToolTip = "墙顶位移";
+
+            // 4、创建一个沉降pushButton加到SplitButton的下拉列表里
+            pushButton = splitButton.AddPushButton(new PushButtonData("GroundSettlement", "地表隆沉", Path.Combine(Path_Dlls, Dll_Projects), "OldW.Commands.cmd_PlaceGroundSettlement"));
+            pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "GroundSettlement_32.png"))); //36*36的大小
+            pushButton.ToolTip = "地表隆沉";
+
+            // 5、创建一个测斜pushButton加到SplitButton的下拉列表里
+            pushButton = splitButton.AddPushButton(new PushButtonData("ColumnHeave", "立柱隆沉", Path.Combine(Path_Dlls, Dll_Projects), "OldW.Commands.cmd_PlaceColumnHeave"));
+            pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "ColumnHeave_32.png"))); //36*36的大小
+            pushButton.ToolTip = "立柱隆沉";
+
+            // 6、创建一个轴力pushButton加到SplitButton的下拉列表里
+            pushButton = splitButton.AddPushButton(new PushButtonData("StrutForce", "支撑轴力", Path.Combine(Path_Dlls, Dll_Projects), "OldW.Commands.cmd_PlaceStrutForce"));
+            pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "StrutForce_32.png"))); //36*36的大小
+            pushButton.ToolTip = "支撑轴力";
+
+            // 7、创建一个测斜pushButton加到SplitButton的下拉列表里
+            pushButton = splitButton.AddPushButton(new PushButtonData("WaterTable", "水位", Path.Combine(Path_Dlls, Dll_Projects), "OldW.Commands.cmd_PlaceWaterTable"));
+            pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "WaterTable_32.png"))); //36*36的大小
+            pushButton.ToolTip = "水位";
+
+            // 8、创建一个测斜pushButton加到SplitButton的下拉列表里
+            pushButton = splitButton.AddPushButton(new PushButtonData("OtherPoint", "其他点测点", Path.Combine(Path_Dlls, Dll_Projects), "OldW.Commands.cmd_PlaceOtherPoint"));
+            pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "OtherPoint_32.png"))); //36*36的大小
+            pushButton.ToolTip = "其他点测点";
+
+            // 9、创建一个测斜pushButton加到SplitButton的下拉列表里
+            pushButton = splitButton.AddPushButton(new PushButtonData("OtherLine", "其他线测点", Path.Combine(Path_Dlls, Dll_Projects), "OldW.Commands.cmd_PlaceOtherLine"));
+            pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "MonitorIncli_32.png"))); //36*36的大小
+            pushButton.ToolTip = "其他线测点";
+            
         }
 
 
@@ -195,6 +226,38 @@ namespace OldW
 
         #endregion 
 
+        #region   ---  基坑开挖
+
+        /// <summary> 添加“开挖”的按钮 </summary>
+        private void AddPushButtonExcavation(RibbonPanel panel)
+        {
+            // Create a new push button
+            PushButton pushButton = panel.AddItem(new PushButtonData("Excavation", "开挖", Path.Combine(Path_Dlls, Dll_Projects), "OldW.Commands.cmd_Excavation")) as PushButton;
+            // Set ToolTip
+            pushButton.ToolTip = "基坑开挖与回筑";
+            // Set Contextual help
+            ContextualHelp contextHelp = new ContextualHelp(ContextualHelpType.Url, "http://www.autodesk.com");
+            pushButton.SetContextualHelp(contextHelp);
+            // Set Icon
+            pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "Excavation-32.png"))); // "Excavation-32.png"
+
+        }
+
+        /// <summary> 添加“开挖信息”的按钮 </summary>
+        private void AddPushButtonExcavationInfo(RibbonPanel panel)
+        {
+            // Create a new push button
+            PushButton pushButton = panel.AddItem(new PushButtonData("ExcavationInfo", "开挖信息", Path.Combine(Path_Dlls, Dll_Projects), "OldW.Commands.cmd_ExcavationInfo")) as PushButton;
+            pushButton.ToolTip = "提取模型中的基坑开挖模型土体与开挖土体的信息。";
+            // Set Contextual help
+            ContextualHelp contextHelp = new ContextualHelp(ContextualHelpType.Url, "http://www.autodesk.com");
+            pushButton.SetContextualHelp(contextHelp);
+            // Set Icon
+            pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "ExcavationInfo-32.png"))); // "Excavation-32.png"
+
+        }
+
+        #endregion 
         #region   ---  警戒与分析
 
         /// <summary> 添加“警戒值设定”的按钮 </summary>
@@ -228,34 +291,6 @@ namespace OldW
 
         #endregion 
 
-        /// <summary> 添加“开挖”的按钮 </summary>
-        private void AddPushButtonExcavation(RibbonPanel panel)
-        {
-            // Create a new push button
-            PushButton pushButton = panel.AddItem(new PushButtonData("Excavation", "开挖", Path.Combine(Path_Dlls, Dll_Projects), "OldW.Commands.cmd_Excavation")) as PushButton;
-            // Set ToolTip
-            pushButton.ToolTip = "基坑开挖与回筑";
-            // Set Contextual help
-            ContextualHelp contextHelp = new ContextualHelp(ContextualHelpType.Url, "http://www.autodesk.com");
-            pushButton.SetContextualHelp(contextHelp);
-            // Set Icon
-            pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "Excavation-32.png"))); // "Excavation-32.png"
-
-        }
-
-        /// <summary> 添加“开挖信息”的按钮 </summary>
-        private void AddPushButtonExcavationInfo(RibbonPanel panel)
-        {
-            // Create a new push button
-            PushButton pushButton = panel.AddItem(new PushButtonData("ExcavationInfo", "开挖信息", Path.Combine(Path_Dlls, Dll_Projects), "OldW.Commands.cmd_ExcavationInfo")) as PushButton;
-            pushButton.ToolTip = "提取模型中的基坑开挖模型土体与开挖土体的信息。";
-            // Set Contextual help
-            ContextualHelp contextHelp = new ContextualHelp(ContextualHelpType.Url, "http://www.autodesk.com");
-            pushButton.SetContextualHelp(contextHelp);
-            // Set Icon
-            pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "ExcavationInfo-32.png"))); // "Excavation-32.png"
-
-        }
 
         /// <summary> 添加“当前时间”的文本框 </summary>
         private void AddTextBoxCurrentDate(RibbonPanel panel)
@@ -305,5 +340,4 @@ namespace OldW
 
         #endregion
     }
-
 }

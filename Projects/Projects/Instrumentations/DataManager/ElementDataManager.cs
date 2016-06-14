@@ -44,7 +44,7 @@ namespace OldW.DataManager
         private Instrumentation _activeInstru;
 
         /// <summary> 进入测点监测数据管理窗口时，所有选择的测点 </summary>
-        private InstrumDoc.InstrumCollector selectedInstrum;
+        private InstrumCollector selectedInstrum;
 
         #endregion
 
@@ -73,7 +73,7 @@ namespace OldW.DataManager
             Dgv_Line = new DgvLine(document.Document, DataGridView_LineMonitor);
             // --------------------------------
             // 根据不同的选择情况来进行不同的初始化
-            selectedInstrum = new InstrumDoc.InstrumCollector(eleIdCollection);
+            selectedInstrum = new InstrumCollector(eleIdCollection);
 
             InitializeUI(selectedInstrum);
         }
@@ -82,7 +82,7 @@ namespace OldW.DataManager
         /// 根据不同的选择情况来进行不同的初始化
         ///  </summary>
         /// <param name="AllselectedInstrum"></param>
-        private void InitializeUI(InstrumDoc.InstrumCollector AllselectedInstrum)
+        private void InitializeUI(InstrumCollector AllselectedInstrum)
         {
             // 复选框的启用与否
             checkBox_columnheave.Enabled = AllselectedInstrum.ColumnHeave.Count != 0;
@@ -167,11 +167,13 @@ namespace OldW.DataManager
             {
                 case MonitorMode.MonitorPoint:
                     {
-                        List<Instrum_Point> points;
-                        points = selectedInstrum.GetPointMonitors(checkBox_columnheave.Checked,
-                            checkBox_groundsettlement.Checked,
-                            checkBox_strutaxisforce.Checked);
-
+                        // 选择要进行提取的监测类型
+                        InstrumentationType tp = InstrumentationType.未指定;
+                        tp = checkBox_columnheave.Checked ? tp | InstrumentationType.立柱隆沉 : tp;
+                        tp = checkBox_groundsettlement.Checked ? tp | InstrumentationType.地表隆沉 : tp;
+                        tp = checkBox_strutaxisforce.Checked ? tp | InstrumentationType.支撑轴力 : tp;
+                        //
+                        var points = selectedInstrum.GetPointMonitors(tp);
                         // 切换 Datagridview
                         ShiftToPoint();
 
@@ -180,8 +182,11 @@ namespace OldW.DataManager
                     }
                 case MonitorMode.MonitorLine:
                     {
-                        List<Instrum_Line> lines;
-                        lines = selectedInstrum.GetLineMonitors(checkBox_incline.Checked);
+                        // 选择要进行提取的监测类型
+                        InstrumentationType tp = InstrumentationType.未指定;
+                        tp = checkBox_incline.Checked ? tp | InstrumentationType.墙体测斜 : tp;
+                        //
+                        List<Instrum_Line> lines = selectedInstrum.GetLineMonitors(tp);
 
                         // 切换 Datagridview
                         ShiftToLine();

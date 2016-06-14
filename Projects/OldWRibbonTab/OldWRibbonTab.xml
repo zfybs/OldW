@@ -39,17 +39,17 @@
         <member name="M:OldW.AppAddRibbonTab.AddPushButtonDataExport(Autodesk.Revit.UI.RibbonPanel)">
             <summary> 添加“数据导出”的按钮 </summary>
         </member>
-        <member name="M:OldW.AppAddRibbonTab.AddPushButtonSetWarning(Autodesk.Revit.UI.RibbonPanel)">
-            <summary> 添加“警戒值设定”的按钮 </summary>
-        </member>
-        <member name="M:OldW.AppAddRibbonTab.AddPushButtonAnalysis(Autodesk.Revit.UI.RibbonPanel)">
-            <summary> 添加“分析”的按钮 </summary>
-        </member>
         <member name="M:OldW.AppAddRibbonTab.AddPushButtonExcavation(Autodesk.Revit.UI.RibbonPanel)">
             <summary> 添加“开挖”的按钮 </summary>
         </member>
         <member name="M:OldW.AppAddRibbonTab.AddPushButtonExcavationInfo(Autodesk.Revit.UI.RibbonPanel)">
             <summary> 添加“开挖信息”的按钮 </summary>
+        </member>
+        <member name="M:OldW.AppAddRibbonTab.AddPushButtonSetWarning(Autodesk.Revit.UI.RibbonPanel)">
+            <summary> 添加“警戒值设定”的按钮 </summary>
+        </member>
+        <member name="M:OldW.AppAddRibbonTab.AddPushButtonAnalysis(Autodesk.Revit.UI.RibbonPanel)">
+            <summary> 添加“分析”的按钮 </summary>
         </member>
         <member name="M:OldW.AppAddRibbonTab.AddTextBoxCurrentDate(Autodesk.Revit.UI.RibbonPanel)">
             <summary> 添加“当前时间”的文本框 </summary>

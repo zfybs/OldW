@@ -19,7 +19,7 @@ namespace OldW.Commands
             Document doc = uiApp.ActiveUIDocument.Document;
             //
             Element inclineEle = doc.GetElement(new ElementId(460115));
-            Instrum_Incline Incline = new Instrum_Incline((FamilyInstance) inclineEle);
+            Instrum_WallIncline Incline = new Instrum_WallIncline((FamilyInstance) inclineEle);
             //
             FamilyInstance eleEarht = (FamilyInstance) doc.GetElement(new ElementId(460116));
             ExcavationDoc exca = new ExcavationDoc(WDoc);

@@ -135,6 +135,9 @@
             <returns>测点元素中表示监测数据的共享参数的Guid值。</returns>
             <remarks>如果要用扩展方法，请加上标签：System.Runtime.CompilerServices.Extension() </remarks>
         </member>
+        <member name="F:OldW.GlobalSettings.Constants.ExcelDatabasePrimaryKeyName">
+            <summary>  Excel数据库中，每一个工作表的第一个字段名称，即主键名称必须是中文“时间” </summary>
+        </member>
         <member name="M:OldW.GlobalSettings.Operations.DeActivateControls(Autodesk.Revit.UI.UIApplication)">
             <summary>
             将程序插件中的所有面板禁用

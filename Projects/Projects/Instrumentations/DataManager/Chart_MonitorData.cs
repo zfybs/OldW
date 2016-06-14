@@ -42,7 +42,7 @@ namespace OldW.DataManager
             Chart.Size = new Size(650, 400);  //  一般情况下的窗口尺寸
             switch (Type) // 对于不同的监测数据类型，设置不同的图表格式
             {
-                case InstrumentationType.测斜:
+                case InstrumentationType.墙体测斜:
                     Chart.Size = new Size(400, 650);
                     break;
             }

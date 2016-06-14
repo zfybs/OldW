@@ -199,7 +199,7 @@
         </member>
         <member name="M:stdOldW.DAL.ExcelDbHelper.GetFieldNames(System.Data.OleDb.OleDbConnection,System.String)">
             <summary>
-            获取指定工作表中所有字段的名称
+            获取指定工作表中所有字段的名称，包括主键
             </summary>
             <param name="conn"></param>
             <param name="tableName"> 要在哪一个工作表中提取字段信息，表名的格式为“Sheet1$”</param>
@@ -207,40 +207,43 @@
         </member>
         <member name="M:stdOldW.DAL.ExcelDbHelper.GetFieldDataType(System.Data.OleDb.OleDbConnection,System.String)">
             <summary>
-            获取指定工作表中所有字段的名称
+            获取指定工作表中所有字段的数据类型。
             </summary>
             <param name="conn"></param>
             <param name="tableName"> 要在哪一个工作表中提取字段信息，表名的格式为“Sheet1$”</param>
+            <remarks>Excel中字段的数据类型是以数字来表示的，其中：时间=7；</remarks>
+        </member>
+        <member name="M:stdOldW.DAL.ExcelDbHelper.GetDataFromSheet(System.Data.OleDb.OleDbConnection,System.String)">
+            <summary>
+            读取Excel整张工作表中的所有字段的数据
+            </summary>
+            <param name="conn">OleDB的数据连接</param>
+            <param name="sheetName">要读取的数据所在的工作表，名称中请自行包括后缀$</param>
+            <returns></returns>
             <remarks></remarks>
         </member>
-        <member name="M:stdOldW.DAL.ExcelDbHelper.GetDataSet(System.Data.OleDb.OleDbConnection,System.String)">
-            <summary> 执行有参SQL语句，返回DataTable </summary>
-            <param name="conn"></param>
-            <param name="safeSql">数据查询语句，比如“ Selete * From [Sheet1$] ”</param>
-            <returns> DataAdapter.Fill得到的DataSet中的第一个DataTable </returns>
-        </member>
-        <member name="M:stdOldW.DAL.ExcelDbHelper.GetDataFromExcel(System.Data.OleDb.OleDbConnection,System.String,System.String)">
+        <member name="M:stdOldW.DAL.ExcelDbHelper.GetFieldDataFromExcel(System.Data.OleDb.OleDbConnection,System.String,System.String)">
             <summary>
             读取Excel工作表中的某一个字段数据
             </summary>
             <param name="conn">OleDB的数据连接</param>
-            <param name="SheetName">要读取的数据所在的工作表</param>
+            <param name="SheetName">要读取的数据所在的工作表，名称中请自行包括后缀$</param>
             <param name="FieldName">在读取的字段</param>
             <returns></returns>
             <remarks></remarks>
         </member>
-        <member name="M:stdOldW.DAL.ExcelDbHelper.GetDataFromExcel``1(System.Data.OleDb.OleDbConnection,System.String,System.String)">
+        <member name="M:stdOldW.DAL.ExcelDbHelper.GetFieldDataFromExcel``1(System.Data.OleDb.OleDbConnection,System.String,System.String)">
             <summary>
             读取Excel工作表中的某一个字段数据
             </summary>
             <param name="conn">OleDB的数据连接</param>
-            <param name="SheetName">要读取的数据所在的工作表</param>
+            <param name="SheetName">要读取的数据所在的工作表，名称中请自行包括后缀$</param>
             <param name="FieldName">在读取的字段</param>
             <typeparam name="T">要提取的字段的数据类型，比如设置为 double? 等可空类型 </typeparam>
             <returns></returns>
             <remarks></remarks>
         </member>
-        <member name="M:stdOldW.DAL.ExcelDbHelper.GetDataFromExcel(System.Data.OleDb.OleDbConnection,System.String,System.String[])">
+        <member name="M:stdOldW.DAL.ExcelDbHelper.GetFieldDataFromExcel(System.Data.OleDb.OleDbConnection,System.String,System.String[])">
             <summary>
             读取Excel工作簿中的多个字段的数据
             </summary>
@@ -249,6 +252,12 @@
             <param name="FieldNames">在读取的每一个字段的名称</param>
             <returns></returns>
             <remarks></remarks>
+        </member>
+        <member name="M:stdOldW.DAL.ExcelDbHelper.GetDataSet(System.Data.OleDb.OleDbConnection,System.String)">
+            <summary> 执行有参SQL语句，返回DataTable </summary>
+            <param name="conn"></param>
+            <param name="safeSql">数据查询语句，比如“ Selete * From [Sheet1$] ”</param>
+            <returns> DataAdapter.Fill得到的DataSet中的第一个DataTable </returns>
         </member>
         <member name="M:stdOldW.DAL.ExcelDbHelper.InsertDataTable(System.Data.OleDb.OleDbConnection,System.Data.DataTable,System.String)">
             <summary>
@@ -511,6 +520,38 @@
              keybd_event(115, 0, KEYEVENTF_KEYUP, 0);
              keybd_event(18, 0, KEYEVENTF_KEYUP, 0);
             </remarks>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.WindowsUtil.mouse_event(stdOldW.WinFormHelper.WindowsUtil.MouseOperation,System.UInt32,System.UInt32,System.UInt32,System.UInt32)">
+            <summary> 发送鼠标消息 </summary>
+            <param name="dwFlags"> (位编码)要如何操作鼠标。如果不指定 MOUSEEVENTF_ABSOLUTE，则是相对于当前的鼠标位置。 </param>
+            <param name="dx">根据MOUSEEVENTF_ABSOLUTE标志，指定x，y方向的绝对位置或相对位置 </param>
+            <param name="dy">根据MOUSEEVENTF_ABSOLUTE标志，指定x，y方向的绝对位置或相对位置 </param>
+            <param name="dwData">没有使用，直接赋值为0 </param>
+            <param name="dwExtraInfo">没有使用，直接赋值为0 </param>
+        </member>
+        <member name="F:stdOldW.WinFormHelper.WindowsUtil.MouseOperation.MouseEventF_Move">
+            <Summary> 移动鼠标 </Summary>
+        </member>
+        <member name="F:stdOldW.WinFormHelper.WindowsUtil.MouseOperation.MouseEventF_LeftDown">
+            <Summary> 模拟鼠标左键按下 </Summary>
+        </member>
+        <member name="F:stdOldW.WinFormHelper.WindowsUtil.MouseOperation.MouseEventF_LeftUp">
+            <Summary> 模拟鼠标左键抬起 </Summary>
+        </member>
+        <member name="F:stdOldW.WinFormHelper.WindowsUtil.MouseOperation.MouseEventF_RightDown">
+            <Summary> 模拟鼠标右键按下 </Summary>
+        </member>
+        <member name="F:stdOldW.WinFormHelper.WindowsUtil.MouseOperation.MouseEventF_RightUp">
+            <Summary> 模拟鼠标右键抬起 </Summary>
+        </member>
+        <member name="F:stdOldW.WinFormHelper.WindowsUtil.MouseOperation.MouseEventF_MiddleDown">
+            <Summary> 模拟鼠标中键按下 </Summary>
+        </member>
+        <member name="F:stdOldW.WinFormHelper.WindowsUtil.MouseOperation.MouseEventF_MiddleUp">
+            <Summary> 模拟鼠标中键抬起 </Summary>
+        </member>
+        <member name="F:stdOldW.WinFormHelper.WindowsUtil.MouseOperation.MouseEventF_Absolute">
+            <Summary> 标示是否采用绝对坐标 </Summary>
         </member>
         <member name="M:stdOldW.ExtensionMethods.AddRange``1(System.Collections.Generic.ICollection{``0},System.Collections.Generic.IEnumerable{``0})">
             <summary>

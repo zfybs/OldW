@@ -728,7 +728,7 @@ namespace OldW.DataManager
                     float?[][] allData = monitorDataSet.GetMonitorData(rowIndexes, out allDate);
 
                     // 绘图
-                    Chart_MonitorData Chart1 = new Chart_MonitorData(InstrumentationType.测斜);
+                    Chart_MonitorData Chart1 = new Chart_MonitorData(InstrumentationType.墙体测斜);
                     // 设置图例
                     Chart1.Chart.Legends.Clear();
                     Chart1.Chart.Legends.Add(new Legend("图例"));

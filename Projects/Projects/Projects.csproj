@@ -101,8 +101,12 @@
     <Compile Include="Instrumentations\DataManager\FormReNameElement.Designer.cs">
       <DependentUpon>FormReNameElement.cs</DependentUpon>
     </Compile>
-    <Compile Include="Instrumentations\nsDefinition.cs" />
+    <Compile Include="Instrumentations\DataTransfer\DataImport_MonitorEntityExcel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Instrumentations\InstrumService.cs" />
     <Compile Include="Instrumentations\InstrumDoc.cs" />
+    <Compile Include="Instrumentations\Instrum_WallTop.cs" />
     <Compile Include="SafetyWarnings\Analysis.cs" />
     <Compile Include="Commands\cmds_Analyses.cs" />
     <Compile Include="Commands\cmds_Excavation.cs" />
