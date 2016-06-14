@@ -9,26 +9,548 @@
             激活本DLL所引用的那些DLLs
             </summary>
         </member>
+        <member name="T:OldW.DataManager.ElementDataManager">
+            <summary>
+            模型中的测点的监测数据的添加，删除，导入导出等
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="T:OldW.DataManager.ElementDataManager.DgvLine.TableBindedData">
+            <summary>
+            与一个线测点相关的所有数据，包括测点信息，所有的监测数据，以及对应表格实体类的信息
+            </summary>
+        </member>
+        <member name="F:OldW.DataManager.ElementDataManager.DgvLine.TableBindedData.Monitor">
+            <summary> 线测点对象 </summary>
+        </member>
+        <member name="F:OldW.DataManager.ElementDataManager.DgvLine.TableBindedData.Assembly">
+            <summary> 此线测点的实体类所对应的程序集 </summary>
+        </member>
+        <member name="F:OldW.DataManager.ElementDataManager.DgvLine.TableBindedData.DatagridViewData">
+            <summary>
+            在DataGridView中记录的监测数据，这些数据并不一定完全符合监测数据实体类的数据格式，
+            只是存储下来以供后面再次切换到此测点时可以直接将数据恢复到Datagridview中，
+            而不用每一次都去构造对应的实体类并且为每一天的实例数据赋值。
+            </summary>
+        </member>
+        <member name="F:OldW.DataManager.ElementDataManager.DgvLine.TableBindedData.Nodes">
+            <summary>
+            此测点的节点数据。如果在DataGridView中修改了一个测点的节点信息，则其最新的节点数据会体现在这里。
+            </summary>
+        </member>
+        <member name="F:OldW.DataManager.ElementDataManager.DgvLine.TableBindedData.EntityName">
+            <summary> Datagridview 所绑定 表示线测点监测数据的实体类的名称，其所在的命名空间保存在常数 <see cref="F:OldW.DataManager.ElementDataManager.DgvLine.NamespaceName"/> 中</summary>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.TableBindedData.#ctor(OldW.Instrumentations.Instrum_Line,System.Reflection.Assembly,System.String)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="monitor"></param>
+            <param name="assemblyData"></param>
+            <param name="entityName"> 实体类的名称 </param>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.TableBindedData.GetEntityClass">
+            <summary>
+            返回此测点所对应的实体类
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.TableBindedData.GetMonitorData(System.Int32[],System.DateTime[]@)">
+            <summary>
+            返回指定数据行的监测数据
+            </summary>
+            <param name="rowIndexes"> 要提取的数据在BindingList中的行号
+            （正常情况下其值应该与Datagridview中的行号相同，但是如果出现不同，以Bindinglist为准） </param>
+            <param name="date"> 指定行中所对应的时间数据 </param>
+            <returns> 指定行中所对应的监测数据 </returns>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.TableBindedData.CreateInstance">
+            <summary>
+            生成一个实体类的实例对象
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="F:OldW.DataManager.ElementDataManager.DgvLine.CompiledAssemlies">
+            <summary>
+            已经编译好的实体类对象
+            </summary>
+        </member>
+        <member name="F:OldW.DataManager.ElementDataManager.DgvLine.activeInstruId">
+            <summary> 表格中当前处理的那个测点。在为此属性赋值的过程中，会执行相关的刷新操作 </summary>
+        </member>
+        <member name="F:OldW.DataManager.ElementDataManager.DgvLine.OpenedTableSet">
+            <summary>
+            当前以经打开并且提取过监测数据的线测点对象。
+            </summary>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.#ctor(Autodesk.Revit.DB.Document,stdOldW.WinFormHelper.eZDataGridViewPaste)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="doc"></param>
+            <param name="dataGridViewLine"></param>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.ConstructDataGridView">
+            <summary>
+            创建 DataGridView 为点测点监测数据类型
+            </summary>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.ShiftToNewElement(OldW.Instrumentations.Instrum_Line)">
+            <summary> 与表格数据进行绑定的点测点监测数据集合 </summary>
+            <summary>
+            切换到新的线监测点
+            </summary>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.ChangeNodes">
+            <summary>
+            设置当前活动节点的数据
+            </summary>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.SaveTableToElement">
+            <summary>
+            将表格中的数据保存到Element的对应参数中。
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.InitialMonitorLine(OldW.Instrumentations.Instrum_Line)">
+            <summary>
+            对于还没有打开过的element，将其在 Datagridview 中打开，同时初始化相应的 TableBindedData 数据。
+            </summary>
+            <param name="ele"></param>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.RefreshNodes(System.Single[])">
+            <summary>
+            为指定的单元设置新的节点信息，并同时刷新 Datagridview 控件中的数据
+            </summary>
+            <param name="ele"></param>
+            <param name="newNodes"> 节点修改前后，重新绑定数据集合与界面的刷新 </param>
+            <remarks> 当节点信息改变后，有以下几种情况：
+             1、 如果节点数目没有变，则 DataSource 不用变，只需要修改表格的表头文字而已
+             2、 如果节点数目发生了变化，则 DataSource 所绑定的集合中的泛型将要发生改变，此时需要重新构造BindingList集合，并且将原来的数据行转换到新的集合中去。</remarks>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.ConvertBindingList(OldW.DataManager.ElementDataManager.DgvLine.TableBindedData)">
+            <summary> 将 DataGridView 控件中绑定的数据集合转换为实体类 <see cref="T:OldW.Instrumentations.MonitorData_Point"/> 的集合。 </summary>
+            <remarks> BindingList 中的元素如果有测点的监测日期为null，则进行剔除。</remarks>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.FillBindingListFromParameter(OldW.DataManager.ElementDataManager.DgvLine.TableBindedData)">
+            <summary> 将指定单元中的监测数据参数中的监测数据提取出来并 填充到 BindingList 集合中。</summary>
+            <param name="monitorDataSet"> 某线测点的监测数据 </param>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.FillBindingListFromList(System.ComponentModel.BindingList{System.Object},OldW.DataManager.ElementDataManager.DgvLine.TableBindedData)">
+            <summary> 将Datagridview的DataSource进行重新绑定，并刷新事件AddingNew事件关联。</summary>
+            <param name="sourceData"> 用来填充 Datagridview 的数据集合  </param>
+        </member>
+        <member name="F:OldW.DataManager.ElementDataManager.DgvLine.NamespaceName">
+            <summary> Datagridview 所绑定 表示线测点监测数据的实体类所在的命名空间的名称</summary>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.GetEntityAssembly(System.Int32,System.String@)">
+            <summary> 返回指定节点数据所对应的实体类 </summary>
+            <param name="nodesCount"> 如果nodesCount的值为0，则返回的实体类中只有一个属性“Date”</param>
+            <param name="entityName"> 编译的实体类的名称，即“Nodes_3” </param>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.ChangeColumns(System.Int32,System.Single[])">
+            <summary>
+            修改表格的列数。表格中的第一列始终是日期列，这一列是永远不会被删除的。
+            </summary>
+            <param name="nodesCount"> 新表格中有多少个节点 </param>
+            <param name="nodes"> 可选参数，表示每一个节点的位置，用来显示在表格的表头处。 </param>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.CompileEntity(System.String,System.Int32)">
+            <summary> 编译对应的实体类的Dll </summary>
+            <param name="EntityName">实体类的名称。此实体类会被放置在OldW.LineMonitorEntity命名空间下。
+            对应的dll文件的名称为“EntityName + ".dll" ”。</param>
+            <param name="nodesCount">此类中的属性个数，即线测点中的节点个数。</param>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.ConstructEntityByNodes(System.String,System.Int32)">
+            <summary>
+            示例代码：生成CodeDOM图，这一步是最复杂的部分，后面生成代码与编译都是以这里的东西为蓝本
+            </summary>
+            <returns>此函数仅为示例，并不在此类中执行。外部代码可以参数本函数来创建出对应的 CodeCompileUnit 源代码结构 </returns>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.DrawData">
+            <summary>
+            绘制图表
+            </summary>
+            <param name="data"></param>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.MyDataGridView1_DataError(System.Object,System.Windows.Forms.DataGridViewDataErrorEventArgs)">
+            <summary>
+            表格中输入的数据不能进行正常转换时的异常处理
+            </summary>
+        </member>
+        <member name="T:OldW.DataManager.ElementDataManager.FormNodes">
+            <summary>
+            打开窗口以设置最新的节点数据。
+            </summary>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.FormNodes.#ctor(System.Single[])">
+            <summary>
+            构造函数
+            </summary>
+            <param name="Nodes"></param>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.FormNodes.Initialize">
+            <summary>
+            界面初始化
+            </summary>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.FormNodes._dataGridView_DataError(System.Object,System.Windows.Forms.DataGridViewDataErrorEventArgs)">
+            <summary>
+            表格中输入的数据不能进行正常转换时的异常处理
+            </summary>
+        </member>
+        <member name="F:OldW.DataManager.ElementDataManager.DgvPoint.activeInstru">
+            <summary>
+            表格中当前处理的那个测点。在为此属性赋值的过程中，会执行相关的刷新操作
+            </summary>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvPoint.#ctor(Autodesk.Revit.DB.Document,stdOldW.WinFormHelper.eZDataGridViewPaste)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="doc"></param>
+            <param name="dataGridViewLine"></param>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvPoint.ConstructDataGridView">
+            <summary>
+            创建 DataGridView 为点测点监测数据类型
+            </summary>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvPoint.SaveTableToElement">
+            <summary>
+            将表格中的数据保存到Element的对应参数中。
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvPoint.ShiftToNewElement(OldW.Instrumentations.Instrum_Point)">
+            <summary>
+            将元素的数据从Revit中提取出来并写入表格
+            </summary>
+            <param name="ele">要进行数据提取的监测单元</param>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvPoint.DrawData">
+            <summary>
+            绘制图表
+            </summary>
+            <param name="data"></param>
+        </member>
+        <member name="F:OldW.DataManager.ElementDataManager.DgvPoint.bindedTableData">
+            <summary> 与表格数据进行绑定的点测点监测数据集合 </summary>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvPoint.ConvertBindingList(System.ComponentModel.BindingList{OldW.DataManager.ElementDataManager.DgvPoint.DgvBindingPointData})">
+            <summary> 将 DataGridView 控件中绑定的数据集合转换为实体类 <see cref="T:OldW.Instrumentations.MonitorData_Point"/> 的集合。 </summary>
+            <remarks> BindingList 中的元素如果有测点的监测日期为null，则进行剔除。</remarks>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvPoint.FillBindingList(System.Collections.Generic.List{OldW.Instrumentations.MonitorData_Point},System.ComponentModel.BindingList{OldW.DataManager.ElementDataManager.DgvPoint.DgvBindingPointData}@)">
+            <summary> 将 实体类 <see cref="T:OldW.Instrumentations.MonitorData_Point"/> 的集合中的数据填充到 BindingList 集合中。</summary>
+        </member>
+        <member name="T:OldW.DataManager.ElementDataManager.DgvPoint.DgvBindingPointData">
+            <summary> 用来绑定到 DataGridView 的DataSource属性的监测数据类，表示点测点中的每一天的监测数据 </summary>
+            <remarks>如果属性中包含有[System.ComponentModel.Browsable(false)]，则不计入表格项 </remarks>
+        </member>
+        <member name="P:OldW.DataManager.ElementDataManager.DgvPoint.DgvBindingPointData.Date">
+            <summary>
+            监测日期
+            </summary>
+        </member>
+        <member name="P:OldW.DataManager.ElementDataManager.DgvPoint.DgvBindingPointData.Value">
+            <summary>
+            监测数据，如果当天没有数据，则为null
+            </summary>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvPoint.DgvBindingPointData.#ctor(System.Nullable{System.DateTime},System.Nullable{System.Single})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="Date"></param>
+            <param name="Value"></param>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvPoint.MyDataGridView1_DataError(System.Object,System.Windows.Forms.DataGridViewDataErrorEventArgs)">
+            <summary>
+            表格中输入的数据不能进行正常转换时的异常处理
+            </summary>
+        </member>
+        <member name="T:OldW.DataManager.ElementDataManager.MonitorMode">
+            <summary> 当前操作的测点模式，比如是线测点（测斜管）、点测点等 </summary>
+        </member>
+        <member name="F:OldW.DataManager.ElementDataManager.MonitorMode.MonitorPoint">
+            <summary> 点测点，比如地表沉降、立柱垂直位移测点等 </summary>
+        </member>
+        <member name="F:OldW.DataManager.ElementDataManager.MonitorMode.MonitorLine">
+            <summary> 线测点，比如测斜管 </summary>
+        </member>
+        <member name="F:OldW.DataManager.ElementDataManager._activeInstru">
+            <summary> 当前活动的测点对象 </summary>
+        </member>
+        <member name="F:OldW.DataManager.ElementDataManager.selectedInstrum">
+            <summary> 进入测点监测数据管理窗口时，所有选择的测点 </summary>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.#ctor(System.Collections.Generic.ICollection{OldW.Instrumentations.Instrumentation},OldW.Instrumentations.InstrumDoc)">
+            <summary> 构造函数 </summary>
+            <param name="eleIdCollection">所有要进行处理的测点元素的Id集合</param>
+            <param name="document"></param>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.InitializeUI(OldW.Instrumentations.InstrumCollector)">
+            <summary>
+            根据不同的选择情况来进行不同的初始化
+             </summary>
+            <param name="AllselectedInstrum"></param>
+        </member>
+        <member name="F:OldW.DataManager.ElementDataManager.activeMonitorMode">
+            <summary> 当前操作的测点模式，比如是线测点（测斜管）、点测点等 </summary>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.btnActivateDatagridview_Click(System.Object,System.EventArgs)">
+            <summary>
+            激活 Datagridview 控件
+            </summary>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.ComboBox1_SelectedIndexChanged(System.Object,System.EventArgs)">
+            <summary>
+            在组合框中改变了选择的测点后，去更新DataGridView中的数据为指定测点的监测数据。
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.SaveTableToElement(System.Object,System.EventArgs)">
+            <summary>
+            将表格中的数据保存到Element的对应参数中。
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.btnDraw_Click(System.Object,System.EventArgs)">
+            <summary>
+             绘制监测曲线图
+            </summary>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.btnSetNodes_Click(System.Object,System.EventArgs)">
+            <summary> 设置线测点的节点信息 </summary>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DataGrid_pointMonitor_Resize(System.Object,System.EventArgs)">
+            <summary>
+             在表格框宽度发生变化时，自动调整窗口的宽度
+            </summary>
+        </member>
+        <member name="M:OldW.DataManager.ElementDataManager.RenameElement(System.Object,System.EventArgs)">
+            <summary>
+            测点单元的重命名
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="T:OldW.DataManager.FormReNameElement">
+            <summary>
+            对测点的编号进行重命名
+            </summary>
+        </member>
+        <member name="F:OldW.DataManager.FormReNameElement.MonitorName">
+            <summary>
+            测点的新名称
+            </summary>
+        </member>
+        <member name="M:OldW.DataManager.FormReNameElement.#ctor(System.String)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="oldName"></param>
+        </member>
+        <member name="F:OldW.DataManager.FormReNameElement.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OldW.DataManager.FormReNameElement.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OldW.DataManager.FormReNameElement.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:OldW.DataManager.DataImport.MonitorEntityExcel">
+            <summary>
+            DataGridViewExcel中所对应的实体类
+            </summary>
+        </member>
+        <member name="F:OldW.DataManager.DataImport.MonitorEntityExcel._transport">
+            <summary> 数据库中的此测点是否要进行传输，即导入或者导出 </summary>
+        </member>
+        <member name="P:OldW.DataManager.DataImport.MonitorEntityExcel.Transport">
+            <summary> 数据库中的此测点是否要进行传输，即导入或者导出 </summary>
+        </member>
+        <member name="P:OldW.DataManager.DataImport.MonitorEntityExcel.SheetName">
+            <summary> 此测点在Excel的哪一个工作表内，工作表名称包含后缀$ </summary>
+        </member>
+        <member name="P:OldW.DataManager.DataImport.MonitorEntityExcel.FieldName">
+            <summary> 此测点在Excel工作表内对应哪一个字段 </summary>
+        </member>
+        <member name="P:OldW.DataManager.DataImport.MonitorEntityExcel.MappedItem">
+            <summary> 此测点在Revit中绑定的对应测点。也是后面要进行实际的数据导入的对应测点 </summary>
+        </member>
+        <member name="P:OldW.DataManager.DataImport.MonitorEntityExcel.StoredInField">
+            <summary>  如果此测点的数据是保存在一整张工作表中（比如测斜数据），则为 false，
+            而如果此测点的数据是保存在一个工作表的某字段下，则为true。 </summary>
+        </member>
+        <member name="P:OldW.DataManager.DataImport.MonitorEntityExcel.MonitorType">
+            <summary> 此测点的类型 </summary>
+        </member>
+        <member name="M:OldW.DataManager.DataImport.MonitorEntityExcel.#ctor(System.String,System.String,System.Boolean,OldW.Instrumentations.InstrumCollector)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="sheetName">此测点在Excel的哪一个工作表内，工作表名称包含后缀$</param>
+            <param name="fieldName">此测点在Excel工作表内对应哪一个字段</param>
+            <param name="storedInField"> 如果此测点的数据是保存在一整张工作表中（比如测斜数据），则为 false，
+            而如果此测点的数据是保存在一个工作表的某字段下，则为true。 </param>
+            <param name="possibleMatches"> 在进行字段匹配时，此测点可能匹配到的所有测点的集合。 </param>
+        </member>
+        <member name="F:OldW.DataManager.DataImport.MonitorEntityExcel._possibleMatches">
+            <summary> 在进行字段匹配时，此测点可能匹配到的所有测点的集合。 </summary>
+        </member>
+        <member name="M:OldW.DataManager.DataImport.MonitorEntityExcel.MatchInstrum(OldW.Instrumentations.InstrumCollector)">
+            <summary>
+            将此数据库对象在Revit中找到一个可能的匹配测点单元
+            </summary>
+            <param name="instrumsToMatch"> 在Revit中要进行匹配的测点集合 </param>
+            <remarks> 在修改完与Datagridview绑定的属性后，记得通过Datagridview.Refresh()方法刷新界面。 </remarks>
+        </member>
+        <member name="F:OldW.DataManager.DataImport._selectedInstrum">
+            <summary> 进入测点监测数据管理窗口时，所有选择的测点 </summary>
+        </member>
+        <member name="F:OldW.DataManager.DataImport._BindedExcelPoints">
+            <summary> 与DataGridView相绑定的数据源集合 </summary>
+        </member>
+        <member name="F:OldW.DataManager.DataImport._excelConnection">
+            <summary> Excel数据库的连接 </summary>
+        </member>
+        <member name="F:OldW.DataManager.DataImport._backgroundWorker">
+            <summary> 执行数据导入操作的后台线程 </summary>
+        </member>
+        <member name="M:OldW.DataManager.DataImport.#ctor(System.Collections.Generic.ICollection{OldW.Instrumentations.Instrumentation},OldW.Instrumentations.InstrumDoc)">
+            <summary> 构造函数 </summary>
+            <param name="eleIdCollection">所有要进行处理的测点元素的Id集合</param>
+            <param name="document"></param>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.DataManager.DataImport.buttonMapping_Click(System.Object,System.EventArgs)">
+            <summary> 准备将选择的工作表中的监测数据输入Datagridview控件，并重新刷新界面 </summary>
+            <param name="sender"></param> <param name="e"></param>
+        </member>
+        <member name="M:OldW.DataManager.DataImport.Mapping(System.String)">
+            <summary> 将选择的工作表中的监测数据输入Datagridview控件，并重新刷新界面 </summary>
+            <param name="WorkbookName"> 监测数据工作簿的绝对路径 </param>
+        </member>
+        <member name="M:OldW.DataManager.DataImport.GetPointNames(System.Data.OleDb.OleDbConnection,System.String)">
+            <summary>
+            检查工作表中的字段是否符合要求，并获取工作表中除第一个字段“时间”以外的所有字段的名称
+            </summary>
+            <param name="conn"></param>
+            <param name="tableName"> 要在哪一个工作表中提取字段信息，表名的格式为“Sheet1$”</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.DataManager.DataImport.buttonCheckMultiple_Click(System.Object,System.EventArgs)">
+            <summary> 选择多个 </summary>
+        </member>
+        <member name="M:OldW.DataManager.DataImport.buttonUnCheckMultiple_Click(System.Object,System.EventArgs)">
+            <summary> 取消选择多个 </summary>
+        </member>
+        <member name="M:OldW.DataManager.DataImport.DataGridViewExcelOnCurrentCellDirtyStateChanged(System.Object,System.EventArgs)">
+            <summary> 修改 Checkbox 是否要导入 </summary>
+        </member>
+        <member name="M:OldW.DataManager.DataImport.DrawMonitorData(System.Data.OleDb.OleDbConnection,System.String,System.String)">
+            <summary>
+            临时绘制监测曲线图
+            </summary>
+            <param name="conn"></param>
+            <param name="sheetName"></param>
+            <param name="fieldName"></param>
+        </member>
+        <member name="F:OldW.DataManager.DataImport._tranImport">
+            <summary> 事务：将Excel中的监测数据导入Revit中的测点单元 </summary>
+        </member>
+        <member name="M:OldW.DataManager.DataImport.CheckDuplicated(System.ComponentModel.BindingList{OldW.DataManager.DataImport.MonitorEntityExcel},System.Int32@)">
+            <summary>
+            检查列表框中有没有出现Revit中的一个元素（除了“墙顶位移”外）对应的Excel中的多个数据字段的情况。
+            </summary>
+            <param name="datasource"></param>
+            <param name="row"> 在执行到第row行时退出了循环 </param>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.DataManager.DataImport.BackgroundWorkerOnDoWork_ImportFromExcel(System.Object,System.ComponentModel.DoWorkEventArgs)">
+            <summary>
+            开始在后台线程中实际执行测点数据从Excel导入Revit的操作
+            </summary>
+            <param name="sender"></param>
+            <param name="e"> 输入前请确保 e.Argument所对应的集合的Count > 0 </param>
+        </member>
+        <member name="M:OldW.DataManager.DataImport.DataImport_FormClosed(System.Object,System.Windows.Forms.FormClosedEventArgs)">
+            <summary> 关闭窗口事件 </summary>
+        </member>
+        <member name="F:OldW.DataManager.Chart_MonitorData.Chart">
+            <summary> 数据图表 </summary>
+        </member>
+        <member name="M:OldW.DataManager.Chart_MonitorData.#ctor(OldW.Instrumentations.InstrumentationType)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="Type">窗口的标题：监测类型</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.DataManager.Chart_MonitorData.SetupChart">
+            <summary>
+            图表的初始化
+            </summary>
+        </member>
+        <member name="M:OldW.DataManager.Chart_MonitorData.AddLineSeries(System.String,System.String)">
+            <summary>
+            添加一条监测曲线，并设置曲线的基本样式
+            </summary>
+            <param name="seriesName"></param>
+            <param name="chartAreaName"></param>
+            <returns></returns>
+        </member>
         <member name="T:OldW.Instrumentations.InstrumentationType">
             <summary>
-            监测仪器的族名称（也是族文件的名称），同时也作为监测仪器的类型判断
+            (位编码)监测仪器的族名称（也是族文件的名称），同时也作为监测仪器的类型判断
             </summary>
             <remarks>从枚举值返回对应的枚举字符的方法：GlobalSettings.InstrumentationType.沉降测点.ToString</remarks>
         </member>
-        <member name="F:OldW.Instrumentations.InstrumentationType.其他">
-            <summary> 并不是任何一种已经识别的测点类型 </summary>
+        <member name="F:OldW.Instrumentations.InstrumentationType.未指定">
+            <summary> 并不是任何一种已经指定的线测点或者点测点类型 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumentationType.其他点测点">
+            <summary> 并不是任何一种已经特殊处理过的点测点类型 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumentationType.其他线测点">
+            <summary> 并不是任何一种已经特殊处理过的线测点类型 </summary>
         </member>
         <member name="F:OldW.Instrumentations.InstrumentationType.墙体测斜">
             <summary> 比如地下连续墙的水平位移 </summary>
         </member>
+        <member name="F:OldW.Instrumentations.InstrumentationType.土体测斜">
+            <summary> 比如土体中的测斜管的水平位移，它与墙体测斜的区别在于墙体测斜是嵌在地下连续墙中，
+            而且墙体测斜与土体测斜的安全警戒准则并不相同。 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumentationType.墙顶位移">
+            <summary> 墙顶位移的监测数据包括水平位移与垂直位移。
+            在Excel中通过两张表“墙顶水平位移”与“墙顶垂直位移”来保存。 </summary>
+        </member>
         <member name="F:OldW.Instrumentations.InstrumentationType.地表隆沉">
             <summary> 比如基坑外地表的垂直位移 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumentationType.立柱隆沉">
+            <summary> 比如基坑中立柱的垂直位移 </summary>
         </member>
         <member name="F:OldW.Instrumentations.InstrumentationType.支撑轴力">
             <summary> 比如基坑中支撑的轴力 </summary>
         </member>
-        <member name="F:OldW.Instrumentations.InstrumentationType.立柱隆沉">
-            <summary> 比如基坑中立柱的垂直位移 </summary>
+        <member name="F:OldW.Instrumentations.InstrumentationType.水位">
+            <summary> 比如基坑中水位测点处的水位高低 </summary>
         </member>
         <member name="T:OldW.Instrumentations.MonitorData_Point">
             <summary> 监测数据类，表示点测点中的每一天的监测数据 </summary>
@@ -50,6 +572,201 @@
             <param name="Date"></param>
             <param name="Value"></param>
         </member>
+        <member name="M:OldW.Instrumentations.MonitorData_Point.FromDataTable(System.Data.DataTable,System.Int32,System.Int32)">
+            <summary>
+            从 DataTable 对象中指定的两个字段提取出点测点的监测数据的实体类集合
+            </summary>
+            <param name="table"> 要进行数据提取的表格 </param>
+            <param name="indexDate"> 日期数据在 table 中所在的列的列号 </param>
+            <param name="indexValue"> 监测数据在 table 中所在的列的列号 </param>
+            <returns> 实体类集合，用来作为 Instrum_Point.SetMonitorData 的输入参数 </returns>
+        </member>
+        <member name="T:OldW.Instrumentations.MonitorData_Line">
+            <summary>
+            线测点中的每一天的监测数据
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="P:OldW.Instrumentations.MonitorData_Line.Nodes">
+            <summary>
+            线测点上的每一个子节点的深度（相对于线测点的顶端或起点而言）
+            </summary>
+        </member>
+        <member name="P:OldW.Instrumentations.MonitorData_Line.MonitorData">
+            <summary>
+            测斜管在每一天的监测数据。其中，SortedDictionary 中的Value项 为一个数组，
+            它代表对应的日期下，Depths中每一个深度处所对应的监测数据值，
+            所以，此数组中元素的个数必须要与Depths数组中元素的个数相同。
+            </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.MonitorData_Line.#ctor(System.Single[])">
+            <summary>
+            构造函数
+            </summary>
+            <param name="nodes">线测点上的每一个子节点的深度（相对于线测点的顶端或起点而言）</param>
+        </member>
+        <member name="M:OldW.Instrumentations.MonitorData_Line.#ctor(System.Single[],System.Collections.Generic.SortedDictionary{System.DateTime,System.Nullable{System.Single}[]})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="nodes">线测点上的每一个子节点的深度（相对于线测点的顶端或起点而言）</param>
+            <param name="monitoredData">已经记录好的监测数据</param>
+        </member>
+        <member name="M:OldW.Instrumentations.MonitorData_Line.FromDataTable(System.Data.DataTable)">
+            <summary>
+            从 DataTable 对象提取出此线测点的所有监测数据
+            </summary>
+            <param name="table"> 要进行数据提取的表格的第一个字段必须是用来存储时间信息的主键，并且后面的每一个字段的名称都是“2#50”的格式。 </param>
+            <returns> 实体类，用来作为 Instrum_Line.SetMonitorData 的输入参数 </returns>
+        </member>
+        <member name="T:OldW.Instrumentations.InstrumCollector">
+            <summary>
+            测点收集器，用来对测点集合进行分类管理
+            </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumCollector._allInstrumentations">
+            <summary> 所有的测点的集合 </summary>
+        </member>
+        <member name="P:OldW.Instrumentations.InstrumCollector.AllInstrumentations">
+            <summary> 所有的测点的集合 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumCollector.ColumnHeave">
+            <summary> 立柱隆沉测点 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumCollector.GroundSettlement">
+            <summary> 地表隆沉测点 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumCollector.Incline">
+            <summary> 测斜点 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumCollector.StrutAxialForce">
+            <summary> 支撑轴力点 </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.#ctor(System.Collections.Generic.IEnumerable{OldW.Instrumentations.Instrumentation})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="instrums"> 要进行测点分类的测点集合 </param>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.Truncate(System.Collections.Generic.IEnumerable{OldW.Instrumentations.Instrumentation})">
+            <summary>
+            清空原测点集合中的元素，并重新添加新的元素
+            </summary>
+            <param name="instrums"></param>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.Append(System.Collections.Generic.IEnumerable{OldW.Instrumentations.Instrumentation})">
+            <summary>
+            直接向集合中附加新的测点
+            </summary>
+            <param name="instrums"></param>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.GetMonitors(OldW.Instrumentations.InstrumentationType)">
+            <summary> 按指定的类型过滤出集合中所有的测点 </summary>
+            <param name="type"> 多种监测类型的按位组合 </param>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.GetLineMonitors">
+            <summary> 过滤出集合中所有的线测点 </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.GetLineMonitors(OldW.Instrumentations.InstrumentationType)">
+            <summary> 按指定的选项过滤出集合中所有的线测点 </summary>
+            <param name="type"> 多种监测类型的按位组合 </param>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.GetPointMonitors">
+            <summary> 过滤出集合中所有的线测点 </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.GetPointMonitors(OldW.Instrumentations.InstrumentationType)">
+            <summary> 按指定的选项过滤出集合中所有的点测点 </summary>
+            <param name="type"> 多种监测类型的按位组合 </param>
+        </member>
+        <member name="T:OldW.Instrumentations.InstrumTypeMapping">
+            <summary>
+            将不同的Excel工作表字段的名称映射到Revit对应的测点中去
+            </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumTypeMapping.SheetWallIncline">
+            <summary> 墙体测斜,每一个测斜点的数据用一个工作表来保存 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumTypeMapping.SheetSoilIncine">
+            <summary> 土体测斜,每一个测斜点的数据用一个工作表来保存 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumTypeMapping.SheetOtherPoint">
+            <summary> 其他未在上面标记过的测点类型，其每一个点测点的监测数据都保存在工作表中的某个字段下。 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumTypeMapping.SheetOtherLine">
+            <summary> 其他未在上面标记过的测点类型，其每一个线测点中有多个子节点（类似于测斜管），
+            一个测点的监测数据保存在一张工作表，而表中的每一个字段代表此线测点中的一个子节点。 </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumTypeMapping.MultiPointsInSheet(System.String)">
+            <summary> 指定的Excel工作表中是包含多个测点（点测点）还是只包含一个测点（线测点） </summary>
+            <param name="excelSheetName"></param>
+            <returns> 如果此工作表中有多个点测点，比如“地表隆沉”，则返回true；
+            如果此工作表就代表一个线测点，则返回false。 </returns>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumTypeMapping.IsRevitLine(System.String)">
+            <summary> 此工作表名称所对应的测点类型在Revit中是否是一个线测点类型 </summary>
+            <param name="excelSheetName"></param>
+            <returns> 如果此工作表名称代表一类测点，比如“地表隆沉”，则返回true；
+            如果此工作表就代表一个测斜测点，则返回false。 </returns>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumTypeMapping.MapToType(System.String)">
+            <summary>
+            由字段名称来匹配出对应的测点类型
+            </summary>
+            <param name="excelSheetName"> Excel工作表的名称，不包含后缀$</param>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumTypeMapping.GetNumber(System.String)">
+            <summary> 根据给出的字段名匹配出对应的测点编号 </summary>
+            <param name="excelPointOrLineName"> Excel中的测点编号，此编号可以了线测点的编号如CX01，也可以是点测点的编号如DB01。 </param>
+            <returns> 如果能匹配出编号12或者编号2-12这两种模式，则返回对应的数值字符，如果不能匹配，则返回空字符</returns>
+        </member>
+        <member name="T:OldW.Instrumentations.InstrumDoc">
+            <summary> 用来执行基坑中的测点布置，监测数据管理等操作 </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumDoc.#ctor(OldWDocument)">
+            <summary> 构造函数 </summary>
+            <param name="OldWDoc"></param>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumDoc.SetFamily(OldW.Instrumentations.InstrumentationType)">
+            <summary>
+            放置测点
+            </summary>
+            <param name="monitorType"> 要放置的测点类型 </param>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumDoc.FillCombobox(System.Collections.Generic.IEnumerable{OldW.Instrumentations.Instrumentation},System.Object)">
+            <summary>
+            将指定的测点集合对象转换为组合列表框Combox控件的DataSource类型。
+            </summary>
+            <param name="elementCollection"></param>
+            <param name="comboboxControl"> ComboBox 控件对象或者 DataGridViewComboBoxCell 控件对象  </param>
+            <returns> </returns>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumDoc.GetComboboxDatasource(System.Collections.Generic.IEnumerable{OldW.Instrumentations.Instrumentation})">
+            <summary>
+            将指定的测点集合对象转换为组合列表框Combox控件的DataSource类型。
+            </summary>
+            <param name="elementCollection"></param>
+            <returns> </returns>
+        </member>
+        <member name="T:OldW.Instrumentations.Instrum_WallTop">
+            <summary>
+            墙顶位移测点
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_WallTop.#ctor(Autodesk.Revit.DB.FamilyInstance)">
+            <summary> 构造函数 </summary>
+            <param name="inclinometerElement">测斜管所对应的图元</param>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_WallTop.ImportFromExcel(Autodesk.Revit.DB.Transaction,System.Data.OleDb.OleDbConnection,System.String,System.String)">
+            <summary> 从Excel中导入监测数据 </summary>
+            <param name="tran"> 已经start的Revit事务 </param>
+            <param name="conn">连接到Excel工作簿</param>
+            <param name="sheetName">监测数据所在的Excel工作表，表名称中应该包含后缀$ </param>
+            <param name="fieldName">监测数据在工作表中的哪个字段下。对于线测点，其fieldName是不必要的。</param>
+        </member>
         <member name="T:OldW.Instrumentations.Instrumentation">
             <summary>
             监测测点：包括线测点（测斜管）或点测点（地表沉降、立柱隆起、支撑轴力）等
@@ -68,9 +785,6 @@
         <member name="P:OldW.Instrumentations.Instrumentation.Type">
             <summary> 监测点的测点类型，也是测点所属的族的名称 </summary>
         </member>
-        <member name="P:OldW.Instrumentations.Instrumentation.Name">
-            <summary> 每一个测点的名称，比如 CX1，LZ2等 </summary>
-        </member>
         <member name="M:OldW.Instrumentations.Instrumentation.#ctor(Autodesk.Revit.DB.FamilyInstance,OldW.Instrumentations.InstrumentationType)">
             <summary>
             构造函数
@@ -80,16 +794,29 @@
             <remarks></remarks>
         </member>
         <member name="M:OldW.Instrumentations.Instrumentation.Lookup(Autodesk.Revit.DB.Document,System.Collections.Generic.ICollection{Autodesk.Revit.DB.ElementId})">
-            <summary>
-            从指定的Element集合中，找出所有的监测点元素
-            </summary>
+            <summary> 从指定的Element集合中，找出所有的监测点元素 </summary>
             <param name="Elements"> 要进行搜索过滤的Element集合</param>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrumentation.Lookup(Autodesk.Revit.DB.Document)">
+            <summary> 从整个文档中找出所有的监测点元素 </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrumentation.LookupFromCollector(Autodesk.Revit.DB.FilteredElementCollector)">
+            <summary>
+            从 FilteredElementCollector 集合中，找出所有的监测点元素
+            </summary>
             <returns></returns>
-            <remarks></remarks>
         </member>
         <member name="M:OldW.Instrumentations.Instrumentation.getMonitorName">
             <summary>
             提取测点的名称，比如“CX1”。此参数是在测点族的设计时添加进去的，而不是通过API添加的。
+            </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrumentation.setMonitorName(Autodesk.Revit.DB.Transaction,System.String)">
+            <summary>
+            设置测点的名称，比如“CX1”。此参数是在测点族的设计时添加进去的，而不是通过API添加的。但是其值可以通过API设置。
+            </summary>
+            <summary>
+            将测点数据类序列化之后的字符保存到测点对象的参数中。
             </summary>
         </member>
         <member name="M:OldW.Instrumentations.Instrumentation.getMonitorDataString">
@@ -102,6 +829,13 @@
             <summary>
             将测点数据类序列化之后的字符保存到测点对象的参数中。
             </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrumentation.ImportFromExcel(Autodesk.Revit.DB.Transaction,System.Data.OleDb.OleDbConnection,System.String,System.String)">
+            <summary> 从Excel中导入监测数据 </summary>
+            <param name="tran"> 已经start的Revit事务 </param>
+            <param name="conn">连接到Excel工作簿</param>
+            <param name="sheetName">监测数据所在的Excel工作表，表名称中应该包含后缀$ </param>
+            <param name="fieldName">监测数据在工作表中的哪个字段下。对于线测点，其fieldName是不必要的。</param>
         </member>
         <member name="T:OldW.Instrumentations.Instrum_ColumnHeave">
             <summary>
@@ -123,22 +857,22 @@
             <summary> 构造函数 </summary>
             <param name="GroundSettlementElement">地表垂直位移测点所对应的图元</param>
         </member>
-        <member name="T:OldW.Instrumentations.Instrum_Incline">
+        <member name="T:OldW.Instrumentations.Instrum_WallIncline">
             <summary>
             测点_测斜管
             </summary>
             <remarks></remarks>
         </member>
-        <member name="F:OldW.Instrumentations.Instrum_Incline._isInsideEarth">
+        <member name="F:OldW.Instrumentations.Instrum_WallIncline._isInsideEarth">
             <summary> 测斜管的位置是在模型中的开挖土体的内部还是外部，即测斜管与开挖土体的Element是否相交。 </summary>
             <remarks>True if the inclinometer is inside the excavation earth,
             and False if the inclinometer is outside the excavation earth.</remarks>
         </member>
-        <member name="M:OldW.Instrumentations.Instrum_Incline.#ctor(Autodesk.Revit.DB.FamilyInstance)">
+        <member name="M:OldW.Instrumentations.Instrum_WallIncline.#ctor(Autodesk.Revit.DB.FamilyInstance)">
             <summary> 构造函数 </summary>
             <param name="inclinometerElement">测斜管所对应的图元</param>
         </member>
-        <member name="M:OldW.Instrumentations.Instrum_Incline.FindAdjacentEarthElevation(Autodesk.Revit.DB.FamilyInstance)">
+        <member name="M:OldW.Instrumentations.Instrum_WallIncline.FindAdjacentEarthElevation(Autodesk.Revit.DB.FamilyInstance)">
             <summary>
             找到距离此测斜管最近的土体开挖面的标高值
             </summary>
@@ -146,13 +880,13 @@
             <returns>如果没有找到对应的标高值，则返回 null</returns>
             <remarks></remarks>
         </member>
-        <member name="M:OldW.Instrumentations.Instrum_Incline.FindBottomPoint(Autodesk.Revit.DB.XYZ,System.Boolean,Autodesk.Revit.DB.FamilyInstance,Autodesk.Revit.DB.ReferenceIntersector)">
+        <member name="M:OldW.Instrumentations.Instrum_WallIncline.FindBottomPoint(Autodesk.Revit.DB.XYZ,System.Boolean,Autodesk.Revit.DB.FamilyInstance,Autodesk.Revit.DB.ReferenceIntersector)">
             <summary>
             搜索一个底部坐标点，有了此点后，只要向上发射一条射线，即可以找到此时的开挖面
             </summary>
             <param name="ptInclinometerBottom">测斜管的底部坐标点</param>
             <param name="IsInside">测斜管是否在开挖土体Element的内部</param>
-            <param name="Earth">开挖墙体单元</param>
+            <param name="Earth">开挖土体单元</param>
             <param name="IntersectedEarth">用来搜索相交面的开挖土体</param>
             <returns></returns>
             <remarks>  如果测斜管就在土体内部，那么测斜管的底部点就可以直接用来向上发射射线了。
@@ -165,13 +899,10 @@
             </summary>
             <remarks></remarks>
         </member>
-        <member name="P:OldW.Instrumentations.Instrum_Line.MonitorData">
+        <member name="F:OldW.Instrumentations.Instrum_Line._monitorData">
             <summary>
             线测点的整个施工阶段中的监测数据
             </summary>
-            <Value></Value>
-            <returns></returns>
-            <remarks></remarks>
         </member>
         <member name="M:OldW.Instrumentations.Instrum_Line.#ctor(Autodesk.Revit.DB.FamilyInstance,OldW.Instrumentations.InstrumentationType)">
             <summary>
@@ -185,21 +916,29 @@
             <summary>
             从指定的Element集合中，找出所有的点测点元素
             </summary>
-            <param name="Elements"> 要进行搜索过滤的Element集合</param>
+            <param name="elements"> 要进行搜索过滤的Element集合</param>
             <returns></returns>
             <remarks></remarks>
         </member>
-        <member name="T:OldW.Instrumentations.Instrum_Line.MonitorData_Line">
+        <member name="M:OldW.Instrumentations.Instrum_Line.GetMonitorData">
             <summary>
-            线测点中的每一天的监测数据
+            将测点对象中的监测数据提取为具体的序列化类。
+            其中包括线测点的每一个子节点的数据，以及整个线测点在整个施工过程中所有的测点数据。
             </summary>
-            <remarks></remarks>
+            <returns>如果在派生类中将此方法进行重写，则一定要对应地对 <see cref="M:OldW.Instrumentations.Instrum_Line.SetMonitorData(Autodesk.Revit.DB.Transaction,OldW.Instrumentations.MonitorData_Line)"/> 方法进行重写。</returns>
         </member>
-        <member name="T:OldW.Instrumentations.Instrum_Line.MonitorData_Length">
-             <summary>
-            
-             </summary>
-             <remarks></remarks>
+        <member name="M:OldW.Instrumentations.Instrum_Line.SetMonitorData(Autodesk.Revit.DB.Transaction,OldW.Instrumentations.MonitorData_Line)">
+            <summary>
+            将监测数据以序列化字符串保存到对应的Parameter对象中。
+            </summary>
+            <remarks>如果在派生类中将此方法进行重写，则一定要对应地对 <see cref="M:OldW.Instrumentations.Instrum_Line.GetMonitorData"/> 方法进行重写。</remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_Line.ImportFromExcel(Autodesk.Revit.DB.Transaction,System.Data.OleDb.OleDbConnection,System.String,System.String)">
+            <summary> 从Excel中导入监测数据 </summary>
+            <param name="tran"> 已经start的Revit事务 </param>
+            <param name="conn">连接到Excel工作簿</param>
+            <param name="sheetName">监测数据所在的Excel工作表，表名称中应该包含后缀$ </param>
+            <param name="fieldName">监测数据在工作表中的哪个字段下。对于线测点，其fieldName是不必要的。</param>
         </member>
         <member name="T:OldW.Instrumentations.Instrum_Point">
             <summary>
@@ -207,7 +946,7 @@
             </summary>
             <remarks></remarks>
         </member>
-        <member name="P:OldW.Instrumentations.Instrum_Point.MonitorData">
+        <member name="F:OldW.Instrumentations.Instrum_Point._monitorData">
             <summary>
             点测点的整个施工阶段中的监测数据
             </summary>
@@ -232,13 +971,20 @@
             <summary>
             将测点对象中的监测数据提取为具体的序列化类
             </summary>
-            <returns></returns>
+            <returns>如果在派生类中将此方法进行重写，则一定要对应地对 <see cref="M:OldW.Instrumentations.Instrum_Point.SetMonitorData(Autodesk.Revit.DB.Transaction,System.Collections.Generic.List{OldW.Instrumentations.MonitorData_Point})"/> 方法进行重写。</returns>
         </member>
         <member name="M:OldW.Instrumentations.Instrum_Point.SetMonitorData(Autodesk.Revit.DB.Transaction,System.Collections.Generic.List{OldW.Instrumentations.MonitorData_Point})">
             <summary>
             将监测数据以序列化字符串保存到对应的Parameter对象中。
             </summary>
-            <remarks></remarks>
+            <remarks>如果在派生类中将此方法进行重写，则一定要对应地对 <see cref="M:OldW.Instrumentations.Instrum_Point.GetMonitorData"/> 方法进行重写。</remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_Point.ImportFromExcel(Autodesk.Revit.DB.Transaction,System.Data.OleDb.OleDbConnection,System.String,System.String)">
+            <summary> 从Excel中导入监测数据 </summary>
+            <param name="tran"> 已经start的Revit事务 </param>
+            <param name="conn">连接到Excel工作簿</param>
+            <param name="sheetName">监测数据所在的Excel工作表，表名称中应该包含后缀$ </param>
+            <param name="fieldName">监测数据在工作表中的哪个字段下。对于线测点，其fieldName是不必要的。</param>
         </member>
         <member name="T:OldW.Instrumentations.Instrum_StrutAxialForce">
             <summary>
@@ -357,144 +1103,74 @@
         <member name="T:OldW.Commands.cmd_ExcavationInfo">
             <summary> 提取模型中的开挖土体信息 </summary>
         </member>
-        <member name="T:OldW.Commands.cmd_SetFamilyForce">
+        <member name="T:OldW.Commands.cmd_DataManager">
             <summary>
-            轴力测点建模
+            监测数据管理系统
             </summary>
         </member>
-        <member name="T:OldW.Commands.cmd_SetFamilyIncli">
+        <member name="T:OldW.Commands.cmd_DataImport">
             <summary>
-            沉降测点建模
+            从Excel中导入监测数据
             </summary>
         </member>
-        <member name="T:OldW.Commands.cmd_SetFamilySettlement">
+        <member name="T:OldW.Commands.cmd_DataExport">
             <summary>
-            沉降测点建模
+            将数据导出到Excel
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_PlaceWallIncline">
+            <summary>
+            墙体测斜
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_PlaceSoilIncline">
+            <summary>
+            土体测斜
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_PlaceWallTop">
+            <summary>
+            墙顶位移
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_PlaceGroundSettlement">
+            <summary>
+            地表隆沉
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_PlaceColumnHeave">
+            <summary>
+            立柱隆沉
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_PlaceStrutForce">
+            <summary>
+            支撑轴力
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_PlaceWaterTable">
+            <summary>
+            水位
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_PlaceOtherPoint">
+            <summary>
+            其他点测点
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_PlaceOtherLine">
+            <summary>
+            其他线测点
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.PlaceMonitor">
+            <summary>
+            放置任意类型的监测测点
             </summary>
         </member>
         <member name="T:OldW.Commands.cmd_SetWarning">
             <summary>
             test command
-            </summary>
-        </member>
-        <member name="F:OldW.DataManager.Chart_MonitorData.Chart">
-            <summary> 数据图表 </summary>
-        </member>
-        <member name="M:OldW.DataManager.Chart_MonitorData.#ctor(OldW.Instrumentations.InstrumentationType)">
-            <summary>
-            构造函数
-            </summary>
-            <param name="Type">窗口的标题：监测类型</param>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.DataManager.Chart_MonitorData.SetupChart">
-            <summary>
-            图表的初始化
-            </summary>
-        </member>
-        <member name="T:OldW.DataManager.ElementDataManager">
-            <summary>
-            模型中的测点的监测数据的添加，删除，导入导出等
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="F:OldW.DataManager.ElementDataManager.ActiveInstru">
-            <summary> 当前活动的测点对象 </summary>
-        </member>
-        <member name="F:OldW.DataManager.ElementDataManager.monitorData">
-            <summary>
-            与表格数据进行绑定的点测点监测数据集合
-            </summary>
-        </member>
-        <member name="M:OldW.DataManager.ElementDataManager.#ctor(System.Collections.Generic.ICollection{OldW.Instrumentations.Instrumentation},Autodesk.Revit.DB.Document)">
-            <summary>
-            构造函数
-            </summary>
-            <param name="eleIdCollection">所有要进行处理的测点元素的Id集合</param>
-            <param name="document"></param>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.DataManager.ElementDataManager.ConstructDataGridView">
-            <summary>
-            创建 DataGridView 为点测点监测数据类型
-            </summary>
-        </member>
-        <member name="M:OldW.DataManager.ElementDataManager.fillCombobox(System.Collections.Generic.ICollection{OldW.Instrumentations.Instrumentation})">
-            <summary>
-            将指定的测点集合对象添加到组合列表框中
-            </summary>
-            <param name="elementCollection"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OldW.DataManager.ElementDataManager.ComboBox1_SelectedIndexChanged(System.Object,System.EventArgs)">
-            <summary>
-            在组合框中改变了选择的测点后，去更新DataGridView中的数据为指定测点的监测数据。
-            </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
-        </member>
-        <member name="M:OldW.DataManager.ElementDataManager.SaveTableToElement(System.Object,System.EventArgs)">
-            <summary>
-            将表格中的数据保存到Element的对应参数中。
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.DataManager.ElementDataManager.FillTableWithElementData(OldW.Instrumentations.Instrumentation,System.Windows.Forms.DataGridView)">
-            <summary>
-            将元素的数据从Revit中提取出来并写入表格
-            </summary>
-            <param name="ele">要进行数据提取的监测单元</param>
-            <param name="table"></param>
-            <returns></returns>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.DataManager.ElementDataManager.ConvertBindingList(System.ComponentModel.BindingList{OldW.DataManager.ElementDataManager.DgvBindingPointData})">
-            <summary> 将 DataGridView 控件中绑定的数据集合转换为实体类 <see cref="T:OldW.Instrumentations.MonitorData_Point"/> 的集合。 </summary>
-            <remarks> BindingList 中的元素如果有测点的监测日期为null，则进行剔除。</remarks>
-        </member>
-        <member name="M:OldW.DataManager.ElementDataManager.FillBindingList(System.Collections.Generic.List{OldW.Instrumentations.MonitorData_Point},System.ComponentModel.BindingList{OldW.DataManager.ElementDataManager.DgvBindingPointData}@)">
-            <summary> 将 实体类 <see cref="T:OldW.Instrumentations.MonitorData_Point"/> 的集合中的数据填充到 BindingList 集合中。</summary>
-        </member>
-        <member name="T:OldW.DataManager.ElementDataManager.DgvBindingPointData">
-            <summary> 用来绑定到 DataGridView 的DataSource属性的监测数据类，表示点测点中的每一天的监测数据 </summary>
-            <remarks>如果属性中包含有[System.ComponentModel.Browsable(false)]，则不计入表格项 </remarks>
-        </member>
-        <member name="P:OldW.DataManager.ElementDataManager.DgvBindingPointData.Date">
-            <summary>
-            监测日期
-            </summary>
-        </member>
-        <member name="P:OldW.DataManager.ElementDataManager.DgvBindingPointData.Value">
-            <summary>
-            监测数据，如果当天没有数据，则为null
-            </summary>
-        </member>
-        <member name="M:OldW.DataManager.ElementDataManager.DgvBindingPointData.#ctor(System.Nullable{System.DateTime},System.Nullable{System.Single})">
-            <summary>
-            构造函数
-            </summary>
-            <param name="Date"></param>
-            <param name="Value"></param>
-        </member>
-        <member name="M:OldW.DataManager.ElementDataManager.DrawData(System.ComponentModel.BindingList{OldW.DataManager.ElementDataManager.DgvBindingPointData})">
-            <summary>
-            绘制图表
-            </summary>
-            <param name="data"></param>
-        </member>
-        <member name="M:OldW.DataManager.ElementDataManager.MyDataGridView1_DataError(System.Object,System.Windows.Forms.DataGridViewDataErrorEventArgs)">
-            <summary>
-            表格中输入的数据不能进行正常转换时的异常处理
-            </summary>
-        </member>
-        <member name="M:OldW.DataManager.ElementDataManager.btnDraw_Click(System.Object,System.EventArgs)">
-            <summary>
-             绘制监测曲线图
-            </summary>
-        </member>
-        <member name="M:OldW.DataManager.ElementDataManager.DataGrid_pointMonitor_Resize(System.Object,System.EventArgs)">
-            <summary>
-             在表格框宽度发生变化时，自动调整窗口的宽度
             </summary>
         </member>
         <member name="T:OldW.Excavation.ExcavationDoc">

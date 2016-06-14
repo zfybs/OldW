@@ -89,8 +89,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DllActivator_Projects.cs" />
-    <Compile Include="Instrumentations\nsDefinition.cs" />
-    <Compile Include="Warnings\Analysis.cs" />
+    <Compile Include="Instrumentations\DataManager\ElementDataManager_Line.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Instrumentations\DataManager\ElementDataManager_Point.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Instrumentations\DataManager\FormReNameElement.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Instrumentations\DataManager\FormReNameElement.Designer.cs">
+      <DependentUpon>FormReNameElement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Instrumentations\DataTransfer\DataImport_MonitorEntityExcel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Instrumentations\InstrumService.cs" />
+    <Compile Include="Instrumentations\InstrumDoc.cs" />
+    <Compile Include="Instrumentations\Instrum_WallTop.cs" />
+    <Compile Include="SafetyWarnings\Analysis.cs" />
     <Compile Include="Commands\cmds_Analyses.cs" />
     <Compile Include="Commands\cmds_Excavation.cs" />
     <Compile Include="Commands\cmds_Monitoring.cs" />
@@ -101,17 +118,17 @@
     <Compile Include="ConstructionReview\ConstructionReview.Designer.cs">
       <DependentUpon>ConstructionReview.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataTransfer\frm_DataExport.cs">
+    <Compile Include="Instrumentations\DataTransfer\DataExport.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DataTransfer\frm_DataExport.Designer.cs">
-      <DependentUpon>frm_DataExport.cs</DependentUpon>
+    <Compile Include="Instrumentations\DataTransfer\DataExport.Designer.cs">
+      <DependentUpon>DataExport.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataTransfer\frm_DataImport.cs">
+    <Compile Include="Instrumentations\DataTransfer\DataImport.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DataTransfer\frm_DataImport.Designer.cs">
-      <DependentUpon>frm_DataImport.cs</DependentUpon>
+    <Compile Include="Instrumentations\DataTransfer\DataImport.Designer.cs">
+      <DependentUpon>DataImport.cs</DependentUpon>
     </Compile>
     <Compile Include="Excavation\ExcavationDoc.cs" />
     <Compile Include="Excavation\frm_DrawExcavation.cs">
@@ -132,16 +149,16 @@
     <Compile Include="Excavation\Soil_Element.cs" />
     <Compile Include="Excavation\Soil_Excav.cs" />
     <Compile Include="Excavation\Soil_Model.cs" />
-    <Compile Include="Instrumentations\Chart_MonitorData.cs">
+    <Compile Include="Instrumentations\DataManager\Chart_MonitorData.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Instrumentations\Chart_MonitorData.Designer.cs">
+    <Compile Include="Instrumentations\DataManager\Chart_MonitorData.Designer.cs">
       <DependentUpon>Chart_MonitorData.cs</DependentUpon>
     </Compile>
-    <Compile Include="Instrumentations\ElementDataManager.cs">
+    <Compile Include="Instrumentations\DataManager\ElementDataManager.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Instrumentations\ElementDataManager.Designer.cs">
+    <Compile Include="Instrumentations\DataManager\ElementDataManager.Designer.cs">
       <DependentUpon>ElementDataManager.cs</DependentUpon>
     </Compile>
     <Compile Include="Instrumentations\Instrumentation.cs" />
@@ -154,29 +171,27 @@
     <Compile Include="OldWApplication.cs" />
     <Compile Include="OldWDocument.cs" />
     <Compile Include="OldWProjectInfo.cs" />
-    <Compile Include="Warnings\FormSetWarning.cs">
+    <Compile Include="SafetyWarnings\FormSetWarning.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Warnings\FormSetWarning.Designer.cs">
+    <Compile Include="SafetyWarnings\FormSetWarning.Designer.cs">
       <DependentUpon>FormSetWarning.cs</DependentUpon>
     </Compile>
-    <Compile Include="MonitorPlacement\SetFamilyForce.cs" />
-    <Compile Include="MonitorPlacement\SetFamilyIncli.cs" />
-    <Compile Include="MonitorPlacement\SetFamilySettlement.cs" />
+    <Compile Include="Commands\cmds_PlaceMonitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Warnings\SetWarning.cs" />
-    <Compile Include="Warnings\WarningType.cs" />
-    <Compile Include="Warnings\WarningValue.cs" />
+    <Compile Include="SafetyWarnings\SetWarning.cs" />
+    <Compile Include="SafetyWarnings\WarningType.cs" />
+    <Compile Include="SafetyWarnings\WarningValue.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ConstructionReview\ConstructionReview.resx">
       <DependentUpon>ConstructionReview.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataTransfer\frm_DataExport.resx">
-      <DependentUpon>frm_DataExport.cs</DependentUpon>
+    <EmbeddedResource Include="Instrumentations\DataTransfer\DataExport.resx">
+      <DependentUpon>DataExport.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataTransfer\frm_DataImport.resx">
-      <DependentUpon>frm_DataImport.cs</DependentUpon>
+    <EmbeddedResource Include="Instrumentations\DataTransfer\DataImport.resx">
+      <DependentUpon>DataImport.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Excavation\frm_DrawExcavation.resx">
       <DependentUpon>frm_DrawExcavation.cs</DependentUpon>
@@ -184,13 +199,16 @@
     <EmbeddedResource Include="Excavation\frm_ExcavationInfo.resx">
       <DependentUpon>frm_ExcavationInfo.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Instrumentations\Chart_MonitorData.resx">
+    <EmbeddedResource Include="Instrumentations\DataManager\Chart_MonitorData.resx">
       <DependentUpon>Chart_MonitorData.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Instrumentations\ElementDataManager.resx">
+    <EmbeddedResource Include="Instrumentations\DataManager\ElementDataManager.resx">
       <DependentUpon>ElementDataManager.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Warnings\FormSetWarning.resx">
+    <EmbeddedResource Include="Instrumentations\DataManager\FormReNameElement.resx">
+      <DependentUpon>FormReNameElement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SafetyWarnings\FormSetWarning.resx">
       <DependentUpon>FormSetWarning.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
@@ -203,9 +221,9 @@
       <Project>{13378ff8-0b99-4a4e-8529-db04f4b8ec4d}</Project>
       <Name>RevitTools</Name>
     </ProjectReference>
-    <ProjectReference Include="..\std\std.csproj">
+    <ProjectReference Include="..\std\stdOldW.csproj">
       <Project>{74d48009-1ece-4791-ba11-111ed062879c}</Project>
-      <Name>std</Name>
+      <Name>stdOldW</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

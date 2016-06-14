@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.OleDb;
 using System.Runtime.CompilerServices;
 using Autodesk.Revit.DB;
 using OldW.GlobalSettings;
@@ -42,9 +43,6 @@ namespace OldW.Instrumentations
             get { return F_Type; }
         }
 
-        /// <summary> 每一个测点的名称，比如 CX1，LZ2等 </summary>
-        public string Name { get; set; }
-
         #endregion
 
         #region    ---   构造函数
@@ -74,52 +72,84 @@ namespace OldW.Instrumentations
 
         #region    ---   从Element集合中过滤出监测点对象
 
-        /// <summary>
-        /// 从指定的Element集合中，找出所有的监测点元素
-        /// </summary>
+        /// <summary> 从指定的Element集合中，找出所有的监测点元素 </summary>
         /// <param name="Elements"> 要进行搜索过滤的Element集合</param>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public static List<Instrumentation> Lookup(Document Doc, ICollection<ElementId> Elements)
         {
-            List<Instrumentation> Instrus = new List<Instrumentation>();
-            if (Elements.Count > 0)
-            {
-                FilteredElementCollector Coll = new FilteredElementCollector(Doc, Elements);
-                // 集合中的族实例
-                Coll = Coll.OfClass(typeof(FamilyInstance));
+            FilteredElementCollector Coll = new FilteredElementCollector(Doc, Elements);
+            List<Instrumentation> Instrus = LookupFromCollector(Coll);
+            return Instrus;
+        }
 
-                // 找到指定的Element集合中，所有的族实例
-                FilteredElementIterator FEI = Coll.GetElementIterator();
-                string strName = "";
-                FEI.Reset();
-                while (FEI.MoveNext())
+        /// <summary> 从整个文档中找出所有的监测点元素 </summary>
+        public static List<Instrumentation> Lookup(Document Doc)
+        {
+            FilteredElementCollector Coll = new FilteredElementCollector(Doc);
+            List<Instrumentation> Instrus = LookupFromCollector(Coll);
+            return Instrus;
+        }
+
+        /// <summary>
+        /// 从 FilteredElementCollector 集合中，找出所有的监测点元素
+        /// </summary>
+        /// <returns></returns>
+        private static List<Instrumentation> LookupFromCollector(FilteredElementCollector Coll)
+        {
+            List<Instrumentation> Instrus = new List<Instrumentation>();
+
+            // 集合中的族实例
+            Coll = Coll.OfClass(typeof(FamilyInstance));
+
+            // 找到指定的Element集合中，所有的族实例
+            FilteredElementIterator FEI = Coll.GetElementIterator();
+            string strName = "";
+            FEI.Reset();
+            while (FEI.MoveNext())
+            {
+                //add level to list
+                FamilyInstance fi = FEI.Current as FamilyInstance;
+                if (fi != null)
                 {
-                    //add level to list
-                    FamilyInstance fi = FEI.Current as FamilyInstance;
-                    if (fi != null)
+                    // 一个Element所对应的族的名称（而不是族类型的名称）
+                    strName = Convert.ToString(fi.Symbol.FamilyName);
+                    InstrumentationType Tp = default(InstrumentationType);
+                    if (Enum.TryParse(value: strName, result: out Tp))
                     {
-                        // 一个Element所对应的族的名称
-                        strName = Convert.ToString(fi.Symbol.FamilyName);
-                        InstrumentationType Tp = default(InstrumentationType);
-                        if (Enum.TryParse(value: strName, result: out Tp))
+                        switch (Tp)
                         {
-                            switch (Tp)
-                            {
-                                case InstrumentationType.墙体测斜:
-                                    Instrus.Add(new Instrum_Incline(fi));
-                                    break;
-                                case InstrumentationType.支撑轴力:
-                                    Instrus.Add(new Instrum_StrutAxialForce(fi));
-                                    break;
-                                case InstrumentationType.地表隆沉:
-                                    Instrus.Add(new Instrum_GroundSettlement(fi));
-                                    break;
-                                case InstrumentationType.立柱隆沉:
-                                    Instrus.Add(new Instrum_ColumnHeave(fi));
-                                    break;
-                            }
+                            case InstrumentationType.墙体测斜:
+                                Instrus.Add(new Instrum_WallIncline(fi));
+                                break;
+                            case InstrumentationType.土体测斜:
+                                Instrus.Add(new Instrum_Line(fi, InstrumentationType.土体测斜));
+                                break;
+
+                            case InstrumentationType.墙顶位移:
+                                Instrus.Add(new Instrum_WallTop(fi));
+                                break;
+
+                            case InstrumentationType.地表隆沉:
+                                Instrus.Add(new Instrum_GroundSettlement(fi));
+                                break;
+                            case InstrumentationType.立柱隆沉:
+                                Instrus.Add(new Instrum_ColumnHeave(fi));
+                                break;
+
+                            case InstrumentationType.支撑轴力:
+                                Instrus.Add(new Instrum_StrutAxialForce(fi));
+                                break;
+                            case InstrumentationType.水位:
+                                Instrus.Add(new Instrum_Point(fi, InstrumentationType.水位));
+                                break;
+
+                            case InstrumentationType.其他线测点:
+                                Instrus.Add(new Instrum_Line(fi, InstrumentationType.其他线测点));
+                                break;
+                            case InstrumentationType.其他点测点:
+                                Instrus.Add(new Instrum_Point(fi, InstrumentationType.其他点测点));
+                                break;
                         }
+
                     }
                 }
             }
@@ -130,12 +160,28 @@ namespace OldW.Instrumentations
 
         #region   ---   族参数中数据的提取与保存
 
+        private string MonitorName;
         /// <summary>
         /// 提取测点的名称，比如“CX1”。此参数是在测点族的设计时添加进去的，而不是通过API添加的。
         /// </summary>
         public string getMonitorName()
         {
-            return Monitor.get_Parameter(Constants.SP_MonitorName_Guid).AsString();
+            return MonitorName ?? Monitor.get_Parameter(Constants.SP_MonitorName_Guid).AsString();
+        }
+
+        /// <summary>
+        /// 设置测点的名称，比如“CX1”。此参数是在测点族的设计时添加进去的，而不是通过API添加的。但是其值可以通过API设置。
+        /// </summary>
+        /// <summary>
+        /// 将测点数据类序列化之后的字符保存到测点对象的参数中。
+        /// </summary>
+        public void setMonitorName(Transaction tran, string MonitorName)
+        {
+            Parameter para = Monitor.get_Parameter(Constants.SP_MonitorName_Guid);
+            para.Set(MonitorName);
+
+            // store its name in the private variable.
+            this.MonitorName = MonitorName;
         }
 
         /// <summary>
@@ -155,6 +201,18 @@ namespace OldW.Instrumentations
             Parameter para = Monitor.get_Parameter(Constants.SP_MonitorData_Guid);
             para.Set(dataString);
         }
+
+        #endregion
+
+        #region   ---   与Excel数据库的数据交互
+
+        /// <summary> 从Excel中导入监测数据 </summary>
+        /// <param name="tran"> 已经start的Revit事务 </param>
+        /// <param name="conn">连接到Excel工作簿</param>
+        /// <param name="sheetName">监测数据所在的Excel工作表，表名称中应该包含后缀$ </param>
+        /// <param name="fieldName">监测数据在工作表中的哪个字段下。对于线测点，其fieldName是不必要的。</param>
+        public abstract void ImportFromExcel(Transaction tran, OleDbConnection conn, string sheetName, string fieldName);
+
         #endregion
     }
 }

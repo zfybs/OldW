@@ -4,6 +4,6 @@ F:\Software\Revit\RevitDevelop\OldW\bin\std.pdb
 F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\Debug\std.csproj.GenerateResource.Cache
 F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\Debug\std.dll
 F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\Debug\std.pdb
+F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\Debug\stdOldW.WinFormHelper.eZDataGridViewPaste.resources
+F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\Debug\stdOldW.WinFormHelper.eZDataGridView.resources
 F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\Debug\std.csprojResolveAssemblyReference.cache
-F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\Debug\std_ez.eZDataGridView.resources
-F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\Debug\std_ez.eZDataGridViewPaste.resources

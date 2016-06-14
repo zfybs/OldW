@@ -8,7 +8,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Structure;
 using Autodesk.Revit.UI;
 using OldW.GlobalSettings;
-using std_ez;
+using stdOldW;
 using Application = Autodesk.Revit.ApplicationServices.Application;
 using Document = Autodesk.Revit.DB.Document;
 using View = Autodesk.Revit.DB.View;
@@ -74,12 +74,12 @@ namespace OldW.Excavation
                 ExtrusionAndBindingDimension(FamilyDoc, CurveArrArr, Depth);
 
                 // 将族加载到项目文档中
-                Family fam = FamilyDoc.LoadFamily(Doc, UIDocument.GetRevitUIFamilyLoadOptions());
+                Family fam = FamilyDoc.LoadFamily(Document, UIDocument.GetRevitUIFamilyLoadOptions());
                 FamilyDoc.Close(false);
                 // 获取一个族类型，以加载一个族实例到项目文档中
-                FamilySymbol fs = fam.GetFamilySymbolIds().First().Element(Doc) as FamilySymbol;
+                FamilySymbol fs = fam.GetFamilySymbolIds().First().Element(Document) as FamilySymbol;
 
-                using (Transaction t = new Transaction(Doc, "添加族实例"))
+                using (Transaction t = new Transaction(Document, "添加族实例"))
                 {
                     t.Start();
                     // 将模型土体放到Group中
@@ -87,7 +87,7 @@ namespace OldW.Excavation
                     List<ElementId> GroupMems = new List<ElementId>();
                     GroupType gptp =
                         (GroupType)
-                            rvtTools.RvtTools.FindElement(Doc, typeof(GroupType), targetName: Constants.FamilyName_Soil);
+                            rvtTools.RvtTools.FindElement(Document, typeof(GroupType), targetName: Constants.FamilyName_Soil);
                     // 组类型中包含有族实例，所以要找到对应的组类型，然后找到对应的组实例，再将组实例解组。
                     // 这是为了避免在删除“基坑土体”族及其实例时，UI界面中会出现“删除组实例中的最后一个成员”的警告。
                     Group gp = default(Group);
@@ -95,17 +95,17 @@ namespace OldW.Excavation
                     {
                         gp =
                             (Group)
-                                rvtTools.RvtTools.FindElement(Doc, typeof(Group), targetName: Constants.FamilyName_Soil);
+                                rvtTools.RvtTools.FindElement(Document, typeof(Group), targetName: Constants.FamilyName_Soil);
                         if (gp != null)
                         {
                             GroupMems = gp.GetMemberIds() as List<ElementId>;
                             gp.UngroupMembers();
                         }
-                        Doc.Delete(gptp.Id);
+                        Document.Delete(gptp.Id);
                     }
 
                     //
-                    Family f = Doc.FindFamily(Constants.FamilyName_Soil, BuiltInCategory.OST_Site);
+                    Family f = Document.FindFamily(Constants.FamilyName_Soil, BuiltInCategory.OST_Site);
                     if (f != null)
                     {
                         // 将此模型土体从Group的集合中删除
@@ -117,7 +117,7 @@ namespace OldW.Excavation
                             }
                         }
                         // 删除模型土体族及对应的实例
-                        Doc.Delete(f.Id);
+                        Document.Delete(f.Id);
                     }
 
                     // 为族与族类型重命名
@@ -129,12 +129,12 @@ namespace OldW.Excavation
                     {
                         fs.Activate();
                     }
-                    FamilyInstance fi = Doc.Create.NewFamilyInstance(new XYZ(), fs, StructuralType.NonStructural);
+                    FamilyInstance fi = Document.Create.NewFamilyInstance(new XYZ(), fs, StructuralType.NonStructural);
 
                     // 重新构造Group
-                    Doc.Regenerate();
+                    Document.Regenerate();
                     GroupMems.Add(fi.Id);
-                    gp = Doc.Create.NewGroup(GroupMems);
+                    gp = Document.Create.NewGroup(GroupMems);
                     gp.GroupType.Name = Constants.FamilyName_Soil;
                     //
                     SM = Soil_Model.Create(this, fi);
@@ -196,16 +196,16 @@ namespace OldW.Excavation
 
 
                     // 将族加载到项目文档中
-                    Family fam = FamDoc.LoadFamily(Doc, UIDocument.GetRevitUIFamilyLoadOptions());
+                    Family fam = FamDoc.LoadFamily(Document, UIDocument.GetRevitUIFamilyLoadOptions());
                     FamDoc.Close(false);
                     // 获取一个族类型，以加载一个族实例到项目文档中
-                    FamilySymbol fs = (FamilySymbol)fam.GetFamilySymbolIds().First().Element(Doc);
-                    using (Transaction t = new Transaction(Doc, "添加族实例"))
+                    FamilySymbol fs = (FamilySymbol)fam.GetFamilySymbolIds().First().Element(Document);
+                    using (Transaction t = new Transaction(Document, "添加族实例"))
                     {
                         t.Start();
                         // 族或族类型的重命名
 
-                        string soilName = GetValidExcavationSoilName(Doc, DesiredName);
+                        string soilName = GetValidExcavationSoilName(Document, DesiredName);
                         fam.Name = soilName;
                         fs.Name = soilName;
 
@@ -214,7 +214,7 @@ namespace OldW.Excavation
                         {
                             fs.Activate();
                         }
-                        FamilyInstance fi = Doc.Create.NewFamilyInstance(new XYZ(), fs, StructuralType.NonStructural);
+                        FamilyInstance fi = Document.Create.NewFamilyInstance(new XYZ(), fs, StructuralType.NonStructural);
                         SE = Soil_Excav.Create(fi, p_ModelSoil);
                         t.Commit();
                     }
@@ -234,7 +234,7 @@ namespace OldW.Excavation
         /// </summary>
         private Document CreateSoilFamily()
         {
-            var app = Doc.Application;
+            var app = Document.Application;
             string TemplateName = Path.Combine(ProjectPath.Path_family, Constants.FamilyTemplateName_Soil);
             if (!File.Exists(TemplateName))
             {
@@ -371,7 +371,7 @@ namespace OldW.Excavation
         private string GetValidExcavationSoilNameFromDate(Document doc, DateTime ExcavationCompleteDate)
         {
             string prefix = "开挖土体-";
-            List<Family> Fams = Doc.FindFamilies(BuiltInCategory.OST_Site);
+            List<Family> Fams = Document.FindFamilies(BuiltInCategory.OST_Site);
 
             // 构造一个字典，其中包括的所有开挖土体族的名称中，每一个日期，以及对应的可能编号
             Dictionary<DateTime, List<UInt16>> Date_Count = new Dictionary<DateTime, List<UInt16>>();
@@ -448,7 +448,7 @@ namespace OldW.Excavation
         {
             string prefix = "开挖-";
 
-            List<Family> Fams = Doc.FindFamilies(BuiltInCategory.OST_Site);
+            List<Family> Fams = Document.FindFamilies(BuiltInCategory.OST_Site);
             // 构造一个字典，其中包括的所有开挖土体族的名称中，每一个日期，以及对应的可能编号
             List<string> FamNames = new List<string>();
             string FamName = "";
@@ -549,11 +549,11 @@ namespace OldW.Excavation
             string FMessage = null;
             if (ModelSoil == null)
             {
-                ModelSoil = GetModelSoil(Doc, new ElementId(SoilElementId), ref FMessage);
+                ModelSoil = GetModelSoil(Document, new ElementId(SoilElementId), ref FMessage);
             }
             else // 检查现有的这个模型土体单元是否还有效
             {
-                if (!Soil_Model.IsSoildModel(Doc, ModelSoil.Soil.Id, ref FMessage))
+                if (!Soil_Model.IsSoildModel(Document, ModelSoil.Soil.Id, ref FMessage))
                 {
                     ModelSoil = null;
                 }
@@ -583,7 +583,7 @@ namespace OldW.Excavation
                     string FMessage = null;
                     if (Soil_Model.IsSoildModel(doc, SoilElementId, ref FMessage))
                     {
-                        Soil = (FamilyInstance)Doc.GetElement(SoilElementId);
+                        Soil = (FamilyInstance)Document.GetElement(SoilElementId);
                     }
                     else
                     {
@@ -601,7 +601,7 @@ namespace OldW.Excavation
             {
                 // 在整个文档中进行搜索
                 // 1. 族名称
-                Family SoilFamily = Doc.FindFamily(Constants.FamilyName_Soil);
+                Family SoilFamily = Document.FindFamily(Constants.FamilyName_Soil);
                 if (SoilFamily != null)
                 {
                     // 实例的类别
@@ -650,7 +650,7 @@ namespace OldW.Excavation
             List<ElementId> ElemIds = gp.GetMemberIds() as List<ElementId>;
             if (ElemIds.Count > 0)
             {
-                FilteredElementCollector col = new FilteredElementCollector(Doc, ElemIds);
+                FilteredElementCollector col = new FilteredElementCollector(Document, ElemIds);
                 // 所有的模型土体与开挖土体集合
                 List<Element> Elems =
                     col.OfClass(typeof(FamilyInstance))
@@ -682,23 +682,23 @@ namespace OldW.Excavation
         public bool DeleteEmptySoilFamily()
         {
             bool blnSuc = false;
-            using (Transaction t = new Transaction(Doc, "删除文档中没有实例对象的土体族。"))
+            using (Transaction t = new Transaction(Document, "删除文档中没有实例对象的土体族。"))
             {
                 try
                 {
-                    List<Family> Fams = Doc.FindFamilies(BuiltInCategory.OST_Site);
+                    List<Family> Fams = Document.FindFamilies(BuiltInCategory.OST_Site);
                     List<ElementId> FamsToDelete = new List<ElementId>();
-                    string DeletedFamilyName = "";
+                    string deletedFamilyName = "";
                     foreach (Family f in Fams)
                     {
                         if (f.Instances(BuiltInCategory.OST_Site).Count() == 0)
                         {
                             FamsToDelete.Add(f.Id);
-                            DeletedFamilyName = DeletedFamilyName + f.Name + "\r\n";
+                            deletedFamilyName = deletedFamilyName + f.Name + "\r\n";
                         }
                     }
                     t.Start();
-                    Doc.Delete(FamsToDelete);
+                    Document.Delete(FamsToDelete);
                     t.Commit();
                     //  MessageBox.Show("删除空的土体族对象成功。删除掉的族对象有：" & vbCrLf & DeletedFamilyName, "恭喜", MessageBoxButtons.OK, MessageBoxIcon.None)
                     blnSuc = true;
