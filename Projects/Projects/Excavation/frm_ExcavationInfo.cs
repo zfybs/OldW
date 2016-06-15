@@ -9,6 +9,9 @@ using Autodesk.Revit.DB;
 
 namespace OldW.Excavation
 {
+    /// <summary>
+    /// 提取并且操作基坑开挖的信息
+    /// </summary>
 	public partial class frm_ExcavationInfo : IExternalEventHandler
 	{
 		

@@ -6,4 +6,3 @@ F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\Debug\stdOldW.WinFormHelper
 F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\Debug\stdOldW.csproj.GenerateResource.Cache
 F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\Debug\stdOldW.dll
 F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\Debug\stdOldW.pdb
-F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\Debug\stdOldW.csprojResolveAssemblyReference.cache

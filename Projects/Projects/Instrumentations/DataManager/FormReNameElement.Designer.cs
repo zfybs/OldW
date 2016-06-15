@@ -1,6 +1,6 @@
 ﻿namespace OldW.DataManager
 {
-    partial class FormReNameElement
+    partial class ElementInitialize
     {
         /// <summary>
         /// Required designer variable.

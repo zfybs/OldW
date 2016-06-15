@@ -8,7 +8,7 @@ namespace OldW.Instrumentations
     /// 测点_测斜管
     /// </summary>
     /// <remarks></remarks>
-    public class Instrum_Incline : Instrum_Line
+    public class Instrum_WallIncline : Instrum_Line
     {
         #region    ---   Properties
 
@@ -25,8 +25,9 @@ namespace OldW.Instrumentations
 
         /// <summary> 构造函数 </summary>
         /// <param name="inclinometerElement">测斜管所对应的图元</param>
-        public Instrum_Incline(FamilyInstance inclinometerElement) : base(inclinometerElement, InstrumentationType.测斜)
+        public Instrum_WallIncline(FamilyInstance inclinometerElement) : base(inclinometerElement, InstrumentationType.墙体测斜, true)
         {
+            _isInsideEarth = false;
         }
 
         #region    ---   测斜点附近的土体开挖面
@@ -49,7 +50,7 @@ namespace OldW.Instrumentations
 
             // 将当前3D视图作为ReferenceIntersector的构造参数
             View3D view3d = null;
-            view3d = Doc.ActiveView as View3D;
+            view3d = Document.ActiveView as View3D;
             if (view3d == null)
             {
                 TaskDialog.Show("3D view", "current view should be 3D view");
@@ -101,7 +102,7 @@ namespace OldW.Instrumentations
                 ReferenceWithContext NearestRefCont = null;
                 XYZ NearestDir = null;
                 XYZ dire = default(XYZ);
-                for (var angle = 0.3/180*Math.PI; angle <= 2*Math.PI; angle += Math.PI/7)
+                for (var angle = 0.3 / 180 * Math.PI; angle <= 2 * Math.PI; angle += Math.PI / 7)
                 {
                     // 创建一个水平面上的方向向量，此向量与x轴的夹角为angle
                     dire = new XYZ(Math.Cos(angle), Math.Sin(angle), 0);
@@ -121,17 +122,17 @@ namespace OldW.Instrumentations
 
                     // 找到最近的那个相交射线所对应的相交面，此面即为此离测斜管最近的那个土体的侧面（竖向）
                     // 注意，这里返回的Face是位于族类型中的Face，而不是模型空间中的族实例的Face
-                    Face VerticalFace = (Face) Earth.GetGeometryObjectFromReference(NearestRef);
+                    Face VerticalFace = (Face)Earth.GetGeometryObjectFromReference(NearestRef);
 
                     // 测斜管底部点到找到的最近的面的垂足点
                     XYZ Normal = VerticalFace.ComputeNormal(NearestRef.UVPoint);
-                        // face normal where ray hits，注意：这里返回的法向量是相对于族类型的局部空间的
+                    // face normal where ray hits，注意：这里返回的法向量是相对于族类型的局部空间的
                     Normal = NearestRefCont.GetInstanceTransform().OfVector(Normal);
-                        //将法向由族类型的局部空间转换到模型空间。 transformation to get it in terms of document coordinates instead of the parent symbol
+                    //将法向由族类型的局部空间转换到模型空间。 transformation to get it in terms of document coordinates instead of the parent symbol
 
                     // 将垂足点沿着面的法向的反方向延长 0.001 英尺，以进入土体内部（而不是位于竖直面的表面）
                     // 在实际操作中，这里并没有取法向，而是近似地取距离最近的相交射线的方向，这里由于：如果测点在开挖土体的拐角处，就找不到在面内的投影点了。
-                    PtBottom = ptInclinometerBottom + NearestDir*(NearestDist + 0.001);
+                    PtBottom = ptInclinometerBottom + NearestDir * (NearestDist + 0.001);
                 }
                 else
                 {

@@ -46,7 +46,7 @@ namespace OldW.DataManager
                 /// <summary>
                 /// 此测点的节点数据。如果在DataGridView中修改了一个测点的节点信息，则其最新的节点数据会体现在这里。
                 /// </summary>
-                public float[] Nodes;
+                public string[] Nodes;
 
                 /// <summary> Datagridview 所绑定 表示线测点监测数据的实体类的名称，其所在的命名空间保存在常数 <see cref="NamespaceName"/> 中</summary>
                 public string EntityName;
@@ -66,11 +66,11 @@ namespace OldW.DataManager
 
                     if (monitor.GetMonitorData() != null)
                     {
-                        Nodes = monitor.GetMonitorData().Nodes;
+                        Nodes = monitor.GetMonitorData().GetStringNodes();
                     }
                     else
                     {
-                        Nodes = new float[0];
+                        Nodes = new string[0];
                     }
                     this.Assembly = assemblyData;
                     this.EntityName = entityName;
@@ -262,14 +262,16 @@ namespace OldW.DataManager
                 }
 
                 TableBindedData tbd = OpenedTableSet[activeInstruId];
+                if (tbd.Monitor.NodesDigital)
+                {
+                    var nodes = tbd.Nodes;
+                    var fn = new FormNodes(nodes);
 
-                var nodes = tbd.Nodes;
-                var fn = new FormNodes(nodes);
+                    // 打开窗口并操作
+                    fn.ShowDialog();
 
-                // 打开窗口并操作
-                fn.ShowDialog();
-
-                RefreshNodes(fn.Nodes);
+                    RefreshNodes(fn.Nodes);
+                }
             }
 
             /// <summary>
@@ -289,7 +291,7 @@ namespace OldW.DataManager
                         var monitorValue = ConvertBindingList(tdb);
 
                         // 
-                        var monitorDataLine = new MonitorData_Line(tdb.Nodes, monitorValue);
+                        var monitorDataLine = new MonitorData_Line(tdb.Nodes, monitorValue, OpenedTableSet[activeInstruId].Monitor.NodesDigital);
 
                         OpenedTableSet[activeInstruId].Monitor.SetMonitorData(tran, monitorDataLine);
                         tran.Commit();
@@ -317,16 +319,16 @@ namespace OldW.DataManager
 
                 // 提取监测数据
                 MonitorData_Line ML = ele.GetMonitorData();
-                float[] newNodes;
+                string[] newNodes;
                 if (ML == null)
                 {
                     // 说明Element的参数中没有包含有效的监测数据
-                    newNodes = new float[0];
+                    newNodes = new string[0];
                 }
                 else
                 {
                     // 说明Element的参数中包含有有效的监测数据
-                    newNodes = ML.Nodes;
+                    newNodes = ML.GetStringNodes();
                 }
 
                 // 根据节点数目返回对应的程序集
@@ -350,7 +352,7 @@ namespace OldW.DataManager
             /// <remarks> 当节点信息改变后，有以下几种情况：
             ///  1、 如果节点数目没有变，则 DataSource 不用变，只需要修改表格的表头文字而已
             ///  2、 如果节点数目发生了变化，则 DataSource 所绑定的集合中的泛型将要发生改变，此时需要重新构造BindingList集合，并且将原来的数据行转换到新的集合中去。</remarks>
-            private void RefreshNodes(float[] newNodes)
+            private void RefreshNodes(string[] newNodes)
             {
                 if (activeInstruId != null && OpenedTableSet.ContainsKey(activeInstruId))
                 {
@@ -430,7 +432,7 @@ namespace OldW.DataManager
                 // 提取监测数据
                 DateTime dt;
                 object EntityInstance;
-                MonitorData_Line ml = monitorDataSet.Monitor.GetMonitorData() ?? new MonitorData_Line(new float[0]);
+                MonitorData_Line ml = monitorDataSet.Monitor.GetMonitorData() ?? new MonitorData_Line(new string[0], monitorDataSet.Monitor.NodesDigital);
                 // 将监测数据中的值更新到 Datagridview 绑定的集合中
                 foreach (var oneDayValues in ml.MonitorData)
                 {
@@ -523,7 +525,7 @@ namespace OldW.DataManager
             /// </summary>
             /// <param name="nodesCount"> 新表格中有多少个节点 </param>
             /// <param name="nodes"> 可选参数，表示每一个节点的位置，用来显示在表格的表头处。 </param>
-            private void ChangeColumns(int nodesCount, float[] nodes = null)
+            private void ChangeColumns(int nodesCount, string[] nodes = null)
             {
                 int lastColumnNum = dataGridViewLine.ColumnCount - 1;
                 // 表格中最后一列所对应的节点编号，如果LastColumnNum的值为0，则表示只有第一列即日期列
@@ -728,7 +730,7 @@ namespace OldW.DataManager
                     float?[][] allData = monitorDataSet.GetMonitorData(rowIndexes, out allDate);
 
                     // 绘图
-                    Chart_MonitorData Chart1 = new Chart_MonitorData(InstrumentationType.测斜);
+                    Chart_MonitorData Chart1 = new Chart_MonitorData(monitorDataSet.Monitor.Type);
                     // 设置图例
                     Chart1.Chart.Legends.Clear();
                     Chart1.Chart.Legends.Add(new Legend("图例"));
@@ -791,9 +793,9 @@ namespace OldW.DataManager
             private eZDataGridViewPaste _dataGridView;
 
             // 设置好的节点数据
-            private float[] _nodes;
+            private string[] _nodes;
 
-            public float[] Nodes
+            public string[] Nodes
             {
                 get { return _nodes; }
             }
@@ -802,7 +804,7 @@ namespace OldW.DataManager
             /// 构造函数
             /// </summary>
             /// <param name="Nodes"></param>
-            public FormNodes(float[] Nodes)
+            public FormNodes(string[] Nodes)
             {
                 Initialize();
 
@@ -870,14 +872,14 @@ namespace OldW.DataManager
                     // 提取数据
                     int nodesCount = _dataGridView.Rows.Count - 1;
                     object v;
-                    _nodes = new float[nodesCount];
+                    _nodes = new string[nodesCount];
                     for (int i = 0; i < nodesCount; i++)
                     {
                         v = _dataGridView.Rows[i].Cells[0].Value;
 
                         if (v != null)
                         {
-                            _nodes[i] = (float)v;
+                            _nodes[i] = (string)v;
                         }
                     }
                 }

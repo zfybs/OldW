@@ -138,7 +138,7 @@ namespace stdOldW.DAL
                 //注意下面的Rows属性返回的并不是Excel工作表中的每一行，而是Excel工作簿中的所有工作表。
                 DataRowCollection Tables = conn.GetSchema("Tables").Rows;
                 //
-              List<string> sheetNames = new List<string>();
+                List<string> sheetNames = new List<string>();
                 for (int i = 0; i <= Tables.Count - 1; i++)
                 {
                     //注意这里的表格Table是以DataRow的形式出现的。
@@ -159,7 +159,7 @@ namespace stdOldW.DAL
         }
 
         /// <summary>
-        /// 获取指定工作表中所有字段的名称
+        /// 获取指定工作表中所有字段的名称，包括主键
         /// </summary>
         /// <param name="conn"></param>
         /// <param name="tableName"> 要在哪一个工作表中提取字段信息，表名的格式为“Sheet1$”</param>
@@ -172,44 +172,32 @@ namespace stdOldW.DAL
         }
 
         /// <summary>
-        /// 获取指定工作表中所有字段的名称
+        /// 获取指定工作表中所有字段的数据类型。
         /// </summary>
         /// <param name="conn"></param>
         /// <param name="tableName"> 要在哪一个工作表中提取字段信息，表名的格式为“Sheet1$”</param>
-        /// <remarks></remarks>
+        /// <remarks>Excel中字段的数据类型是以数字来表示的，其中：时间=7；</remarks>
         public static IList<string> GetFieldDataType(OleDbConnection conn, string tableName)
         {
             var dt = conn.GetSchema("Columns", new string[] { null, null, tableName });
-            var names = DataTableHelper.GetValue(dt, "COLUMN_NAME");
+            var names = DataTableHelper.GetValue(dt, "DATA_TYPE");
             return names.AsEnumerable().Select(r => r.ToString()).ToList();
         }
-        
-        /// <summary> 执行有参SQL语句，返回DataTable </summary>
-        /// <param name="conn"></param>
-        /// <param name="safeSql">数据查询语句，比如“ Selete * From [Sheet1$] ”</param>
-        /// <returns> DataAdapter.Fill得到的DataSet中的第一个DataTable </returns>
-        public static DataTable GetDataSet(OleDbConnection conn, string safeSql)
-        {
-            DataSet ds = new DataSet();
-            OleDbCommand cmd = new OleDbCommand(safeSql, conn);
-            OleDbDataAdapter da = new OleDbDataAdapter(cmd);
-            da.Fill(ds);
-            return ds.Tables[0];
-        }
+
+
 
         #endregion
 
         #region 提取Excel中的数据记录
 
         /// <summary>
-        /// 读取Excel工作表中的某一个字段数据
+        /// 读取Excel整张工作表中的所有字段的数据
         /// </summary>
         /// <param name="conn">OleDB的数据连接</param>
-        /// <param name="SheetName">要读取的数据所在的工作表</param>
-        /// <param name="FieldName">在读取的字段</param>
+        /// <param name="sheetName">要读取的数据所在的工作表，名称中请自行包括后缀$</param>
         /// <returns></returns>
         /// <remarks></remarks>
-        public static string[] GetDataFromExcel(OleDbConnection conn, string SheetName, string FieldName)
+        public static DataTable GetDataFromSheet(OleDbConnection conn, string sheetName)
         {
             //如果连接已经关闭，则先打开连接
             if (conn.State == ConnectionState.Closed)
@@ -222,7 +210,7 @@ namespace stdOldW.DAL
                 OleDbCommand olecmd = conn.CreateCommand();
                 //类似SQL的查询语句这个[Sheet1$对应Excel文件中的一个工作表]
                 //如果要提取Excel中的工作表中的某一个指定区域的数据，可以用："select * from [Sheet3$A1:C5]"
-                olecmd.CommandText = "select * from [" + SheetName + "$]";
+                olecmd.CommandText = "select * from [" + sheetName + "]";
 
                 //创建数据适配器——根据指定的数据库指令
                 OleDbDataAdapter Adapter = new OleDbDataAdapter(olecmd);
@@ -233,8 +221,50 @@ namespace stdOldW.DAL
                 //将数据适配器按指令操作的数据填充到数据集中的某一工作表中（默认为“Table”工作表）
                 Adapter.Fill(dtSet);
 
-                //其中的数据都是由 "select * from [" + SheetName + "$]"得到的Excel中工作表SheetName中的数据。
-                int intTablesCount = dtSet.Tables.Count;
+                //索引数据集中的第一个工作表对象
+                DataTable dataTable = dtSet.Tables[0]; // conn.GetSchema("Tables")
+
+                return dataTable;
+            }
+            else
+            {
+                MessageBox.Show("未正确连接到Excel数据库!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 读取Excel工作表中的某一个字段数据
+        /// </summary>
+        /// <param name="conn">OleDB的数据连接</param>
+        /// <param name="SheetName">要读取的数据所在的工作表，名称中请自行包括后缀$</param>
+        /// <param name="FieldName">在读取的字段</param>
+        /// <returns></returns>
+        /// <remarks></remarks>
+        public static string[] GetFieldDataFromExcel(OleDbConnection conn, string SheetName, string FieldName)
+        {
+            //如果连接已经关闭，则先打开连接
+            if (conn.State == ConnectionState.Closed)
+            {
+                conn.Open();
+            }
+            if (ConnectionSourceValidated(conn))
+            {
+                //创建向数据库发出的指令
+                OleDbCommand olecmd = conn.CreateCommand();
+                //类似SQL的查询语句这个[Sheet1$对应Excel文件中的一个工作表]
+                //如果要提取Excel中的工作表中的某一个指定区域的数据，可以用："select * from [Sheet3$A1:C5]"
+                olecmd.CommandText = $"select [{FieldName}] from [{SheetName}]";
+
+                //创建数据适配器——根据指定的数据库指令
+                OleDbDataAdapter Adapter = new OleDbDataAdapter(olecmd);
+
+                //创建一个数据集以保存数据
+                DataSet dtSet = new DataSet();
+
+                //将数据适配器按指令操作的数据填充到数据集中的某一工作表中（默认为“Table”工作表）
+                Adapter.Fill(dtSet);
+
 
                 //索引数据集中的第一个工作表对象
                 System.Data.DataTable DataTable = dtSet.Tables[0]; // conn.GetSchema("Tables")
@@ -242,14 +272,13 @@ namespace stdOldW.DAL
                 //工作表中的数据有8列9行(它的范围与用Worksheet.UsedRange所得到的范围相同。
                 //不一定是写有数据的单元格才算进行，对单元格的格式，如底纹，字号等进行修改的单元格也在其中。)
                 int intRowsInTable = DataTable.Rows.Count;
-                int intColsInTable = DataTable.Columns.Count;
 
                 //提取每一行数据中的“成绩”数据
                 string[] Data = new string[intRowsInTable - 1 + 1];
                 for (int i = 0; i <= intRowsInTable - 1; i++)
                 {
                     // 如果单元格中没有数据的话，则对应的数据的类型为System.DBNull
-                    Data[i] = DataTable.Rows[i][FieldName].ToString();
+                    Data[i] = DataTable.Rows[i][0].ToString();
                 }
                 return Data;
             }
@@ -264,12 +293,12 @@ namespace stdOldW.DAL
         /// 读取Excel工作表中的某一个字段数据
         /// </summary>
         /// <param name="conn">OleDB的数据连接</param>
-        /// <param name="SheetName">要读取的数据所在的工作表</param>
+        /// <param name="SheetName">要读取的数据所在的工作表，名称中请自行包括后缀$</param>
         /// <param name="FieldName">在读取的字段</param>
         /// <typeparam name="T">要提取的字段的数据类型，比如设置为 double? 等可空类型 </typeparam>
         /// <returns></returns>
         /// <remarks></remarks>
-        public static T[] GetDataFromExcel<T>(OleDbConnection conn, string SheetName, string FieldName)
+        public static T[] GetFieldDataFromExcel<T>(OleDbConnection conn, string SheetName, string FieldName)
         {
             //如果连接已经关闭，则先打开连接
             if (conn.State == ConnectionState.Closed)
@@ -282,7 +311,7 @@ namespace stdOldW.DAL
                 OleDbCommand olecmd = conn.CreateCommand();
                 //类似SQL的查询语句这个[Sheet1$对应Excel文件中的一个工作表]
                 //如果要提取Excel中的工作表中的某一个指定区域的数据，可以用："select * from [Sheet3$A1:C5]"
-                olecmd.CommandText = "select * from [" + SheetName + "$]";
+                olecmd.CommandText = "select * from [" + SheetName + "]";
 
                 //创建数据适配器——根据指定的数据库指令
                 OleDbDataAdapter Adapter = new OleDbDataAdapter(olecmd);
@@ -331,7 +360,7 @@ namespace stdOldW.DAL
         /// <param name="FieldNames">在读取的每一个字段的名称</param>
         /// <returns></returns>
         /// <remarks></remarks>
-        public static DataTable GetDataFromExcel(OleDbConnection conn, string SheetName, params string[] FieldNames)
+        public static DataTable GetFieldDataFromExcel(OleDbConnection conn, string SheetName, params string[] FieldNames)
         {
             //如果连接已经关闭，则先打开连接
             if (conn.State == ConnectionState.Closed)
@@ -366,6 +395,19 @@ namespace stdOldW.DAL
                 return null;
             }
             return null;
+        }
+
+        /// <summary> 执行有参SQL语句，返回DataTable </summary>
+        /// <param name="conn"></param>
+        /// <param name="safeSql">数据查询语句，比如“ Selete * From [Sheet1$] ”</param>
+        /// <returns> DataAdapter.Fill得到的DataSet中的第一个DataTable </returns>
+        public static DataTable GetDataSet(OleDbConnection conn, string safeSql)
+        {
+            DataSet ds = new DataSet();
+            OleDbCommand cmd = new OleDbCommand(safeSql, conn);
+            OleDbDataAdapter da = new OleDbDataAdapter(cmd);
+            da.Fill(ds);
+            return ds.Tables[0];
         }
 
         #endregion
@@ -473,7 +515,7 @@ namespace stdOldW.DAL
                 return;
             }
         }
-        
+
         /// <summary>
         /// 将要提取的字段名称转换为SQL语句中的字段名称字符
         /// </summary>
