@@ -124,9 +124,31 @@ namespace OldW.GlobalSettings
         }
 
         #endregion
-        
+
+        #region    ---   Excel 监测数据库的名称规范
+
+        /// <summary> 墙体测斜,每一个测斜点的数据用一个工作表来保存 </summary>
+        public const string ExcelDatabaseSheet_WallIncline = "CX";
+        /// <summary> 土体测斜,每一个测斜点的数据用一个工作表来保存 </summary>
+        public const string ExcelDatabaseSheet_SoilIncine = "TX";
+
+        /// <summary> 墙顶位移在Revit中是属于线测点，但是出于习惯，在Excel中通过两个点测点的格式来放置监测数据 </summary>
+        public const string ExcelDatabaseSheet_WallTopH = "墙顶水平位移";
+        /// <summary> 墙顶位移在Revit中是属于线测点，但是出于习惯，在Excel中通过两个点测点的格式来放置监测数据 </summary>
+        public const string ExcelDatabaseSheet_WallTopV = "墙顶垂直位移";
+        /// <summary>  </summary>
+        public const string ExcelDatabaseSheet_GroundHeave = "地表隆沉";
+        /// <summary>  </summary>
+        public const string ExcelDatabaseSheet_ColumnHeave = "立柱隆沉";
+        /// <summary> 存 </summary>
+        public const string ExcelDatabaseSheet_StrutForce = "支撑轴力";
+        /// <summary>  </summary>
+        public const string ExcelDatabaseSheet_WaterTable = "水位";
+
         /// <summary>  Excel数据库中，每一个工作表的第一个字段名称，即主键名称必须是中文“时间” </summary>
         public const string ExcelDatabasePrimaryKeyName = "时间";
+
+        #endregion
 
     }
 }

@@ -6,9 +6,11 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using stdOldW.DAL;
+using OldW.GlobalSettings;
 
 namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关的一些接口、枚举等的定义
 {
+
     #region ---   enum(InstrumentationType) ：监测仪器的族名称（也是族文件的名称），同时也作为监测仪器的类型判断 
 
     /// <summary>
@@ -50,139 +52,14 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
 
         /// <summary> 比如基坑中水位测点处的水位高低 </summary>
         水位 = 256,
+
+        /// <summary> 通过位运算进行组合的所有线测点的集合。 </summary>
+        线测点集合 = 其他线测点 | 墙体测斜 | 土体测斜 | 墙顶位移,
+
+        /// <summary> 通过位运算进行组合的所有点测点的集合。 </summary>
+        点测点集合 = 其他点测点 | 地表隆沉 | 立柱隆沉 | 支撑轴力 | 水位,
     }
 
-    #endregion
-
-    #region ---   Class(MonitorData_Point/MonitorData_Line)：Revit中测点监测数据的序列化类 
-
-    /// <summary> 监测数据类，表示点测点中的每一天的监测数据 </summary>
-    [Serializable()]
-    public class MonitorData_Point
-    {
-        /// <summary>
-        /// 监测日期
-        /// </summary>
-        public DateTime Date { get; set; }
-
-        /// <summary>
-        /// 监测数据，如果当天没有数据，则为null
-        /// </summary>
-        public float? Value { get; set; }
-
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="Date"></param>
-        /// <param name="Value"></param>
-        public MonitorData_Point(DateTime Date, float? Value)
-        {
-            this.Date = Date;
-            this.Value = Value;
-        }
-
-        /// <summary>
-        /// 从 DataTable 对象中指定的两个字段提取出点测点的监测数据的实体类集合
-        /// </summary>
-        /// <param name="table"> 要进行数据提取的表格 </param>
-        /// <param name="indexDate"> 日期数据在 table 中所在的列的列号 </param>
-        /// <param name="indexValue"> 监测数据在 table 中所在的列的列号 </param>
-        /// <returns> 实体类集合，用来作为 Instrum_Point.SetMonitorData 的输入参数 </returns>
-        public static List<MonitorData_Point> FromDataTable(DataTable table, int indexDate, int indexValue)
-        {
-            return (from DataRow row in table.Rows
-                    select Convert.IsDBNull(row[indexValue])
-                    ? new MonitorData_Point((DateTime)row[indexDate], null)
-                    : new MonitorData_Point((DateTime)row[indexDate], Convert.ToSingle(row[indexValue]))).ToList();
-        }
-    }
-
-
-    /// <summary>
-    /// 线测点中的每一天的监测数据
-    /// </summary>
-    /// <remarks></remarks>
-    [Serializable()]
-    public class MonitorData_Line
-    {
-        /// <summary>
-        /// 线测点上的每一个子节点的深度（相对于线测点的顶端或起点而言）
-        /// </summary>
-        public Single[] Nodes { get; set; }
-
-        private readonly SortedDictionary<DateTime, float?[]> _monitorData;
-
-        /// <summary>
-        /// 测斜管在每一天的监测数据。其中，SortedDictionary 中的Value项 为一个数组，
-        /// 它代表对应的日期下，Depths中每一个深度处所对应的监测数据值，
-        /// 所以，此数组中元素的个数必须要与Depths数组中元素的个数相同。
-        /// </summary>
-        public SortedDictionary<DateTime, float?[]> MonitorData
-        {
-            get { return _monitorData; }
-        }
-
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="nodes">线测点上的每一个子节点的深度（相对于线测点的顶端或起点而言）</param>
-        public MonitorData_Line(Single[] nodes)
-        {
-            _monitorData = new SortedDictionary<DateTime, float?[]>();
-            Nodes = nodes;
-        }
-
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="nodes">线测点上的每一个子节点的深度（相对于线测点的顶端或起点而言）</param>
-        /// <param name="monitoredData">已经记录好的监测数据</param>
-        public MonitorData_Line(float[] nodes, SortedDictionary<DateTime, float?[]> monitoredData)
-        {
-            _monitorData = monitoredData;
-            Nodes = nodes;
-        }
-        
-        /// <summary>
-        /// 从 DataTable 对象提取出此线测点的所有监测数据
-        /// </summary>
-        /// <param name="table"> 要进行数据提取的表格的第一个字段必须是用来存储时间信息的主键，并且后面的每一个字段的名称都是“2#50”的格式。 </param>
-        /// <returns> 实体类，用来作为 Instrum_Line.SetMonitorData 的输入参数 </returns>
-        public static MonitorData_Line FromDataTable(DataTable table)
-        {
-            int nodesCount = table.Columns.Count - 1;
-
-            // 提取子节点深度
-            float[] nodes = new float[nodesCount];
-            for (int i = 0; i < nodesCount; i++)
-            {
-                // 列名格式为：“0#50”，即表示深度为0.50处的子节点，所以这里要先将其转换为数值
-                nodes[i] = Convert.ToSingle(table.Columns[i + 1].ColumnName.Replace("#", "."));
-            }
-
-            // 构造监测数据的集合
-            SortedDictionary<DateTime, float?[]> monitoredData = new SortedDictionary<DateTime, float?[]>();
-            foreach (DataRow row in table.Rows)
-            {
-                float?[] values = new float?[nodesCount];
-                for (int i = 0; i < nodesCount; i++)
-                {
-                    // 列名格式为：“0#50”，即表示深度为0.50处的子节点，所以这里要先将其转换为数值
-                    if (Convert.IsDBNull(row[i + 1]))
-                    {
-                        values[i] = null;
-                    }
-                    else
-                    {
-                        values[i] = Convert.ToSingle(row[i + 1]);
-                    }
-                }
-                // 添加一条记录
-                monitoredData.Add((DateTime)row[0], values);
-            }
-            return new MonitorData_Line(nodes,monitoredData);
-        }
-    }
     #endregion
 
     #region ---   Class(InstrumCollector)：测点收集器，用来对测点集合进行分类管理
@@ -202,17 +79,17 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
 
         #region ---   不同的测点集合 
 
-        /// <summary> 立柱隆沉测点 </summary>
-        public readonly List<Instrum_ColumnHeave> ColumnHeave;
+        ///// <summary> 立柱隆沉测点 </summary>
+        //public readonly List<Instrum_ColumnHeave> ColumnHeave;
 
-        /// <summary> 地表隆沉测点 </summary>
-        public readonly List<Instrum_GroundSettlement> GroundSettlement;
+        ///// <summary> 地表隆沉测点 </summary>
+        //public readonly List<Instrum_GroundSettlement> GroundSettlement;
 
-        /// <summary> 测斜点 </summary>
-        public readonly List<Instrum_WallIncline> Incline;
+        ///// <summary> 测斜点 </summary>
+        //public readonly List<Instrum_WallIncline> Incline;
 
-        /// <summary> 支撑轴力点 </summary>
-        public readonly List<Instrum_StrutAxialForce> StrutAxialForce;
+        ///// <summary> 支撑轴力点 </summary>
+        //public readonly List<Instrum_StrutAxialForce> StrutAxialForce;
 
         #endregion
 
@@ -222,10 +99,10 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
         /// <param name="instrums"> 要进行测点分类的测点集合 </param>
         public InstrumCollector(IEnumerable<Instrumentation> instrums)
         {
-            ColumnHeave = new List<Instrum_ColumnHeave>();
-            GroundSettlement = new List<Instrum_GroundSettlement>();
-            Incline = new List<Instrum_WallIncline>();
-            StrutAxialForce = new List<Instrum_StrutAxialForce>();
+            //ColumnHeave = new List<Instrum_ColumnHeave>();
+            //GroundSettlement = new List<Instrum_GroundSettlement>();
+            //Incline = new List<Instrum_WallIncline>();
+            //StrutAxialForce = new List<Instrum_StrutAxialForce>();
             //
             _allInstrumentations = new List<Instrumentation>();
 
@@ -239,10 +116,10 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
         /// <param name="instrums"></param>
         public void Truncate(IEnumerable<Instrumentation> instrums)
         {
-            ColumnHeave.Clear();
-            GroundSettlement.Clear();
-            Incline.Clear();
-            StrutAxialForce.Clear();
+            //ColumnHeave.Clear();
+            //GroundSettlement.Clear();
+            //Incline.Clear();
+            //StrutAxialForce.Clear();
             //
             _allInstrumentations.Clear();
 
@@ -255,25 +132,25 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
         /// <param name="instrums"></param>
         public void Append(IEnumerable<Instrumentation> instrums)
         {
-            foreach (Instrumentation inst in instrums)
-            {
-                if (inst is Instrum_ColumnHeave)
-                {
-                    ColumnHeave.Add((Instrum_ColumnHeave)inst);
-                }
-                else if (inst is Instrum_GroundSettlement)
-                {
-                    GroundSettlement.Add((Instrum_GroundSettlement)inst);
-                }
-                else if (inst is Instrum_WallIncline)
-                {
-                    Incline.Add((Instrum_WallIncline)inst);
-                }
-                else if (inst is Instrum_StrutAxialForce)
-                {
-                    StrutAxialForce.Add((Instrum_StrutAxialForce)inst);
-                }
-            }
+            //foreach (Instrumentation inst in instrums)
+            //{
+            //    if (inst is Instrum_ColumnHeave)
+            //    {
+            //        ColumnHeave.Add((Instrum_ColumnHeave)inst);
+            //    }
+            //    else if (inst is Instrum_GroundSettlement)
+            //    {
+            //        GroundSettlement.Add((Instrum_GroundSettlement)inst);
+            //    }
+            //    else if (inst is Instrum_WallIncline)
+            //    {
+            //        Incline.Add((Instrum_WallIncline)inst);
+            //    }
+            //    else if (inst is Instrum_StrutAxialForce)
+            //    {
+            //        StrutAxialForce.Add((Instrum_StrutAxialForce)inst);
+            //    }
+            //}
             _allInstrumentations.AddRange(instrums);
 
         }
@@ -345,19 +222,6 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
     /// </summary>
     public struct InstrumTypeMapping
     {
-
-        /// <summary> 墙体测斜,每一个测斜点的数据用一个工作表来保存 </summary>
-        private const string SheetWallIncline = "CX";
-        /// <summary> 土体测斜,每一个测斜点的数据用一个工作表来保存 </summary>
-        private const string SheetSoilIncine = "TX";
-
-        private const string SheetWallTopH = "墙顶水平位移";
-        private const string SheetWallTopV = "墙顶垂直位移";
-        private const string SheetGroundHeave = "地表隆沉";
-        private const string SheetColumnHeave = "立柱隆沉";
-        private const string SheetStrut = "支撑轴力";
-        private const string SheetWaterTable = "水位";
-
         /// <summary> 其他未在上面标记过的测点类型，其每一个点测点的监测数据都保存在工作表中的某个字段下。 </summary>
         private const string SheetOtherPoint = "PM";
         /// <summary> 其他未在上面标记过的测点类型，其每一个线测点中有多个子节点（类似于测斜管），
@@ -372,8 +236,8 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
         /// 如果此工作表就代表一个线测点，则返回false。 </returns>
         public static bool MultiPointsInSheet(string excelSheetName)
         {
-            if (excelSheetName.StartsWith(SheetSoilIncine, StringComparison.OrdinalIgnoreCase)
-                || excelSheetName.StartsWith(SheetWallIncline, StringComparison.OrdinalIgnoreCase)
+            if (excelSheetName.StartsWith(Constants.ExcelDatabaseSheet_SoilIncine, StringComparison.OrdinalIgnoreCase)
+                || excelSheetName.StartsWith(Constants.ExcelDatabaseSheet_WallIncline, StringComparison.OrdinalIgnoreCase)
                 || excelSheetName.StartsWith(SheetOtherLine, StringComparison.OrdinalIgnoreCase))
             {
                 return false;
@@ -387,10 +251,10 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
         /// 如果此工作表就代表一个测斜测点，则返回false。 </returns>
         public static bool IsRevitLine(string excelSheetName)
         {
-            if (excelSheetName.StartsWith(SheetSoilIncine, StringComparison.OrdinalIgnoreCase)
-                || excelSheetName.StartsWith(SheetWallIncline, StringComparison.OrdinalIgnoreCase)
-                || excelSheetName.StartsWith(SheetWallTopH, StringComparison.OrdinalIgnoreCase)
-                || excelSheetName.StartsWith(SheetWallTopV, StringComparison.OrdinalIgnoreCase)
+            if (excelSheetName.StartsWith(Constants.ExcelDatabaseSheet_SoilIncine, StringComparison.OrdinalIgnoreCase)
+                || excelSheetName.StartsWith(Constants.ExcelDatabaseSheet_WallIncline, StringComparison.OrdinalIgnoreCase)
+                || excelSheetName.StartsWith(Constants.ExcelDatabaseSheet_WallTopH, StringComparison.OrdinalIgnoreCase)
+                || excelSheetName.StartsWith(Constants.ExcelDatabaseSheet_WallTopV, StringComparison.OrdinalIgnoreCase)
                 || excelSheetName.StartsWith(SheetOtherLine, StringComparison.OrdinalIgnoreCase))
             {
                 return false;
@@ -407,11 +271,11 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
         public static InstrumentationType MapToType(string excelSheetName)
         {
             InstrumentationType tp;
-            if (excelSheetName.StartsWith(SheetColumnHeave))
+            if (excelSheetName.StartsWith(Constants.ExcelDatabaseSheet_ColumnHeave))
             {
                 tp = InstrumentationType.立柱隆沉;
             }
-            else if (excelSheetName.StartsWith(SheetGroundHeave))
+            else if (excelSheetName.StartsWith(Constants.ExcelDatabaseSheet_GroundHeave))
             {
                 tp = InstrumentationType.地表隆沉;
             }
@@ -423,27 +287,27 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
             {
                 tp = InstrumentationType.其他点测点;
             }
-            else if (excelSheetName.StartsWith(SheetSoilIncine))
+            else if (excelSheetName.StartsWith(Constants.ExcelDatabaseSheet_SoilIncine))
             {
                 tp = InstrumentationType.土体测斜;
             }
-            else if (excelSheetName.StartsWith(SheetStrut))
+            else if (excelSheetName.StartsWith(Constants.ExcelDatabaseSheet_StrutForce))
             {
                 tp = InstrumentationType.支撑轴力;
             }
-            else if (excelSheetName.StartsWith(SheetWallIncline))
+            else if (excelSheetName.StartsWith(Constants.ExcelDatabaseSheet_WallIncline))
             {
                 tp = InstrumentationType.墙体测斜;
             }
-            else if (excelSheetName.StartsWith(SheetWallTopH))
+            else if (excelSheetName.StartsWith(Constants.ExcelDatabaseSheet_WallTopH))
             {
                 tp = InstrumentationType.墙顶位移;
             }
-            else if (excelSheetName.StartsWith(SheetWallTopV))
+            else if (excelSheetName.StartsWith(Constants.ExcelDatabaseSheet_WallTopV))
             {
                 tp = InstrumentationType.墙顶位移;
             }
-            else if (excelSheetName.StartsWith(SheetWaterTable))
+            else if (excelSheetName.StartsWith(Constants.ExcelDatabaseSheet_WaterTable))
             {
                 tp = InstrumentationType.水位;
             }

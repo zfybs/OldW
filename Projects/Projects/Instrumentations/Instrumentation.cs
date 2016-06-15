@@ -22,7 +22,11 @@ namespace OldW.Instrumentations
     {
         #region    ---   Properties
 
-        public Document Doc { get; }
+        /// <summary> 测点所在的Revit文档 </summary>
+        public Document Document { get; }
+
+        /// <summary> 测点的标志文字，一般格式为“墙体测斜（CX3）: 568742” </summary>
+        public string IdName => F_Monitor.Name + "( " + getMonitorName() + " ):" + F_Monitor.Id.IntegerValue;
 
         private FamilyInstance F_Monitor;
 
@@ -58,7 +62,7 @@ namespace OldW.Instrumentations
             if (Instrumentation != null)
             {
                 this.F_Monitor = Instrumentation;
-                this.Doc = Instrumentation.Document;
+                this.Document = Instrumentation.Document;
                 this.F_Type = Type;
                 //
             }
@@ -76,6 +80,10 @@ namespace OldW.Instrumentations
         /// <param name="Elements"> 要进行搜索过滤的Element集合</param>
         public static List<Instrumentation> Lookup(Document Doc, ICollection<ElementId> Elements)
         {
+            if (Elements==null)
+            {
+                return new List<Instrumentation>();
+            }
             FilteredElementCollector Coll = new FilteredElementCollector(Doc, Elements);
             List<Instrumentation> Instrus = LookupFromCollector(Coll);
             return Instrus;
@@ -121,7 +129,7 @@ namespace OldW.Instrumentations
                                 Instrus.Add(new Instrum_WallIncline(fi));
                                 break;
                             case InstrumentationType.土体测斜:
-                                Instrus.Add(new Instrum_Line(fi, InstrumentationType.土体测斜));
+                                Instrus.Add(new Instrum_Line(fi, InstrumentationType.土体测斜,true));
                                 break;
 
                             case InstrumentationType.墙顶位移:
@@ -143,7 +151,7 @@ namespace OldW.Instrumentations
                                 break;
 
                             case InstrumentationType.其他线测点:
-                                Instrus.Add(new Instrum_Line(fi, InstrumentationType.其他线测点));
+                                Instrus.Add(new Instrum_Line(fi, InstrumentationType.其他线测点, false));
                                 break;
                             case InstrumentationType.其他点测点:
                                 Instrus.Add(new Instrum_Point(fi, InstrumentationType.其他点测点));

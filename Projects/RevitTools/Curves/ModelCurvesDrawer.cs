@@ -156,7 +156,7 @@ namespace rvtTools
         {
             // 最后再检测一次
             bool blnContinueDraw = false;
-            CurvesState cs = ValidateCurves(ref blnContinueDraw);
+            CurvesState cs = ValidateCurves(out blnContinueDraw);
             RefreshUI(cs, blnContinueDraw);
 
             if (cs == CurvesState.Validated)
@@ -238,7 +238,7 @@ namespace rvtTools
                         // 检测当前集合中的曲线是否符合指定的连续性要求
                         if (this.CheckInTime)
                         {
-                            CurvesState cs = ValidateCurves(ref blnContinueDraw);
+                            CurvesState cs = ValidateCurves(out blnContinueDraw);
                             RefreshUI(cs, blnContinueDraw);
                         }
                         else // 说明不进行实时检测，而直接继续绘制
@@ -273,7 +273,7 @@ namespace rvtTools
                         {
                             if (this.CheckInTime)
                             {
-                                CurvesState cs = ValidateCurves(ref blnContinueDraw);
+                                CurvesState cs = ValidateCurves(out blnContinueDraw);
                                 RefreshUI(cs, blnContinueDraw);
                             }
                             else // 说明不进行实时检测，而直接继续绘制
@@ -303,7 +303,7 @@ namespace rvtTools
                         // 检测剔除后的集合中的曲线是否符合指定的连续性要求
                         if (this.CheckInTime)
                         {
-                            CurvesState cs = ValidateCurves(ref blnContinueDraw);
+                            CurvesState cs = ValidateCurves(out blnContinueDraw);
                             RefreshUI(cs, blnContinueDraw);
                         }
                         else // 说明不进行实时检测，而直接继续绘制
@@ -361,7 +361,7 @@ namespace rvtTools
         /// </summary>
         /// <param name="continueDraw">在检查连续性后是否要继续绘制</param>
         /// <returns></returns>
-        private CurvesState ValidateCurves(ref bool continueDraw)
+        private CurvesState ValidateCurves(out bool continueDraw)
         {
             CurvesState cs = CurvesState.Invalid;
             continueDraw = false;

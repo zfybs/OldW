@@ -93,6 +93,7 @@ namespace OldW.DataManager
             ColumnImport.DataPropertyName = "Transport";
             ColumnImport.HeaderText = "导入";
             ColumnImport.Width = 50;
+            ColumnImport.Resizable = DataGridViewTriState.False ;
             // 
             // ColumnDrawData
             // 
@@ -103,6 +104,7 @@ namespace OldW.DataManager
             ColumnDrawData.Text = "查看";
             ColumnDrawData.UseColumnTextForButtonValue = true;
             ColumnDrawData.Width = 50;
+            ColumnDrawData.Resizable = DataGridViewTriState.False ;
             // 
             // ColumnSheet
             // 
@@ -145,7 +147,7 @@ namespace OldW.DataManager
             dataGridViewExcel.AutoSize = false;
             dataGridViewExcel.AllowUserToResizeRows = false;
             dataGridViewExcel.EditMode = DataGridViewEditMode.EditOnEnter; // 为了解决DataGridViewComboBoxCell要点击三次才出现下拉框的问题。
-
+       
             // --------------- 事件关联  --------------- 
             dataGridViewExcel.DataError += DataGridViewExcelOnDataError;
             dataGridViewExcel.CellContentClick += DataGridViewExcelOnCellContentClick;
@@ -154,7 +156,7 @@ namespace OldW.DataManager
 
         #endregion
 
-        #region ---   数据库字段与测点的匹配映射
+        #region ---   Mapping 数据库字段与测点的匹配映射
 
         /// <summary> 准备将选择的工作表中的监测数据输入Datagridview控件，并重新刷新界面 </summary>
         /// <param name="sender"></param> <param name="e"></param>
@@ -173,6 +175,13 @@ namespace OldW.DataManager
                     // 刷新界面
                     buttonCheckMultiple.Visible = true;
                     buttonUnCheckMultiple.Visible = true;
+
+                    // 刷新进度条
+                    labelProgress.Text = "";
+                    progressBar1.Value = 0;
+
+                    // 下次再按Enter就执行导入操作
+                    AcceptButton = ButtonImport;
                 }
                 else
                 {
@@ -395,10 +404,9 @@ namespace OldW.DataManager
 
         /// <summary> 事务：将Excel中的监测数据导入Revit中的测点单元 </summary>
         Transaction _tranImport;
-
+        
         private void ButtonImport_Click(object sender, EventArgs e)
         {
-
             if (dataGridViewExcel != null && dataGridViewExcel.DataSource != null)
             {      // 首先检测有没有出现Revit中的某一个
                 int errorRow;
@@ -500,11 +508,11 @@ namespace OldW.DataManager
             // 
             MonitorEntityExcel monitorEntity;  // 每一个要导入的数据库字段与Revit测点信息
             Instrumentation ins;
-
+            int row = 0;
             try
             {
                 // tran.Start();
-                for (int row = 0; row < count; row++)
+                for (row = 0; row < count; row++)
                 {
                     monitorEntity = datasource[row];
                     if (monitorEntity.Transport && monitorEntity.MappedItem != null)  // 进行此字段的数据导入的必要条件
@@ -525,7 +533,7 @@ namespace OldW.DataManager
             {
                 e.Cancel = true;
                 // _tranImport.RollBack();
-                Utils.ShowDebugCatch(ex, "将Excel中的监测数据导入Revit中的测点单元出错");
+                Utils.ShowDebugCatch(ex, $"将Excel中的监测数据导入Revit中的测点单元出错，出错行：{row + 1} 。");
             }
         }
 
@@ -544,6 +552,10 @@ namespace OldW.DataManager
                 Thread.Sleep(10);
                 labelProgress.Text = @"100%";
                 progressBar1.Value = 100;
+
+
+                // 下次再按Enter就执行导入操作
+                AcceptButton = buttonMapping;
             }
             else
             { // 报错则回滚
@@ -565,7 +577,11 @@ namespace OldW.DataManager
             //
             _backgroundWorker.Dispose();
         }
-
+        
+        private void ButtonExit_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
         #endregion
     }
 }

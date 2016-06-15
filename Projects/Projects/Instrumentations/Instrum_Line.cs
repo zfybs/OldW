@@ -17,12 +17,20 @@ namespace OldW.Instrumentations
     /// <remarks></remarks>
     public class Instrum_Line : Instrumentation
     {
+
         #region    ---   Properties
 
         /// <summary>
         /// 线测点的整个施工阶段中的监测数据
         /// </summary>
         private MonitorData_Line _monitorData;
+
+        /// <summary>
+        /// 子节点的名称是否有数值意义
+        /// </summary>
+        /// <remarks> 线测点的子节点是广义上的同一个测点中所监测的不同类型的数据，比如墙顶位移测点就有“墙顶垂直位移”与 “墙顶水平位移”两个子节点。
+        /// 但是对于测斜管这类线测点，其每一个字段都是有严格的数值意义的，即代表了此子节点距离管顶的深度。</remarks>
+        public readonly bool NodesDigital;
 
         #endregion
 
@@ -31,10 +39,12 @@ namespace OldW.Instrumentations
         /// </summary>
         /// <param name="MonitorLine">所有类型的监测管线，包括测斜管，但不包括地表沉降、立柱隆起、支撑轴力等</param>
         /// <param name="Type">监测点的测点类型，也是测点所属的族的名称</param>
+        /// <param name="nodesDigital"> 子节点的名称是否有数值意义 </param>
         /// <remarks></remarks>
-        public Instrum_Line(FamilyInstance MonitorLine, InstrumentationType Type)
+        public Instrum_Line(FamilyInstance MonitorLine, InstrumentationType Type,bool nodesDigital)
             : base(MonitorLine, Type)
         {
+            NodesDigital = nodesDigital;
         }
 
         /// <summary>
@@ -122,7 +132,7 @@ namespace OldW.Instrumentations
         public override void ImportFromExcel(Transaction tran, OleDbConnection conn, string sheetName, string fieldName)
         {
             var dt = ExcelDbHelper.GetDataFromSheet(conn, sheetName);
-            var data = MonitorData_Line.FromDataTable(dt);
+            var data = MonitorData_Line.FromDataTable(dt, NodesDigital);
             SetMonitorData(tran, data);
         }
 

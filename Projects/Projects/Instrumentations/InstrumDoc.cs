@@ -77,6 +77,7 @@ namespace OldW.Instrumentations
             //获得该族的族类型，并且放置族实例
             FamilySymbol symbol = uidoc.Document.GetElement(family.GetFamilySymbolIds().ElementAt(0)) as FamilySymbol;
             uidoc.PostRequestForElementTypePlacement(symbol);
+
         }
 
         #region    ---   组合列表框 ComboBox 的操作
@@ -89,7 +90,7 @@ namespace OldW.Instrumentations
         /// <returns> </returns>
         public void FillCombobox(IEnumerable<Instrumentation> elementCollection, object comboboxControl)
         {
-            List<LstbxValue<Instrumentation>> arr = GetComboboxDatasource(elementCollection);
+            LstbxValue<Instrumentation>[] arr = GetComboboxDatasource(elementCollection);
 
             if (comboboxControl.GetType() == typeof(Forms.ComboBox))
             {
@@ -119,11 +120,12 @@ namespace OldW.Instrumentations
         /// </summary>
         /// <param name="elementCollection"></param>
         /// <returns> </returns>
-        public List<LstbxValue<Instrumentation>> GetComboboxDatasource(IEnumerable<Instrumentation> elementCollection)
+        public LstbxValue<Instrumentation>[] GetComboboxDatasource(IEnumerable<Instrumentation> elementCollection)
         {
             return elementCollection.Select(eleid =>
-            new LstbxValue<Instrumentation>(DisplayedText: eleid.Monitor.Name + "( " + eleid.getMonitorName() + " ):" + eleid.Monitor.Id.IntegerValue,
-            Value: eleid)).ToList();
+            new LstbxValue<Instrumentation>(
+                DisplayedText: eleid.IdName,
+                Value: eleid)).ToArray();
         }
 
         #endregion

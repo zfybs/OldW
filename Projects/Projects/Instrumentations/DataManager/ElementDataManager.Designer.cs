@@ -29,22 +29,27 @@ namespace OldW.DataManager
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle19 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnSaveChange = new System.Windows.Forms.Button();
             this.cmbx_elements = new System.Windows.Forms.ComboBox();
             this.Label1 = new System.Windows.Forms.Label();
             this.btnDraw = new System.Windows.Forms.Button();
             this.DataGridView_pointMonitor = new stdOldW.WinFormHelper.eZDataGridViewPaste();
             this.groupBoxPoints = new System.Windows.Forms.GroupBox();
+            this.checkBox_OtherPoint = new System.Windows.Forms.CheckBox();
             this.checkBox_strutaxisforce = new System.Windows.Forms.CheckBox();
+            this.checkBox_WaterTable = new System.Windows.Forms.CheckBox();
             this.checkBox_columnheave = new System.Windows.Forms.CheckBox();
             this.checkBox_groundsettlement = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.groupBoxLines = new System.Windows.Forms.GroupBox();
-            this.checkBox_incline = new System.Windows.Forms.CheckBox();
+            this.checkBox_OtherLine = new System.Windows.Forms.CheckBox();
+            this.checkBox_WallTop = new System.Windows.Forms.CheckBox();
+            this.checkBox_SoilIncline = new System.Windows.Forms.CheckBox();
+            this.checkBox_WallIncline = new System.Windows.Forms.CheckBox();
             this.btnSetNodes = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.DataGridView_LineMonitor = new stdOldW.WinFormHelper.eZDataGridViewPaste();
@@ -99,24 +104,24 @@ namespace OldW.DataManager
             // 
             // DataGridView_pointMonitor
             // 
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            this.DataGridView_pointMonitor.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle17.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle17.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle17.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle17.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle17.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            this.DataGridView_pointMonitor.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle17;
             this.DataGridView_pointMonitor.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.DataGridView_pointMonitor.Location = new System.Drawing.Point(116, 68);
             this.DataGridView_pointMonitor.Name = "DataGridView_pointMonitor";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopRight;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.DataGridView_pointMonitor.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopRight;
+            dataGridViewCellStyle18.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle18.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle18.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle18.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle18.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle18.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.DataGridView_pointMonitor.RowHeadersDefaultCellStyle = dataGridViewCellStyle18;
             this.DataGridView_pointMonitor.RowHeadersWidth = 52;
             this.DataGridView_pointMonitor.RowTemplate.Height = 23;
             this.DataGridView_pointMonitor.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
@@ -126,15 +131,27 @@ namespace OldW.DataManager
             // 
             // groupBoxPoints
             // 
+            this.groupBoxPoints.Controls.Add(this.checkBox_OtherPoint);
             this.groupBoxPoints.Controls.Add(this.checkBox_strutaxisforce);
+            this.groupBoxPoints.Controls.Add(this.checkBox_WaterTable);
             this.groupBoxPoints.Controls.Add(this.checkBox_columnheave);
             this.groupBoxPoints.Controls.Add(this.checkBox_groundsettlement);
-            this.groupBoxPoints.Location = new System.Drawing.Point(3, 94);
+            this.groupBoxPoints.Location = new System.Drawing.Point(3, 120);
             this.groupBoxPoints.Name = "groupBoxPoints";
-            this.groupBoxPoints.Size = new System.Drawing.Size(83, 89);
+            this.groupBoxPoints.Size = new System.Drawing.Size(92, 128);
             this.groupBoxPoints.TabIndex = 4;
             this.groupBoxPoints.TabStop = false;
             this.groupBoxPoints.Text = "点测点";
+            // 
+            // checkBox_OtherPoint
+            // 
+            this.checkBox_OtherPoint.AutoSize = true;
+            this.checkBox_OtherPoint.Location = new System.Drawing.Point(6, 109);
+            this.checkBox_OtherPoint.Name = "checkBox_OtherPoint";
+            this.checkBox_OtherPoint.Size = new System.Drawing.Size(84, 16);
+            this.checkBox_OtherPoint.TabIndex = 0;
+            this.checkBox_OtherPoint.Text = "其他点测点";
+            this.checkBox_OtherPoint.UseVisualStyleBackColor = true;
             // 
             // checkBox_strutaxisforce
             // 
@@ -146,6 +163,16 @@ namespace OldW.DataManager
             this.checkBox_strutaxisforce.Text = "支撑轴力";
             this.checkBox_strutaxisforce.UseVisualStyleBackColor = true;
             // 
+            // checkBox_WaterTable
+            // 
+            this.checkBox_WaterTable.AutoSize = true;
+            this.checkBox_WaterTable.Location = new System.Drawing.Point(6, 87);
+            this.checkBox_WaterTable.Name = "checkBox_WaterTable";
+            this.checkBox_WaterTable.Size = new System.Drawing.Size(48, 16);
+            this.checkBox_WaterTable.TabIndex = 0;
+            this.checkBox_WaterTable.Text = "水位";
+            this.checkBox_WaterTable.UseVisualStyleBackColor = true;
+            // 
             // checkBox_columnheave
             // 
             this.checkBox_columnheave.AutoSize = true;
@@ -153,7 +180,7 @@ namespace OldW.DataManager
             this.checkBox_columnheave.Name = "checkBox_columnheave";
             this.checkBox_columnheave.Size = new System.Drawing.Size(72, 16);
             this.checkBox_columnheave.TabIndex = 0;
-            this.checkBox_columnheave.Text = "立柱隆起";
+            this.checkBox_columnheave.Text = "立柱隆沉";
             this.checkBox_columnheave.UseVisualStyleBackColor = true;
             // 
             // checkBox_groundsettlement
@@ -163,7 +190,7 @@ namespace OldW.DataManager
             this.checkBox_groundsettlement.Name = "checkBox_groundsettlement";
             this.checkBox_groundsettlement.Size = new System.Drawing.Size(72, 16);
             this.checkBox_groundsettlement.TabIndex = 0;
-            this.checkBox_groundsettlement.Text = "地表沉降";
+            this.checkBox_groundsettlement.Text = "地表隆沉";
             this.checkBox_groundsettlement.UseVisualStyleBackColor = true;
             // 
             // panel1
@@ -172,39 +199,73 @@ namespace OldW.DataManager
             this.panel1.Controls.Add(this.groupBoxPoints);
             this.panel1.Location = new System.Drawing.Point(12, 36);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(92, 190);
+            this.panel1.Size = new System.Drawing.Size(98, 255);
             this.panel1.TabIndex = 5;
             // 
             // groupBoxLines
             // 
-            this.groupBoxLines.Controls.Add(this.checkBox_incline);
-            this.groupBoxLines.Controls.Add(this.btnSetNodes);
+            this.groupBoxLines.Controls.Add(this.checkBox_OtherLine);
+            this.groupBoxLines.Controls.Add(this.checkBox_WallTop);
+            this.groupBoxLines.Controls.Add(this.checkBox_SoilIncline);
+            this.groupBoxLines.Controls.Add(this.checkBox_WallIncline);
             this.groupBoxLines.Location = new System.Drawing.Point(3, 3);
             this.groupBoxLines.Name = "groupBoxLines";
-            this.groupBoxLines.Size = new System.Drawing.Size(83, 85);
+            this.groupBoxLines.Size = new System.Drawing.Size(92, 111);
             this.groupBoxLines.TabIndex = 4;
             this.groupBoxLines.TabStop = false;
             this.groupBoxLines.Text = "线测点";
             // 
-            // checkBox_incline
+            // checkBox_OtherLine
             // 
-            this.checkBox_incline.AutoSize = true;
-            this.checkBox_incline.Location = new System.Drawing.Point(7, 21);
-            this.checkBox_incline.Name = "checkBox_incline";
-            this.checkBox_incline.Size = new System.Drawing.Size(48, 16);
-            this.checkBox_incline.TabIndex = 0;
-            this.checkBox_incline.Text = "测斜";
-            this.checkBox_incline.UseVisualStyleBackColor = true;
+            this.checkBox_OtherLine.AutoSize = true;
+            this.checkBox_OtherLine.Location = new System.Drawing.Point(4, 87);
+            this.checkBox_OtherLine.Name = "checkBox_OtherLine";
+            this.checkBox_OtherLine.Size = new System.Drawing.Size(84, 16);
+            this.checkBox_OtherLine.TabIndex = 0;
+            this.checkBox_OtherLine.Text = "其他线测点";
+            this.checkBox_OtherLine.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_WallTop
+            // 
+            this.checkBox_WallTop.AutoSize = true;
+            this.checkBox_WallTop.Location = new System.Drawing.Point(4, 65);
+            this.checkBox_WallTop.Name = "checkBox_WallTop";
+            this.checkBox_WallTop.Size = new System.Drawing.Size(72, 16);
+            this.checkBox_WallTop.TabIndex = 0;
+            this.checkBox_WallTop.Text = "墙顶位移";
+            this.checkBox_WallTop.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_SoilIncline
+            // 
+            this.checkBox_SoilIncline.AutoSize = true;
+            this.checkBox_SoilIncline.Location = new System.Drawing.Point(5, 42);
+            this.checkBox_SoilIncline.Name = "checkBox_SoilIncline";
+            this.checkBox_SoilIncline.Size = new System.Drawing.Size(72, 16);
+            this.checkBox_SoilIncline.TabIndex = 0;
+            this.checkBox_SoilIncline.Text = "土体测斜";
+            this.checkBox_SoilIncline.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_WallIncline
+            // 
+            this.checkBox_WallIncline.AutoSize = true;
+            this.checkBox_WallIncline.Location = new System.Drawing.Point(5, 20);
+            this.checkBox_WallIncline.Name = "checkBox_WallIncline";
+            this.checkBox_WallIncline.Size = new System.Drawing.Size(72, 16);
+            this.checkBox_WallIncline.TabIndex = 0;
+            this.checkBox_WallIncline.Text = "墙体测斜";
+            this.checkBox_WallIncline.UseVisualStyleBackColor = true;
             // 
             // btnSetNodes
             // 
-            this.btnSetNodes.Location = new System.Drawing.Point(3, 47);
+            this.btnSetNodes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSetNodes.Location = new System.Drawing.Point(321, 9);
             this.btnSetNodes.Name = "btnSetNodes";
             this.btnSetNodes.Size = new System.Drawing.Size(75, 23);
             this.btnSetNodes.TabIndex = 1;
             this.btnSetNodes.Text = "节点";
             this.toolTip1.SetToolTip(this.btnSetNodes, "设置线测点中每一个节点距离测点起点的距离。");
             this.btnSetNodes.UseVisualStyleBackColor = true;
+            this.btnSetNodes.Visible = false;
             this.btnSetNodes.Click += new System.EventHandler(this.btnSetNodes_Click);
             // 
             // label2
@@ -218,24 +279,24 @@ namespace OldW.DataManager
             // 
             // DataGridView_LineMonitor
             // 
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            this.DataGridView_LineMonitor.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle19.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle19.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle19.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle19.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle19.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle19.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            this.DataGridView_LineMonitor.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle19;
             this.DataGridView_LineMonitor.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.DataGridView_LineMonitor.Location = new System.Drawing.Point(116, 68);
             this.DataGridView_LineMonitor.Name = "DataGridView_LineMonitor";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopRight;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.DataGridView_LineMonitor.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle20.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopRight;
+            dataGridViewCellStyle20.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle20.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle20.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle20.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle20.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle20.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.DataGridView_LineMonitor.RowHeadersDefaultCellStyle = dataGridViewCellStyle20;
             this.DataGridView_LineMonitor.RowHeadersWidth = 52;
             this.DataGridView_LineMonitor.RowTemplate.Height = 23;
             this.DataGridView_LineMonitor.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
@@ -245,7 +306,7 @@ namespace OldW.DataManager
             // 
             // btnActivateDatagridview
             // 
-            this.btnActivateDatagridview.Location = new System.Drawing.Point(12, 232);
+            this.btnActivateDatagridview.Location = new System.Drawing.Point(12, 297);
             this.btnActivateDatagridview.Name = "btnActivateDatagridview";
             this.btnActivateDatagridview.Size = new System.Drawing.Size(75, 23);
             this.btnActivateDatagridview.TabIndex = 1;
@@ -273,6 +334,7 @@ namespace OldW.DataManager
             this.Controls.Add(this.label2);
             this.Controls.Add(this.Label1);
             this.Controls.Add(this.cmbx_elements);
+            this.Controls.Add(this.btnSetNodes);
             this.Controls.Add(this.btnActivateDatagridview);
             this.Controls.Add(this.btnDraw);
             this.Controls.Add(this.btnRename);
@@ -305,7 +367,7 @@ namespace OldW.DataManager
         private CheckBox checkBox_groundsettlement;
         private Panel panel1;
         private GroupBox groupBoxLines;
-        private CheckBox checkBox_incline;
+        private CheckBox checkBox_WallIncline;
         internal Label label2;
         internal stdOldW.WinFormHelper.eZDataGridViewPaste DataGridView_LineMonitor;
         internal Button btnSetNodes;
@@ -314,5 +376,10 @@ namespace OldW.DataManager
         private CheckBox checkBox_strutaxisforce;
         internal Button btnActivateDatagridview;
         internal Button btnRename;
+        private CheckBox checkBox_SoilIncline;
+        private CheckBox checkBox_OtherPoint;
+        private CheckBox checkBox_WaterTable;
+        private CheckBox checkBox_OtherLine;
+        private CheckBox checkBox_WallTop;
     }
 }

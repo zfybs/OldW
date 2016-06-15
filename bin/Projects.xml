@@ -4,6 +4,680 @@
         <name>Projects</name>
     </assembly>
     <members>
+        <member name="F:OldW.Commands.ElementInitializer.MonitorName">
+            <summary> 测点名称 </summary>
+        </member>
+        <member name="M:OldW.Commands.ElementInitializer.#ctor(System.String)">
+            <summary>
+            构造函数
+            </summary>
+        </member>
+        <member name="F:OldW.Commands.ElementInitializer.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OldW.Commands.ElementInitializer.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OldW.Commands.ElementInitializer.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_ViewStage">
+            <summary> 查看指定日期的开挖工况 </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_ExcavationInfo">
+            <summary> 提取模型中的开挖土体信息 </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_DataManager">
+            <summary>
+            监测数据管理系统
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_DataImport">
+            <summary>
+            从Excel中导入监测数据
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_DataExport">
+            <summary>
+            将数据导出到Excel
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_PlaceWallIncline">
+            <summary>
+            墙体测斜
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_PlaceSoilIncline">
+            <summary>
+            土体测斜
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_PlaceWallTop">
+            <summary>
+            墙顶位移
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_PlaceGroundSettlement">
+            <summary>
+            地表隆沉
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_PlaceColumnHeave">
+            <summary>
+            立柱隆沉
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_PlaceStrutForce">
+            <summary>
+            支撑轴力
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_PlaceWaterTable">
+            <summary>
+            水位
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_PlaceOtherPoint">
+            <summary>
+            其他点测点
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_PlaceOtherLine">
+            <summary>
+            其他线测点
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.PlaceMonitor">
+            <summary>
+            放置任意类型的监测测点
+            </summary>
+        </member>
+        <member name="M:OldW.Commands.PlaceMonitor.PlaceInstrumentation(Autodesk.Revit.UI.ExternalCommandData@,System.String@,Autodesk.Revit.DB.ElementSet@,OldW.Instrumentations.InstrumentationType)">
+            <summary> 放置各种类型的监测测点 </summary>
+        </member>
+        <member name="M:OldW.Commands.PlaceMonitor.idling_RenameAddedInstrums(System.Object,Autodesk.Revit.UI.Events.IdlingEventArgs)">
+            <summary> 在闲置事件中对新添加的测点进行重命名。 </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:OldW.Commands.PlaceMonitor.InitializeInstrumentation(OldW.Instrumentations.Instrumentation)">
+            <summary>
+            监测单元的初始化
+            </summary>
+            <param name="ins"></param>
+        </member>
+        <member name="T:OldW.Commands.cmd_FilterInstrums">
+            <summary>
+            监测数据管理系统
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_SetWarning">
+            <summary>
+            test command
+            </summary>
+        </member>
+        <member name="T:OldW.Instrumentations.PickInstrums">
+            <summary>
+            测点过滤器
+            </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.PickInstrums.FilterdInstrumentations">
+            <summary> 最终决定要选择的测点单元 </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.PickInstrums.#ctor(System.Collections.Generic.ICollection{OldW.Instrumentations.Instrumentation},OldW.Instrumentations.InstrumDoc)">
+            <summary> 构造函数 </summary>
+            <param name="eleIdCollection">所有要进行处理的测点元素的Id集合</param>
+            <param name="document"></param>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.PickInstrums.ConstructTreeView(System.Collections.Generic.ICollection{OldW.Instrumentations.Instrumentation})">
+            <summary> 构造树形控件。一共分两级，第一级是测点类型，第二级是每种类型下的测点集合 </summary>
+            <param name="allInstrums"></param>
+        </member>
+        <member name="M:OldW.Instrumentations.PickInstrums.TreeViewIns_AfterCheck(System.Object,System.Windows.Forms.TreeViewEventArgs)">
+            <summary>
+            在选择或者取消选择父节点时，对其子节点进行相同的操作
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="F:OldW.Instrumentations.PickInstrums.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.PickInstrums.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OldW.Instrumentations.PickInstrums.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:OldW.Instrumentations.InstrumentationType">
+            <summary>
+            (位编码)监测仪器的族名称（也是族文件的名称），同时也作为监测仪器的类型判断
+            </summary>
+            <remarks>从枚举值返回对应的枚举字符的方法：GlobalSettings.InstrumentationType.沉降测点.ToString</remarks>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumentationType.未指定">
+            <summary> 并不是任何一种已经指定的线测点或者点测点类型 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumentationType.其他点测点">
+            <summary> 并不是任何一种已经特殊处理过的点测点类型 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumentationType.其他线测点">
+            <summary> 并不是任何一种已经特殊处理过的线测点类型 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumentationType.墙体测斜">
+            <summary> 比如地下连续墙的水平位移 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumentationType.土体测斜">
+            <summary> 比如土体中的测斜管的水平位移，它与墙体测斜的区别在于墙体测斜是嵌在地下连续墙中，
+            而且墙体测斜与土体测斜的安全警戒准则并不相同。 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumentationType.墙顶位移">
+            <summary> 墙顶位移的监测数据包括水平位移与垂直位移。
+            在Excel中通过两张表“墙顶水平位移”与“墙顶垂直位移”来保存。 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumentationType.地表隆沉">
+            <summary> 比如基坑外地表的垂直位移 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumentationType.立柱隆沉">
+            <summary> 比如基坑中立柱的垂直位移 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumentationType.支撑轴力">
+            <summary> 比如基坑中支撑的轴力 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumentationType.水位">
+            <summary> 比如基坑中水位测点处的水位高低 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumentationType.线测点集合">
+            <summary> 通过位运算进行组合的所有线测点的集合。 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumentationType.点测点集合">
+            <summary> 通过位运算进行组合的所有点测点的集合。 </summary>
+        </member>
+        <member name="T:OldW.Instrumentations.InstrumCollector">
+            <summary>
+            测点收集器，用来对测点集合进行分类管理
+            </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumCollector._allInstrumentations">
+            <summary> 所有的测点的集合 </summary>
+        </member>
+        <member name="P:OldW.Instrumentations.InstrumCollector.AllInstrumentations">
+            <summary> 所有的测点的集合 </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.#ctor(System.Collections.Generic.IEnumerable{OldW.Instrumentations.Instrumentation})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="instrums"> 要进行测点分类的测点集合 </param>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.Truncate(System.Collections.Generic.IEnumerable{OldW.Instrumentations.Instrumentation})">
+            <summary>
+            清空原测点集合中的元素，并重新添加新的元素
+            </summary>
+            <param name="instrums"></param>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.Append(System.Collections.Generic.IEnumerable{OldW.Instrumentations.Instrumentation})">
+            <summary>
+            直接向集合中附加新的测点
+            </summary>
+            <param name="instrums"></param>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.GetMonitors(OldW.Instrumentations.InstrumentationType)">
+            <summary> 按指定的类型过滤出集合中所有的测点 </summary>
+            <param name="type"> 多种监测类型的按位组合 </param>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.GetLineMonitors">
+            <summary> 过滤出集合中所有的线测点 </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.GetLineMonitors(OldW.Instrumentations.InstrumentationType)">
+            <summary> 按指定的选项过滤出集合中所有的线测点 </summary>
+            <param name="type"> 多种监测类型的按位组合 </param>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.GetPointMonitors">
+            <summary> 过滤出集合中所有的线测点 </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.GetPointMonitors(OldW.Instrumentations.InstrumentationType)">
+            <summary> 按指定的选项过滤出集合中所有的点测点 </summary>
+            <param name="type"> 多种监测类型的按位组合 </param>
+        </member>
+        <member name="T:OldW.Instrumentations.InstrumTypeMapping">
+            <summary>
+            将不同的Excel工作表字段的名称映射到Revit对应的测点中去
+            </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumTypeMapping.SheetOtherPoint">
+            <summary> 其他未在上面标记过的测点类型，其每一个点测点的监测数据都保存在工作表中的某个字段下。 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumTypeMapping.SheetOtherLine">
+            <summary> 其他未在上面标记过的测点类型，其每一个线测点中有多个子节点（类似于测斜管），
+            一个测点的监测数据保存在一张工作表，而表中的每一个字段代表此线测点中的一个子节点。 </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumTypeMapping.MultiPointsInSheet(System.String)">
+            <summary> 指定的Excel工作表中是包含多个测点（点测点）还是只包含一个测点（线测点） </summary>
+            <param name="excelSheetName"></param>
+            <returns> 如果此工作表中有多个点测点，比如“地表隆沉”，则返回true；
+            如果此工作表就代表一个线测点，则返回false。 </returns>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumTypeMapping.IsRevitLine(System.String)">
+            <summary> 此工作表名称所对应的测点类型在Revit中是否是一个线测点类型 </summary>
+            <param name="excelSheetName"></param>
+            <returns> 如果此工作表名称代表一类测点，比如“地表隆沉”，则返回true；
+            如果此工作表就代表一个测斜测点，则返回false。 </returns>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumTypeMapping.MapToType(System.String)">
+            <summary>
+            由字段名称来匹配出对应的测点类型
+            </summary>
+            <param name="excelSheetName"> Excel工作表的名称，不包含后缀$</param>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumTypeMapping.GetNumber(System.String)">
+            <summary> 根据给出的字段名匹配出对应的测点编号 </summary>
+            <param name="excelPointOrLineName"> Excel中的测点编号，此编号可以了线测点的编号如CX01，也可以是点测点的编号如DB01。 </param>
+            <returns> 如果能匹配出编号12或者编号2-12这两种模式，则返回对应的数值字符，如果不能匹配，则返回空字符</returns>
+        </member>
+        <member name="T:OldW.Instrumentations.InstrumDoc">
+            <summary> 用来执行基坑中的测点布置，监测数据管理等操作 </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumDoc.#ctor(OldWDocument)">
+            <summary> 构造函数 </summary>
+            <param name="OldWDoc"></param>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumDoc.SetFamily(OldW.Instrumentations.InstrumentationType)">
+            <summary>
+            放置测点
+            </summary>
+            <param name="monitorType"> 要放置的测点类型 </param>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumDoc.FillCombobox(System.Collections.Generic.IEnumerable{OldW.Instrumentations.Instrumentation},System.Object)">
+            <summary>
+            将指定的测点集合对象转换为组合列表框Combox控件的DataSource类型。
+            </summary>
+            <param name="elementCollection"></param>
+            <param name="comboboxControl"> ComboBox 控件对象或者 DataGridViewComboBoxCell 控件对象  </param>
+            <returns> </returns>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumDoc.GetComboboxDatasource(System.Collections.Generic.IEnumerable{OldW.Instrumentations.Instrumentation})">
+            <summary>
+            将指定的测点集合对象转换为组合列表框Combox控件的DataSource类型。
+            </summary>
+            <param name="elementCollection"></param>
+            <returns> </returns>
+        </member>
+        <member name="T:OldW.Instrumentations.Instrum_WallTop">
+            <summary>
+            墙顶位移测点
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_WallTop.#ctor(Autodesk.Revit.DB.FamilyInstance)">
+            <summary> 构造函数 </summary>
+            <param name="inclinometerElement">测斜管所对应的图元</param>
+        </member>
+        <member name="F:OldW.Instrumentations.Instrum_WallTop.enteredTransactionHashCode">
+            <summary> 假设 Revit 开启的事务的HashCode不可能为0。 </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_WallTop.ImportFromExcel(Autodesk.Revit.DB.Transaction,System.Data.OleDb.OleDbConnection,System.String,System.String)">
+            <summary> 将Excel中墙顶位移监测数据（两个点测点的格式）导入Revit的测点单元（线测点）中 </summary>
+            <param name="tran"> 已经start的Revit事务 </param>
+            <param name="conn">连接到Excel工作簿</param>
+            <param name="sheetName">监测数据所在的Excel工作表，表名称中应该包含后缀$ </param>
+            <param name="fieldName">监测数据在工作表中的哪个字段下。对于线测点，其fieldName是不必要的。</param>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_WallTop.TruncateAndAddOneField(Autodesk.Revit.DB.Transaction,System.Data.OleDb.OleDbConnection,System.String,System.String,System.Byte)">
+            <summary> 采用先清空的方式导入第一个子节点的监测数据 </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_WallTop.AppendOneField(Autodesk.Revit.DB.Transaction,System.Data.OleDb.OleDbConnection,System.String,System.String,System.Byte)">
+            <summary> 采用附加的方式导入另一个子节点的监测数据 </summary>
+        </member>
+        <member name="T:OldW.Instrumentations.MonitorData_Point">
+            <summary> 监测数据类，表示点测点中的每一天的监测数据 </summary>
+        </member>
+        <member name="P:OldW.Instrumentations.MonitorData_Point.Date">
+            <summary>
+            监测日期
+            </summary>
+        </member>
+        <member name="P:OldW.Instrumentations.MonitorData_Point.Value">
+            <summary>
+            监测数据，如果当天没有数据，则为null
+            </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.MonitorData_Point.#ctor(System.DateTime,System.Nullable{System.Single})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="Date"></param>
+            <param name="Value"></param>
+        </member>
+        <member name="M:OldW.Instrumentations.MonitorData_Point.FromDataTable(System.Data.DataTable,System.Int32,System.Int32)">
+            <summary>
+            从 DataTable 对象中指定的两个字段提取出点测点的监测数据的实体类集合
+            </summary>
+            <param name="table"> 要进行数据提取的表格 </param>
+            <param name="indexDate"> 日期数据在 table 中所在的列的列号 </param>
+            <param name="indexValue"> 监测数据在 table 中所在的列的列号 </param>
+            <returns> 实体类集合，用来作为 Instrum_Point.SetMonitorData 的输入参数 </returns>
+        </member>
+        <member name="T:OldW.Instrumentations.MonitorData_Line">
+            <summary>
+            线测点中的每一天的监测数据
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="P:OldW.Instrumentations.MonitorData_Line._nodes">
+            <summary>
+            因为从概念上来说，所谓的线测点，其子节点们不一定是表示深度的数值区分，而是指一个测点中有多个监测项目。
+            比如测斜管是在一个测点中的不同深度下有多个监测数据，而墙顶位移是一个测点中有水平与竖直两个监测数据。
+            </summary>
+        </member>
+        <member name="P:OldW.Instrumentations.MonitorData_Line.MonitorData">
+            <summary>
+            测斜管在每一天的监测数据。其中，SortedDictionary 中的Value项 为一个数组，
+            它代表对应的日期下，Depths中每一个深度处所对应的监测数据值，
+            所以，此数组中元素的个数必须要与Depths数组中元素的个数相同。
+            </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.MonitorData_Line.NodesDigital">
+            <summary>
+            子节点的名称是否有数值意义
+            </summary>
+            <remarks> 线测点的子节点是广义上的同一个测点中所监测的不同类型的数据，比如墙顶位移测点就有“墙顶垂直位移”与 “墙顶水平位移”两个子节点。
+            但是对于测斜管这类线测点，其每一个字段都是有严格的数值意义的，即代表了此子节点距离管顶的深度。</remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.MonitorData_Line.#ctor(System.String[],System.Boolean)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="nodes">线测点上的每一个子节点的深度（相对于线测点的顶端或起点而言）</param>
+            <param name="nodesDigital">子节点的名称是否有数值意义</param>
+        </member>
+        <member name="M:OldW.Instrumentations.MonitorData_Line.#ctor(System.String[],System.Collections.Generic.SortedDictionary{System.DateTime,System.Nullable{System.Single}[]},System.Boolean)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="nodes">线测点上的每一个子节点的深度（相对于线测点的顶端或起点而言）</param>
+            <param name="monitoredData">已经记录好的监测数据</param>
+            <param name="nodesDigital">子节点的名称是否有数值意义</param>
+        </member>
+        <member name="M:OldW.Instrumentations.MonitorData_Line.GetDigitalNodes">
+            <summary> 获取线测点的子节点的名称所对应的数值。如果不能转换为数值，则给出报错。 </summary>
+            <returns>对于测斜管这类线测点，其每一个字段都是有严格的数值意义的，即代表了此子节点距离管顶的深度。</returns>
+        </member>
+        <member name="M:OldW.Instrumentations.MonitorData_Line.GetStringNodes">
+            <summary> 获取线测点的子节点的名称 </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.MonitorData_Line.FromDataTable(System.Data.DataTable,System.Boolean)">
+            <summary>
+            从 DataTable 对象提取出此线测点的所有监测数据
+            </summary>
+            <param name="table"> 要进行数据提取的表格的第一个字段必须是用来存储时间信息的主键 </param>
+            <param name="convertStringToSingle"> 对于测斜管这类线测点，其每一个字段都是有严格的数值意义的，即代表了此子节点距离管顶的深度，
+            所以在Excel工作表中，这些子节点的字段名的格式为“2#50”，这时就要将其转换为对应的可以表示数值的“2.50”。 </param>
+            <returns> 实体类，用来作为 Instrum_Line.SetMonitorData 的输入参数 </returns>
+        </member>
+        <member name="T:OldW.Instrumentations.Instrumentation">
+            <summary>
+            监测测点：包括线测点（测斜管）或点测点（地表沉降、立柱隆起、支撑轴力）等
+            </summary>
+            <remarks>
+            对于点测点而言，其监测数据是在不同的时间记录的，每一个时间上都只有一个数据。所以其监测数据是一个两列的表格，第一列为时间，第二列为监测数据。
+            对于线测点而言（比如测斜管），在每一个时间上都有两列数据，用来记录这一时间上，线测点中每一个位置的监测值。
+            </remarks>
+        </member>
+        <member name="P:OldW.Instrumentations.Instrumentation.Document">
+            <summary> 测点所在的Revit文档 </summary>
+        </member>
+        <member name="P:OldW.Instrumentations.Instrumentation.IdName">
+            <summary> 测点的标志文字，一般格式为“墙体测斜（CX3）: 568742” </summary>
+        </member>
+        <member name="P:OldW.Instrumentations.Instrumentation.Monitor">
+            <summary>
+            监测仪器，对于点测点，其包括地表沉降、立柱隆起、支撑轴力等；
+            对于线测点，包括测斜管
+            </summary>
+        </member>
+        <member name="P:OldW.Instrumentations.Instrumentation.Type">
+            <summary> 监测点的测点类型，也是测点所属的族的名称 </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrumentation.#ctor(Autodesk.Revit.DB.FamilyInstance,OldW.Instrumentations.InstrumentationType)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="Instrumentation">所有类型的监测仪器，包括线测点（测斜管）或点测点（地表沉降、立柱隆起、支撑轴力）等</param>
+            <param name="Type">监测点的测点类型，也是测点所属的族的名称</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrumentation.Lookup(Autodesk.Revit.DB.Document,System.Collections.Generic.ICollection{Autodesk.Revit.DB.ElementId})">
+            <summary> 从指定的Element集合中，找出所有的监测点元素 </summary>
+            <param name="Elements"> 要进行搜索过滤的Element集合</param>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrumentation.Lookup(Autodesk.Revit.DB.Document)">
+            <summary> 从整个文档中找出所有的监测点元素 </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrumentation.LookupFromCollector(Autodesk.Revit.DB.FilteredElementCollector)">
+            <summary>
+            从 FilteredElementCollector 集合中，找出所有的监测点元素
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrumentation.getMonitorName">
+            <summary>
+            提取测点的名称，比如“CX1”。此参数是在测点族的设计时添加进去的，而不是通过API添加的。
+            </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrumentation.setMonitorName(Autodesk.Revit.DB.Transaction,System.String)">
+            <summary>
+            设置测点的名称，比如“CX1”。此参数是在测点族的设计时添加进去的，而不是通过API添加的。但是其值可以通过API设置。
+            </summary>
+            <summary>
+            将测点数据类序列化之后的字符保存到测点对象的参数中。
+            </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrumentation.getMonitorDataString">
+            <summary>
+            提取测点监测数据所对应的序列化字符。即测点族中“监测数据”参数中的字符。
+            如果要提取监测数据为对应的数据类，可以去调用具体派生类的 GetMonitorData 函数
+            </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrumentation.setMonitorDataString(Autodesk.Revit.DB.Transaction,System.String)">
+            <summary>
+            将测点数据类序列化之后的字符保存到测点对象的参数中。
+            </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrumentation.ImportFromExcel(Autodesk.Revit.DB.Transaction,System.Data.OleDb.OleDbConnection,System.String,System.String)">
+            <summary> 从Excel中导入监测数据 </summary>
+            <param name="tran"> 已经start的Revit事务 </param>
+            <param name="conn">连接到Excel工作簿</param>
+            <param name="sheetName">监测数据所在的Excel工作表，表名称中应该包含后缀$ </param>
+            <param name="fieldName">监测数据在工作表中的哪个字段下。对于线测点，其fieldName是不必要的。</param>
+        </member>
+        <member name="T:OldW.Instrumentations.Instrum_ColumnHeave">
+            <summary>
+            测点_立柱垂直位移
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_ColumnHeave.#ctor(Autodesk.Revit.DB.FamilyInstance)">
+            <summary> 构造函数 </summary>
+            <param name="ColumnHeaveElement">立柱垂直位移测点所对应的图元</param>
+        </member>
+        <member name="T:OldW.Instrumentations.Instrum_GroundSettlement">
+            <summary>
+            测点_地表垂直位移
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_GroundSettlement.#ctor(Autodesk.Revit.DB.FamilyInstance)">
+            <summary> 构造函数 </summary>
+            <param name="GroundSettlementElement">地表垂直位移测点所对应的图元</param>
+        </member>
+        <member name="T:OldW.Instrumentations.Instrum_WallIncline">
+            <summary>
+            测点_测斜管
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="F:OldW.Instrumentations.Instrum_WallIncline._isInsideEarth">
+            <summary> 测斜管的位置是在模型中的开挖土体的内部还是外部，即测斜管与开挖土体的Element是否相交。 </summary>
+            <remarks>True if the inclinometer is inside the excavation earth,
+            and False if the inclinometer is outside the excavation earth.</remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_WallIncline.#ctor(Autodesk.Revit.DB.FamilyInstance)">
+            <summary> 构造函数 </summary>
+            <param name="inclinometerElement">测斜管所对应的图元</param>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_WallIncline.FindAdjacentEarthElevation(Autodesk.Revit.DB.FamilyInstance)">
+            <summary>
+            找到距离此测斜管最近的土体开挖面的标高值
+            </summary>
+            <param name="SoilElement">模型中的土体单元，即此测斜管附近的开挖土体单元</param>
+            <returns>如果没有找到对应的标高值，则返回 null</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_WallIncline.FindBottomPoint(Autodesk.Revit.DB.XYZ,System.Boolean,Autodesk.Revit.DB.FamilyInstance,Autodesk.Revit.DB.ReferenceIntersector)">
+            <summary>
+            搜索一个底部坐标点，有了此点后，只要向上发射一条射线，即可以找到此时的开挖面
+            </summary>
+            <param name="ptInclinometerBottom">测斜管的底部坐标点</param>
+            <param name="IsInside">测斜管是否在开挖土体Element的内部</param>
+            <param name="Earth">开挖土体单元</param>
+            <param name="IntersectedEarth">用来搜索相交面的开挖土体</param>
+            <returns></returns>
+            <remarks>  如果测斜管就在土体内部，那么测斜管的底部点就可以直接用来向上发射射线了。
+            如果测斜管在土体外部，那么需要以测斜管的底部点为中心，向四周发射多条射线，
+            这些射线分别都与土体相交，找到距离土体最近的那一条射线所对应的相交点与相交面，然后将相交点向面内偏移一点点，即可以作为寻找开挖面的射线的原点了。</remarks>
+        </member>
+        <member name="T:OldW.Instrumentations.Instrum_Line">
+            <summary>
+            所有类型的线监测，包括测斜管
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="F:OldW.Instrumentations.Instrum_Line._monitorData">
+            <summary>
+            线测点的整个施工阶段中的监测数据
+            </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.Instrum_Line.NodesDigital">
+            <summary>
+            子节点的名称是否有数值意义
+            </summary>
+            <remarks> 线测点的子节点是广义上的同一个测点中所监测的不同类型的数据，比如墙顶位移测点就有“墙顶垂直位移”与 “墙顶水平位移”两个子节点。
+            但是对于测斜管这类线测点，其每一个字段都是有严格的数值意义的，即代表了此子节点距离管顶的深度。</remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_Line.#ctor(Autodesk.Revit.DB.FamilyInstance,OldW.Instrumentations.InstrumentationType,System.Boolean)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="MonitorLine">所有类型的监测管线，包括测斜管，但不包括地表沉降、立柱隆起、支撑轴力等</param>
+            <param name="Type">监测点的测点类型，也是测点所属的族的名称</param>
+            <param name="nodesDigital"> 子节点的名称是否有数值意义 </param>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_Line.Lookup(Autodesk.Revit.DB.Document,System.Collections.Generic.ICollection{Autodesk.Revit.DB.ElementId})">
+            <summary>
+            从指定的Element集合中，找出所有的点测点元素
+            </summary>
+            <param name="elements"> 要进行搜索过滤的Element集合</param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_Line.GetMonitorData">
+            <summary>
+            将测点对象中的监测数据提取为具体的序列化类。
+            其中包括线测点的每一个子节点的数据，以及整个线测点在整个施工过程中所有的测点数据。
+            </summary>
+            <returns>如果在派生类中将此方法进行重写，则一定要对应地对 <see cref="M:OldW.Instrumentations.Instrum_Line.SetMonitorData(Autodesk.Revit.DB.Transaction,OldW.Instrumentations.MonitorData_Line)"/> 方法进行重写。</returns>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_Line.SetMonitorData(Autodesk.Revit.DB.Transaction,OldW.Instrumentations.MonitorData_Line)">
+            <summary>
+            将监测数据以序列化字符串保存到对应的Parameter对象中。
+            </summary>
+            <remarks>如果在派生类中将此方法进行重写，则一定要对应地对 <see cref="M:OldW.Instrumentations.Instrum_Line.GetMonitorData"/> 方法进行重写。</remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_Line.ImportFromExcel(Autodesk.Revit.DB.Transaction,System.Data.OleDb.OleDbConnection,System.String,System.String)">
+            <summary> 从Excel中导入监测数据 </summary>
+            <param name="tran"> 已经start的Revit事务 </param>
+            <param name="conn">连接到Excel工作簿</param>
+            <param name="sheetName">监测数据所在的Excel工作表，表名称中应该包含后缀$ </param>
+            <param name="fieldName">监测数据在工作表中的哪个字段下。对于线测点，其fieldName是不必要的。</param>
+        </member>
+        <member name="T:OldW.Instrumentations.Instrum_Point">
+            <summary>
+            所有类型的监测点，包括地表沉降、立柱隆起、支撑轴力等，但不包括测斜管
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="F:OldW.Instrumentations.Instrum_Point._monitorData">
+            <summary>
+            点测点的整个施工阶段中的监测数据
+            </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_Point.#ctor(Autodesk.Revit.DB.FamilyInstance,OldW.Instrumentations.InstrumentationType)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="MonitorPoint">所有类型的监测点，包括地表沉降、立柱隆起、支撑轴力等，但不包括测斜管</param>
+            <param name="Type">监测点的测点类型，也是测点所属的族的名称</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_Point.Lookup(Autodesk.Revit.DB.Document,System.Collections.Generic.ICollection{Autodesk.Revit.DB.ElementId})">
+            <summary>
+            从指定的Element集合中，找出所有的点测点元素
+            </summary>
+            <param name="Elements"> 要进行搜索过滤的Element集合</param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_Point.GetMonitorData">
+            <summary>
+            将测点对象中的监测数据提取为具体的序列化类
+            </summary>
+            <returns>如果在派生类中将此方法进行重写，则一定要对应地对 <see cref="M:OldW.Instrumentations.Instrum_Point.SetMonitorData(Autodesk.Revit.DB.Transaction,System.Collections.Generic.List{OldW.Instrumentations.MonitorData_Point})"/> 方法进行重写。</returns>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_Point.SetMonitorData(Autodesk.Revit.DB.Transaction,System.Collections.Generic.List{OldW.Instrumentations.MonitorData_Point})">
+            <summary>
+            将监测数据以序列化字符串保存到对应的Parameter对象中。
+            </summary>
+            <remarks>如果在派生类中将此方法进行重写，则一定要对应地对 <see cref="M:OldW.Instrumentations.Instrum_Point.GetMonitorData"/> 方法进行重写。</remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_Point.ImportFromExcel(Autodesk.Revit.DB.Transaction,System.Data.OleDb.OleDbConnection,System.String,System.String)">
+            <summary> 从Excel中导入监测数据 </summary>
+            <param name="tran"> 已经start的Revit事务 </param>
+            <param name="conn">连接到Excel工作簿</param>
+            <param name="sheetName">监测数据所在的Excel工作表，表名称中应该包含后缀$ </param>
+            <param name="fieldName">监测数据在工作表中的哪个字段下。对于线测点，其fieldName是不必要的。</param>
+        </member>
+        <member name="T:OldW.Instrumentations.Instrum_StrutAxialForce">
+            <summary>
+            测点_支撑轴力
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Instrumentations.Instrum_StrutAxialForce.#ctor(Autodesk.Revit.DB.FamilyInstance)">
+            <summary> 构造函数 </summary>
+            <param name="StrutAxialForceElement"> 支撑轴力测点所对应的图元</param>
+        </member>
         <member name="M:OldW.DllActivator.DllActivator_Projects.ActivateReferences">
             <summary>
             激活本DLL所引用的那些DLLs
@@ -118,7 +792,7 @@
             </summary>
             <param name="ele"></param>
         </member>
-        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.RefreshNodes(System.Single[])">
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.RefreshNodes(System.String[])">
             <summary>
             为指定的单元设置新的节点信息，并同时刷新 Datagridview 控件中的数据
             </summary>
@@ -148,7 +822,7 @@
             <param name="nodesCount"> 如果nodesCount的值为0，则返回的实体类中只有一个属性“Date”</param>
             <param name="entityName"> 编译的实体类的名称，即“Nodes_3” </param>
         </member>
-        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.ChangeColumns(System.Int32,System.Single[])">
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.ChangeColumns(System.Int32,System.String[])">
             <summary>
             修改表格的列数。表格中的第一列始终是日期列，这一列是永远不会被删除的。
             </summary>
@@ -184,7 +858,7 @@
             打开窗口以设置最新的节点数据。
             </summary>
         </member>
-        <member name="M:OldW.DataManager.ElementDataManager.FormNodes.#ctor(System.Single[])">
+        <member name="M:OldW.DataManager.ElementDataManager.FormNodes.#ctor(System.String[])">
             <summary>
             构造函数
             </summary>
@@ -283,8 +957,11 @@
         <member name="F:OldW.DataManager.ElementDataManager._activeInstru">
             <summary> 当前活动的测点对象 </summary>
         </member>
-        <member name="F:OldW.DataManager.ElementDataManager.selectedInstrum">
+        <member name="F:OldW.DataManager.ElementDataManager._selectedInstrum">
             <summary> 进入测点监测数据管理窗口时，所有选择的测点 </summary>
+        </member>
+        <member name="F:OldW.DataManager.ElementDataManager._checkBoxex">
+            <summary> 复选框集合 </summary>
         </member>
         <member name="M:OldW.DataManager.ElementDataManager.#ctor(System.Collections.Generic.ICollection{OldW.Instrumentations.Instrumentation},OldW.Instrumentations.InstrumDoc)">
             <summary> 构造函数 </summary>
@@ -292,13 +969,7 @@
             <param name="document"></param>
             <remarks></remarks>
         </member>
-        <member name="M:OldW.DataManager.ElementDataManager.InitializeUI(OldW.Instrumentations.InstrumCollector)">
-            <summary>
-            根据不同的选择情况来进行不同的初始化
-             </summary>
-            <param name="AllselectedInstrum"></param>
-        </member>
-        <member name="F:OldW.DataManager.ElementDataManager.activeMonitorMode">
+        <member name="F:OldW.DataManager.ElementDataManager._activeMonitorMode">
             <summary> 当前操作的测点模式，比如是线测点（测斜管）、点测点等 </summary>
         </member>
         <member name="M:OldW.DataManager.ElementDataManager.btnActivateDatagridview_Click(System.Object,System.EventArgs)">
@@ -310,8 +981,6 @@
             <summary>
             在组合框中改变了选择的测点后，去更新DataGridView中的数据为指定测点的监测数据。
             </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
         </member>
         <member name="M:OldW.DataManager.ElementDataManager.SaveTableToElement(System.Object,System.EventArgs)">
             <summary>
@@ -339,34 +1008,34 @@
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="T:OldW.DataManager.FormReNameElement">
+        <member name="T:OldW.DataManager.ElementInitialize">
             <summary>
             对测点的编号进行重命名
             </summary>
         </member>
-        <member name="F:OldW.DataManager.FormReNameElement.MonitorName">
+        <member name="F:OldW.DataManager.ElementInitialize.MonitorName">
             <summary>
             测点的新名称
             </summary>
         </member>
-        <member name="M:OldW.DataManager.FormReNameElement.#ctor(System.String)">
+        <member name="M:OldW.DataManager.ElementInitialize.#ctor(System.String)">
             <summary>
             构造函数
             </summary>
             <param name="oldName"></param>
         </member>
-        <member name="F:OldW.DataManager.FormReNameElement.components">
+        <member name="F:OldW.DataManager.ElementInitialize.components">
             <summary>
             Required designer variable.
             </summary>
         </member>
-        <member name="M:OldW.DataManager.FormReNameElement.Dispose(System.Boolean)">
+        <member name="M:OldW.DataManager.ElementInitialize.Dispose(System.Boolean)">
             <summary>
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="M:OldW.DataManager.FormReNameElement.InitializeComponent">
+        <member name="M:OldW.DataManager.ElementInitialize.InitializeComponent">
             <summary>
             Required method for Designer support - do not modify
             the contents of this method with the code editor.
@@ -498,7 +1167,7 @@
             <summary>
             构造函数
             </summary>
-            <param name="Type">窗口的标题：监测类型</param>
+            <param name="type">窗口的标题：监测类型</param>
             <remarks></remarks>
         </member>
         <member name="M:OldW.DataManager.Chart_MonitorData.SetupChart">
@@ -513,488 +1182,6 @@
             <param name="seriesName"></param>
             <param name="chartAreaName"></param>
             <returns></returns>
-        </member>
-        <member name="T:OldW.Instrumentations.InstrumentationType">
-            <summary>
-            (位编码)监测仪器的族名称（也是族文件的名称），同时也作为监测仪器的类型判断
-            </summary>
-            <remarks>从枚举值返回对应的枚举字符的方法：GlobalSettings.InstrumentationType.沉降测点.ToString</remarks>
-        </member>
-        <member name="F:OldW.Instrumentations.InstrumentationType.未指定">
-            <summary> 并不是任何一种已经指定的线测点或者点测点类型 </summary>
-        </member>
-        <member name="F:OldW.Instrumentations.InstrumentationType.其他点测点">
-            <summary> 并不是任何一种已经特殊处理过的点测点类型 </summary>
-        </member>
-        <member name="F:OldW.Instrumentations.InstrumentationType.其他线测点">
-            <summary> 并不是任何一种已经特殊处理过的线测点类型 </summary>
-        </member>
-        <member name="F:OldW.Instrumentations.InstrumentationType.墙体测斜">
-            <summary> 比如地下连续墙的水平位移 </summary>
-        </member>
-        <member name="F:OldW.Instrumentations.InstrumentationType.土体测斜">
-            <summary> 比如土体中的测斜管的水平位移，它与墙体测斜的区别在于墙体测斜是嵌在地下连续墙中，
-            而且墙体测斜与土体测斜的安全警戒准则并不相同。 </summary>
-        </member>
-        <member name="F:OldW.Instrumentations.InstrumentationType.墙顶位移">
-            <summary> 墙顶位移的监测数据包括水平位移与垂直位移。
-            在Excel中通过两张表“墙顶水平位移”与“墙顶垂直位移”来保存。 </summary>
-        </member>
-        <member name="F:OldW.Instrumentations.InstrumentationType.地表隆沉">
-            <summary> 比如基坑外地表的垂直位移 </summary>
-        </member>
-        <member name="F:OldW.Instrumentations.InstrumentationType.立柱隆沉">
-            <summary> 比如基坑中立柱的垂直位移 </summary>
-        </member>
-        <member name="F:OldW.Instrumentations.InstrumentationType.支撑轴力">
-            <summary> 比如基坑中支撑的轴力 </summary>
-        </member>
-        <member name="F:OldW.Instrumentations.InstrumentationType.水位">
-            <summary> 比如基坑中水位测点处的水位高低 </summary>
-        </member>
-        <member name="T:OldW.Instrumentations.MonitorData_Point">
-            <summary> 监测数据类，表示点测点中的每一天的监测数据 </summary>
-        </member>
-        <member name="P:OldW.Instrumentations.MonitorData_Point.Date">
-            <summary>
-            监测日期
-            </summary>
-        </member>
-        <member name="P:OldW.Instrumentations.MonitorData_Point.Value">
-            <summary>
-            监测数据，如果当天没有数据，则为null
-            </summary>
-        </member>
-        <member name="M:OldW.Instrumentations.MonitorData_Point.#ctor(System.DateTime,System.Nullable{System.Single})">
-            <summary>
-            构造函数
-            </summary>
-            <param name="Date"></param>
-            <param name="Value"></param>
-        </member>
-        <member name="M:OldW.Instrumentations.MonitorData_Point.FromDataTable(System.Data.DataTable,System.Int32,System.Int32)">
-            <summary>
-            从 DataTable 对象中指定的两个字段提取出点测点的监测数据的实体类集合
-            </summary>
-            <param name="table"> 要进行数据提取的表格 </param>
-            <param name="indexDate"> 日期数据在 table 中所在的列的列号 </param>
-            <param name="indexValue"> 监测数据在 table 中所在的列的列号 </param>
-            <returns> 实体类集合，用来作为 Instrum_Point.SetMonitorData 的输入参数 </returns>
-        </member>
-        <member name="T:OldW.Instrumentations.MonitorData_Line">
-            <summary>
-            线测点中的每一天的监测数据
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="P:OldW.Instrumentations.MonitorData_Line.Nodes">
-            <summary>
-            线测点上的每一个子节点的深度（相对于线测点的顶端或起点而言）
-            </summary>
-        </member>
-        <member name="P:OldW.Instrumentations.MonitorData_Line.MonitorData">
-            <summary>
-            测斜管在每一天的监测数据。其中，SortedDictionary 中的Value项 为一个数组，
-            它代表对应的日期下，Depths中每一个深度处所对应的监测数据值，
-            所以，此数组中元素的个数必须要与Depths数组中元素的个数相同。
-            </summary>
-        </member>
-        <member name="M:OldW.Instrumentations.MonitorData_Line.#ctor(System.Single[])">
-            <summary>
-            构造函数
-            </summary>
-            <param name="nodes">线测点上的每一个子节点的深度（相对于线测点的顶端或起点而言）</param>
-        </member>
-        <member name="M:OldW.Instrumentations.MonitorData_Line.#ctor(System.Single[],System.Collections.Generic.SortedDictionary{System.DateTime,System.Nullable{System.Single}[]})">
-            <summary>
-            构造函数
-            </summary>
-            <param name="nodes">线测点上的每一个子节点的深度（相对于线测点的顶端或起点而言）</param>
-            <param name="monitoredData">已经记录好的监测数据</param>
-        </member>
-        <member name="M:OldW.Instrumentations.MonitorData_Line.FromDataTable(System.Data.DataTable)">
-            <summary>
-            从 DataTable 对象提取出此线测点的所有监测数据
-            </summary>
-            <param name="table"> 要进行数据提取的表格的第一个字段必须是用来存储时间信息的主键，并且后面的每一个字段的名称都是“2#50”的格式。 </param>
-            <returns> 实体类，用来作为 Instrum_Line.SetMonitorData 的输入参数 </returns>
-        </member>
-        <member name="T:OldW.Instrumentations.InstrumCollector">
-            <summary>
-            测点收集器，用来对测点集合进行分类管理
-            </summary>
-        </member>
-        <member name="F:OldW.Instrumentations.InstrumCollector._allInstrumentations">
-            <summary> 所有的测点的集合 </summary>
-        </member>
-        <member name="P:OldW.Instrumentations.InstrumCollector.AllInstrumentations">
-            <summary> 所有的测点的集合 </summary>
-        </member>
-        <member name="F:OldW.Instrumentations.InstrumCollector.ColumnHeave">
-            <summary> 立柱隆沉测点 </summary>
-        </member>
-        <member name="F:OldW.Instrumentations.InstrumCollector.GroundSettlement">
-            <summary> 地表隆沉测点 </summary>
-        </member>
-        <member name="F:OldW.Instrumentations.InstrumCollector.Incline">
-            <summary> 测斜点 </summary>
-        </member>
-        <member name="F:OldW.Instrumentations.InstrumCollector.StrutAxialForce">
-            <summary> 支撑轴力点 </summary>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumCollector.#ctor(System.Collections.Generic.IEnumerable{OldW.Instrumentations.Instrumentation})">
-            <summary>
-            构造函数
-            </summary>
-            <param name="instrums"> 要进行测点分类的测点集合 </param>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumCollector.Truncate(System.Collections.Generic.IEnumerable{OldW.Instrumentations.Instrumentation})">
-            <summary>
-            清空原测点集合中的元素，并重新添加新的元素
-            </summary>
-            <param name="instrums"></param>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumCollector.Append(System.Collections.Generic.IEnumerable{OldW.Instrumentations.Instrumentation})">
-            <summary>
-            直接向集合中附加新的测点
-            </summary>
-            <param name="instrums"></param>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumCollector.GetMonitors(OldW.Instrumentations.InstrumentationType)">
-            <summary> 按指定的类型过滤出集合中所有的测点 </summary>
-            <param name="type"> 多种监测类型的按位组合 </param>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumCollector.GetLineMonitors">
-            <summary> 过滤出集合中所有的线测点 </summary>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumCollector.GetLineMonitors(OldW.Instrumentations.InstrumentationType)">
-            <summary> 按指定的选项过滤出集合中所有的线测点 </summary>
-            <param name="type"> 多种监测类型的按位组合 </param>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumCollector.GetPointMonitors">
-            <summary> 过滤出集合中所有的线测点 </summary>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumCollector.GetPointMonitors(OldW.Instrumentations.InstrumentationType)">
-            <summary> 按指定的选项过滤出集合中所有的点测点 </summary>
-            <param name="type"> 多种监测类型的按位组合 </param>
-        </member>
-        <member name="T:OldW.Instrumentations.InstrumTypeMapping">
-            <summary>
-            将不同的Excel工作表字段的名称映射到Revit对应的测点中去
-            </summary>
-        </member>
-        <member name="F:OldW.Instrumentations.InstrumTypeMapping.SheetWallIncline">
-            <summary> 墙体测斜,每一个测斜点的数据用一个工作表来保存 </summary>
-        </member>
-        <member name="F:OldW.Instrumentations.InstrumTypeMapping.SheetSoilIncine">
-            <summary> 土体测斜,每一个测斜点的数据用一个工作表来保存 </summary>
-        </member>
-        <member name="F:OldW.Instrumentations.InstrumTypeMapping.SheetOtherPoint">
-            <summary> 其他未在上面标记过的测点类型，其每一个点测点的监测数据都保存在工作表中的某个字段下。 </summary>
-        </member>
-        <member name="F:OldW.Instrumentations.InstrumTypeMapping.SheetOtherLine">
-            <summary> 其他未在上面标记过的测点类型，其每一个线测点中有多个子节点（类似于测斜管），
-            一个测点的监测数据保存在一张工作表，而表中的每一个字段代表此线测点中的一个子节点。 </summary>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumTypeMapping.MultiPointsInSheet(System.String)">
-            <summary> 指定的Excel工作表中是包含多个测点（点测点）还是只包含一个测点（线测点） </summary>
-            <param name="excelSheetName"></param>
-            <returns> 如果此工作表中有多个点测点，比如“地表隆沉”，则返回true；
-            如果此工作表就代表一个线测点，则返回false。 </returns>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumTypeMapping.IsRevitLine(System.String)">
-            <summary> 此工作表名称所对应的测点类型在Revit中是否是一个线测点类型 </summary>
-            <param name="excelSheetName"></param>
-            <returns> 如果此工作表名称代表一类测点，比如“地表隆沉”，则返回true；
-            如果此工作表就代表一个测斜测点，则返回false。 </returns>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumTypeMapping.MapToType(System.String)">
-            <summary>
-            由字段名称来匹配出对应的测点类型
-            </summary>
-            <param name="excelSheetName"> Excel工作表的名称，不包含后缀$</param>
-            <returns></returns>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumTypeMapping.GetNumber(System.String)">
-            <summary> 根据给出的字段名匹配出对应的测点编号 </summary>
-            <param name="excelPointOrLineName"> Excel中的测点编号，此编号可以了线测点的编号如CX01，也可以是点测点的编号如DB01。 </param>
-            <returns> 如果能匹配出编号12或者编号2-12这两种模式，则返回对应的数值字符，如果不能匹配，则返回空字符</returns>
-        </member>
-        <member name="T:OldW.Instrumentations.InstrumDoc">
-            <summary> 用来执行基坑中的测点布置，监测数据管理等操作 </summary>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumDoc.#ctor(OldWDocument)">
-            <summary> 构造函数 </summary>
-            <param name="OldWDoc"></param>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumDoc.SetFamily(OldW.Instrumentations.InstrumentationType)">
-            <summary>
-            放置测点
-            </summary>
-            <param name="monitorType"> 要放置的测点类型 </param>
-            <returns></returns>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumDoc.FillCombobox(System.Collections.Generic.IEnumerable{OldW.Instrumentations.Instrumentation},System.Object)">
-            <summary>
-            将指定的测点集合对象转换为组合列表框Combox控件的DataSource类型。
-            </summary>
-            <param name="elementCollection"></param>
-            <param name="comboboxControl"> ComboBox 控件对象或者 DataGridViewComboBoxCell 控件对象  </param>
-            <returns> </returns>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumDoc.GetComboboxDatasource(System.Collections.Generic.IEnumerable{OldW.Instrumentations.Instrumentation})">
-            <summary>
-            将指定的测点集合对象转换为组合列表框Combox控件的DataSource类型。
-            </summary>
-            <param name="elementCollection"></param>
-            <returns> </returns>
-        </member>
-        <member name="T:OldW.Instrumentations.Instrum_WallTop">
-            <summary>
-            墙顶位移测点
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrum_WallTop.#ctor(Autodesk.Revit.DB.FamilyInstance)">
-            <summary> 构造函数 </summary>
-            <param name="inclinometerElement">测斜管所对应的图元</param>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrum_WallTop.ImportFromExcel(Autodesk.Revit.DB.Transaction,System.Data.OleDb.OleDbConnection,System.String,System.String)">
-            <summary> 从Excel中导入监测数据 </summary>
-            <param name="tran"> 已经start的Revit事务 </param>
-            <param name="conn">连接到Excel工作簿</param>
-            <param name="sheetName">监测数据所在的Excel工作表，表名称中应该包含后缀$ </param>
-            <param name="fieldName">监测数据在工作表中的哪个字段下。对于线测点，其fieldName是不必要的。</param>
-        </member>
-        <member name="T:OldW.Instrumentations.Instrumentation">
-            <summary>
-            监测测点：包括线测点（测斜管）或点测点（地表沉降、立柱隆起、支撑轴力）等
-            </summary>
-            <remarks>
-            对于点测点而言，其监测数据是在不同的时间记录的，每一个时间上都只有一个数据。所以其监测数据是一个两列的表格，第一列为时间，第二列为监测数据。
-            对于线测点而言（比如测斜管），在每一个时间上都有两列数据，用来记录这一时间上，线测点中每一个位置的监测值。
-            </remarks>
-        </member>
-        <member name="P:OldW.Instrumentations.Instrumentation.Monitor">
-            <summary>
-            监测仪器，对于点测点，其包括地表沉降、立柱隆起、支撑轴力等；
-            对于线测点，包括测斜管
-            </summary>
-        </member>
-        <member name="P:OldW.Instrumentations.Instrumentation.Type">
-            <summary> 监测点的测点类型，也是测点所属的族的名称 </summary>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrumentation.#ctor(Autodesk.Revit.DB.FamilyInstance,OldW.Instrumentations.InstrumentationType)">
-            <summary>
-            构造函数
-            </summary>
-            <param name="Instrumentation">所有类型的监测仪器，包括线测点（测斜管）或点测点（地表沉降、立柱隆起、支撑轴力）等</param>
-            <param name="Type">监测点的测点类型，也是测点所属的族的名称</param>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrumentation.Lookup(Autodesk.Revit.DB.Document,System.Collections.Generic.ICollection{Autodesk.Revit.DB.ElementId})">
-            <summary> 从指定的Element集合中，找出所有的监测点元素 </summary>
-            <param name="Elements"> 要进行搜索过滤的Element集合</param>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrumentation.Lookup(Autodesk.Revit.DB.Document)">
-            <summary> 从整个文档中找出所有的监测点元素 </summary>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrumentation.LookupFromCollector(Autodesk.Revit.DB.FilteredElementCollector)">
-            <summary>
-            从 FilteredElementCollector 集合中，找出所有的监测点元素
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrumentation.getMonitorName">
-            <summary>
-            提取测点的名称，比如“CX1”。此参数是在测点族的设计时添加进去的，而不是通过API添加的。
-            </summary>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrumentation.setMonitorName(Autodesk.Revit.DB.Transaction,System.String)">
-            <summary>
-            设置测点的名称，比如“CX1”。此参数是在测点族的设计时添加进去的，而不是通过API添加的。但是其值可以通过API设置。
-            </summary>
-            <summary>
-            将测点数据类序列化之后的字符保存到测点对象的参数中。
-            </summary>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrumentation.getMonitorDataString">
-            <summary>
-            提取测点监测数据所对应的序列化字符。即测点族中“监测数据”参数中的字符。
-            如果要提取监测数据为对应的数据类，可以去调用具体派生类的 GetMonitorData 函数
-            </summary>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrumentation.setMonitorDataString(Autodesk.Revit.DB.Transaction,System.String)">
-            <summary>
-            将测点数据类序列化之后的字符保存到测点对象的参数中。
-            </summary>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrumentation.ImportFromExcel(Autodesk.Revit.DB.Transaction,System.Data.OleDb.OleDbConnection,System.String,System.String)">
-            <summary> 从Excel中导入监测数据 </summary>
-            <param name="tran"> 已经start的Revit事务 </param>
-            <param name="conn">连接到Excel工作簿</param>
-            <param name="sheetName">监测数据所在的Excel工作表，表名称中应该包含后缀$ </param>
-            <param name="fieldName">监测数据在工作表中的哪个字段下。对于线测点，其fieldName是不必要的。</param>
-        </member>
-        <member name="T:OldW.Instrumentations.Instrum_ColumnHeave">
-            <summary>
-            测点_立柱垂直位移
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrum_ColumnHeave.#ctor(Autodesk.Revit.DB.FamilyInstance)">
-            <summary> 构造函数 </summary>
-            <param name="ColumnHeaveElement">立柱垂直位移测点所对应的图元</param>
-        </member>
-        <member name="T:OldW.Instrumentations.Instrum_GroundSettlement">
-            <summary>
-            测点_地表垂直位移
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrum_GroundSettlement.#ctor(Autodesk.Revit.DB.FamilyInstance)">
-            <summary> 构造函数 </summary>
-            <param name="GroundSettlementElement">地表垂直位移测点所对应的图元</param>
-        </member>
-        <member name="T:OldW.Instrumentations.Instrum_WallIncline">
-            <summary>
-            测点_测斜管
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="F:OldW.Instrumentations.Instrum_WallIncline._isInsideEarth">
-            <summary> 测斜管的位置是在模型中的开挖土体的内部还是外部，即测斜管与开挖土体的Element是否相交。 </summary>
-            <remarks>True if the inclinometer is inside the excavation earth,
-            and False if the inclinometer is outside the excavation earth.</remarks>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrum_WallIncline.#ctor(Autodesk.Revit.DB.FamilyInstance)">
-            <summary> 构造函数 </summary>
-            <param name="inclinometerElement">测斜管所对应的图元</param>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrum_WallIncline.FindAdjacentEarthElevation(Autodesk.Revit.DB.FamilyInstance)">
-            <summary>
-            找到距离此测斜管最近的土体开挖面的标高值
-            </summary>
-            <param name="SoilElement">模型中的土体单元，即此测斜管附近的开挖土体单元</param>
-            <returns>如果没有找到对应的标高值，则返回 null</returns>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrum_WallIncline.FindBottomPoint(Autodesk.Revit.DB.XYZ,System.Boolean,Autodesk.Revit.DB.FamilyInstance,Autodesk.Revit.DB.ReferenceIntersector)">
-            <summary>
-            搜索一个底部坐标点，有了此点后，只要向上发射一条射线，即可以找到此时的开挖面
-            </summary>
-            <param name="ptInclinometerBottom">测斜管的底部坐标点</param>
-            <param name="IsInside">测斜管是否在开挖土体Element的内部</param>
-            <param name="Earth">开挖土体单元</param>
-            <param name="IntersectedEarth">用来搜索相交面的开挖土体</param>
-            <returns></returns>
-            <remarks>  如果测斜管就在土体内部，那么测斜管的底部点就可以直接用来向上发射射线了。
-            如果测斜管在土体外部，那么需要以测斜管的底部点为中心，向四周发射多条射线，
-            这些射线分别都与土体相交，找到距离土体最近的那一条射线所对应的相交点与相交面，然后将相交点向面内偏移一点点，即可以作为寻找开挖面的射线的原点了。</remarks>
-        </member>
-        <member name="T:OldW.Instrumentations.Instrum_Line">
-            <summary>
-            所有类型的线监测，包括测斜管
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="F:OldW.Instrumentations.Instrum_Line._monitorData">
-            <summary>
-            线测点的整个施工阶段中的监测数据
-            </summary>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrum_Line.#ctor(Autodesk.Revit.DB.FamilyInstance,OldW.Instrumentations.InstrumentationType)">
-            <summary>
-            构造函数
-            </summary>
-            <param name="MonitorLine">所有类型的监测管线，包括测斜管，但不包括地表沉降、立柱隆起、支撑轴力等</param>
-            <param name="Type">监测点的测点类型，也是测点所属的族的名称</param>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrum_Line.Lookup(Autodesk.Revit.DB.Document,System.Collections.Generic.ICollection{Autodesk.Revit.DB.ElementId})">
-            <summary>
-            从指定的Element集合中，找出所有的点测点元素
-            </summary>
-            <param name="elements"> 要进行搜索过滤的Element集合</param>
-            <returns></returns>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrum_Line.GetMonitorData">
-            <summary>
-            将测点对象中的监测数据提取为具体的序列化类。
-            其中包括线测点的每一个子节点的数据，以及整个线测点在整个施工过程中所有的测点数据。
-            </summary>
-            <returns>如果在派生类中将此方法进行重写，则一定要对应地对 <see cref="M:OldW.Instrumentations.Instrum_Line.SetMonitorData(Autodesk.Revit.DB.Transaction,OldW.Instrumentations.MonitorData_Line)"/> 方法进行重写。</returns>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrum_Line.SetMonitorData(Autodesk.Revit.DB.Transaction,OldW.Instrumentations.MonitorData_Line)">
-            <summary>
-            将监测数据以序列化字符串保存到对应的Parameter对象中。
-            </summary>
-            <remarks>如果在派生类中将此方法进行重写，则一定要对应地对 <see cref="M:OldW.Instrumentations.Instrum_Line.GetMonitorData"/> 方法进行重写。</remarks>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrum_Line.ImportFromExcel(Autodesk.Revit.DB.Transaction,System.Data.OleDb.OleDbConnection,System.String,System.String)">
-            <summary> 从Excel中导入监测数据 </summary>
-            <param name="tran"> 已经start的Revit事务 </param>
-            <param name="conn">连接到Excel工作簿</param>
-            <param name="sheetName">监测数据所在的Excel工作表，表名称中应该包含后缀$ </param>
-            <param name="fieldName">监测数据在工作表中的哪个字段下。对于线测点，其fieldName是不必要的。</param>
-        </member>
-        <member name="T:OldW.Instrumentations.Instrum_Point">
-            <summary>
-            所有类型的监测点，包括地表沉降、立柱隆起、支撑轴力等，但不包括测斜管
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="F:OldW.Instrumentations.Instrum_Point._monitorData">
-            <summary>
-            点测点的整个施工阶段中的监测数据
-            </summary>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrum_Point.#ctor(Autodesk.Revit.DB.FamilyInstance,OldW.Instrumentations.InstrumentationType)">
-            <summary>
-            构造函数
-            </summary>
-            <param name="MonitorPoint">所有类型的监测点，包括地表沉降、立柱隆起、支撑轴力等，但不包括测斜管</param>
-            <param name="Type">监测点的测点类型，也是测点所属的族的名称</param>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrum_Point.Lookup(Autodesk.Revit.DB.Document,System.Collections.Generic.ICollection{Autodesk.Revit.DB.ElementId})">
-            <summary>
-            从指定的Element集合中，找出所有的点测点元素
-            </summary>
-            <param name="Elements"> 要进行搜索过滤的Element集合</param>
-            <returns></returns>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrum_Point.GetMonitorData">
-            <summary>
-            将测点对象中的监测数据提取为具体的序列化类
-            </summary>
-            <returns>如果在派生类中将此方法进行重写，则一定要对应地对 <see cref="M:OldW.Instrumentations.Instrum_Point.SetMonitorData(Autodesk.Revit.DB.Transaction,System.Collections.Generic.List{OldW.Instrumentations.MonitorData_Point})"/> 方法进行重写。</returns>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrum_Point.SetMonitorData(Autodesk.Revit.DB.Transaction,System.Collections.Generic.List{OldW.Instrumentations.MonitorData_Point})">
-            <summary>
-            将监测数据以序列化字符串保存到对应的Parameter对象中。
-            </summary>
-            <remarks>如果在派生类中将此方法进行重写，则一定要对应地对 <see cref="M:OldW.Instrumentations.Instrum_Point.GetMonitorData"/> 方法进行重写。</remarks>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrum_Point.ImportFromExcel(Autodesk.Revit.DB.Transaction,System.Data.OleDb.OleDbConnection,System.String,System.String)">
-            <summary> 从Excel中导入监测数据 </summary>
-            <param name="tran"> 已经start的Revit事务 </param>
-            <param name="conn">连接到Excel工作簿</param>
-            <param name="sheetName">监测数据所在的Excel工作表，表名称中应该包含后缀$ </param>
-            <param name="fieldName">监测数据在工作表中的哪个字段下。对于线测点，其fieldName是不必要的。</param>
-        </member>
-        <member name="T:OldW.Instrumentations.Instrum_StrutAxialForce">
-            <summary>
-            测点_支撑轴力
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.Instrumentations.Instrum_StrutAxialForce.#ctor(Autodesk.Revit.DB.FamilyInstance)">
-            <summary> 构造函数 </summary>
-            <param name="StrutAxialForceElement"> 支撑轴力测点所对应的图元</param>
         </member>
         <member name="M:OldW.SafetyWarning.FormSetWarning.getFormValve">
             <summary>
@@ -1096,82 +1283,6 @@
             返回该警戒值设定的ID
             </summary>
             <returns></returns>
-        </member>
-        <member name="T:OldW.Commands.cmd_ViewStage">
-            <summary> 查看指定日期的开挖工况 </summary>
-        </member>
-        <member name="T:OldW.Commands.cmd_ExcavationInfo">
-            <summary> 提取模型中的开挖土体信息 </summary>
-        </member>
-        <member name="T:OldW.Commands.cmd_DataManager">
-            <summary>
-            监测数据管理系统
-            </summary>
-        </member>
-        <member name="T:OldW.Commands.cmd_DataImport">
-            <summary>
-            从Excel中导入监测数据
-            </summary>
-        </member>
-        <member name="T:OldW.Commands.cmd_DataExport">
-            <summary>
-            将数据导出到Excel
-            </summary>
-        </member>
-        <member name="T:OldW.Commands.cmd_PlaceWallIncline">
-            <summary>
-            墙体测斜
-            </summary>
-        </member>
-        <member name="T:OldW.Commands.cmd_PlaceSoilIncline">
-            <summary>
-            土体测斜
-            </summary>
-        </member>
-        <member name="T:OldW.Commands.cmd_PlaceWallTop">
-            <summary>
-            墙顶位移
-            </summary>
-        </member>
-        <member name="T:OldW.Commands.cmd_PlaceGroundSettlement">
-            <summary>
-            地表隆沉
-            </summary>
-        </member>
-        <member name="T:OldW.Commands.cmd_PlaceColumnHeave">
-            <summary>
-            立柱隆沉
-            </summary>
-        </member>
-        <member name="T:OldW.Commands.cmd_PlaceStrutForce">
-            <summary>
-            支撑轴力
-            </summary>
-        </member>
-        <member name="T:OldW.Commands.cmd_PlaceWaterTable">
-            <summary>
-            水位
-            </summary>
-        </member>
-        <member name="T:OldW.Commands.cmd_PlaceOtherPoint">
-            <summary>
-            其他点测点
-            </summary>
-        </member>
-        <member name="T:OldW.Commands.cmd_PlaceOtherLine">
-            <summary>
-            其他线测点
-            </summary>
-        </member>
-        <member name="T:OldW.Commands.PlaceMonitor">
-            <summary>
-            放置任意类型的监测测点
-            </summary>
-        </member>
-        <member name="T:OldW.Commands.cmd_SetWarning">
-            <summary>
-            test command
-            </summary>
         </member>
         <member name="T:OldW.Excavation.ExcavationDoc">
             <summary>
@@ -1395,6 +1506,11 @@
         <member name="F:OldW.Excavation.frm_DrawExcavation.Request.StartModeling">
             <summary>
             开始建模
+            </summary>
+        </member>
+        <member name="T:OldW.Excavation.frm_ExcavationInfo">
+            <summary>
+            提取并且操作基坑开挖的信息
             </summary>
         </member>
         <member name="T:OldW.Excavation.frm_ExcavationInfo.RequestParameter">
