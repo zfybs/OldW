@@ -88,6 +88,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\ElementInitialize.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Commands\ElementInitialize.Designer.cs">
+      <DependentUpon>ElementInitialize.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Commands\PickInstrums.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Commands\PickInstrums.Designer.cs">
+      <DependentUpon>PickInstrums.cs</DependentUpon>
+    </Compile>
     <Compile Include="DllActivator_Projects.cs" />
     <Compile Include="Instrumentations\DataManager\ElementDataManager_Line.cs">
       <SubType>Form</SubType>
@@ -106,7 +118,8 @@
     </Compile>
     <Compile Include="Instrumentations\InstrumService.cs" />
     <Compile Include="Instrumentations\InstrumDoc.cs" />
-    <Compile Include="Instrumentations\Instrum_WallTop.cs" />
+    <Compile Include="Instrumentations\IntrumType\Instrum_WallTop.cs" />
+    <Compile Include="Instrumentations\MonitorData.cs" />
     <Compile Include="SafetyWarnings\Analysis.cs" />
     <Compile Include="Commands\cmds_Analyses.cs" />
     <Compile Include="Commands\cmds_Excavation.cs" />
@@ -162,12 +175,12 @@
       <DependentUpon>ElementDataManager.cs</DependentUpon>
     </Compile>
     <Compile Include="Instrumentations\Instrumentation.cs" />
-    <Compile Include="Instrumentations\Instrum_ColumnHeave.cs" />
-    <Compile Include="Instrumentations\Instrum_GroundSettlement.cs" />
-    <Compile Include="Instrumentations\Instrum_Incline.cs" />
+    <Compile Include="Instrumentations\IntrumType\Instrum_ColumnHeave.cs" />
+    <Compile Include="Instrumentations\IntrumType\Instrum_GroundSettlement.cs" />
+    <Compile Include="Instrumentations\IntrumType\Instrum_Incline.cs" />
     <Compile Include="Instrumentations\Instrum_Line.cs" />
     <Compile Include="Instrumentations\Instrum_Point.cs" />
-    <Compile Include="Instrumentations\Instrum_StrutAxialForce.cs" />
+    <Compile Include="Instrumentations\IntrumType\Instrum_StrutAxialForce.cs" />
     <Compile Include="OldWApplication.cs" />
     <Compile Include="OldWDocument.cs" />
     <Compile Include="OldWProjectInfo.cs" />
@@ -184,6 +197,12 @@
     <Compile Include="SafetyWarnings\WarningValue.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Commands\ElementInitialize.resx">
+      <DependentUpon>ElementInitialize.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Commands\PickInstrums.resx">
+      <DependentUpon>PickInstrums.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ConstructionReview\ConstructionReview.resx">
       <DependentUpon>ConstructionReview.cs</DependentUpon>
     </EmbeddedResource>

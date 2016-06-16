@@ -162,13 +162,28 @@
             <param name="planNormal"></param>
             <returns>空间三维曲线可能并不会在任何一个平面内，此时其自然是返回False。</returns>
         </member>
-        <member name="M:rvtTools.CurvesFormator.GetContiguousCurvesFromCurves_OneDirection(System.Collections.Generic.IList{Autodesk.Revit.DB.Curve})">
+        <member name="M:rvtTools.CurvesFormator.GetContiguousCurvesFromCurveArray(Autodesk.Revit.DB.CurveArray,System.Collections.Generic.IList{Autodesk.Revit.DB.Curve}@)">
+            <summary> 将 CurveArray 中的曲线进行重新排列，以组成连续的曲线链 </summary>
+            <param name="curveArr"> 要进行重组的曲线集合 </param>
+            <param name="contigeousCurves"> 如果不能形成连续的曲线链，则返回 null </param>
+        </member>
+        <member name="M:rvtTools.CurvesFormator.GetContiguousCurvesFromCurveArray(Autodesk.Revit.DB.CurveArray,Autodesk.Revit.DB.CurveArray@)">
+            <summary> 将 CurveArray 中的曲线进行重新排列，以组成连续的曲线链 </summary>
+            <param name="curveArr"> 要进行重组的曲线集合 </param>
+            <param name="contigeousCurves"> 如果不能形成连续的曲线链，则返回 null，从外部调用来看，此参数可以与第一个参数curveArr赋同一个实参。 </param>
+        </member>
+        <member name="M:rvtTools.CurvesFormator.GetContiguousCurvesFromCurveArrArray(Autodesk.Revit.DB.CurveArrArray)">
+            <summary> 将 CurveArray 中的曲线进行重新排列，以组成连续的曲线链 </summary>
+            <param name="curveArr"> 要进行重组的曲线集合 </param>
+            <returns>如果不能形成连续的曲线链，则返回 null </returns>
+        </member>
+        <member name="M:rvtTools.CurvesFormator.GetContiguousCurvesFromSelectedCurveElements(Autodesk.Revit.DB.Document,System.Collections.Generic.IList{Autodesk.Revit.DB.Reference})">
             <summary>
-            从指定的Curve集合中中，获得连续排列的多段曲线（不一定要封闭）。
-            此方法必须保证集合中的第一个元素为连续曲线链中的最左端的那一根曲线。
+            从选择的Curve Elements中，获得连续排列的多段曲线（不一定要封闭）。
             </summary>
-            <param name="curves">多条曲线元素所对应的集合
-            注意，curves 集合中每一条曲线都必须是有界的（IsBound），否则，其 GetEndPoint 会报错。</param>
+            <param name="doc">曲线所在文档</param>
+            <param name="SelectedCurves">多条曲线元素所对应的Reference，可以通过Selection.PickObjects返回。
+            注意，SelectedCurves中每一条曲线都必须是有界的（IsBound），否则，其GetEndPoint会报错。</param>
             <returns>如果输入的曲线可以形成连续的多段线，则返回重新排序后的多段线集合；
             如果输入的曲线不能形成连续的多段线，则返回Nothing！</returns>
         </member>
@@ -381,16 +396,6 @@
             </summary>
             <remarks></remarks>
         </member>
-        <member name="M:rvtTools.ModelCurveSelector.GetContiguousCurvesFromSelectedCurveElements(Autodesk.Revit.DB.Document,System.Collections.Generic.IList{Autodesk.Revit.DB.Reference})">
-            <summary>
-            从选择的Curve Elements中，获得连续排列的多段曲线（不一定要封闭）。
-            </summary>
-            <param name="doc">曲线所在文档</param>
-            <param name="SelectedCurves">多条曲线元素所对应的Reference，可以通过Selection.PickObjects返回。
-            注意，SelectedCurves中每一条曲线都必须是有界的（IsBound），否则，其GetEndPoint会报错。</param>
-            <returns>如果输入的曲线可以形成连续的多段线，则返回重新排序后的多段线集合；
-            如果输入的曲线不能形成连续的多段线，则返回Nothing！</returns>
-        </member>
         <member name="T:rvtTools.ExtensionMethods">
             <summary>
             Revit中对象的扩展方法
@@ -410,6 +415,49 @@
         <member name="M:rvtTools.ExtensionMethods.FindFamilies(Autodesk.Revit.DB.Document,Autodesk.Revit.DB.BuiltInCategory)">
             <summary> 返回项目文档中指定类别的族对象。在函数中会对所有族对象的FamilyCategory进行判断。</summary>
             <param name="Category">此族所属的 BuiltInCategory 类别，即FamilyCategory属性所对应的类别。</param>
+        </member>
+        <member name="M:rvtTools.ExtensionMethods.FindElements(Autodesk.Revit.DB.Document,System.Type,Autodesk.Revit.DB.BuiltInCategory,System.String)">
+            <summary>
+            根据指定的类型、类别与名称来搜索Revit文档所有元素中的第一个有效对象
+            </summary>
+            <param name="rvtDoc"></param>
+            <param name="targetType"></param>
+            <param name="targetCategory"> INVALID 表示不进行类别限制 </param>
+            <param name="targetName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:rvtTools.ExtensionMethods.FindElements(Autodesk.Revit.DB.Document,System.Collections.Generic.ICollection{Autodesk.Revit.DB.ElementId},System.Type,Autodesk.Revit.DB.BuiltInCategory,System.String)">
+            <summary>
+             根据指定的类型、类别与名称来搜索Revit文档指定元素集合中的第一个有效对象
+            </summary>
+            <param name="rvtDoc">要进行搜索的Revit文档</param>
+            <param name="SourceElements">要从文档中的哪个集合中来进行搜索</param>
+            <param name="targetType"></param>
+            <param name="targetCategory"> INVALID 表示不进行类别限制 </param>
+            <param name="targetName"></param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:rvtTools.ExtensionMethods.FindElement(Autodesk.Revit.DB.Document,System.Type,Autodesk.Revit.DB.BuiltInCategory,System.String)">
+            <summary>
+            根据指定的类型、类别与名称来搜索Revit文档的所有元素中的第一个有效对象
+            </summary>
+            <param name="rvtDoc"></param>
+            <param name="targetType"></param>
+            <param name="targetCategory"> INVALID 表示不进行类别限制 </param>
+            <param name="targetName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:rvtTools.ExtensionMethods.FindElement(Autodesk.Revit.DB.Document,System.Collections.Generic.ICollection{Autodesk.Revit.DB.ElementId},System.Type,Autodesk.Revit.DB.BuiltInCategory,System.String)">
+            <summary>
+            根据指定的类型、类别与名称来搜索Revit文档指定元素集合中的第一个有效对象
+            </summary>
+            <param name="rvtDoc"></param>
+            <param name="SourceElements"></param>
+            <param name="targetType"></param>
+            <param name="targetCategory"> INVALID 表示不进行类别限制 </param>
+            <param name="targetName"></param>
+            <returns></returns>
         </member>
         <member name="M:rvtTools.ExtensionMethods.Instances(Autodesk.Revit.DB.Family,Autodesk.Revit.DB.BuiltInCategory)">
             <summary> 返回项目文档中某族Family的所有实例 </summary>
@@ -546,6 +594,11 @@
             <param name="p1"></param>
             <param name="plane">参考平面，ReferencePlane.GetPlane方法也可以返回Plane对象。</param>
             <returns></returns>
+        </member>
+        <member name="M:rvtTools.GeoHelper.GetCurvesEnd(System.Collections.Generic.IEnumerable{Autodesk.Revit.DB.Curve})">
+            <summary> 查看曲线集合中每一条曲线的端点坐标 </summary>
+            <param name="curves"> 要查看端点坐标的曲线集合 </param>
+            <returns>用来进行Messagebox.Show或者Debug.Print的字符串。</returns>
         </member>
         <member name="T:rvtTools.Test.classTemplate">
             <summary>
@@ -741,24 +794,6 @@
             也可以通过DefinitionGroup.Definitions.Create(name As String)来创建新的共享参数。
             </summary>
             <param name="app"></param>
-        </member>
-        <member name="M:rvtTools.RvtTools.FindElements(Autodesk.Revit.DB.Document,System.Type,Autodesk.Revit.DB.BuiltInCategory,System.String)">
-            <summary>
-            Helper function: find a list of element with the given Class, Name and Category (optional).
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="M:rvtTools.RvtTools.FindElements(Autodesk.Revit.DB.Document,System.Collections.Generic.ICollection{Autodesk.Revit.DB.ElementId},System.Type,Autodesk.Revit.DB.BuiltInCategory,System.String)">
-            <summary>
-             Helper function: find a list of element with the given Class, Name and Category (optional).
-            </summary>
-            <param name="rvtDoc">要进行搜索的Revit文档</param>
-            <param name="SourceElements">要从文档中的哪个集合中来进行搜索</param>
-            <param name="targetType"></param>
-            <param name="targetCategory"></param>
-            <param name="targetName"></param>
-            <returns></returns>
-            <remarks></remarks>
         </member>
         <member name="M:rvtTools.RvtTools.Undo">
             <summary>

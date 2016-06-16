@@ -25,7 +25,7 @@ namespace OldW.Instrumentations
 
         /// <summary> 构造函数 </summary>
         /// <param name="inclinometerElement">测斜管所对应的图元</param>
-        public Instrum_WallIncline(FamilyInstance inclinometerElement) : base(inclinometerElement, InstrumentationType.墙体测斜)
+        public Instrum_WallIncline(FamilyInstance inclinometerElement) : base(inclinometerElement, InstrumentationType.墙体测斜, true)
         {
             _isInsideEarth = false;
         }
@@ -50,7 +50,7 @@ namespace OldW.Instrumentations
 
             // 将当前3D视图作为ReferenceIntersector的构造参数
             View3D view3d = null;
-            view3d = Doc.ActiveView as View3D;
+            view3d = Document.ActiveView as View3D;
             if (view3d == null)
             {
                 TaskDialog.Show("3D view", "current view should be 3D view");

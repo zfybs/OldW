@@ -29,14 +29,11 @@ namespace OldW.DataManager
 
         #endregion
 
-        #region   ---  Properties
+        #region   ---  Fields
 
         private readonly DgvPoint Dgv_Point;
         private readonly DgvLine Dgv_Line;
 
-        #endregion
-
-        #region   ---  Fields
 
         private readonly InstrumDoc _document;
 
@@ -44,8 +41,10 @@ namespace OldW.DataManager
         private Instrumentation _activeInstru;
 
         /// <summary> 进入测点监测数据管理窗口时，所有选择的测点 </summary>
-        private InstrumCollector selectedInstrum;
+        private InstrumCollector _selectedInstrum;
 
+        /// <summary> 复选框集合 </summary>
+        private readonly List<CheckBox> _checkBoxex;
         #endregion
 
         /// <summary> 构造函数 </summary>
@@ -58,40 +57,57 @@ namespace OldW.DataManager
             // --------------------------------
             this._document = document;
 
-            // 属性绑定
-            btnSetNodes.DataBindings.Add("Enabled", checkBox_incline, "Checked", false,
-                DataSourceUpdateMode.OnPropertyChanged);
+            _checkBoxex = new List<CheckBox>();
+            // Tag绑定
+            checkBox_WallIncline.Tag = InstrumentationType.墙体测斜;
+            checkBox_SoilIncline.Tag = InstrumentationType.土体测斜;
+            checkBox_OtherLine.Tag = InstrumentationType.其他线测点;
+            checkBox_OtherPoint.Tag = InstrumentationType.其他点测点;
+            checkBox_WallTop.Tag = InstrumentationType.墙顶位移;
+            checkBox_WaterTable.Tag = InstrumentationType.水位;
+            checkBox_columnheave.Tag = InstrumentationType.立柱隆沉;
+            checkBox_groundsettlement.Tag = InstrumentationType.地表隆沉;
+            checkBox_strutaxisforce.Tag = InstrumentationType.支撑轴力;
+
+            // 添加到集合中
+            _checkBoxex.AddRange(new CheckBox[]
+            {
+                checkBox_WallIncline,
+                checkBox_SoilIncline,
+                checkBox_OtherLine,
+                checkBox_OtherPoint,
+                checkBox_WallTop,
+                checkBox_WaterTable,
+                checkBox_columnheave,
+                checkBox_groundsettlement,
+                checkBox_strutaxisforce,
+            });
+
 
             // 事件绑定
-            checkBox_incline.CheckedChanged += new EventHandler(this.checkBox_CheckedChanged);
-            checkBox_columnheave.CheckedChanged += new EventHandler(this.checkBox_CheckedChanged);
-            checkBox_groundsettlement.CheckedChanged += new EventHandler(this.checkBox_CheckedChanged);
-            checkBox_strutaxisforce.CheckedChanged += new EventHandler(this.checkBox_CheckedChanged);
+            foreach (var checkBox in _checkBoxex)
+            {
+                checkBox.CheckedChanged += new EventHandler(this.checkBox_CheckedChanged);
+            }
 
             //
             Dgv_Point = new DgvPoint(document.Document, DataGridView_pointMonitor);
             Dgv_Line = new DgvLine(document.Document, DataGridView_LineMonitor);
-            // --------------------------------
+
+            // ----------------------------------------------------------------------------------------------
             // 根据不同的选择情况来进行不同的初始化
-            selectedInstrum = new InstrumCollector(eleIdCollection);
+            _selectedInstrum = new InstrumCollector(eleIdCollection);
 
-            InitializeUI(selectedInstrum);
-        }
-
-        /// <summary>
-        /// 根据不同的选择情况来进行不同的初始化
-        ///  </summary>
-        /// <param name="AllselectedInstrum"></param>
-        private void InitializeUI(InstrumCollector AllselectedInstrum)
-        {
             // 复选框的启用与否
-            checkBox_columnheave.Enabled = AllselectedInstrum.ColumnHeave.Count != 0;
-            checkBox_groundsettlement.Enabled = AllselectedInstrum.GroundSettlement.Count != 0;
-            checkBox_incline.Enabled = AllselectedInstrum.Incline.Count != 0;
-            checkBox_strutaxisforce.Enabled = AllselectedInstrum.StrutAxialForce.Count != 0;
+            foreach (var checkBox in _checkBoxex)
+            {
+                checkBox.Enabled = _selectedInstrum.GetMonitors((InstrumentationType)checkBox.Tag).Count != 0;
+            }
 
             //
             btnActivateDatagridview.Enabled = false;
+            btnSetNodes.Location = new System.Drawing.Point(x: 321, y: 33);
+
         }
 
         private void ShiftToPoint()
@@ -101,6 +117,10 @@ namespace OldW.DataManager
 
             // 调整窗口大小
             Width = DataGridView_pointMonitor.Width + DataGridView_pointMonitor.Left + 29;
+
+            // 调整“节点”按钮的UI界面
+            btnSetNodes.Visible = false;
+
         }
 
         private void ShiftToLine()
@@ -112,40 +132,44 @@ namespace OldW.DataManager
 
             DataGridView_LineMonitor.Width = 600;
             Width = DataGridView_LineMonitor.Width + DataGridView_LineMonitor.Left + 29;
+
+            // 调整“节点”按钮的UI界面
+            btnSetNodes.Visible = true;
+
         }
 
         #region    ---   CheckBox 与 Datagridview 控件的激活
 
         /// <summary> 当前操作的测点模式，比如是线测点（测斜管）、点测点等 </summary>
-        private MonitorMode activeMonitorMode;
+        private MonitorMode _activeMonitorMode;
 
         private void checkBox_CheckedChanged(object sender, EventArgs e)
         {
             CheckBox cbx = (CheckBox)sender;
-            if (!cbx.Checked)
-            {
-                return;
-            }
+
+            // 如果最终有勾选项，则激活“激活”按钮
             btnActivateDatagridview.Enabled = true;
+
+            if (!cbx.Checked) { return; }
 
             GroupBox gbx = (GroupBox)cbx.Parent;
             // 线测点模式
             if (gbx.Name == groupBoxLines.Name)
             {
-                activeMonitorMode = MonitorMode.MonitorLine;
+                _activeMonitorMode = MonitorMode.MonitorLine;
                 // 禁用点测点的复选框
-                foreach (var VARIABLE in groupBoxPoints.Controls)
+                foreach (var control in groupBoxPoints.Controls)
                 {
-                    if (VARIABLE is CheckBox)
+                    if (control is CheckBox)
                     {
-                        ((CheckBox)VARIABLE).Checked = false;
+                        ((CheckBox)control).Checked = false;
                     }
                 }
             }
             // 点测点模式
             else if (gbx.Name == groupBoxPoints.Name)
             {
-                activeMonitorMode = MonitorMode.MonitorPoint;
+                _activeMonitorMode = MonitorMode.MonitorPoint;
 
                 // 禁用线测点的复选框
                 foreach (var VARIABLE in groupBoxLines.Controls)
@@ -156,6 +180,7 @@ namespace OldW.DataManager
                     }
                 }
             }
+
         }
 
         /// <summary>
@@ -163,20 +188,29 @@ namespace OldW.DataManager
         /// </summary>
         public void btnActivateDatagridview_Click(object sender, EventArgs e)
         {
-            switch (activeMonitorMode)
+            switch (_activeMonitorMode)
             {
                 case MonitorMode.MonitorPoint:
                     {
                         // 选择要进行提取的监测类型
                         InstrumentationType tp = InstrumentationType.未指定;
-                        tp = checkBox_columnheave.Checked ? tp | InstrumentationType.立柱隆沉 : tp;
-                        tp = checkBox_groundsettlement.Checked ? tp | InstrumentationType.地表隆沉 : tp;
-                        tp = checkBox_strutaxisforce.Checked ? tp | InstrumentationType.支撑轴力 : tp;
+
+                        foreach (CheckBox chk in _checkBoxex)
+                        {
+                            if (chk.Checked)
+                            {
+                                InstrumentationType tp1 = (InstrumentationType)chk.Tag;
+                                if ((tp1 & InstrumentationType.点测点集合) > 0)
+                                {
+                                    tp = tp | tp1;
+                                }
+                            }
+                        }
                         //
-                        var points = selectedInstrum.GetPointMonitors(tp);
+                        var points = _selectedInstrum.GetPointMonitors(tp);
                         // 切换 Datagridview
                         ShiftToPoint();
-
+                        // 填充
                         _document.FillCombobox(points, cmbx_elements);
                         break;
                     }
@@ -184,13 +218,24 @@ namespace OldW.DataManager
                     {
                         // 选择要进行提取的监测类型
                         InstrumentationType tp = InstrumentationType.未指定;
-                        tp = checkBox_incline.Checked ? tp | InstrumentationType.墙体测斜 : tp;
+
+                        foreach (CheckBox chk in _checkBoxex)
+                        {
+                            if (chk.Checked)
+                            {
+                                InstrumentationType tp1 = (InstrumentationType)chk.Tag;
+                                if ((tp1 & InstrumentationType.线测点集合) > 0)
+                                {
+                                    tp = tp | tp1;
+                                }
+                            }
+                        }
+
                         //
-                        List<Instrum_Line> lines = selectedInstrum.GetLineMonitors(tp);
+                        List<Instrum_Line> lines = _selectedInstrum.GetLineMonitors(tp);
 
                         // 切换 Datagridview
                         ShiftToLine();
-
                         // 填充
                         _document.FillCombobox(lines, cmbx_elements);
                         break;
@@ -206,33 +251,37 @@ namespace OldW.DataManager
         /// <summary>
         /// 在组合框中改变了选择的测点后，去更新DataGridView中的数据为指定测点的监测数据。
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         public void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             Instrumentation ele = (Instrumentation)cmbx_elements.SelectedValue;
-            btnRename.Enabled = true;
-            try
+            if (ele != null)
             {
-                this._activeInstru = ele;
-                switch (activeMonitorMode)
+                btnRename.Enabled = true;
+                try
                 {
-                    case MonitorMode.MonitorPoint:
-                        {
-                            Dgv_Point.ShiftToNewElement((Instrum_Point)ele);
-                            //  FillTableWithElementData(ele, this.DataGridView_pointMonitor);
-                            break;
-                        }
-                    case MonitorMode.MonitorLine:
-                        {
-                            Dgv_Line.ShiftToNewElement((Instrum_Line)ele);
-                            break;
-                        }
+                    this._activeInstru = ele;
+                    switch (_activeMonitorMode)
+                    {
+                        case MonitorMode.MonitorPoint:
+                            {
+                                Dgv_Point.ShiftToNewElement((Instrum_Point)ele);
+                                //  FillTableWithElementData(ele, this.DataGridView_pointMonitor);
+                                break;
+                            }
+                        case MonitorMode.MonitorLine:
+                            {
+                                Dgv_Line.ShiftToNewElement((Instrum_Line)ele);
+
+                                // 设置是否启用节点设置的UI界面
+                                btnSetNodes.Enabled = ((Instrum_Line)ele).NodesDigital;
+                                break;
+                            }
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                Utils.ShowDebugCatch(ex, "SelectedIndexChanged时出错。");
+                catch (Exception ex)
+                {
+                    Utils.ShowDebugCatch(ex, "SelectedIndexChanged时出错。");
+                }
             }
         }
 
@@ -244,7 +293,7 @@ namespace OldW.DataManager
         /// <remarks></remarks>
         private void SaveTableToElement(object sender, EventArgs e)
         {
-            switch (activeMonitorMode)
+            switch (_activeMonitorMode)
             {
                 case MonitorMode.MonitorPoint:
                     {
@@ -259,14 +308,12 @@ namespace OldW.DataManager
             }
         }
 
-        #region    ---   事件处理
-
         /// <summary>
         ///  绘制监测曲线图
         /// </summary>
         public void btnDraw_Click(object sender, EventArgs e)
         {
-            switch (activeMonitorMode)
+            switch (_activeMonitorMode)
             {
                 case MonitorMode.MonitorPoint:
                     {
@@ -281,6 +328,8 @@ namespace OldW.DataManager
                     }
             }
         }
+
+        #region    ---   事件处理
 
         /// <summary> 设置线测点的节点信息 </summary>
         public void btnSetNodes_Click(object sender, EventArgs e)
@@ -308,8 +357,8 @@ namespace OldW.DataManager
         private void RenameElement(object sender, EventArgs e)
         {
             Instrumentation ele = (Instrumentation)cmbx_elements.SelectedValue;
-            string oldName = ele.getMonitorName();
-            FormReNameElement ff = new FormReNameElement(oldName);
+            string oldName = ele.GetMonitorName();
+            ElementInitialize ff = new ElementInitialize(oldName);
             ff.ShowDialog();
 
             if (!ff.NameChanged)
@@ -320,7 +369,7 @@ namespace OldW.DataManager
             using (Transaction tt = new Transaction(_document.Document, "设置测点名称"))
             {
                 tt.Start();
-                ele.setMonitorName(tt, ff.MonitorName);
+                ele.SetMonitorName(tt, ff.MonitorName);
                 tt.Commit();
             }
 

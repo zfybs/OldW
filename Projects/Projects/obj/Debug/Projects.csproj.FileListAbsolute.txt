@@ -12,5 +12,7 @@ F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\Debug\Projects.pdb
 F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\Debug\OldW.SafetyWarning.FormSetWarning.resources
 F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\Debug\OldW.DynamicReview.ConstructionReview.resources
 F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\Debug\OldW.DataManager.frm_DataExport.resources
-F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\Debug\OldW.DataManager.FormReNameElement.resources
 F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\Debug\OldW.DataManager.DataImport.resources
+F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\Debug\OldW.Commands.ElementInitializer.resources
+F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\Debug\OldW.DataManager.ElementInitialize.resources
+F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\Debug\OldW.Instrumentations.PickInstrums.resources

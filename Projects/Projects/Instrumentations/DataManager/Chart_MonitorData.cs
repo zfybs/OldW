@@ -24,9 +24,9 @@ namespace OldW.DataManager
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="Type">窗口的标题：监测类型</param>
+        /// <param name="type">窗口的标题：监测类型</param>
         /// <remarks></remarks>
-        public Chart_MonitorData(InstrumentationType Type)
+        public Chart_MonitorData(InstrumentationType type)
         {
             // This call is required by the designer.
             InitializeComponent();
@@ -35,12 +35,12 @@ namespace OldW.DataManager
             //
             this.KeyPreview = true;
             //
-            this.Text = Type.ToString();
+            this.Text = type.ToString();
             SetupChart();
 
             // 设置窗口尺寸
             Chart.Size = new Size(650, 400);  //  一般情况下的窗口尺寸
-            switch (Type) // 对于不同的监测数据类型，设置不同的图表格式
+            switch (type) // 对于不同的监测数据类型，设置不同的图表格式
             {
                 case InstrumentationType.墙体测斜:
                     Chart.Size = new Size(400, 650);

@@ -117,7 +117,7 @@ namespace OldW.DataManager
                 var num1 = InstrumTypeMapping.GetNumber(FieldName);
                 foreach (Instrumentation ins in searchingInstrums)
                 {
-                    if (string.Compare(num1, InstrumTypeMapping.GetNumber(ins.getMonitorName()), StringComparison.Ordinal) == 0)
+                    if (string.Compare(num1, InstrumTypeMapping.GetNumber(ins.GetMonitorName()), StringComparison.Ordinal) == 0)
                     {
                         possibleInstrum = ins;
                         break;

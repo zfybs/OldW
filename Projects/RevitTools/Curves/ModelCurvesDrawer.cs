@@ -32,11 +32,11 @@ namespace rvtTools
         {
             add
             {
-                DrawingCompletedEvent = (DrawingCompletedEventHandler) Delegate.Combine(DrawingCompletedEvent, value);
+                DrawingCompletedEvent = (DrawingCompletedEventHandler)Delegate.Combine(DrawingCompletedEvent, value);
             }
             remove
             {
-                DrawingCompletedEvent = (DrawingCompletedEventHandler) Delegate.Remove(DrawingCompletedEvent, value);
+                DrawingCompletedEvent = (DrawingCompletedEventHandler)Delegate.Remove(DrawingCompletedEvent, value);
             }
         }
 
@@ -156,7 +156,7 @@ namespace rvtTools
         {
             // 最后再检测一次
             bool blnContinueDraw = false;
-            CurvesState cs = ValidateCurves(ref blnContinueDraw);
+            CurvesState cs = ValidateCurves(out blnContinueDraw);
             RefreshUI(cs, blnContinueDraw);
 
             if (cs == CurvesState.Validated)
@@ -238,7 +238,7 @@ namespace rvtTools
                         // 检测当前集合中的曲线是否符合指定的连续性要求
                         if (this.CheckInTime)
                         {
-                            CurvesState cs = ValidateCurves(ref blnContinueDraw);
+                            CurvesState cs = ValidateCurves(out blnContinueDraw);
                             RefreshUI(cs, blnContinueDraw);
                         }
                         else // 说明不进行实时检测，而直接继续绘制
@@ -273,7 +273,7 @@ namespace rvtTools
                         {
                             if (this.CheckInTime)
                             {
-                                CurvesState cs = ValidateCurves(ref blnContinueDraw);
+                                CurvesState cs = ValidateCurves(out blnContinueDraw);
                                 RefreshUI(cs, blnContinueDraw);
                             }
                             else // 说明不进行实时检测，而直接继续绘制
@@ -303,7 +303,7 @@ namespace rvtTools
                         // 检测剔除后的集合中的曲线是否符合指定的连续性要求
                         if (this.CheckInTime)
                         {
-                            CurvesState cs = ValidateCurves(ref blnContinueDraw);
+                            CurvesState cs = ValidateCurves(out blnContinueDraw);
                             RefreshUI(cs, blnContinueDraw);
                         }
                         else // 说明不进行实时检测，而直接继续绘制
@@ -344,12 +344,12 @@ namespace rvtTools
         {
             UIntPtr ptr0 = new UIntPtr(0);
             // 在Revit UI界面中退出绘制，即按下ESCAPE键
-            WindowsUtil.keybd_event((byte) 27, (byte) 0, 0, ptr0); // 按下 ESCAPE键
-            WindowsUtil.keybd_event((byte) 27, (byte) 0, 0x2, ptr0); // 按键弹起
+            WindowsUtil.keybd_event((byte)27, (byte)0, 0, ptr0); // 按下 ESCAPE键
+            WindowsUtil.keybd_event((byte)27, (byte)0, 0x2, ptr0); // 按键弹起
 
             // 再按一次
-            WindowsUtil.keybd_event((byte) 27, (byte) 0, 0, ptr0);
-            WindowsUtil.keybd_event((byte) 27, (byte) 0, 0x2, ptr0);
+            WindowsUtil.keybd_event((byte)27, (byte)0, 0, ptr0);
+            WindowsUtil.keybd_event((byte)27, (byte)0, 0x2, ptr0);
         }
 
         #endregion
@@ -361,7 +361,7 @@ namespace rvtTools
         /// </summary>
         /// <param name="continueDraw">在检查连续性后是否要继续绘制</param>
         /// <returns></returns>
-        private CurvesState ValidateCurves(ref bool continueDraw)
+        private CurvesState ValidateCurves(out bool continueDraw)
         {
             CurvesState cs = CurvesState.Invalid;
             continueDraw = false;
@@ -370,7 +370,7 @@ namespace rvtTools
             //将ElementId转换为对应的 Curve 对象
             foreach (var id in AddedModelCurvesId)
             {
-                curves.Add(((ModelCurve) doc.GetElement(id)).GeometryCurve);
+                curves.Add(((ModelCurve)doc.GetElement(id)).GeometryCurve);
             }
 
             // 根据不同的模式进行不同的检测
@@ -391,7 +391,9 @@ namespace rvtTools
             {
                 IList<Curve> CurveChain = default(List<Curve>);
 
+              //  MessageBox.Show(GeoHelper.GetCurvesEnd(curves));
                 CurveChain = CurvesFormator.GetContiguousCurvesFromCurves(curves);
+               
                 if (CurveChain == null) // 说明根本就不连续
                 {
                     cs = CurvesState.Invalid;
@@ -481,7 +483,7 @@ namespace rvtTools
         /// <summary> 询问用户是否要撤消操作 </summary>
         private bool InquireUndo()
         {
-            DialogResult res = MessageBox.Show("当前操作使得绘制的模型线不满足要求，是否要撤消此操作？", "提示", MessageBoxButtons.YesNo,
+            DialogResult res = MessageBox.Show(@"当前操作使得绘制的模型线不满足要求，是否要撤消此操作？", @"提示", MessageBoxButtons.YesNo,
                 MessageBoxIcon.Asterisk, MessageBoxDefaultButton.Button1);
             if (res == DialogResult.Yes)
             {

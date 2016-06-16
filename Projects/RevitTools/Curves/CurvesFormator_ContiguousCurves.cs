@@ -12,65 +12,141 @@ namespace rvtTools
     {
         #region  曲线连续性 的 实现方法
 
+        ///// GetContiguousCurvesFromCurves_OneDirection
+        //// <summary>
+        ///// 从指定的Curve集合中中，获得连续排列的多段曲线（不一定要封闭）。
+        ///// 此方法必须保证集合中的第一个元素为连续曲线链中的最左端的那一根曲线。
+        ///// </summary>
+        ///// <param name="curves">多条曲线元素所对应的集合
+        ///// 注意，curves 集合中每一条曲线都必须是有界的（IsBound），否则，其 GetEndPoint 会报错。</param>
+        ///// <returns>如果输入的曲线可以形成连续的多段线，则返回重新排序后的多段线集合；
+        ///// 如果输入的曲线不能形成连续的多段线，则返回Nothing！</returns>
+        //public static IList<Curve> GetContiguousCurvesFromCurves_OneDirection(IList<Curve> curves)
+        //{
+        //    XYZ endPoint = default(XYZ); // 每一条线的终点，用来与剩下的线段的起点或者终点进行比较
+        //    bool blnHasCont = false; // 此终点是否有对应的点与之对应，如果没有，则说明所有的线段中都不能形成连续的多段线
+
+        //    // Walk through each curve (after the first) to match up the curves in order
+        //    for (int ThisCurveId = 0; ThisCurveId <= curves.Count - 2; ThisCurveId++)
+        //    {
+        //        Curve ThisCurve = curves[ThisCurveId];
+        //        blnHasCont = false;
+        //        endPoint = ThisCurve.GetEndPoint(1); // 第i条线的终点
+        //        Curve tmpCurve = curves[ThisCurveId + 1];
+        //        // 当有其余的曲线放置在当ThisCurveId + 1位置时，要将当前状态下的ThisCurveId + 1位置的曲线与对应的曲线对调。
+
+        //        // 从剩下的曲线中找出起点与上面的终点重合的曲线 。 find curve with start point = end point
+        //        for (int NextCurveId = ThisCurveId + 1; NextCurveId <= curves.Count - 1; NextCurveId++)
+        //        {
+        //            // Is there a match end->start, if so this is the next curve
+        //            if (GeoHelper.IsAlmostEqualTo(curves[NextCurveId].GetEndPoint(0), endPoint,
+        //                GeoHelper.VertexTolerance))
+        //            {
+        //                blnHasCont = true;
+        //                // 向上对换
+        //                curves[ThisCurveId + 1] = curves[NextCurveId];
+        //                curves[NextCurveId] = tmpCurve;
+        //                continue;
+
+        //                // Is there a match end->end, if so, reverse the next curve
+        //            }
+        //            else if (GeoHelper.IsAlmostEqualTo(curves[NextCurveId].GetEndPoint(1), endPoint,
+        //                GeoHelper.VertexTolerance))
+        //            {
+        //                blnHasCont = true;
+        //                // 向上对换
+        //                curves[ThisCurveId + 1] = curves[NextCurveId].CreateReversed();
+        //                if (NextCurveId != ThisCurveId + 1)
+        //                {
+        //                    // 如果 NextCurveId = ThisCurveId + 1 ，说明 ThisCurveId + 1 就是接下来的那条线，只不过方向反了。
+        //                    // 这样就不可以将反转前的那条线放回去，而只需要执行上面的反转操作就可以了。
+        //                    curves[NextCurveId] = tmpCurve;
+        //                }
+
+        //                continue;
+        //            }
+        //        }
+        //        if (!blnHasCont) // 说明不可能形成连续的多段线了
+        //        {
+        //            return default(IList<Curve>);
+        //        }
+        //    }
+
+        //    return curves;
+        //}
+
+
+        /// <summary> 将 CurveArray 中的曲线进行重新排列，以组成连续的曲线链 </summary>
+        /// <param name="curveArr"> 要进行重组的曲线集合 </param>
+        /// <param name="contigeousCurves"> 如果不能形成连续的曲线链，则返回 null </param>
+        public static void GetContiguousCurvesFromCurveArray(CurveArray curveArr, out IList<Curve> contigeousCurves)
+        {
+            IList<Curve> curves = curveArr.Cast<Curve>().ToList();
+            // Build a list of curves from the curve elements
+            contigeousCurves = CurvesFormator.GetContiguousCurvesFromCurves(curves);
+        }
+
+        /// <summary> 将 CurveArray 中的曲线进行重新排列，以组成连续的曲线链 </summary>
+        /// <param name="curveArr"> 要进行重组的曲线集合 </param>
+        /// <param name="contigeousCurves"> 如果不能形成连续的曲线链，则返回 null，从外部调用来看，此参数可以与第一个参数curveArr赋同一个实参。 </param>
+        public static void GetContiguousCurvesFromCurveArray(CurveArray curveArr, out CurveArray contigeousCurves)
+        {
+            IList<Curve> curves;
+
+            // Build a list of curves from the curve elements
+            CurvesFormator.GetContiguousCurvesFromCurveArray(curveArr, out curves);
+
+            contigeousCurves = new CurveArray();
+            if (curves == null)
+            {
+                contigeousCurves = null;
+                return;
+            }
+            foreach (Curve c in curves)
+            {
+                contigeousCurves.Append(c);
+            }
+        }
+
+        /// <summary> 将 CurveArray 中的曲线进行重新排列，以组成连续的曲线链 </summary>
+        /// <param name="curveArr"> 要进行重组的曲线集合 </param>
+        /// <returns>如果不能形成连续的曲线链，则返回 null </returns>
+        public static CurveArrArray GetContiguousCurvesFromCurveArrArray(CurveArrArray curveArr)
+        {
+            CurveArrArray curveOut = new CurveArrArray();
+            foreach (CurveArray cArr in curveArr)
+            {
+                CurveArray conti;
+                GetContiguousCurvesFromCurveArray(cArr, out conti);
+                if (conti == null)
+                {
+                    return null;
+                }
+                curveOut.Append(conti);
+            }
+            return curveOut;
+        }
+
         /// <summary>
-        /// 从指定的Curve集合中中，获得连续排列的多段曲线（不一定要封闭）。
-        /// 此方法必须保证集合中的第一个元素为连续曲线链中的最左端的那一根曲线。
+        /// 从选择的Curve Elements中，获得连续排列的多段曲线（不一定要封闭）。
         /// </summary>
-        /// <param name="curves">多条曲线元素所对应的集合
-        /// 注意，curves 集合中每一条曲线都必须是有界的（IsBound），否则，其 GetEndPoint 会报错。</param>
+        /// <param name="doc">曲线所在文档</param>
+        /// <param name="SelectedCurves">多条曲线元素所对应的Reference，可以通过Selection.PickObjects返回。
+        /// 注意，SelectedCurves中每一条曲线都必须是有界的（IsBound），否则，其GetEndPoint会报错。</param>
         /// <returns>如果输入的曲线可以形成连续的多段线，则返回重新排序后的多段线集合；
         /// 如果输入的曲线不能形成连续的多段线，则返回Nothing！</returns>
-        public static IList<Curve> GetContiguousCurvesFromCurves_OneDirection(IList<Curve> curves)
+        public static IList<Curve> GetContiguousCurvesFromSelectedCurveElements(Document doc, IList<Reference> SelectedCurves)
         {
-            XYZ endPoint = default(XYZ); // 每一条线的终点，用来与剩下的线段的起点或者终点进行比较
-            bool blnHasCont = false; // 此终点是否有对应的点与之对应，如果没有，则说明所有的线段中都不能形成连续的多段线
+            IList<Curve> curves = new List<Curve>();
 
-            // Walk through each curve (after the first) to match up the curves in order
-            for (int ThisCurveId = 0; ThisCurveId <= curves.Count - 2; ThisCurveId++)
+            // Build a list of curves from the curve elements
+            foreach (Reference reference in SelectedCurves)
             {
-                Curve ThisCurve = curves[ThisCurveId];
-                blnHasCont = false;
-                endPoint = ThisCurve.GetEndPoint(1); // 第i条线的终点
-                Curve tmpCurve = curves[ThisCurveId + 1];
-                // 当有其余的曲线放置在当ThisCurveId + 1位置时，要将当前状态下的ThisCurveId + 1位置的曲线与对应的曲线对调。
-
-                // 从剩下的曲线中找出起点与上面的终点重合的曲线 。 find curve with start point = end point
-                for (int NextCurveId = ThisCurveId + 1; NextCurveId <= curves.Count - 1; NextCurveId++)
-                {
-                    // Is there a match end->start, if so this is the next curve
-                    if (GeoHelper.IsAlmostEqualTo(curves[NextCurveId].GetEndPoint(0), endPoint,
-                        GeoHelper.VertexTolerance))
-                    {
-                        blnHasCont = true;
-                        // 向上对换
-                        curves[ThisCurveId + 1] = curves[NextCurveId];
-                        curves[NextCurveId] = tmpCurve;
-                        continue;
-
-                        // Is there a match end->end, if so, reverse the next curve
-                    }
-                    else if (GeoHelper.IsAlmostEqualTo(curves[NextCurveId].GetEndPoint(1), endPoint,
-                        GeoHelper.VertexTolerance))
-                    {
-                        blnHasCont = true;
-                        // 向上对换
-                        curves[ThisCurveId + 1] = curves[NextCurveId].CreateReversed();
-                        if (NextCurveId != ThisCurveId + 1)
-                        {
-                            // 如果 NextCurveId = ThisCurveId + 1 ，说明 ThisCurveId + 1 就是接下来的那条线，只不过方向反了。
-                            // 这样就不可以将反转前的那条线放回去，而只需要执行上面的反转操作就可以了。
-                            curves[NextCurveId] = tmpCurve;
-                        }
-
-                        continue;
-                    }
-                }
-                if (!blnHasCont) // 说明不可能形成连续的多段线了
-                {
-                    return default(IList<Curve>);
-                }
+                CurveElement curveElement = doc.GetElement(reference) as CurveElement;
+                curves.Add(curveElement.GeometryCurve.Clone());
             }
-
+            //
+            curves = CurvesFormator.GetContiguousCurvesFromCurves(curves);
             return curves;
         }
 
@@ -96,10 +172,10 @@ namespace rvtTools
                 Curve c = curves[0];
                 if ((!c.IsBound) && ((c is Arc) || (c is Ellipse)))
                 {
-                    c.MakeBound(0,2*Math.PI);
+                    c.MakeBound(0, 2 * Math.PI);
                 }
                 // 将改造后的结果直接返回
-                List<Curve> l=new List<Curve>();
+                List<Curve> l = new List<Curve>();
                 l.Add(c);
                 return l;
             }
@@ -108,6 +184,8 @@ namespace rvtTools
                 cc = new ContiguousCurveChain(curves[0]);
                 for (var i = 1; i <= curves.Count - 1; i++)
                 {
+                    // 所有曲线集合中，除了已经构造为连续曲线链的曲线外，还剩下的待进行匹配的曲线。
+                    // 其key值为曲线在所有曲线集合中的下标值。
                     CurvesLeft.Add(i, curves[Convert.ToInt32(i)]);
                 }
             }
@@ -116,15 +194,16 @@ namespace rvtTools
                 return null;
             }
             //
-            Nullable<int> foundedIndex = null;
+            int? foundedIndex = null;
             // 先向右端延伸搜索
-            for (var i = 0; i <= CurvesLeft.Count - 1; i++)
+            var leftCount = CurvesLeft.Count;  // 将CurvesLeft.Count值固定下来，因为在后面的匹配中，可能会执行 CurvesLeft.Remove，这样的话 CurvesLeft.Count 的值会发生变化。
+            for (var i = 0; i < leftCount; i++)
             {
                 foundedIndex = cc.CheckForward(CurvesLeft);
                 if (foundedIndex != null) // 说明找到了相连的曲线
                 {
                     cc.ConnectForward(CurvesLeft[foundedIndex.Value]);
-                    CurvesLeft.Remove(foundedIndex.Value);
+                    CurvesLeft.Remove(foundedIndex.Value);  // 此时 CurvesLeft.Count 的值变小了
                 }
                 else // 说明剩下的曲线中，没有任何一条曲线能与当前连续链的右端相连了
                 {
@@ -133,7 +212,8 @@ namespace rvtTools
             }
 
             // 再向左端延伸搜索
-            for (var i = 0; i <= CurvesLeft.Count - 1; i++)
+            leftCount = CurvesLeft.Count;  // 将CurvesLeft.Count值固定下来，因为在后面的匹配中，可能会执行 CurvesLeft.Remove，这样的话 CurvesLeft.Count 的值会发生变化。
+            for (var i = 0; i <= leftCount - 1; i++)
             {
                 foundedIndex = cc.CheckBackward(CurvesLeft);
                 if (foundedIndex != null) // 说明找到了相连的曲线

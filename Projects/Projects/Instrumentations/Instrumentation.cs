@@ -22,7 +22,11 @@ namespace OldW.Instrumentations
     {
         #region    ---   Properties
 
-        public Document Doc { get; }
+        /// <summary> 测点所在的Revit文档 </summary>
+        public Document Document { get; }
+
+        /// <summary> 测点的标志文字，一般格式为“墙体测斜（CX3）: 568742” </summary>
+        public string IdName => F_Monitor.Name + "( " + GetMonitorName() + " ):" + F_Monitor.Id.IntegerValue;
 
         private FamilyInstance F_Monitor;
 
@@ -58,7 +62,7 @@ namespace OldW.Instrumentations
             if (Instrumentation != null)
             {
                 this.F_Monitor = Instrumentation;
-                this.Doc = Instrumentation.Document;
+                this.Document = Instrumentation.Document;
                 this.F_Type = Type;
                 //
             }
@@ -76,6 +80,10 @@ namespace OldW.Instrumentations
         /// <param name="Elements"> 要进行搜索过滤的Element集合</param>
         public static List<Instrumentation> Lookup(Document Doc, ICollection<ElementId> Elements)
         {
+            if (Elements==null)
+            {
+                return new List<Instrumentation>();
+            }
             FilteredElementCollector Coll = new FilteredElementCollector(Doc, Elements);
             List<Instrumentation> Instrus = LookupFromCollector(Coll);
             return Instrus;
@@ -121,7 +129,7 @@ namespace OldW.Instrumentations
                                 Instrus.Add(new Instrum_WallIncline(fi));
                                 break;
                             case InstrumentationType.土体测斜:
-                                Instrus.Add(new Instrum_Line(fi, InstrumentationType.土体测斜));
+                                Instrus.Add(new Instrum_Line(fi, InstrumentationType.土体测斜,true));
                                 break;
 
                             case InstrumentationType.墙顶位移:
@@ -143,7 +151,7 @@ namespace OldW.Instrumentations
                                 break;
 
                             case InstrumentationType.其他线测点:
-                                Instrus.Add(new Instrum_Line(fi, InstrumentationType.其他线测点));
+                                Instrus.Add(new Instrum_Line(fi, InstrumentationType.其他线测点, false));
                                 break;
                             case InstrumentationType.其他点测点:
                                 Instrus.Add(new Instrum_Point(fi, InstrumentationType.其他点测点));
@@ -160,13 +168,13 @@ namespace OldW.Instrumentations
 
         #region   ---   族参数中数据的提取与保存
 
-        private string MonitorName;
+        private string _monitorName;
         /// <summary>
         /// 提取测点的名称，比如“CX1”。此参数是在测点族的设计时添加进去的，而不是通过API添加的。
         /// </summary>
-        public string getMonitorName()
+        public string GetMonitorName()
         {
-            return MonitorName ?? Monitor.get_Parameter(Constants.SP_MonitorName_Guid).AsString();
+            return _monitorName ?? Monitor.get_Parameter(Constants.SP_MonitorName_Guid).AsString();
         }
 
         /// <summary>
@@ -175,20 +183,20 @@ namespace OldW.Instrumentations
         /// <summary>
         /// 将测点数据类序列化之后的字符保存到测点对象的参数中。
         /// </summary>
-        public void setMonitorName(Transaction tran, string MonitorName)
+        public void SetMonitorName(Transaction tran, string MonitorName)
         {
             Parameter para = Monitor.get_Parameter(Constants.SP_MonitorName_Guid);
             para.Set(MonitorName);
 
             // store its name in the private variable.
-            this.MonitorName = MonitorName;
+            this._monitorName = MonitorName;
         }
 
         /// <summary>
         /// 提取测点监测数据所对应的序列化字符。即测点族中“监测数据”参数中的字符。
         /// 如果要提取监测数据为对应的数据类，可以去调用具体派生类的 GetMonitorData 函数
         /// </summary>
-        protected string getMonitorDataString()
+        protected string GetMonitorDataString()
         {
             return Monitor.get_Parameter(Constants.SP_MonitorData_Guid).AsString();
         }
@@ -196,7 +204,7 @@ namespace OldW.Instrumentations
         /// <summary>
         /// 将测点数据类序列化之后的字符保存到测点对象的参数中。
         /// </summary>
-        protected void setMonitorDataString(Transaction tran, string dataString)
+        protected void SetMonitorDataString(Transaction tran, string dataString)
         {
             Parameter para = Monitor.get_Parameter(Constants.SP_MonitorData_Guid);
             para.Set(dataString);

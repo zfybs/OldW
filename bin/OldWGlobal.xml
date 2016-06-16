@@ -123,7 +123,6 @@
             监测数据点的Element中，用一个共享参数来存储此测点的“监测数据”
             </summary>
             <returns>测点元素中表示监测数据的共享参数的Guid值。</returns>
-            <remarks>如果要用扩展方法，请加上标签：System.Runtime.CompilerServices.Extension() </remarks>
         </member>
         <member name="F:OldW.GlobalSettings.Constants.SP_MonitorName">
             <summary> 每一个开挖土体单元，都有一个对应的开始开挖的日期数据。 </summary>
@@ -133,7 +132,39 @@
             监测数据点的Element中，用一个共享参数来存储此测点的“监测数据”
             </summary>
             <returns>测点元素中表示监测数据的共享参数的Guid值。</returns>
-            <remarks>如果要用扩展方法，请加上标签：System.Runtime.CompilerServices.Extension() </remarks>
+        </member>
+        <member name="F:OldW.GlobalSettings.Constants.SP_SoilDepth">
+            <summary> 模型土体或者开挖土体单元的深度，此参数是通过API代码创建的实例参数，而且它与Revit中的模型尺寸相关联。 </summary>
+        </member>
+        <member name="P:OldW.GlobalSettings.Constants.SP_SoilDepth_Guid">
+            <summary>
+            模型土体或者开挖土体单元的深度，此参数是通过API代码创建的实例参数，而且它与Revit中的模型尺寸相关联。
+            </summary>
+            <returns>土体单元中表示模型深度的共享参数的Guid值。</returns>
+        </member>
+        <member name="F:OldW.GlobalSettings.Constants.ExcelDatabaseSheet_WallIncline">
+            <summary> 墙体测斜,每一个测斜点的数据用一个工作表来保存 </summary>
+        </member>
+        <member name="F:OldW.GlobalSettings.Constants.ExcelDatabaseSheet_SoilIncine">
+            <summary> 土体测斜,每一个测斜点的数据用一个工作表来保存 </summary>
+        </member>
+        <member name="F:OldW.GlobalSettings.Constants.ExcelDatabaseSheet_WallTopH">
+            <summary> 墙顶位移在Revit中是属于线测点，但是出于习惯，在Excel中通过两个点测点的格式来放置监测数据 </summary>
+        </member>
+        <member name="F:OldW.GlobalSettings.Constants.ExcelDatabaseSheet_WallTopV">
+            <summary> 墙顶位移在Revit中是属于线测点，但是出于习惯，在Excel中通过两个点测点的格式来放置监测数据 </summary>
+        </member>
+        <member name="F:OldW.GlobalSettings.Constants.ExcelDatabaseSheet_GroundHeave">
+            <summary>  </summary>
+        </member>
+        <member name="F:OldW.GlobalSettings.Constants.ExcelDatabaseSheet_ColumnHeave">
+            <summary>  </summary>
+        </member>
+        <member name="F:OldW.GlobalSettings.Constants.ExcelDatabaseSheet_StrutForce">
+            <summary> 存 </summary>
+        </member>
+        <member name="F:OldW.GlobalSettings.Constants.ExcelDatabaseSheet_WaterTable">
+            <summary>  </summary>
         </member>
         <member name="F:OldW.GlobalSettings.Constants.ExcelDatabasePrimaryKeyName">
             <summary>  Excel数据库中，每一个工作表的第一个字段名称，即主键名称必须是中文“时间” </summary>

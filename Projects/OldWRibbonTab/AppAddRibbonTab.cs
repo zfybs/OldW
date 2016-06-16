@@ -89,6 +89,7 @@ namespace OldW
 
             // 监测数据面板
             RibbonPanel ribbonPanelData = application.CreateRibbonPanel(tabName, "监测");
+            AddPushButtonFilterInstrums(ribbonPanelData);
             AddSplitButtonModeling(ribbonPanelData);
             AddPushButtonDataManager(ribbonPanelData);
             AddPushButtonDataImport(ribbonPanelData);
@@ -121,6 +122,21 @@ namespace OldW
 
 
         #region   ---  基坑监测
+
+        /// <summary> 添加“监测数据管理”的按钮 </summary>
+        private void AddPushButtonFilterInstrums(RibbonPanel panel)
+        {
+            // Create a new push button
+            string str = Path.Combine(Path_Dlls, Dll_Projects);
+            PushButton pushButton = panel.AddItem(new PushButtonData("FilterInstrums", "过滤", str, "OldW.Commands.cmd_FilterInstrums")) as PushButton;
+            // Set ToolTip
+            pushButton.ToolTip = "从选择的元素集合中过滤出指定的监测测点单元";
+            // Set Contextual help
+            ContextualHelp contextHelp = new ContextualHelp(ContextualHelpType.Url, "http://www.autodesk.com");
+            pushButton.SetContextualHelp(contextHelp);
+            // Set Icon
+            pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "FilterInstrums_32.png")));
+        }
 
         /// <summary> 添加“放置监测点”的下拉记忆按钮 </summary>
         private void AddSplitButtonModeling(RibbonPanel panel)
@@ -176,8 +192,7 @@ namespace OldW
             pushButton.ToolTip = "其他线测点";
             
         }
-
-
+        
         /// <summary> 添加“监测数据管理”的按钮 </summary>
         private void AddPushButtonDataManager(RibbonPanel panel)
         {
@@ -258,6 +273,7 @@ namespace OldW
         }
 
         #endregion 
+
         #region   ---  警戒与分析
 
         /// <summary> 添加“警戒值设定”的按钮 </summary>

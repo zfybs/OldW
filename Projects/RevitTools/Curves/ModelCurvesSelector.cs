@@ -92,28 +92,6 @@ namespace rvtTools
 			}
 		}
 		
-		/// <summary>
-		/// 从选择的Curve Elements中，获得连续排列的多段曲线（不一定要封闭）。
-		/// </summary>
-		/// <param name="doc">曲线所在文档</param>
-		/// <param name="SelectedCurves">多条曲线元素所对应的Reference，可以通过Selection.PickObjects返回。
-		/// 注意，SelectedCurves中每一条曲线都必须是有界的（IsBound），否则，其GetEndPoint会报错。</param>
-		/// <returns>如果输入的曲线可以形成连续的多段线，则返回重新排序后的多段线集合；
-		/// 如果输入的曲线不能形成连续的多段线，则返回Nothing！</returns>
-		protected IList<Curve> GetContiguousCurvesFromSelectedCurveElements(Document doc, IList<Reference> SelectedCurves)
-		{
-			IList<Curve> curves = new List<Curve>();
-			
-			// Build a list of curves from the curve elements
-			foreach (Reference reference in SelectedCurves)
-			{
-				CurveElement curveElement = doc.GetElement(reference) as CurveElement;
-				curves.Add(curveElement.GeometryCurve.Clone());
-			}
-			//
-			curves = CurvesFormator.GetContiguousCurvesFromCurves(curves);
-			return curves;
-		}
 		
 #endregion
 		
