@@ -1,14 +1,9 @@
-// VBConversions Note: VB project level imports
-
 using System;
-//using Autodesk.Revit.DB;
-//using Autodesk.Revit.UI;
 using Autodesk.Revit.DB;
-// End of VB project level imports
-using stdOldW;
-//using rvtTools_ez.ExtensionMethods;
-//using rvtTools_ez.rvtTools;
 using Autodesk.Revit.UI;
+using OldW.GlobalSettings;
+using rvtTools;
+using stdOldW;
 
 /// <summary>
 /// 将Revit中与基坑开挖相关的Document对象转换为OldW程序中的OldWDocument对象。
@@ -19,18 +14,15 @@ using Autodesk.Revit.UI;
 /// </summary>
 public class OldWDocument
 {
-
     #region    ---    Properties
 
     /// <summary> 每一个OldWDocument对象都绑定了一个Revit的Document对象。 </summary>
     private Document Doc;
+
     /// <summary> 每一个OldWDocument对象都绑定了一个Revit的Document对象。 </summary>
     public Document Document
     {
-        get
-        {
-            return this.Doc;
-        }
+        get { return this.Doc; }
     }
 
     /// <summary> 每一个OldWDocument对象都绑定了一个Revit的 UIDocument 对象。 </summary>
@@ -60,7 +52,8 @@ public class OldWDocument
         }
         else
         {
-            throw (new ArgumentException("The specified document to construct an instance of OldWDocument is not a valid object"));
+            throw new ArgumentException(
+                "The specified document to construct an instance of OldWDocument is not a valid object");
         }
     }
 
@@ -71,7 +64,7 @@ public class OldWDocument
     internal static OldWDocument SearchOrCreate(OldWApplication OldWApp, Document Doc)
     {
         OldWDocument OldWD = null;
-        if (OldWDocument.IsOldWDocument(Doc))
+        if (IsOldWDocument(Doc))
         {
             // 先搜索系统集合中是否有对应的 OldWDocument 对象
             int closingDocumentIndex = -1;
@@ -86,7 +79,7 @@ public class OldWDocument
         {
             if (Doc.IsFamilyDocument)
             {
-                throw (new InvalidOperationException("此文档为一个族文档，不能用来创建OldWDocument对象"));
+                throw new InvalidOperationException("此文档为一个族文档，不能用来创建OldWDocument对象");
                 // MessageBox.Show("此文档为一个族文档，不能用来创建OldWDocument对象", "Warnning", MessageBoxButtons.OK, MessageBoxIcon.Error)
             }
             else // 在项目信息中添加一个新的参数
@@ -109,23 +102,21 @@ public class OldWDocument
     {
         OldWDocument OldWD = null;
         // 创建一个新的OldW文档
-        if (OldWDocument.IsOldWDocument(Doc))
+        if (IsOldWDocument(Doc))
         {
             OldWD = new OldWDocument(Doc);
             OldWApp.OpenedDocuments.Add(OldWD);
-
         }
         else // 说明这个文档不符合OldWDocument的特征，此时为其添加对应的项目参数，使其成为一个OldWDocument对象
         {
-
             if (Doc.IsFamilyDocument)
             {
-                throw (new InvalidOperationException("此文档为一个族文档，不能用来创建OldWDocument对象"));
+                throw new InvalidOperationException("此文档为一个族文档，不能用来创建OldWDocument对象");
                 // MessageBox.Show("此文档为一个族文档，不能用来创建OldWDocument对象", "Warnning", MessageBoxButtons.OK, MessageBoxIcon.Error)
             }
             else // 在项目信息中添加一个新的参数
             {
-                OldWD = OldWDocument.CreateNew(OldWApp, Doc);
+                OldWD = CreateNew(OldWApp, Doc);
                 OldWApp.OpenedDocuments.Add(OldWD);
             }
         }
@@ -144,8 +135,8 @@ public class OldWDocument
         OldWDocument OldWD = null;
 
         var app = OldWApp.Application;
-        DefinitionGroup myGroup = rvtTools.RvtTools.GetOldWDefinitionGroup(app);
-        ExternalDefinition OldWDefi = (ExternalDefinition)(myGroup.Definitions.get_Item(OldW.GlobalSettings.Constants.SP_OldWProjectInfo));
+        DefinitionGroup myGroup = RvtTools.GetOldWDefinitionGroup(app);
+        ExternalDefinition OldWDefi = (ExternalDefinition) myGroup.Definitions.get_Item(Constants.SP_OldWProjectInfo);
 
         // 创建一个“项目信息”类别，用来提供给共享参数进行绑定
         CategorySet myCategories = app.Create.NewCategorySet();
@@ -160,7 +151,8 @@ public class OldWDocument
         using (Transaction resource = new Transaction(Doc, "添加项目参数"))
         {
             resource.Start();
-            bool instanceBindOK = System.Convert.ToBoolean(bindingMap.Insert(OldWDefi, instanceBinding, BuiltInParameterGroup.PG_TEXT));
+            bool instanceBindOK =
+                Convert.ToBoolean(bindingMap.Insert(OldWDefi, instanceBinding, BuiltInParameterGroup.PG_TEXT));
             resource.Commit();
         }
 
@@ -179,7 +171,7 @@ public class OldWDocument
         ProjectInfo proInfo = Doc.ProjectInformation; // 族文件中的ProjectInformation属性为Nothing
         if (proInfo != null)
         {
-            Parameter pa = proInfo.get_Parameter(OldW.GlobalSettings.Constants.SP_OldWProjectInfo_Guid);
+            Parameter pa = proInfo.get_Parameter(Constants.SP_OldWProjectInfo_Guid);
             if (pa != null)
             {
                 bln = true;
@@ -199,7 +191,7 @@ public class OldWDocument
     /// <remarks></remarks>
     public void SetProjectInfo(OldWProjectInfo ProjInfo)
     {
-        Parameter pa = Doc.ProjectInformation.get_Parameter(OldW.GlobalSettings.Constants.SP_OldWProjectInfo_Guid);
+        Parameter pa = Doc.ProjectInformation.get_Parameter(Constants.SP_OldWProjectInfo_Guid);
         string Info = StringSerializer.Encode64(this.ProjectInfo);
         using (Transaction tran = new Transaction(Doc, "将OldW项目信息保存到Document中"))
         {
@@ -208,7 +200,6 @@ public class OldWDocument
             tran.Commit();
             tran.Commit();
         }
-
     }
 
     /// <summary>
@@ -218,9 +209,9 @@ public class OldWDocument
     /// <remarks></remarks>
     public OldWProjectInfo GetProjectInfo()
     {
-        Parameter pa = this.Doc.ProjectInformation.get_Parameter(OldW.GlobalSettings.Constants.SP_OldWProjectInfo_Guid);
-        string info = System.Convert.ToString(pa.AsString());
-        OldWProjectInfo proinfo = (OldWProjectInfo)(StringSerializer.Decode64(info));
+        Parameter pa = this.Doc.ProjectInformation.get_Parameter(Constants.SP_OldWProjectInfo_Guid);
+        string info = Convert.ToString(pa.AsString());
+        OldWProjectInfo proinfo = (OldWProjectInfo) StringSerializer.Decode64(info);
         return proinfo;
     }
 
@@ -234,7 +225,7 @@ public class OldWDocument
     /// <returns>如果这两个Document对象是同一个Revit文档，则返回True，否则返回False。</returns>
     public new bool Equals(Document ComparedDocument)
     {
-        if (OldWDocument.IsOldWDocument(Doc))
+        if (IsOldWDocument(Doc))
         {
             return CompareDocuments(this.Document, ComparedDocument);
         }
@@ -259,8 +250,8 @@ public class OldWDocument
         }
         else // 比较两个 Document 的绝对路径是否相同
         {
-            string path1 = System.Convert.ToString(Doc1.PathName);
-            string path2 = System.Convert.ToString(Doc2.PathName);
+            string path1 = Convert.ToString(Doc1.PathName);
+            string path2 = Convert.ToString(Doc2.PathName);
             if (path1.CompareTo(path2) == 0)
             {
                 IsEqual = true;
@@ -270,6 +261,4 @@ public class OldWDocument
     }
 
     #endregion
-
 }
-

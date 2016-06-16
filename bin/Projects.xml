@@ -480,12 +480,12 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:OldW.Instrumentations.Instrumentation.getMonitorName">
+        <member name="M:OldW.Instrumentations.Instrumentation.GetMonitorName">
             <summary>
             提取测点的名称，比如“CX1”。此参数是在测点族的设计时添加进去的，而不是通过API添加的。
             </summary>
         </member>
-        <member name="M:OldW.Instrumentations.Instrumentation.setMonitorName(Autodesk.Revit.DB.Transaction,System.String)">
+        <member name="M:OldW.Instrumentations.Instrumentation.SetMonitorName(Autodesk.Revit.DB.Transaction,System.String)">
             <summary>
             设置测点的名称，比如“CX1”。此参数是在测点族的设计时添加进去的，而不是通过API添加的。但是其值可以通过API设置。
             </summary>
@@ -493,13 +493,13 @@
             将测点数据类序列化之后的字符保存到测点对象的参数中。
             </summary>
         </member>
-        <member name="M:OldW.Instrumentations.Instrumentation.getMonitorDataString">
+        <member name="M:OldW.Instrumentations.Instrumentation.GetMonitorDataString">
             <summary>
             提取测点监测数据所对应的序列化字符。即测点族中“监测数据”参数中的字符。
             如果要提取监测数据为对应的数据类，可以去调用具体派生类的 GetMonitorData 函数
             </summary>
         </member>
-        <member name="M:OldW.Instrumentations.Instrumentation.setMonitorDataString(Autodesk.Revit.DB.Transaction,System.String)">
+        <member name="M:OldW.Instrumentations.Instrumentation.SetMonitorDataString(Autodesk.Revit.DB.Transaction,System.String)">
             <summary>
             将测点数据类序列化之后的字符保存到测点对象的参数中。
             </summary>
@@ -1304,6 +1304,12 @@
             文档中已经检索出来的模型土体，这个对象可能为空，也可能是一个无效的对象。
             </summary>
         </member>
+        <member name="M:OldW.Excavation.ExcavationDoc.#ctor(OldWDocument)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="OldWDoc"></param>
+        </member>
         <member name="M:OldW.Excavation.ExcavationDoc.CreateModelSoil(System.Double,Autodesk.Revit.DB.CurveArrArray)">
             <summary>
             创建模型土体，此土体单元在模型中应该只有一个。
@@ -1317,35 +1323,30 @@
             <summary>
             创建开挖土体，此土体单元在模型中可以有很多个。
             </summary>
-            <param name="p_ModelSoil">在创建开挖土体之前，请先确保已经创建好了模型土体。
+            <param name="modelSoil">在创建开挖土体之前，请先确保已经创建好了模型土体。
             在此方法中，模型土体对象并不起任何作用，只是用来确保模型土体对象已经创建。</param>
-            <param name="CurveArrArr"> 要进行拉伸的平面轮廓（可以由多个封闭的曲线组成） </param>
-            <param name="Depth">开挖土体的深度，单位为m，数值为正表示向下的深度，反之表示向上的高度。</param>
-            <param name="DesiredName">此开挖土体实例的名称（推荐以开挖完成的日期）。如果此名称已经被使用，则以默认的名称来命名。</param>
+            <param name="curveArrArr"> 要进行拉伸的平面轮廓（可以由多个封闭的曲线组成） </param>
+            <param name="depth">开挖土体的深度，单位为m，数值为正表示向下的深度，反之表示向上的高度。</param>
+            <param name="desiredName">此开挖土体实例的名称（推荐以开挖完成的日期）。如果此名称已经被使用，则以默认的名称来命名。</param>
             <returns></returns>
         </member>
-        <member name="M:OldW.Excavation.ExcavationDoc.CreateSoilFamily">
+        <member name="M:OldW.Excavation.ExcavationDoc.CreateFamilyFromProfile(System.Double,Autodesk.Revit.DB.CurveArrArray)">
             <summary>
-            创建一个模型土体（或者是开挖土体）的族文档，并将其打开。
+            根据输入的平面轮廓信息，以及对应的模型深度，创建出模型土体或者开挖土体族
             </summary>
+            <param name="Depth"></param>
+            <param name="CurveArrArr"></param>
+            <returns></returns>
         </member>
-        <member name="M:OldW.Excavation.ExcavationDoc.ExtrusionAndBindingDimension(Autodesk.Revit.DB.Document,Autodesk.Revit.DB.CurveArrArray,System.Double)">
+        <member name="M:OldW.Excavation.ExcavationDoc.ExtrusionAndBindingDimension(Autodesk.Revit.DB.Transaction,Autodesk.Revit.DB.Document,Autodesk.Revit.DB.CurveArrArray,System.Double)">
             <summary>
             绘制拉伸实体，并将其深度值与具体参数关联起来。
             </summary>
-            <param name="FamDoc">实体所在的族文档，此文档当前已经处于打开状态。</param>
-            <param name="CurveAA">用来绘制实体的闭合轮廓</param>
-            <param name="Depth">模型土体的深度，单位为m，数值为正表示向下的深度，反之表示向上的高度。</param>
+            <param name="tranFam"></param>
+            <param name="famDoc">实体所在的族文档，此文档当前已经处于打开状态。</param>
+            <param name="curveArrArr">用来绘制实体的闭合轮廓</param>
+            <param name="depth">模型土体的深度，单位为m，数值为正表示向下的深度，反之表示向上的高度。</param>
             <remarks></remarks>
-        </member>
-        <member name="M:OldW.Excavation.ExcavationDoc.GetValidExcavationSoilNameFromDate(Autodesk.Revit.DB.Document,System.DateTime)">
-            <summary>
-            在当前模型文档中，构造出一个有效的名称，来供开挖土体族使用。
-            </summary>
-            <param name="doc"></param>
-            <param name="ExcavationCompleteDate">日期的数据中请保证不包含小时或者更小的值，即请用“Date对象.Date”来进行赋值。</param>
-            <returns></returns>
-            <remarks>其基本格式为：开挖土体-2016/04/03-02</remarks>
         </member>
         <member name="M:OldW.Excavation.ExcavationDoc.GetValidExcavationSoilName(Autodesk.Revit.DB.Document,System.String)">
             <summary>
@@ -1382,7 +1383,7 @@
             <summary>
             搜索文档中与模型土体位于同一个Group中的所有的开挖土体。
             </summary>
-            <param name="SoilM">文档中的模型土体单元，可以通过 ExcavationDoc.GetSoilModel 函数获得</param>
+            <param name="soilM">文档中的模型土体单元，可以通过 ExcavationDoc.GetSoilModel 函数获得</param>
             <returns></returns>
             <remarks></remarks>
         </member>
@@ -1565,34 +1566,12 @@
             设置列表中选择的每一行所对应的开挖土体的可见性。
             </summary>
         </member>
-        <member name="T:OldW.Excavation.frm_ExcavationInfo.ExcavSoilInfo">
+        <member name="F:OldW.Excavation.frm_ExcavationInfo.Request.ReCut">
             <summary>
-            列表中的每一行数据所对应的类
+            修改所有开挖土体对于基坑土体的剪切关系。
+            在某些情况下（比如用新的模型土体替换了旧的模型土体时），
+            开挖土体可能会失去对于模型土体的剪切关系，以致于开挖土体虽然位于模型土体的组中，但是模型土体并没有被切割。
             </summary>
-            <remarks></remarks>
-        </member>
-        <member name="P:OldW.Excavation.frm_ExcavationInfo.ExcavSoilInfo.Soil">
-            <summary> 开挖土体对象 </summary>
-        </member>
-        <member name="P:OldW.Excavation.frm_ExcavationInfo.ExcavSoilInfo.Id">
-            <summary> 土体单元的Id值 </summary>
-        </member>
-        <member name="P:OldW.Excavation.frm_ExcavationInfo.ExcavSoilInfo.StartedDate">
-            <summary> 开挖土体开挖完成的日期 </summary>
-        </member>
-        <member name="P:OldW.Excavation.frm_ExcavationInfo.ExcavSoilInfo.CompletedDate">
-            <summary> 开挖土体开挖完成的日期 </summary>
-        </member>
-        <member name="P:OldW.Excavation.frm_ExcavationInfo.ExcavSoilInfo.Visible">
-            <summary> 开挖土体在当前视图中是否可见 </summary>
-        </member>
-        <member name="M:OldW.Excavation.frm_ExcavationInfo.ExcavSoilInfo.SetVisibility(Autodesk.Revit.DB.Transaction,System.Boolean,Autodesk.Revit.DB.View)">
-            <summary>
-            设置开挖土体的可见性
-            </summary>
-            <param name="tran"></param>
-            <param name="Vis">True代表设置其为可见</param>
-            <param name="V">当前视图对象</param>
         </member>
         <member name="F:OldW.Excavation.frm_ExcavationInfo.ExEvent">
             <summary>用来触发外部事件（通过其Raise方法） </summary>
@@ -1608,14 +1587,56 @@
             <summary> 用来与列表框进行交互的开挖土体信息集合 </summary>
             <remarks></remarks>
         </member>
-        <member name="M:OldW.Excavation.frm_ExcavationInfo.DozeOff">
-            <summary> 在Revit执行相关操作时，禁用窗口中的控件 </summary>
+        <member name="M:OldW.Excavation.frm_ExcavationInfo.#ctor(OldW.Excavation.ExcavationDoc)">
+            <summary> 构造函数 </summary>
+            <param name="ExcavDoc"></param>
         </member>
-        <member name="M:OldW.Excavation.frm_ExcavationInfo.WarmUp">
-            <summary> 在外部事件RequestHandler中的Execute方法执行完成后，用来激活窗口中的控件 </summary>
-        </member>
-        <member name="M:OldW.Excavation.frm_ExcavationInfo.SetupGrid">
+        <member name="M:OldW.Excavation.frm_ExcavationInfo.SetupDatagridview">
             <summary> 将列表框进行初始化 </summary>
+        </member>
+        <member name="T:OldW.Excavation.frm_ExcavationInfo.ExcavSoilEntity">
+            <summary> Datagridview 中的每一行数据所对应的实体类 </summary>
+        </member>
+        <member name="P:OldW.Excavation.frm_ExcavationInfo.ExcavSoilEntity.Soil">
+            <summary> 开挖土体对象 </summary>
+        </member>
+        <member name="P:OldW.Excavation.frm_ExcavationInfo.ExcavSoilEntity.Id">
+            <summary> 土体单元的Id值 </summary>
+        </member>
+        <member name="P:OldW.Excavation.frm_ExcavationInfo.ExcavSoilEntity.Name">
+            <summary> 开挖土体的名称 </summary>
+        </member>
+        <member name="P:OldW.Excavation.frm_ExcavationInfo.ExcavSoilEntity.Depth">
+            <summary> 开挖土体的深度 </summary>
+        </member>
+        <member name="P:OldW.Excavation.frm_ExcavationInfo.ExcavSoilEntity.StartedDate">
+            <summary> 开挖土体开挖完成的日期 </summary>
+        </member>
+        <member name="P:OldW.Excavation.frm_ExcavationInfo.ExcavSoilEntity.CompletedDate">
+            <summary> 开挖土体开挖完成的日期 </summary>
+        </member>
+        <member name="P:OldW.Excavation.frm_ExcavationInfo.ExcavSoilEntity.Visible">
+            <summary> 开挖土体在当前视图中是否可见 </summary>
+        </member>
+        <member name="M:OldW.Excavation.frm_ExcavationInfo.ExcavSoilEntity.syncToDocument(Autodesk.Revit.DB.Transaction,Autodesk.Revit.DB.View)">
+            <summary>
+            将界面中设置的信息同步到Revit文档中
+            </summary>
+            <param name="tran"></param>
+            <param name="View"></param>
+        </member>
+        <member name="M:OldW.Excavation.frm_ExcavationInfo.ExcavSoilEntity.SetVisibility(Autodesk.Revit.DB.Transaction,System.Boolean,Autodesk.Revit.DB.View)">
+            <summary>
+            设置开挖土体的可见性
+            </summary>
+            <param name="tran"></param>
+            <param name="show"> True代表设置其为可见 </param>
+            <param name="view">当前视图对象</param>
+        </member>
+        <member name="M:OldW.Excavation.frm_ExcavationInfo.BtnClearEmpty_Click(System.Object,System.EventArgs)">
+            <summary>
+            清理在Revit中没有实例对象的开挖土体族
+            </summary>
         </member>
         <member name="M:OldW.Excavation.frm_ExcavationInfo.Execute(Autodesk.Revit.UI.UIApplication)">
             <summary>
@@ -1629,6 +1650,12 @@
         <member name="M:OldW.Excavation.frm_ExcavationInfo.GetExcavSoilInfo">
             <summary> 将模型中的开挖土体信息同步到列表中 </summary>
         </member>
+        <member name="M:OldW.Excavation.frm_ExcavationInfo.DozeOff">
+            <summary> 在Revit执行相关操作时，禁用窗口中的控件 </summary>
+        </member>
+        <member name="M:OldW.Excavation.frm_ExcavationInfo.WarmUp">
+            <summary> 在外部事件RequestHandler中的Execute方法执行完成后，用来激活窗口中的控件 </summary>
+        </member>
         <member name="T:OldW.Excavation.Soil_Element">
             <summary>
             土体单元对象。一个土体单元的族实例，必须满足的条件有：1. 族的名称限制；2. 实例类别为“场地”。
@@ -1638,7 +1665,17 @@
         <member name="P:OldW.Excavation.Soil_Element.Soil">
             <summary> 土体单元所对应的族实例对象 </summary>
         </member>
-        <member name="M:OldW.Excavation.Soil_Element.IsSoildElement(Autodesk.Revit.DB.Document,Autodesk.Revit.DB.ElementId,System.String@)">
+        <member name="P:OldW.Excavation.Soil_Element.ExcavDoc">
+            <summary> 基坑开挖文档 </summary>
+        </member>
+        <member name="M:OldW.Excavation.Soil_Element.#ctor(OldW.Excavation.ExcavationDoc,Autodesk.Revit.DB.FamilyInstance)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="excavDoc"></param>
+            <param name="soilElement"></param>
+        </member>
+        <member name="M:OldW.Excavation.Soil_Element.IsSoilElement(Autodesk.Revit.DB.Document,Autodesk.Revit.DB.ElementId,System.String@)">
             <summary>
             对于一个单元进行全面的检测，以判断其是否为一个模型土体单元或者开挖土体单元。
             </summary>
@@ -1647,6 +1684,20 @@
             <param name="FailureMessage">如果不是，则返回不能转换的原因。</param>
             <returns>如果检查通过，则可以直接通过Create静态方法来创建对应的模型土体</returns>
             <remarks>一个土体单元的族实例，必须满足的条件有：1. 族的名称限制；2. 实例类别为“场地”。</remarks>
+        </member>
+        <member name="F:OldW.Excavation.Soil_Element._depth">
+            <summary>
+            模型土体或者开挖土体的深度值，单位为米
+            </summary>
+        </member>
+        <member name="M:OldW.Excavation.Soil_Element.GetDepth">
+            <summary> 提取模型土体或者开挖土体的深度参数。此参数是通过API添加的。 </summary>
+            <returns> 返回深度值，单位为米 </returns>
+        </member>
+        <member name="M:OldW.Excavation.Soil_Element.SetDepth(Autodesk.Revit.DB.Transaction,System.Double)">
+            <summary> 设置模型土体或者开挖土体的深度参数。此参数是通过API添加的。 </summary>
+            <param name="tran">  </param>
+            <param name="depth"> 模型的新的深度，单位为米 </param>
         </member>
         <member name="T:OldW.Excavation.Soil_Excav">
             <summary> 用来模拟分块开挖的土体元素。 </summary>
@@ -1696,6 +1747,14 @@
             <returns></returns>
             <remarks></remarks>
         </member>
+        <member name="M:OldW.Excavation.Soil_Excav.GetElevation(System.Boolean)">
+            <summary>
+            得到开挖土体的顶面或者底面的在模型中的标高
+            </summary>
+            <param name="Top">If true, obtain the elevation of the top surface. If false, obtain the elevation of the bottom surface.  </param>
+            <returns>指定表面的标高值（单位为m）。the elevation of the specified surface, in the unit of meter.</returns>
+            <remarks>不用Element.Geometry（）方法，因为此方法包含大量的数据结构转换，太消耗CPU。而应使用GetBoundingBox与GetTransform等方法。</remarks>
+        </member>
         <member name="M:OldW.Excavation.Soil_Excav.SetExcavatedDate(Autodesk.Revit.DB.Document,System.Boolean,System.Collections.Generic.Dictionary{OldW.Excavation.Soil_Excav,System.DateTime})">
             <summary>
             为多个开挖土体设置对应的开挖完成的时间
@@ -1719,16 +1778,14 @@
             </summary>
             <param name="Started">如果要提取土体开始开挖的时间，则设置为True，反之则是提取土体开挖完成的时间</param>
         </member>
-        <member name="M:OldW.Excavation.Soil_Excav.GetElevation(System.Boolean)">
-            <summary>
-            得到开挖土体的顶面或者底面的在模型中的标高
-            </summary>
-            <param name="Top">If true, obtain the elevation of the top surface. If false, obtain the elevation of the bottom surface.  </param>
-            <returns>指定表面的标高值（单位为m）。the elevation of the specified surface, in the unit of meter.</returns>
-            <remarks>不用Element.Geometry（）方法，因为此方法包含大量的数据结构转换，太消耗CPU。而应使用GetBoundingBox与GetTransform等方法。</remarks>
-        </member>
         <member name="M:OldW.Excavation.Soil_Excav.GetName">
             <summary> 获取开挖土体的名称，这里取的是族实例所对应的族类型的名称 </summary>
+        </member>
+        <member name="M:OldW.Excavation.Soil_Excav.SetName(Autodesk.Revit.DB.Transaction,System.String)">
+            <summary> 设置开挖土体的名称。默认情况下，一个开挖土体族中只有一个族类型，此族类型也只有一个实例单元。
+            族实例所对应的族类型的名称 </summary>
+            <param name="tran">  </param>
+            <param name="newName"> 这里会将开挖土体对应所对应的族类型，以及其族都设置为此名称。 </param>
         </member>
         <member name="T:OldW.Excavation.Soil_Model">
             <summary>
@@ -1772,18 +1829,18 @@
             <returns></returns>
             <remarks></remarks>
         </member>
-        <member name="M:OldW.Excavation.Soil_Model.RemoveSoil(OldW.Excavation.Soil_Excav)">
+        <member name="M:OldW.Excavation.Soil_Model.RemoveSoil(Autodesk.Revit.DB.Transaction,OldW.Excavation.Soil_Excav)">
             <summary>
             从当前的开挖状态中，移除指定的一块土，用来模拟土体的开挖
             </summary>
-            <param name="SoilToRemove"></param>
+            <param name="soilToRemove"></param>
             <remarks></remarks>
         </member>
-        <member name="M:OldW.Excavation.Soil_Model.RemoveSoils(System.Collections.Generic.List{OldW.Excavation.Soil_Excav})">
+        <member name="M:OldW.Excavation.Soil_Model.RemoveSoils(Autodesk.Revit.DB.Transaction,System.Collections.Generic.List{OldW.Excavation.Soil_Excav})">
             <summary>
             从当前的开挖状态中，移除指定的一块土，用来模拟土体的开挖
             </summary>
-            <param name="SoilsToRemove"></param>
+            <param name="soilsToRemove"></param>
             <remarks></remarks>
         </member>
         <member name="M:OldW.Excavation.Soil_Model.FillSoil(OldW.Excavation.Soil_Excav)">

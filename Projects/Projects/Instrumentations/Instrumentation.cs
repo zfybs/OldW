@@ -26,7 +26,7 @@ namespace OldW.Instrumentations
         public Document Document { get; }
 
         /// <summary> 测点的标志文字，一般格式为“墙体测斜（CX3）: 568742” </summary>
-        public string IdName => F_Monitor.Name + "( " + getMonitorName() + " ):" + F_Monitor.Id.IntegerValue;
+        public string IdName => F_Monitor.Name + "( " + GetMonitorName() + " ):" + F_Monitor.Id.IntegerValue;
 
         private FamilyInstance F_Monitor;
 
@@ -168,13 +168,13 @@ namespace OldW.Instrumentations
 
         #region   ---   族参数中数据的提取与保存
 
-        private string MonitorName;
+        private string _monitorName;
         /// <summary>
         /// 提取测点的名称，比如“CX1”。此参数是在测点族的设计时添加进去的，而不是通过API添加的。
         /// </summary>
-        public string getMonitorName()
+        public string GetMonitorName()
         {
-            return MonitorName ?? Monitor.get_Parameter(Constants.SP_MonitorName_Guid).AsString();
+            return _monitorName ?? Monitor.get_Parameter(Constants.SP_MonitorName_Guid).AsString();
         }
 
         /// <summary>
@@ -183,20 +183,20 @@ namespace OldW.Instrumentations
         /// <summary>
         /// 将测点数据类序列化之后的字符保存到测点对象的参数中。
         /// </summary>
-        public void setMonitorName(Transaction tran, string MonitorName)
+        public void SetMonitorName(Transaction tran, string MonitorName)
         {
             Parameter para = Monitor.get_Parameter(Constants.SP_MonitorName_Guid);
             para.Set(MonitorName);
 
             // store its name in the private variable.
-            this.MonitorName = MonitorName;
+            this._monitorName = MonitorName;
         }
 
         /// <summary>
         /// 提取测点监测数据所对应的序列化字符。即测点族中“监测数据”参数中的字符。
         /// 如果要提取监测数据为对应的数据类，可以去调用具体派生类的 GetMonitorData 函数
         /// </summary>
-        protected string getMonitorDataString()
+        protected string GetMonitorDataString()
         {
             return Monitor.get_Parameter(Constants.SP_MonitorData_Guid).AsString();
         }
@@ -204,7 +204,7 @@ namespace OldW.Instrumentations
         /// <summary>
         /// 将测点数据类序列化之后的字符保存到测点对象的参数中。
         /// </summary>
-        protected void setMonitorDataString(Transaction tran, string dataString)
+        protected void SetMonitorDataString(Transaction tran, string dataString)
         {
             Parameter para = Monitor.get_Parameter(Constants.SP_MonitorData_Guid);
             para.Set(dataString);

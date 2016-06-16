@@ -67,7 +67,7 @@ namespace OldW.Instrumentations
             {
                 return _monitorData;
             }
-            string strData = base.getMonitorDataString();
+            string strData = base.GetMonitorDataString();
             List<MonitorData_Point> mData = null;
             if (strData.Length > 0)
             {
@@ -96,7 +96,7 @@ namespace OldW.Instrumentations
             // 将数据序列化为字符串
             // 如果data为空，则表示将原来的监测数据清空，所以也是可以的
             string strData = StringSerializer.Encode64(data);
-            base.setMonitorDataString(tran, strData);
+            base.SetMonitorDataString(tran, strData);
 
             // 将数据在类实例中保存下来
             _monitorData = data;

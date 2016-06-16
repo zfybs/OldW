@@ -104,7 +104,6 @@ namespace OldW.GlobalSettings
         /// 监测数据点的Element中，用一个共享参数来存储此测点的“监测数据”
         /// </summary>
         /// <returns>测点元素中表示监测数据的共享参数的Guid值。</returns>
-        /// <remarks>如果要用扩展方法，请加上标签：System.Runtime.CompilerServices.Extension() </remarks>
         public static Guid SP_MonitorData_Guid
         {
             get { return new Guid("c3d04d9e-aa78-4328-90c5-cf58167d1f09"); }
@@ -117,10 +116,21 @@ namespace OldW.GlobalSettings
         /// 监测数据点的Element中，用一个共享参数来存储此测点的“监测数据”
         /// </summary>
         /// <returns>测点元素中表示监测数据的共享参数的Guid值。</returns>
-        /// <remarks>如果要用扩展方法，请加上标签：System.Runtime.CompilerServices.Extension() </remarks>
         public static Guid SP_MonitorName_Guid
         {
-            get { return new Guid("98E55C99-5DA9-4EF3-AA6B-7F94131538DF"); }
+            get { return new Guid("98e55c99-5da9-4ef3-aa6b-7f94131538df"); }
+        }
+
+        /// <summary> 模型土体或者开挖土体单元的深度，此参数是通过API代码创建的实例参数，而且它与Revit中的模型尺寸相关联。 </summary>
+        public const string SP_SoilDepth = "模型深度";
+
+        /// <summary>
+        /// 模型土体或者开挖土体单元的深度，此参数是通过API代码创建的实例参数，而且它与Revit中的模型尺寸相关联。
+        /// </summary>
+        /// <returns>土体单元中表示模型深度的共享参数的Guid值。</returns>
+        public static Guid SP_SoilDepth_Guid
+        {
+            get { return new Guid("70abedd7-dd12-4b30-ab2a-c1dcabe62f37"); }
         }
 
         #endregion
@@ -149,6 +159,5 @@ namespace OldW.GlobalSettings
         public const string ExcelDatabasePrimaryKeyName = "时间";
 
         #endregion
-
     }
 }
