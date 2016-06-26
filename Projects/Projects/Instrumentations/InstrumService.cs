@@ -53,164 +53,19 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
         /// <summary> 比如基坑中水位测点处的水位高低 </summary>
         水位 = 256,
 
-        /// <summary> 通过位运算进行组合的所有线测点的集合。 </summary>
-        线测点集合 = 其他线测点 | 墙体测斜 | 土体测斜 | 墙顶位移,
+        /// <summary> 通过位运算进行组合的非数值线测点的集合。不包括墙体测斜这种子节点有数值意义的线测点 </summary>
+        非数值线测点集合 = 墙顶位移,
+
+        /// <summary> 通过位运算进行组合的数值线测点的集合。不包括墙顶位移这种子节点没有数值意义的线测点 </summary>
+        数值线测点集合 = 其他线测点 | 墙体测斜 | 土体测斜,
+
+        /// <summary> 通过位运算进行组合的所有线测点的集合。包括墙顶位移 </summary>
+        线测点集合 = 数值线测点集合 | 非数值线测点集合,
 
         /// <summary> 通过位运算进行组合的所有点测点的集合。 </summary>
         点测点集合 = 其他点测点 | 地表隆沉 | 立柱隆沉 | 支撑轴力 | 水位,
-    }
-
-    #endregion
-
-    #region ---   Class(InstrumCollector)：测点收集器，用来对测点集合进行分类管理
-
-    /// <summary>
-    /// 测点收集器，用来对测点集合进行分类管理
-    /// </summary>
-    public struct InstrumCollector
-    {
-        /// <summary> 所有的测点的集合 </summary>
-        List<Instrumentation> _allInstrumentations;
-        /// <summary> 所有的测点的集合 </summary>
-        public List<Instrumentation> AllInstrumentations
-        {
-            get { return _allInstrumentations; }
-        }
-
-        #region ---   不同的测点集合 
-
-        ///// <summary> 立柱隆沉测点 </summary>
-        //public readonly List<Instrum_ColumnHeave> ColumnHeave;
-
-        ///// <summary> 地表隆沉测点 </summary>
-        //public readonly List<Instrum_GroundSettlement> GroundSettlement;
-
-        ///// <summary> 测斜点 </summary>
-        //public readonly List<Instrum_WallIncline> Incline;
-
-        ///// <summary> 支撑轴力点 </summary>
-        //public readonly List<Instrum_StrutAxialForce> StrutAxialForce;
-
-        #endregion
-
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="instrums"> 要进行测点分类的测点集合 </param>
-        public InstrumCollector(IEnumerable<Instrumentation> instrums)
-        {
-            //ColumnHeave = new List<Instrum_ColumnHeave>();
-            //GroundSettlement = new List<Instrum_GroundSettlement>();
-            //Incline = new List<Instrum_WallIncline>();
-            //StrutAxialForce = new List<Instrum_StrutAxialForce>();
-            //
-            _allInstrumentations = new List<Instrumentation>();
-
-            // 
-            Truncate(instrums);
-        }
-
-        /// <summary>
-        /// 清空原测点集合中的元素，并重新添加新的元素
-        /// </summary>
-        /// <param name="instrums"></param>
-        public void Truncate(IEnumerable<Instrumentation> instrums)
-        {
-            //ColumnHeave.Clear();
-            //GroundSettlement.Clear();
-            //Incline.Clear();
-            //StrutAxialForce.Clear();
-            //
-            _allInstrumentations.Clear();
-
-            Append(instrums);
-        }
-
-        /// <summary>
-        /// 直接向集合中附加新的测点
-        /// </summary>
-        /// <param name="instrums"></param>
-        public void Append(IEnumerable<Instrumentation> instrums)
-        {
-            //foreach (Instrumentation inst in instrums)
-            //{
-            //    if (inst is Instrum_ColumnHeave)
-            //    {
-            //        ColumnHeave.Add((Instrum_ColumnHeave)inst);
-            //    }
-            //    else if (inst is Instrum_GroundSettlement)
-            //    {
-            //        GroundSettlement.Add((Instrum_GroundSettlement)inst);
-            //    }
-            //    else if (inst is Instrum_WallIncline)
-            //    {
-            //        Incline.Add((Instrum_WallIncline)inst);
-            //    }
-            //    else if (inst is Instrum_StrutAxialForce)
-            //    {
-            //        StrutAxialForce.Add((Instrum_StrutAxialForce)inst);
-            //    }
-            //}
-            _allInstrumentations.AddRange(instrums);
-
-        }
-
-        /// <summary> 按指定的类型过滤出集合中所有的测点 </summary>
-        /// <param name="type"> 多种监测类型的按位组合 </param>
-        public List<Instrumentation> GetMonitors(InstrumentationType type)
-        {
-            var q = from Instrumentation r in AllInstrumentations
-                    where (r.Type & type) > 0
-                    select r;
-            return q.ToList();
-        }
-
-        #region ---   过滤出线测点 
-
-        /// <summary> 过滤出集合中所有的线测点 </summary>
-        public List<Instrum_Line> GetLineMonitors()
-        {
-            var q = from Instrumentation r in AllInstrumentations
-                    where r is Instrum_Line
-                    select (Instrum_Line)r;
-            return q.ToList();
-        }
-
-        /// <summary> 按指定的选项过滤出集合中所有的线测点 </summary>
-        /// <param name="type"> 多种监测类型的按位组合 </param>
-        public List<Instrum_Line> GetLineMonitors(InstrumentationType type)
-        {
-            var q = from Instrumentation r in AllInstrumentations
-                    where (r is Instrum_Line) && (r.Type & type) > 0
-                    select (Instrum_Line)r;
-            return q.ToList();
-        }
 
 
-        #endregion
-
-        #region ---   过滤出点测点 
-
-        /// <summary> 过滤出集合中所有的线测点 </summary>
-        public List<Instrum_Point> GetPointMonitors()
-        {
-            var q = from Instrumentation r in AllInstrumentations
-                    where r is Instrum_Point
-                    select (Instrum_Point)r;
-            return q.ToList();
-        }
-
-        /// <summary> 按指定的选项过滤出集合中所有的点测点 </summary>
-        /// <param name="type"> 多种监测类型的按位组合 </param>
-        public List<Instrum_Point> GetPointMonitors(InstrumentationType type)
-        {
-            var q = from Instrumentation r in AllInstrumentations
-                    where r is Instrum_Point && (r.Type & type) > 0
-                    select (Instrum_Point)r;
-            return q.ToList();
-        }
-
-        #endregion
     }
 
     #endregion
@@ -220,7 +75,7 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
     /// <summary>
     /// 将不同的Excel工作表字段的名称映射到Revit对应的测点中去
     /// </summary>
-    public struct InstrumTypeMapping
+    public static class InstrumTypeMappingExcel
     {
         /// <summary> 其他未在上面标记过的测点类型，其每一个点测点的监测数据都保存在工作表中的某个字段下。 </summary>
         private const string SheetOtherPoint = "PM";
@@ -357,5 +212,159 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
         }
         #endregion
     }
+
     #endregion
+
+    #region ---   Class(InstrumCollector)：测点收集器，用来对测点集合进行分类管理
+
+    /// <summary>
+    /// 测点收集器，用来对测点集合进行分类管理
+    /// </summary>
+    public class InstrumCollector
+    {
+        /// <summary> 所有的测点的集合 </summary>
+        List<Instrumentation> _allInstrumentations;
+        /// <summary> 所有的测点的集合 </summary>
+        public List<Instrumentation> AllInstrumentations
+        {
+            get { return _allInstrumentations; }
+        }
+
+        #region ---   不同的测点集合 
+
+        ///// <summary> 立柱隆沉测点 </summary>
+        //public readonly List<Instrum_ColumnHeave> ColumnHeave;
+
+        ///// <summary> 地表隆沉测点 </summary>
+        //public readonly List<Instrum_GroundSettlement> GroundSettlement;
+
+        ///// <summary> 测斜点 </summary>
+        //public readonly List<Instrum_WallIncline> Incline;
+
+        ///// <summary> 支撑轴力点 </summary>
+        //public readonly List<Instrum_StrutAxialForce> StrutAxialForce;
+
+        #endregion
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="instrums"> 要进行测点分类的测点集合 </param>
+        public InstrumCollector(IEnumerable<Instrumentation> instrums)
+        {
+            //ColumnHeave = new List<Instrum_ColumnHeave>();
+            //GroundSettlement = new List<Instrum_GroundSettlement>();
+            //Incline = new List<Instrum_WallIncline>();
+            //StrutAxialForce = new List<Instrum_StrutAxialForce>();
+            //
+            _allInstrumentations = new List<Instrumentation>();
+
+            // 
+            Truncate(instrums);
+        }
+
+        /// <summary>
+        /// 清空原测点集合中的元素，并重新添加新的元素
+        /// </summary>
+        /// <param name="instrums"></param>
+        public void Truncate(IEnumerable<Instrumentation> instrums)
+        {
+            //ColumnHeave.Clear();
+            //GroundSettlement.Clear();
+            //Incline.Clear();
+            //StrutAxialForce.Clear();
+            //
+            _allInstrumentations.Clear();
+
+            Append(instrums);
+        }
+
+        /// <summary>
+        /// 直接向集合中附加新的测点
+        /// </summary>
+        /// <param name="instrums"></param>
+        public void Append(IEnumerable<Instrumentation> instrums)
+        {
+            //foreach (Instrumentation inst in instrums)
+            //{
+            //    if (inst is Instrum_ColumnHeave)
+            //    {
+            //        ColumnHeave.Add((Instrum_ColumnHeave)inst);
+            //    }
+            //    else if (inst is Instrum_GroundSettlement)
+            //    {
+            //        GroundSettlement.Add((Instrum_GroundSettlement)inst);
+            //    }
+            //    else if (inst is Instrum_WallIncline)
+            //    {
+            //        Incline.Add((Instrum_WallIncline)inst);
+            //    }
+            //    else if (inst is Instrum_StrutAxialForce)
+            //    {
+            //        StrutAxialForce.Add((Instrum_StrutAxialForce)inst);
+            //    }
+            //}
+            _allInstrumentations.AddRange(instrums);
+
+        }
+
+        /// <summary> 按指定的类型过滤出集合中所有的测点 </summary>
+        /// <param name="type"> 多种监测类型的按位组合 </param>
+        public List<Instrumentation> GetMonitors(InstrumentationType type)
+        {
+            var q = from Instrumentation r in AllInstrumentations
+                    where (r.Type & type) > 0
+                    select r;
+            return q.ToList();
+        }
+
+        #region ---   过滤出线测点 
+
+        /// <summary> 过滤出集合中所有的线测点 </summary>
+        public List<Instrum_Line> GetLineMonitors()
+        {
+            var q = from Instrumentation r in AllInstrumentations
+                    where r is Instrum_Line
+                    select (Instrum_Line)r;
+            return q.ToList();
+        }
+
+        /// <summary> 按指定的选项过滤出集合中所有的线测点 </summary>
+        /// <param name="type"> 多种监测类型的按位组合 </param>
+        public List<Instrum_Line> GetLineMonitors(InstrumentationType type)
+        {
+            var q = from Instrumentation r in AllInstrumentations
+                    where (r is Instrum_Line) && (r.Type & type) > 0
+                    select (Instrum_Line)r;
+            return q.ToList();
+        }
+
+        #endregion
+
+        #region ---   过滤出点测点 
+
+        /// <summary> 过滤出集合中所有的线测点 </summary>
+        public List<Instrum_Point> GetPointMonitors()
+        {
+            var q = from Instrumentation r in AllInstrumentations
+                    where r is Instrum_Point
+                    select (Instrum_Point)r;
+            return q.ToList();
+        }
+
+        /// <summary> 按指定的选项过滤出集合中所有的点测点 </summary>
+        /// <param name="type"> 多种监测类型的按位组合 </param>
+        public List<Instrum_Point> GetPointMonitors(InstrumentationType type)
+        {
+            var q = from Instrumentation r in AllInstrumentations
+                    where r is Instrum_Point && (r.Type & type) > 0
+                    select (Instrum_Point)r;
+            return q.ToList();
+        }
+
+        #endregion
+    }
+
+    #endregion
+
 }

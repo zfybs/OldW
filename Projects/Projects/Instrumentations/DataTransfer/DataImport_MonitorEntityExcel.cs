@@ -13,7 +13,7 @@ namespace OldW.DataManager
         /// <summary>
         /// DataGridViewExcel中所对应的实体类
         /// </summary>
-        internal class MonitorEntityExcel
+        private class MonitorEntityExcel
         {
 
             #region ---   数据库实体对象的属性
@@ -91,12 +91,12 @@ namespace OldW.DataManager
                 IEnumerable<Instrumentation> searchingInstrums = instrumsToMatch.AllInstrumentations;
 
                 // 1. 匹配具体的类型
-                searchingInstrums = instrumsToMatch.GetMonitors(type: InstrumTypeMapping.MapToType(SheetName));
+                searchingInstrums = instrumsToMatch.GetMonitors(type: InstrumTypeMappingExcel.MapToType(SheetName));
 
                 // 2. 如果不能匹配到具体的类型，则匹配大的区间：线测点还是点测点
                 if (!searchingInstrums.Any())
                 {
-                    if (InstrumTypeMapping.IsRevitLine(SheetName))
+                    if (InstrumTypeMappingExcel.IsRevitLine(SheetName))
                     {
                         searchingInstrums = instrumsToMatch.GetLineMonitors();
                     }
@@ -114,10 +114,10 @@ namespace OldW.DataManager
 
                 // 3. 匹配可能的字段名
                 Instrumentation possibleInstrum = searchingInstrums.First();
-                var num1 = InstrumTypeMapping.GetNumber(FieldName);
+                var num1 = InstrumTypeMappingExcel.GetNumber(FieldName);
                 foreach (Instrumentation ins in searchingInstrums)
                 {
-                    if (string.Compare(num1, InstrumTypeMapping.GetNumber(ins.getMonitorName()), StringComparison.Ordinal) == 0)
+                    if (string.Compare(num1, InstrumTypeMappingExcel.GetNumber(ins.GetMonitorName()), StringComparison.Ordinal) == 0)
                     {
                         possibleInstrum = ins;
                         break;

@@ -93,7 +93,7 @@ namespace OldW.DataManager
             ColumnImport.DataPropertyName = "Transport";
             ColumnImport.HeaderText = "导入";
             ColumnImport.Width = 50;
-            ColumnImport.Resizable = DataGridViewTriState.False ;
+            ColumnImport.Resizable = DataGridViewTriState.False;
             // 
             // ColumnDrawData
             // 
@@ -104,7 +104,7 @@ namespace OldW.DataManager
             ColumnDrawData.Text = "查看";
             ColumnDrawData.UseColumnTextForButtonValue = true;
             ColumnDrawData.Width = 50;
-            ColumnDrawData.Resizable = DataGridViewTriState.False ;
+            ColumnDrawData.Resizable = DataGridViewTriState.False;
             // 
             // ColumnSheet
             // 
@@ -147,7 +147,7 @@ namespace OldW.DataManager
             dataGridViewExcel.AutoSize = false;
             dataGridViewExcel.AllowUserToResizeRows = false;
             dataGridViewExcel.EditMode = DataGridViewEditMode.EditOnEnter; // 为了解决DataGridViewComboBoxCell要点击三次才出现下拉框的问题。
-       
+
             // --------------- 事件关联  --------------- 
             dataGridViewExcel.DataError += DataGridViewExcelOnDataError;
             dataGridViewExcel.CellContentClick += DataGridViewExcelOnCellContentClick;
@@ -162,7 +162,7 @@ namespace OldW.DataManager
         /// <param name="sender"></param> <param name="e"></param>
         private void buttonMapping_Click(object sender, EventArgs e)
         {
-            string workbookPath = textBox1.Text;
+            string workbookPath = textBoxFilePath.Text;
             if (File.Exists(workbookPath))
             {
                 string strExt = Path.GetExtension(workbookPath);
@@ -218,7 +218,7 @@ namespace OldW.DataManager
             foreach (var shtName in sheetsName)
             {
                 // 如果工作表的名称能够匹配出相对的测点类型，则开始搜索字段
-                if (InstrumTypeMapping.MultiPointsInSheet(shtName.Substring(0, shtName.Length - 1)))
+                if (InstrumTypeMappingExcel.MultiPointsInSheet(shtName.Substring(0, shtName.Length - 1)))
                 {
                     var ptNames = GetPointNames(_excelConnection, shtName);
                     foreach (var ptname in ptNames)
@@ -270,7 +270,7 @@ namespace OldW.DataManager
                 return new List<string>();
             }
 
-            // 检查工作表中“时间”字段的数据类型是否为时间类型（对应的数值为5）
+            // 检查工作表中“时间”字段的数据类型是否为时间类型（对应的数值为7，另外，整数或者小数对应的为5，字符对应130）
             int dataTypeIndex;
             int.TryParse(dt.Rows[indexTime]["DATA_TYPE"].ToString(), out dataTypeIndex);
             if (dataTypeIndex != 7)
@@ -404,7 +404,7 @@ namespace OldW.DataManager
 
         /// <summary> 事务：将Excel中的监测数据导入Revit中的测点单元 </summary>
         Transaction _tranImport;
-        
+
         private void ButtonImport_Click(object sender, EventArgs e)
         {
             if (dataGridViewExcel != null && dataGridViewExcel.DataSource != null)
@@ -577,11 +577,22 @@ namespace OldW.DataManager
             //
             _backgroundWorker.Dispose();
         }
-        
+
         private void ButtonExit_Click(object sender, EventArgs e)
         {
             Close();
         }
+
+        private void buttonChooseFile_Click(object sender, EventArgs e)
+        {
+            string filePath = WindowsUtil.ChooseOpenExcel("选择Excel数据库");
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                textBoxFilePath.Text = filePath;
+            }
+        }
         #endregion
+
+
     }
 }

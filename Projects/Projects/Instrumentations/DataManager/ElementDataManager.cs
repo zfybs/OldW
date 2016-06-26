@@ -357,7 +357,7 @@ namespace OldW.DataManager
         private void RenameElement(object sender, EventArgs e)
         {
             Instrumentation ele = (Instrumentation)cmbx_elements.SelectedValue;
-            string oldName = ele.getMonitorName();
+            string oldName = ele.GetMonitorName();
             ElementInitialize ff = new ElementInitialize(oldName);
             ff.ShowDialog();
 
@@ -369,7 +369,7 @@ namespace OldW.DataManager
             using (Transaction tt = new Transaction(_document.Document, "设置测点名称"))
             {
                 tt.Start();
-                ele.setMonitorName(tt, ff.MonitorName);
+                ele.SetMonitorName(tt, ff.MonitorName);
                 tt.Commit();
             }
 

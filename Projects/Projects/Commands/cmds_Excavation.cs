@@ -1,3 +1,4 @@
+using System.Windows.Forms;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 
@@ -38,19 +39,19 @@ namespace OldW.Commands
 	}
 	
 	/// <summary> 提取模型中的开挖土体信息 </summary>
-	[Autodesk.Revit.Attributes.Transaction(Autodesk.Revit.Attributes.TransactionMode.Manual)]public class cmd_ExcavationInfo : IExternalCommand
+	[Autodesk.Revit.Attributes.Transaction(Autodesk.Revit.Attributes.TransactionMode.Manual)]
+    public class cmd_ExcavationInfo : IExternalCommand
 		{
 		
 		public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
 		{
-			
 			DllActivator.DllActivator_Projects dat = new DllActivator.DllActivator_Projects();
 			dat.ActivateReferences();
 			
 			UIApplication uiApp = commandData.Application;
 			Document doc = uiApp.ActiveUIDocument.Document;
 			//
-			
+            
 			OldWApplication WApp = OldWApplication.Create(uiApp.Application);
 			OldWDocument WDoc = OldWDocument.SearchOrCreate(WApp, doc);
 			//

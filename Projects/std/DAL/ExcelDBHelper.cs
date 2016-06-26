@@ -15,7 +15,6 @@ namespace stdOldW.DAL
     /// </summary>
     public static class ExcelDbHelper
     {
-
         #region Excel 数据库的连接
 
         /// <summary>
@@ -44,6 +43,7 @@ namespace stdOldW.DAL
                           "Data Source=" + excelWorkbookPath + ";" +
                           $"Extended Properties='Excel 12.0;HDR=YES;IMEX={iMEX}'";
             }
+
             OleDbConnection conn = new OleDbConnection(strConn);
             return conn;
         }
@@ -52,70 +52,25 @@ namespace stdOldW.DAL
         /// <summary>
         /// 验证连接的数据源是否是Excel数据库
         /// </summary>
-        /// <param name="conn"></param>
+        /// <param name="excelWorkbookPath"> Excel 工作簿的绝对路径 </param>
         /// <returns>如果是Excel数据库，则返回True，否则返回False。</returns>
         /// <remarks></remarks>
-        private static bool ConnectionSourceValidated(OleDbConnection conn)
+        public static bool IsExcelDataSource(string excelWorkbookPath)
         {
             //考察连接是否是针对于Excel文档的。
-            string strDtSource = conn.DataSource; //"C:\Users\Administrator\Desktop\测试Visio与Excel交互\数据.xlsx"
-            string strExt = Path.GetExtension(strDtSource);
-            if (
-                string.Compare(strExt, ".xlsx", StringComparison.OrdinalIgnoreCase) == 0
-                || string.Compare(strExt, ".xls", StringComparison.OrdinalIgnoreCase) == 0
-                || string.Compare(strExt, ".xlsb", StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                return true;
-            }
-            else
+            //"C:\Users\Administrator\Desktop\测试Visio与Excel交互\数据.xlsx"
+            var strExt = Path.GetExtension(excelWorkbookPath);
+            if (string.IsNullOrEmpty(strExt))
             {
                 return false;
             }
+            strExt = strExt.TrimEnd();
+            return string.Compare(strExt, ".xlsx", StringComparison.OrdinalIgnoreCase) == 0
+                   || string.Compare(strExt, ".xls", StringComparison.OrdinalIgnoreCase) == 0
+                   || string.Compare(strExt, ".xlsb", StringComparison.OrdinalIgnoreCase) == 0;
         }
 
         #endregion
-
-        /// <summary>
-        /// 创建一个新的Excel工作表，并向其中插入一条数据
-        /// </summary>
-        /// <param name="conn"></param>
-        /// <param name="sqlCreateTable"> 用来创建工作表的sql语句 </param>
-        /// <remarks></remarks>
-        public static void CreateNewTable(OleDbConnection conn, string sqlCreateTable)
-        {
-            //如果连接已经关闭，则先打开连接
-            if (conn.State == ConnectionState.Closed)
-            {
-                conn.Open();
-            }
-            if (ConnectionSourceValidated(conn))
-            {
-                using (OleDbCommand ole_cmd = conn.CreateCommand())
-                {
-                    //----- 生成Excel表格 --------------------
-                    //要新创建的表格不能是在Excel工作簿中已经存在的工作表。
-                    //ole_cmd.CommandText = "CREATE TABLE CustomerInfo ([" + tableName + "] VarChar,[Customer] VarChar)";
-                    ole_cmd.CommandText = sqlCreateTable; // "CREATE TABLE Employee(EmployeeID int PRIMARY KEY CLUSTERED";
-                    try
-                    {
-                        //在工作簿中创建新表格时，Excel工作簿不能处于打开状态
-                        ole_cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("创建Excel文档失败，错误信息： " + ex.Message, "Error",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-                }
-
-            }
-            else
-            {
-                MessageBox.Show("未正确连接到Excel数据库!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-        }
 
         #region Excel数据库元数据的获取
 
@@ -132,7 +87,7 @@ namespace stdOldW.DAL
             {
                 conn.Open();
             }
-            if (ConnectionSourceValidated(conn))
+            if (conn.DataSource != null && IsExcelDataSource(conn.DataSource))
             {
                 //获取工作簿连接中的每一个工作表，
                 //注意下面的Rows属性返回的并不是Excel工作表中的每一行，而是Excel工作簿中的所有工作表。
@@ -166,6 +121,11 @@ namespace stdOldW.DAL
         /// <remarks></remarks>
         public static IList<string> GetFieldNames(OleDbConnection conn, string tableName)
         {
+            //如果连接已经关闭，则先打开连接
+            if (conn.State == ConnectionState.Closed)
+            {
+                conn.Open();
+            }
             var dt = conn.GetSchema("Columns", new string[] { null, null, tableName });
             var names = DataTableHelper.GetValue(dt, "COLUMN_NAME");
             return names.AsEnumerable().Select(r => r.ToString()).ToList(); ;
@@ -179,12 +139,16 @@ namespace stdOldW.DAL
         /// <remarks>Excel中字段的数据类型是以数字来表示的，其中：时间=7；</remarks>
         public static IList<string> GetFieldDataType(OleDbConnection conn, string tableName)
         {
+            //如果连接已经关闭，则先打开连接
+            if (conn.State == ConnectionState.Closed)
+            {
+                conn.Open();
+            }
             var dt = conn.GetSchema("Columns", new string[] { null, null, tableName });
+            MessageBox.Show(dt.Rows.Count.ToString());
             var names = DataTableHelper.GetValue(dt, "DATA_TYPE");
             return names.AsEnumerable().Select(r => r.ToString()).ToList();
         }
-
-
 
         #endregion
 
@@ -204,7 +168,7 @@ namespace stdOldW.DAL
             {
                 conn.Open();
             }
-            if (ConnectionSourceValidated(conn))
+            if (conn.DataSource != null && IsExcelDataSource(conn.DataSource))
             {
                 //创建向数据库发出的指令
                 OleDbCommand olecmd = conn.CreateCommand();
@@ -248,7 +212,7 @@ namespace stdOldW.DAL
             {
                 conn.Open();
             }
-            if (ConnectionSourceValidated(conn))
+            if (conn.DataSource != null && IsExcelDataSource(conn.DataSource))
             {
                 //创建向数据库发出的指令
                 OleDbCommand olecmd = conn.CreateCommand();
@@ -305,7 +269,7 @@ namespace stdOldW.DAL
             {
                 conn.Open();
             }
-            if (ConnectionSourceValidated(conn))
+            if (conn.DataSource != null && IsExcelDataSource(conn.DataSource))
             {
                 //创建向数据库发出的指令
                 OleDbCommand olecmd = conn.CreateCommand();
@@ -367,7 +331,7 @@ namespace stdOldW.DAL
             {
                 conn.Open();
             }
-            if (ConnectionSourceValidated(conn))
+            if (conn.DataSource != null && IsExcelDataSource(conn.DataSource))
             {
                 //创建向数据库发出的指令
                 OleDbCommand olecmd = conn.CreateCommand();
@@ -420,15 +384,17 @@ namespace stdOldW.DAL
         /// <param name="conn"> </param>
         /// <param name="tableSource"> 数据源，此工作表中的每一个字段中的数据都会被插入到Excel的指定工作表中。
         /// 请手动确保工作表Sheet中有与DataTable中每一列同名的字段，而且其数据类型是兼容的。 </param>
-        /// <param name="sheetName"> 要进行插入的Excel工作表的名称，其格式为“Sheet1$”</param>
+        /// <param name="sheetName"> 要进行插入的Excel工作表的名称，其格式为“Sheet1$”。请确保此工作表已经存在，而且已经包含与 tableSource 的列名相对应的字段 </param>
         public static void InsertDataTable(OleDbConnection conn, DataTable tableSource, string sheetName)
         {
+            Utils.ShowEnumerable(GetSheetsName(conn),"工作表集合");
+
             //如果连接已经关闭，则先打开连接
             if (conn.State == ConnectionState.Closed)
             {
                 conn.Open();
             }
-            if (ConnectionSourceValidated(conn))
+            if (conn.DataSource != null && IsExcelDataSource(conn.DataSource))
             {
                 string[] fields = new string[tableSource.Columns.Count];
                 // 获取字段名
@@ -453,6 +419,8 @@ namespace stdOldW.DAL
                         ConstructDbValue(row.ItemArray, ref sb);
                         sb.Append(")");
 
+                        // MessageBox.Show(sb.ToString(),"SQL 命令");
+
                         olecmd.CommandText = sb.ToString();
                         // 大致的效果是这样的。
                         // olecmd.CommandText = $"INSERT INTO [Sheet2$] (Field1, Field2, Field3) values (\'{row[0]}\',\'{row[1]}\',\'{row[1]}\')";
@@ -465,49 +433,119 @@ namespace stdOldW.DAL
                 }
                 catch (Exception ex)
                 {
-                    Utils.ShowDebugCatch(ex, "DataTable中的数据插入Excel工作表出错");
-                    throw;
+                    throw new InvalidOperationException("DataTable中的数据插入Excel工作表出错", ex);
                 }
             }
         }
 
-
         /// <summary>
-        /// 向Excel工作表中插入一条数据，此函数并不通用，不建议使用
+        /// 向Excel工作表中插入一条数据
         /// </summary>
         /// <param name="conn"></param>
-        /// <param name="TableName">要插入数据的工作表名称</param>
+        /// <param name="sheetName">要插入数据的工作表名称，名称中请自带后缀$ </param>
         /// <param name="FieldName">要插入到的字段</param>
         /// <param name="Value">实际插入的数据</param>
         /// <remarks></remarks>
-        public static void InsertToTable(OleDbConnection conn, string TableName, string FieldName, object Value)
+        public static void InsertToSheet(OleDbConnection conn, string sheetName, string FieldName, object Value)
+        {
+            string commandText = "insert into [" + sheetName + ("](" + FieldName) + ") values(\'" + Value + "\')";
+            ExecuteNoneQuery(conn, commandText);
+        }
+
+        #endregion
+
+        /// <summary>
+        /// 根据指定的字段名创建一个全新的Excel工作表，但是不向其中添加任何数据。
+        /// </summary>
+        /// <param name="conn"></param>
+        /// <param name="sheetName"> 要创建的工作表的名称，不能带后缀$ </param>
+        /// <param name="fields_valueTypes"> 工作表中的每一个字段，以及字段所对应的数据类型。如果不赋值，则只创建出一个工作表，而不创建任何字段。 </param>
+        /// <remarks>在Excel中创建工作表的语句为： "CREATE TABLE Sheet1 ( [Field1] VarChar,[Field2] VarChar)" </remarks>
+        public static void CreateNewSheet(OleDbConnection conn, string sheetName, params string[] fields_valueTypes)
         {
             //如果连接已经关闭，则先打开连接
             if (conn.State == ConnectionState.Closed)
             {
                 conn.Open();
             }
-            if (ConnectionSourceValidated(conn))
+            if (fields_valueTypes == null || fields_valueTypes.Length == 0)
+            {
+                // 向Excel中创建一个无字段的工作表时，虽然不会报错，但也不会生效。
+                throw new InvalidCastException("请至少为工作表中添加一个字段");
+            }
+
+            if (fields_valueTypes.Length % 2 != 0)
+            {
+                throw new InvalidCastException("输入的字段与数据类型的数目不对应");
+            }
+
+            // 在Excel中创建工作表的语句为： "CREATE TABLE Sheet1 ( [Field1] VarChar,[Field2] VarChar)" 
+            StringBuilder sb = new StringBuilder();
+            sb.Append($"CREATE TABLE [{sheetName}] ([{fields_valueTypes[0]}] {fields_valueTypes[1]}");
+            //
+            for (int pair = 2; pair < fields_valueTypes.Length; pair += 2)
+            {
+                sb.Append($",[{fields_valueTypes[pair]}] {fields_valueTypes[pair + 1]}");
+            }
+            sb.Append(@")");
+
+            ExecuteNoneQuery(conn, sb.ToString());
+
+        }
+
+        /// <summary>
+        /// 根据指定的DataTable 创建一个全新的 Excel 工作表，而不添加任何数据。
+        /// </summary>
+        /// <param name="conn"></param>
+        /// <param name="tableSource"> 工作表名称即 tableSource.TableName；工作表中每一个字段的名称即tableSource中每一列的列名 </param>
+        public static void CreateNewSheet(OleDbConnection conn, DataTable tableSource)
+        {
+            //如果连接已经关闭，则先打开连接
+            if (conn.State == ConnectionState.Closed)
+            {
+                conn.Open();
+            }
+
+            string[] fields_valueTypes = new string[tableSource.Columns.Count * 2];
+
+            for (int i = 0; i < tableSource.Columns.Count; i++)
+            {
+                fields_valueTypes[i * 2] = tableSource.Columns[i].ColumnName;
+                fields_valueTypes[i * 2 + 1] = ConvertExcelDataType(tableSource.Columns[i].DataType);//"char(255)";//tableSource.Columns[i].DataType.ToString();
+            }
+
+            // 创建全新的Excel工作表
+            CreateNewSheet(conn, tableSource.TableName, fields_valueTypes);
+        }
+
+        /// <summary> 对Excel数据库执行非查询SQL语句 </summary>
+        /// <param name="conn"></param>
+        /// <param name="sql"> 用来执行的非查询sql语句</param>
+        /// <remarks></remarks>
+        public static void ExecuteNoneQuery(OleDbConnection conn, string sql)
+        {
+            //如果连接已经关闭，则先打开连接
+            if (conn.State == ConnectionState.Closed)
+            {
+                conn.Open();
+            }
+            if (conn.DataSource != null && IsExcelDataSource(conn.DataSource))
             {
                 using (OleDbCommand ole_cmd = conn.CreateCommand())
                 {
-                    //在插入数据时，字段名必须是数据表中已经有的字段名，插入的数据类型也要与字段下的数据类型相符。
-
+                    ole_cmd.CommandText = sql;
                     try
                     {
-                        ole_cmd.CommandText = "insert into [" + TableName + ("$](" + FieldName) + ") values(\'" + Value.ToString() + "\')";
-
-                        //这种插入方式在Excel中的实时刷新的，也就是说插入时工作簿可以处于打开的状态，
-                        //而且这里插入后在Excel中会立即显示出插入的值。
+                        //在工作簿中创建新表格时，Excel工作簿不能处于打开状态
                         ole_cmd.ExecuteNonQuery();
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("数据插入失败，错误信息： " + ex.Message);
+                        MessageBox.Show("创建Excel文档失败，错误信息： " + ex.Message, "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
                 }
-
             }
             else
             {
@@ -515,6 +553,8 @@ namespace stdOldW.DAL
                 return;
             }
         }
+
+        #region ---   子函数
 
         /// <summary>
         /// 将要提取的字段名称转换为SQL语句中的字段名称字符
@@ -542,19 +582,39 @@ namespace stdOldW.DAL
         /// <param name="sb"></param>
         private static void ConstructDbValue(IList<object> values, ref StringBuilder sb)
         {
-            // 不能将空字符串赋值给可为空的double类型字段，要先将空字符转换为null
+            // 第一个值
             if (values.Count > 0)
             {
-                sb.Append(Convert.IsDBNull(values[0]) ? "null" : "\'" + values[0].ToString() + "\'");
+                // 不能将空字符串赋值给可为空的double类型字段，要先将空字符转换为null
+                sb.Append(Convert.IsDBNull(values[0]) ? "null" : "\'" + values[0] + "\'");
             }
+
+            // 后面的值
             for (int i = 1; i < values.Count; i++)
             {
                 // 注意这里有一个“,”的区别
-                sb.Append(Convert.IsDBNull(values[i]) ? ",null" : ",\'" + values[i].ToString() + "\'");
+                sb.Append(Convert.IsDBNull(values[i]) ? ",null" : ",\'" + values[i] + "\'");
             }
         }
 
-        #endregion
+        /// <summary>
+        /// Create Table时，为字段名匹配字段类型
+        /// </summary>
+        /// <param name="type"> .NET 中的数据类型 </param>
+        /// <returns> Excel中的数据类型 </returns>
+        private static string ConvertExcelDataType(Type type)
+        {
+            if (type == typeof(float) || type == typeof(int) || type == typeof(double))
+            {
+                return "double";
+            }
+            if (type == typeof(DateTime))
+            {
+                return "date";
+            }
+            return "char(255)";
+        }
 
+        #endregion
     }
 }

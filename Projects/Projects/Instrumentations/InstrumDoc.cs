@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Autodesk.Revit.ApplicationServices;
@@ -7,6 +9,8 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using OldW.GlobalSettings;
 using rvtTools;
+using stdOldW;
+using stdOldW.DAL;
 using stdOldW.WinFormHelper;
 using Forms = System.Windows.Forms;
 
@@ -129,6 +133,91 @@ namespace OldW.Instrumentations
         }
 
         #endregion
+
+
+        /// <summary> 将多个点测点（或者线测点中的多个子节点）的监测数据Revit中导出到Excel中。
+        /// 如果指定的点测点（或者线测点中的多个子节点）中没有数据，则返回的表格中只有一个“时间”字段 </summary>
+        /// <param name="fieldPoints"> 字典中的每一键代表多个点测点（或者线测点中的多个子节点）的测点名称，值代表此测点或者子节点每一天的监测数据 </param>
+        /// <param name="tableName"> 表格的标题名称，此名称在后期自然是可以修改的。 </param>
+        public static DataTable PointsToDatatable(Dictionary<string, List<MonitorData_Point>> fieldPoints, string tableName)
+        {
+            DataTable table = new DataTable()
+            {
+                TableName = tableName
+            };
+
+            DataColumn colDate = new DataColumn // 主键的日期字段
+            {
+                ColumnName = Constants.ExcelDatabasePrimaryKeyName,
+                DataType = typeof(DateTime),
+                AllowDBNull = false,
+            };
+
+            table.Columns.Add(colDate);
+
+            SortedSet<DateTime> id = new SortedSet<DateTime>(); // 维护表格的主键
+
+            //
+            foreach (var point in fieldPoints) // 每一个测点
+            {
+                DataColumn colField = new DataColumn // 每一个测点的监测字段
+                {
+                    ColumnName = point.Key,
+                    DataType = typeof(float),
+                    AllowDBNull = true,
+                };
+
+                table.Columns.Add(colField);
+
+                List<MonitorData_Point> data = point.Value;
+                if (data == null)
+                {
+                    // 说明此测点没有数据，因为只添加一个空的数据列
+                    continue;
+                }
+                foreach (MonitorData_Point dataPoint in data) // 测点每一天的监测数据
+                {
+                    var index = id.IndexOf(dataPoint.Date);
+
+                    if (index >= 0) // 说明有匹配项，此时应该在匹配下标所对应的行中添加数据
+                    {
+                        // 不用修改监测日期值，因为日期是主键，在添加数据行时已经赋值了。
+                        table.Rows[index][colField] = FilterNull(dataPoint.Value);      // 监测数据值 
+
+                    }
+                    else // 说明没有匹配项，此时应该在表格中添加一行新的数据
+                    {
+                        id.Add(dataPoint.Date);
+                        int newIndex = id.IndexOf(dataPoint.Date); // 在添加数据后，新添加的数据并不一定会在最后一行，而有可能被Sort到其他行去了。
+
+                        // Instantiate a new row using the NewRow method.
+                        DataRow dtRow = table.NewRow();
+
+
+                        dtRow[colDate] = dataPoint.Date;
+                        // 监测数据值 
+                        dtRow[colField] = FilterNull(dataPoint.Value);
+
+                        // 先为数据行赋值，再将数据行添加到表格中，以避免出现不允许空值的列中出现空值。
+                        table.Rows.InsertAt(dtRow, newIndex);
+                    }
+                }
+            }
+            Forms.MessageBox.Show(DataTableHelper.PrintTableOrView(table, tableName).ToString());
+            return table;
+        }
+
+        /// <summary> 如果输入的值为null，则返回 DBNull.Value，否则返回这个值本身 </summary>
+        private static object FilterNull(object value)
+        {
+            if (value == null)
+            {
+                return DBNull.Value;
+            }
+            return value;
+
+
+        }
 
     }
 }

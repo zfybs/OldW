@@ -1,35 +1,38 @@
 // VBConversions Note: VB project level imports
-using System.Collections.Generic;
+
+#region
+
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using Autodesk.Revit.DB;
+using OldW.GlobalSettings;
+using rvtTools;
 //using Autodesk.Revit.DB;
 //using Autodesk.Revit.UI;
 // End of VB project level imports
-using rvtTools;
-using Autodesk.Revit.DB;
+
+#endregion
 
 namespace OldW.Excavation
 {
-
     /// <summary> 用来模拟分块开挖的土体元素。 </summary>
     /// <remarks></remarks>
     public class Soil_Excav : Soil_Element
     {
-
         #region    ---   Properties
 
         /// <summary> 开挖土体单元所附着的模型土体 </summary>
         private Soil_Model F_ModelSoil;
+
         /// <summary> 开挖土体单元所附着的模型土体 </summary>
         public Soil_Model ModelSoil
         {
-            get
-            {
-                return F_ModelSoil;
-            }
+            get { return F_ModelSoil; }
         }
 
         private Nullable<DateTime> F_CompletedDate;
+
         /// <summary>
         /// 每一个开挖土体都有一个开挖完成的时间。由于记录的不完整，这个时间可能暂时不知道，但是后期要可以指定。
         /// </summary>
@@ -46,6 +49,7 @@ namespace OldW.Excavation
         }
 
         private Nullable<DateTime> F_StartedDate;
+
         /// <summary>
         /// 每一个开挖土体都有一个开始开挖的时间。由于记录的不完整，这个时间可能暂时不知道，但是后期要可以指定。
         /// </summary>
@@ -71,7 +75,8 @@ namespace OldW.Excavation
         /// <param name="SoilRemove">用来模拟土体开挖的土体Element</param>
         /// <param name="BindedModelSoil">开挖土体单元所附着的模型土体。</param>
         /// <remarks></remarks>
-        private Soil_Excav(FamilyInstance SoilRemove, Soil_Model BindedModelSoil) : base(BindedModelSoil.ExcavDoc, SoilRemove)
+        private Soil_Excav(FamilyInstance SoilRemove, Soil_Model BindedModelSoil)
+            : base(BindedModelSoil.ExcavDoc, SoilRemove)
         {
             this.F_ModelSoil = BindedModelSoil;
         }
@@ -91,17 +96,17 @@ namespace OldW.Excavation
             {
                 try
                 {
-                    FamilyInstance Soil = (FamilyInstance)(SoilElementId.Element(doc));
+                    FamilyInstance Soil = (FamilyInstance)SoilElementId.Element(doc);
                     // 是否满足基本的土体单元的条件
-                    if (!Soil_Element.IsSoildElement(doc, SoilElementId, ref FailureMessage))
+                    if (!IsSoilElement(doc, SoilElementId, ref FailureMessage))
                     {
-                        throw (new InvalidCastException(FailureMessage));
+                        throw new InvalidCastException(FailureMessage);
                     }
                     // 进行细致的检测
-                    Parameter pa = Soil.get_Parameter(GlobalSettings.Constants.SP_ExcavationCompleted_Guid);
+                    Parameter pa = Soil.get_Parameter(Constants.SP_ExcavationCompleted_Guid);
                     if (pa != null)
                     {
-                        throw (new InvalidCastException("族实例中没有参数：\"" + GlobalSettings.Constants.SP_ExcavationCompleted + "\""));
+                        throw new InvalidCastException("族实例中没有参数：\"" + Constants.SP_ExcavationCompleted + "\"");
                     }
                     blnSucceed = true;
                 }
@@ -130,6 +135,22 @@ namespace OldW.Excavation
         }
 
         #endregion
+
+
+        /// <summary>
+        /// 得到开挖土体的顶面或者底面的在模型中的标高
+        /// </summary>
+        /// <param name="Top">If true, obtain the elevation of the top surface. If false, obtain the elevation of the bottom surface.  </param>
+        /// <returns>指定表面的标高值（单位为m）。the elevation of the specified surface, in the unit of meter.</returns>
+        /// <remarks>不用Element.Geometry（）方法，因为此方法包含大量的数据结构转换，太消耗CPU。而应使用GetBoundingBox与GetTransform等方法。</remarks>
+        public double GetElevation(bool Top)
+        {
+            double z = Top
+                ? Soil.get_BoundingBox(Document.ActiveView).Max.Z
+                : Convert.ToDouble(Soil.get_BoundingBox(Document.ActiveView).Min.Z);
+
+            return UnitUtils.ConvertFromInternalUnits(z, DisplayUnitType.DUT_CUBIC_METERS);
+        }
 
         #region    ---   为开挖土体设置与读取对应的开挖完成的时间
 
@@ -166,11 +187,11 @@ namespace OldW.Excavation
             Parameter pa = default(Parameter);
             if (Started)
             {
-                pa = Soil.get_Parameter(GlobalSettings.Constants.SP_ExcavationStarted_Guid);
+                pa = Soil.get_Parameter(Constants.SP_ExcavationStarted_Guid);
             }
             else
             {
-                pa = Soil.get_Parameter(GlobalSettings.Constants.SP_ExcavationCompleted_Guid);
+                pa = Soil.get_Parameter(Constants.SP_ExcavationCompleted_Guid);
             }
 
             if (pa != null)
@@ -202,7 +223,7 @@ namespace OldW.Excavation
             }
             else
             {
-                throw (new NullReferenceException(string.Format("土体单元中未找到指定的参数\"{0}\"", GlobalSettings.Constants.SP_ExcavationCompleted)));
+                throw new NullReferenceException(string.Format("土体单元中未找到指定的参数\"{0}\"", Constants.SP_ExcavationCompleted));
             }
         }
 
@@ -216,19 +237,19 @@ namespace OldW.Excavation
             string paName = "";
             if (Started)
             {
-                pa = Soil.get_Parameter(GlobalSettings.Constants.SP_ExcavationStarted_Guid);
-                paName = GlobalSettings.Constants.SP_ExcavationStarted;
+                pa = Soil.get_Parameter(Constants.SP_ExcavationStarted_Guid);
+                paName = Constants.SP_ExcavationStarted;
             }
             else
             {
-                pa = Soil.get_Parameter(GlobalSettings.Constants.SP_ExcavationCompleted_Guid);
-                paName = GlobalSettings.Constants.SP_ExcavationCompleted;
+                pa = Soil.get_Parameter(Constants.SP_ExcavationCompleted_Guid);
+                paName = Constants.SP_ExcavationCompleted;
             }
             //
             string strDate = "";
             if (pa != null)
             {
-                strDate = System.Convert.ToString(pa.AsString());
+                strDate = Convert.ToString(pa.AsString());
                 DateTime dt = default(DateTime);
                 if (DateTime.TryParse(strDate, out dt))
                 {
@@ -243,38 +264,32 @@ namespace OldW.Excavation
             }
             else
             {
-                throw (new NullReferenceException(string.Format("土体单元中未找到指定的参数\"{0}\"", paName)));
+                throw new NullReferenceException(string.Format("土体单元中未找到指定的参数\"{0}\"", paName));
             }
-
         }
 
         #endregion
 
-        /// <summary>
-        /// 得到开挖土体的顶面或者底面的在模型中的标高
-        /// </summary>
-        /// <param name="Top">If true, obtain the elevation of the top surface. If false, obtain the elevation of the bottom surface.  </param>
-        /// <returns>指定表面的标高值（单位为m）。the elevation of the specified surface, in the unit of meter.</returns>
-        /// <remarks>不用Element.Geometry（）方法，因为此方法包含大量的数据结构转换，太消耗CPU。而应使用GetBoundingBox与GetTransform等方法。</remarks>
-        public double GetElevation(bool Top)
-        {
-            double Z = 0;
-            if (Top)
-            {
-                Z = Soil.get_BoundingBox(Doc.ActiveView).Max.Z;
-            }
-            else
-            {
-                Z = System.Convert.ToDouble(Soil.get_BoundingBox(Doc.ActiveView).Min.Z);
-            }
-            return UnitUtils.ConvertFromInternalUnits(Z, DisplayUnitType.DUT_CUBIC_METERS);
-        }
+        #region   ---   开挖土体的名称的提取与设置
 
         /// <summary> 获取开挖土体的名称，这里取的是族实例所对应的族类型的名称 </summary>
         public string GetName()
         {
             return Soil.Symbol.Name;
         }
-    }
 
+        /// <summary> 设置开挖土体的名称。默认情况下，一个开挖土体族中只有一个族类型，此族类型也只有一个实例单元。
+        /// 族实例所对应的族类型的名称 </summary>
+        /// <param name="tran">  </param>
+        /// <param name="newName"> 这里会将开挖土体对应所对应的族类型，以及其族都设置为此名称。 </param>
+        public void SetName(Transaction tran, string newName)
+        {
+            // 设置族类型的名称
+            Soil.Symbol.Name = newName;
+            // 设置族在Revit文档中的名称
+            Soil.Symbol.Family.Name = newName;
+        }
+
+        #endregion
+    }
 }

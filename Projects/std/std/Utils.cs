@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 
 namespace stdOldW
@@ -83,10 +84,25 @@ namespace stdOldW
         /// <param name="ex"> Catch 块中的 Exception 对象</param>
         /// <param name="message">报错信息提示</param>
         /// <param name="title"> 报错对话框的标题 </param>
-        public static void ShowDebugCatch(Exception ex, string message,string title= "出错")
+        public static void ShowDebugCatch(Exception ex, string message, string title = "出错")
         {
-            MessageBox.Show(message + "\r\n" + ex.Message + "\r\n" + ex.StackTrace, title,
-                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(message);
+            sb.AppendLine(ex.Message);
+
+            // 一直向下提取InnerException
+            Exception exInner = ex.InnerException;
+            Exception exStack = ex;
+            while (exInner != null)
+            {
+                exStack = exInner;
+                sb.AppendLine(exInner.Message);
+                exInner = exInner.InnerException;
+            }
+            // 最底层的出错位置
+            sb.AppendLine("\r\n" + exStack.StackTrace);
+
+            MessageBox.Show(sb.ToString(), title, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         /// <summary>
@@ -134,7 +150,7 @@ namespace stdOldW
         /// 另外,在PInvoke中,只有SetDllDirectory这个函数,但是它的真实的名称是SetDllDirectoryW.</remarks>
         [DllImport("kernel32.dll", ExactSpelling = true, CharSet = CharSet.Ansi, SetLastError = true)]
         private static extern bool SetDllDirectoryW(string lpPathName);
-        
+
         /// <summary>
         /// 装载指定的动态链接库，并为当前进程把它映射到地址空间。一旦载入，就可以访问库内保存的资源。一旦不需要，用FreeLibrary函数释放DLL
         /// </summary>

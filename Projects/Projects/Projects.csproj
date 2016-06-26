@@ -116,6 +116,12 @@
     <Compile Include="Instrumentations\DataTransfer\DataImport_MonitorEntityExcel.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Instrumentations\DataTransfer\DataExport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Instrumentations\DataTransfer\DataExport.Designer.cs">
+      <DependentUpon>DataExport.cs</DependentUpon>
+    </Compile>
     <Compile Include="Instrumentations\InstrumService.cs" />
     <Compile Include="Instrumentations\InstrumDoc.cs" />
     <Compile Include="Instrumentations\IntrumType\Instrum_WallTop.cs" />
@@ -130,12 +136,6 @@
     </Compile>
     <Compile Include="ConstructionReview\ConstructionReview.Designer.cs">
       <DependentUpon>ConstructionReview.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Instrumentations\DataTransfer\DataExport.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Instrumentations\DataTransfer\DataExport.Designer.cs">
-      <DependentUpon>DataExport.cs</DependentUpon>
     </Compile>
     <Compile Include="Instrumentations\DataTransfer\DataImport.cs">
       <SubType>Form</SubType>
@@ -206,9 +206,6 @@
     <EmbeddedResource Include="ConstructionReview\ConstructionReview.resx">
       <DependentUpon>ConstructionReview.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Instrumentations\DataTransfer\DataExport.resx">
-      <DependentUpon>DataExport.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Instrumentations\DataTransfer\DataImport.resx">
       <DependentUpon>DataImport.cs</DependentUpon>
     </EmbeddedResource>
@@ -226,6 +223,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Instrumentations\DataManager\FormReNameElement.resx">
       <DependentUpon>FormReNameElement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Instrumentations\DataTransfer\DataExport.resx">
+      <DependentUpon>DataExport.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SafetyWarnings\FormSetWarning.resx">
       <DependentUpon>FormSetWarning.cs</DependentUpon>

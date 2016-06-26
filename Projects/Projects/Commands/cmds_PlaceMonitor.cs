@@ -252,7 +252,7 @@ namespace OldW.Commands
                         {
                             if (ins.Key.Monitor.IsValidObject)
                             {
-                                ins.Key.setMonitorName(tran, ins.Value);
+                                ins.Key.SetMonitorName(tran, ins.Value);
                             }
                         }
                         tran.Commit();
@@ -278,10 +278,10 @@ namespace OldW.Commands
         /// <param name="ins"></param>
         private static void InitializeInstrumentation(Instrumentation ins)
         {
-            ElementInitializer formInitializer = new ElementInitializer(ins.getMonitorName());
+            ElementInitializer formInitializer = new ElementInitializer(ins.GetMonitorName());
             formInitializer.ShowDialog();
 
-            if (ins.getMonitorName() != formInitializer.MonitorName)
+            if (ins.GetMonitorName() != formInitializer.MonitorName)
             {
                 instrumsToBeRenamed.Add(ins, formInitializer.MonitorName);
             }

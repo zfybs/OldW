@@ -1,0 +1,8 @@
+F:\Software\Revit\RevitDevelop\OldW\bin\stdOldW.xml
+F:\Software\Revit\RevitDevelop\OldW\bin\stdOldW.dll
+F:\Software\Revit\RevitDevelop\OldW\bin\stdOldW.pdb
+F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\x86\Debug\stdOldW.WinFormHelper.eZDataGridView.resources
+F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\x86\Debug\stdOldW.WinFormHelper.eZDataGridViewPaste.resources
+F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\x86\Debug\stdOldW.csproj.GenerateResource.Cache
+F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\x86\Debug\stdOldW.dll
+F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\x86\Debug\stdOldW.pdb

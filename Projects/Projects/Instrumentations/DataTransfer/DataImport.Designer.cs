@@ -34,7 +34,7 @@ namespace OldW.DataManager
             this.ButtonImport = new System.Windows.Forms.Button();
             this.dataGridViewExcel = new System.Windows.Forms.DataGridView();
             this.buttonChooseFile = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.textBoxFilePath = new System.Windows.Forms.TextBox();
             this.buttonMapping = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.buttonCheckMultiple = new System.Windows.Forms.Button();
@@ -86,16 +86,17 @@ namespace OldW.DataManager
             this.buttonChooseFile.TabIndex = 3;
             this.buttonChooseFile.Text = "选择";
             this.buttonChooseFile.UseVisualStyleBackColor = true;
+            this.buttonChooseFile.Click += new System.EventHandler(this.buttonChooseFile_Click);
             // 
-            // textBox1
+            // textBoxFilePath
             // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.textBoxFilePath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox1.Location = new System.Drawing.Point(132, 17);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(416, 21);
-            this.textBox1.TabIndex = 6;
-            this.textBox1.Text = "F:\\Software\\Revit\\RevitDevelop\\OldW\\bin\\SQL墙体测斜.xlsx";
+            this.textBoxFilePath.Location = new System.Drawing.Point(132, 17);
+            this.textBoxFilePath.Name = "textBoxFilePath";
+            this.textBoxFilePath.Size = new System.Drawing.Size(416, 21);
+            this.textBoxFilePath.TabIndex = 6;
+            this.textBoxFilePath.Text = "F:\\Software\\Revit\\RevitDevelop\\OldW\\bin\\SQL墙体测斜.xlsx";
             // 
             // buttonMapping
             // 
@@ -173,7 +174,7 @@ namespace OldW.DataManager
             this.ClientSize = new System.Drawing.Size(649, 526);
             this.Controls.Add(this.labelProgress);
             this.Controls.Add(this.progressBar1);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.textBoxFilePath);
             this.Controls.Add(this.dataGridViewExcel);
             this.Controls.Add(this.buttonMapping);
             this.Controls.Add(this.buttonChooseFile);
@@ -198,7 +199,7 @@ namespace OldW.DataManager
         internal Button ButtonImport;
         private DataGridView dataGridViewExcel;
         internal Button buttonChooseFile;
-        private TextBox textBox1;
+        private TextBox textBoxFilePath;
         internal Button buttonMapping;
         private ProgressBar progressBar1;
         internal Button buttonCheckMultiple;
