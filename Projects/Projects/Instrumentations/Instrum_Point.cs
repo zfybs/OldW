@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
+using System.Diagnostics;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Windows.Forms;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using OldW.GlobalSettings;
@@ -17,14 +21,7 @@ namespace OldW.Instrumentations
     /// <remarks></remarks>
     public class Instrum_Point : Instrumentation
     {
-        #region    ---   Properties
 
-        /// <summary>
-        /// 点测点的整个施工阶段中的监测数据
-        /// </summary>
-        private List<MonitorData_Point> _monitorData;
-
-        #endregion
 
         #region    ---   构造函数
 
@@ -56,6 +53,11 @@ namespace OldW.Instrumentations
         #endregion
 
         #region   ---   监测数据的提取与保存
+
+        /// <summary>
+        /// 点测点的整个施工阶段中的监测数据
+        /// </summary>
+        private List<MonitorData_Point> _monitorData;
 
         /// <summary>
         /// 将测点对象中的监测数据提取为具体的序列化类
@@ -113,9 +115,26 @@ namespace OldW.Instrumentations
         /// <param name="fieldName">监测数据在工作表中的哪个字段下。对于线测点，其fieldName是不必要的。</param>
         public override void ImportFromExcel(Transaction tran, OleDbConnection conn, string sheetName, string fieldName)
         {
-            DataTable dt = ExcelDbHelper.GetFieldDataFromExcel(conn, sheetName, Constants.ExcelDatabasePrimaryKeyName, fieldName);
+            DataTable dt = ExcelDbHelper.GetFieldDataFromExcel(conn, sheetName, Constants.ExcelDatabasePrimaryKeyName,
+                fieldName);
             var data = MonitorData_Point.FromDataTable(dt, indexDate: 0, indexValue: 1);
             SetMonitorData(tran, data);
+        }
+
+
+        /// <summary> 将多个点测点的监测数据Revit中导出到Excel中  </summary>
+        /// <param name="points">监测数据在工作表中的哪个字段下。对于线测点，其fieldName是不必要的。</param>
+        public static DataTable ConvertToDatatable(IEnumerable<Instrum_Point> points)
+        {
+            Dictionary<string, List<MonitorData_Point>> fieldPoints = new Dictionary<string, List<MonitorData_Point>>();
+
+            // 将测点数据进行重新组合
+            foreach (Instrum_Point point in points)
+            {
+                fieldPoints.Add(point.GetMonitorName(), point.GetMonitorData());
+            }
+
+            return InstrumDoc.PointsToDatatable(fieldPoints, tableName: points.Any() ? points.First().Type.ToString() : InstrumentationType.其他点测点.ToString());
         }
 
         #endregion

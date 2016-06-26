@@ -88,15 +88,16 @@ namespace stdOldW
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(message);
+            sb.AppendLine(ex.Message);
 
             // 一直向下提取InnerException
-            Exception exIn = ex.InnerException;
+            Exception exInner = ex.InnerException;
             Exception exStack = ex;
-            while (exIn != null)
+            while (exInner != null)
             {
-                exStack = exIn;
-                sb.AppendLine(exIn.Message);
-                exIn = exIn.InnerException;
+                exStack = exInner;
+                sb.AppendLine(exInner.Message);
+                exInner = exInner.InnerException;
             }
             // 最底层的出错位置
             sb.AppendLine("\r\n" + exStack.StackTrace);

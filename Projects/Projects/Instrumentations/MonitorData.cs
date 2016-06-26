@@ -5,11 +5,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using OldW.GlobalSettings;
 using stdOldW.DAL;
 
 namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关的一些接口、枚举等的定义
 {
-    /// <summary> 监测数据类，表示点测点中的每一天的监测数据 </summary>
+    /// <summary> 监测数据类，表示点测点（或者也可以表示线测点中的子节点）中的每一天的监测数据 </summary>
     [Serializable()]
     public class MonitorData_Point
     {
@@ -63,7 +64,7 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
         /// 比如测斜管是在一个测点中的不同深度下有多个监测数据，而墙顶位移是一个测点中有水平与竖直两个监测数据。
         /// </summary>
         private string[] _nodes { get; set; }
-        
+
         private readonly SortedDictionary<DateTime, float?[]> _monitorData;
         /// <summary>
         /// 测斜管在每一天的监测数据。其中，SortedDictionary 中的Value项 为一个数组，
@@ -80,7 +81,7 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
         /// </summary>
         /// <remarks> 线测点的子节点是广义上的同一个测点中所监测的不同类型的数据，比如墙顶位移测点就有“墙顶垂直位移”与 “墙顶水平位移”两个子节点。
         /// 但是对于测斜管这类线测点，其每一个字段都是有严格的数值意义的，即代表了此子节点距离管顶的深度。</remarks>
-        public  bool NodesDigital;
+        public bool NodesDigital;
 
         /// <summary>
         /// 构造函数
@@ -129,7 +130,7 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
         /// </summary>
         /// <param name="table"> 要进行数据提取的表格的第一个字段必须是用来存储时间信息的主键 </param>
         /// <param name="convertStringToSingle"> 对于测斜管这类线测点，其每一个字段都是有严格的数值意义的，即代表了此子节点距离管顶的深度，
-        /// 所以在Excel工作表中，这些子节点的字段名的格式为“2#50”，这时就要将其转换为对应的可以表示数值的“2.50”。 </param>
+        /// 所以在Excel工作表中，这些子节点的字段名的格式为“123、0#50、0.5、0dot5”，这时就要将其转换为对应的可以表示数值的“2.50”。 </param>
         /// <returns> 实体类，用来作为 Instrum_Line.SetMonitorData 的输入参数 </returns>
         public static MonitorData_Line FromDataTable(DataTable table, bool convertStringToSingle)
         {
@@ -139,12 +140,26 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
             string[] nodes = new string[nodesCount];
             if (convertStringToSingle)
             {
+                // 列名格式为：“123、0#50、0.5、0dot5”，即表示深度为0.50处的子节点，所以这里要先将其转换为数值
+                string pattern = @"\b\s*\d*(\.|#|" + Constants.ExcelDatabaseDot + @"dot)??\d*\s*\b";
+
                 for (int i = 0; i < nodesCount; i++)
                 {
-                    // 列名格式为：“0#50”，即表示深度为0.50处的子节点，所以这里要先将其转换为数值
-                    nodes[i] = table.Columns[i + 1].ColumnName.Replace("#", ".");
-                }
+                    string tableName = table.Columns[i + 1].ColumnName;
+                    var match = Regex.Match(tableName, pattern);
+                    if (match.Success)
+                    {
+                        string dot = match.Groups[1].Value;
 
+                        // 如果是整数就直接返回整数就可以了。
+                        nodes[i] = string.IsNullOrEmpty(dot) ? nodes[i] = match.Value : nodes[i] = match.Value.Replace(dot, ".");
+
+                    }
+                    else
+                    {
+                        throw new InvalidCastException("表示节点的字段名不能转换为数值！");
+                    }
+                }
             }
             else
             {
@@ -176,7 +191,7 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
                 // 添加一条记录
                 monitoredData.Add((DateTime)row[0], values);
             }
-            return new MonitorData_Line(nodes, monitoredData,convertStringToSingle);
+            return new MonitorData_Line(nodes, monitoredData, convertStringToSingle);
         }
 
     }

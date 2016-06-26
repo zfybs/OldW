@@ -38,8 +38,11 @@ namespace OldW.Instrumentations
             // TreeViewIns 属性设置
             TreeViewIns.BackColor = Color.FromArgb(255, 204, 232, 207); // 背景色
             TreeViewIns.CheckBoxes = true;  // 是否显示复选框
+
             ConstructTreeView(eleIdCollection);  // 添加节点
+
             TreeViewIns.ExpandAll();       // 展开节点
+            buttonSelectAll_Click(TreeViewIns, new EventArgs());  // 全部选择
         }
 
         /// <summary> 构造树形控件。一共分两级，第一级是测点类型，第二级是每种类型下的测点集合 </summary>

@@ -158,6 +158,11 @@ namespace OldW.GlobalSettings
         /// <summary>  Excel数据库中，每一个工作表的第一个字段名称，即主键名称必须是中文“时间” </summary>
         public const string ExcelDatabasePrimaryKeyName = "时间";
 
+        /// <summary>  Excel监测数据中，对于字段名中的小数点的替换字符 </summary>
+        /// <remarks>Excel监测数据中，有一些线测点的子节点的具有数值意义的，此时表示节点数值的字段名大概为“12.5”，
+        /// 但是在ADO.NET操作Excel时，Insert 语句不支持名称中含有“#”或者“.”的字段名，所以，用此替换常数来替换小数点。 </remarks>
+        public const string ExcelDatabaseDot = "Dot";
+
         #endregion
     }
 }

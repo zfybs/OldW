@@ -173,20 +173,12 @@
             <returns>一个OleDataBase的Connection连接，此连接还没有Open。</returns>
             <remarks></remarks>
         </member>
-        <member name="M:stdOldW.DAL.ExcelDbHelper.ConnectionSourceValidated(System.Data.OleDb.OleDbConnection)">
+        <member name="M:stdOldW.DAL.ExcelDbHelper.IsExcelDataSource(System.String)">
             <summary>
             验证连接的数据源是否是Excel数据库
             </summary>
-            <param name="conn"></param>
+            <param name="excelWorkbookPath"> Excel 工作簿的绝对路径 </param>
             <returns>如果是Excel数据库，则返回True，否则返回False。</returns>
-            <remarks></remarks>
-        </member>
-        <member name="M:stdOldW.DAL.ExcelDbHelper.CreateNewTable(System.Data.OleDb.OleDbConnection,System.String)">
-            <summary>
-            创建一个新的Excel工作表，并向其中插入一条数据
-            </summary>
-            <param name="conn"></param>
-            <param name="sqlCreateTable"> 用来创建工作表的sql语句 </param>
             <remarks></remarks>
         </member>
         <member name="M:stdOldW.DAL.ExcelDbHelper.GetSheetsName(System.Data.OleDb.OleDbConnection)">
@@ -266,16 +258,38 @@
             <param name="conn"> </param>
             <param name="tableSource"> 数据源，此工作表中的每一个字段中的数据都会被插入到Excel的指定工作表中。
             请手动确保工作表Sheet中有与DataTable中每一列同名的字段，而且其数据类型是兼容的。 </param>
-            <param name="sheetName"> 要进行插入的Excel工作表的名称，其格式为“Sheet1$”</param>
+            <param name="sheetName"> 要进行插入的Excel工作表的名称，其格式为“Sheet1$”。请确保此工作表已经存在，而且已经包含与 tableSource 的列名相对应的字段 </param>
         </member>
-        <member name="M:stdOldW.DAL.ExcelDbHelper.InsertToTable(System.Data.OleDb.OleDbConnection,System.String,System.String,System.Object)">
+        <member name="M:stdOldW.DAL.ExcelDbHelper.InsertToSheet(System.Data.OleDb.OleDbConnection,System.String,System.String,System.Object)">
             <summary>
-            向Excel工作表中插入一条数据，此函数并不通用，不建议使用
+            向Excel工作表中插入一条数据
             </summary>
             <param name="conn"></param>
-            <param name="TableName">要插入数据的工作表名称</param>
+            <param name="sheetName">要插入数据的工作表名称，名称中请自带后缀$ </param>
             <param name="FieldName">要插入到的字段</param>
             <param name="Value">实际插入的数据</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:stdOldW.DAL.ExcelDbHelper.CreateNewSheet(System.Data.OleDb.OleDbConnection,System.String,System.String[])">
+            <summary>
+            根据指定的字段名创建一个全新的Excel工作表，但是不向其中添加任何数据。
+            </summary>
+            <param name="conn"></param>
+            <param name="sheetName"> 要创建的工作表的名称，不能带后缀$ </param>
+            <param name="fields_valueTypes"> 工作表中的每一个字段，以及字段所对应的数据类型。如果不赋值，则只创建出一个工作表，而不创建任何字段。 </param>
+            <remarks>在Excel中创建工作表的语句为： "CREATE TABLE Sheet1 ( [Field1] VarChar,[Field2] VarChar)" </remarks>
+        </member>
+        <member name="M:stdOldW.DAL.ExcelDbHelper.CreateNewSheet(System.Data.OleDb.OleDbConnection,System.Data.DataTable)">
+            <summary>
+            根据指定的DataTable 创建一个全新的 Excel 工作表，而不添加任何数据。
+            </summary>
+            <param name="conn"></param>
+            <param name="tableSource"> 工作表名称即 tableSource.TableName；工作表中每一个字段的名称即tableSource中每一列的列名 </param>
+        </member>
+        <member name="M:stdOldW.DAL.ExcelDbHelper.ExecuteNoneQuery(System.Data.OleDb.OleDbConnection,System.String)">
+            <summary> 对Excel数据库执行非查询SQL语句 </summary>
+            <param name="conn"></param>
+            <param name="sql"> 用来执行的非查询sql语句</param>
             <remarks></remarks>
         </member>
         <member name="M:stdOldW.DAL.ExcelDbHelper.ConstructFieldNames(System.Collections.Generic.IList{System.String})">
@@ -291,6 +305,13 @@
             </summary>
             <param name="values"></param>
             <param name="sb"></param>
+        </member>
+        <member name="M:stdOldW.DAL.ExcelDbHelper.ConvertExcelDataType(System.Type)">
+            <summary>
+            Create Table时，为字段名匹配字段类型
+            </summary>
+            <param name="type"> .NET 中的数据类型 </param>
+            <returns> Excel中的数据类型 </returns>
         </member>
         <member name="T:stdOldW.AssemblyCompiler">
             <summary>
@@ -553,6 +574,14 @@
         <member name="F:stdOldW.WinFormHelper.WindowsUtil.MouseOperation.MouseEventF_Absolute">
             <Summary> 标示是否采用绝对坐标 </Summary>
         </member>
+        <member name="M:stdOldW.WinFormHelper.WindowsUtil.ChooseOpenExcel(System.String)">
+            <summary> 通过选择文件对话框选择要进行数据提取的Excel文件 </summary>
+            <returns> 要进行数据提取的Excel文件的绝对路径 </returns>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.WindowsUtil.ChooseSaveExcel(System.String)">
+            <summary> 通过选择文件对话框选择要进行数据写入的Excel文件 </summary>
+            <returns> 要进行数据写入的Excel文件的绝对路径 </returns>
+        </member>
         <member name="M:stdOldW.ExtensionMethods.AddRange``1(System.Collections.Generic.ICollection{``0},System.Collections.Generic.IEnumerable{``0})">
             <summary>
             将某集合中的元素添加到另一个集合中去
@@ -568,6 +597,16 @@
             <typeparam name="T"></typeparam>
             <param name="obj"></param>
             <returns></returns>
+        </member>
+        <member name="M:stdOldW.ExtensionMethods.IndexOf``2(``0,``1)">
+            <summary>
+            从集合中搜索指定项的下标位置（第一个元素的下标值为0），如果没有匹配项，则返回-1。
+            </summary>
+            <typeparam name="TCol"></typeparam>
+            <param name="collection"> 匹配的数据源集合 </param>
+            <typeparam name="TVal"></typeparam>
+            <param name="value"> 要进行匹配的值 </param>
+            <returns> 从集合中搜索指定项的下标位置（第一个元素的下标值为0），如果没有匹配项，则返回-1。 </returns>
         </member>
         <member name="T:stdOldW.StringSerializer">
             <summary>

@@ -2,8 +2,6 @@ F:\Software\Revit\RevitDevelop\OldW\bin\Projects.dll
 F:\Software\Revit\RevitDevelop\OldW\bin\Projects.pdb
 F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\x64\Debug\Projects.csprojResolveAssemblyReference.cache
 F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\x64\Debug\OldW.DynamicReview.ConstructionReview.resources
-F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\x64\Debug\OldW.DataManager.frm_DataExport.resources
-F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\x64\Debug\OldW.DataManager.frm_DataImport.resources
 F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\x64\Debug\OldW.Excavation.frm_DrawExcavation.resources
 F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\x64\Debug\OldW.Excavation.frm_ExcavationInfo.resources
 F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\x64\Debug\OldW.DataManager.Chart_MonitorData.resources
@@ -12,3 +10,8 @@ F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\x64\Debug\OldW.SafetyW
 F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\x64\Debug\Projects.csproj.GenerateResource.Cache
 F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\x64\Debug\Projects.dll
 F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\x64\Debug\Projects.pdb
+F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\x64\Debug\OldW.Commands.ElementInitializer.resources
+F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\x64\Debug\OldW.Instrumentations.PickInstrums.resources
+F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\x64\Debug\OldW.DataManager.DataImport.resources
+F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\x64\Debug\OldW.DataManager.ElementInitialize.resources
+F:\Software\Revit\RevitDevelop\OldW\Projects\Projects\obj\x64\Debug\OldW.Instrumentations.DataExport.resources
