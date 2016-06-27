@@ -3,21 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Autodesk.Revit.DB;
-using OldW.DataManager;
 using stdOldW;
 using stdOldW.DAL;
 using stdOldW.WinFormHelper;
-using Color = System.Drawing.Color;
-using Form = System.Windows.Forms.Form;
 
 namespace OldW.Instrumentations
 {
@@ -29,7 +22,6 @@ namespace OldW.Instrumentations
         /// <summary> 最终决定要导出到Excel的测点单元。字典中的键为每一类测点，值为此测点类型下要导出的测点单元 </summary>
         public Dictionary<InstrumentationType, List<Instrumentation>> InstrumentationsToBeExported;
 
-
         /// <summary> 构造函数 </summary>
         /// <param name="eleIdCollection">所有要进行处理的测点元素的Id集合</param>
         /// <param name="document"></param>
@@ -40,12 +32,12 @@ namespace OldW.Instrumentations
 
             // TreeViewIns 属性设置
             TreeViewIns.BackColor = Color.FromArgb(255, 204, 232, 207); // 背景色
-            TreeViewIns.CheckBoxes = true;  // 是否显示复选框
+            TreeViewIns.CheckBoxes = true; // 是否显示复选框
 
-            ConstructTreeView(eleIdCollection);  // 添加节点
+            ConstructTreeView(eleIdCollection); // 添加节点
 
-            TreeViewIns.ExpandAll();       // 展开节点
-            buttonSelectAll_Click(TreeViewIns, new EventArgs());  // 全部选择
+            TreeViewIns.ExpandAll(); // 展开节点
+            buttonSelectAll_Click(TreeViewIns, new EventArgs()); // 全部选择
 
             // BackgroundWorker 的设置
             _backgroundWorker = new BackgroundWorker
@@ -80,7 +72,7 @@ namespace OldW.Instrumentations
                         Tag = ins.Type,
                         Text = typeName,
                     };
-                    
+
                     TreeViewIns.Nodes.Add(ndType);
                     //
                     insType.Add(ins.Type);
@@ -98,15 +90,16 @@ namespace OldW.Instrumentations
 
         #region   ---  节点选择的相关操作
 
-
         private void buttonExpand_Click(object sender, EventArgs e)
         {
             TreeViewIns.ExpandAll();
         }
+
         private void buttonShrink_Click(object sender, EventArgs e)
         {
             TreeViewIns.CollapseAll();
         }
+
         private void buttonSelectAll_Click(object sender, EventArgs e)
         {
             foreach (TreeNode ndType in TreeViewIns.Nodes)
@@ -114,6 +107,7 @@ namespace OldW.Instrumentations
                 ndType.Checked = true;
             }
         }
+
         private void buttonDeselectAll_Click(object sender, EventArgs e)
         {
             foreach (TreeNode ndType in TreeViewIns.Nodes)
@@ -135,7 +129,6 @@ namespace OldW.Instrumentations
                 foreach (TreeNode ndIns in nd.Nodes)
                 {
                     ndIns.Checked = nd.Checked;
-
                 }
             }
         }
@@ -143,7 +136,6 @@ namespace OldW.Instrumentations
         #endregion
 
         #region ---   一般事件处理
-
 
         private void buttonChooseFile_Click(object sender, EventArgs e)
         {
@@ -167,6 +159,7 @@ namespace OldW.Instrumentations
 
         /// <summary> 执行数据导入操作的后台线程 </summary>
         private readonly BackgroundWorker _backgroundWorker;
+
         /// <summary> 要导出数据的Excel工作簿 </summary>
         private OleDbConnection _conn;
 
@@ -198,7 +191,7 @@ namespace OldW.Instrumentations
                 {
                     InstrumentationsToBeExported.Add(tp, instrums);
                 }
-            }  // 下一个测点类型
+            } // 下一个测点类型
             ExportToExcel(InstrumentationsToBeExported);
         }
 
@@ -213,7 +206,7 @@ namespace OldW.Instrumentations
                     MessageBox.Show(@"无效的Excel工作簿路径");
                     return;
                 }
-                if (File.Exists(filePath))  // 删除已经存在的工作簿
+                if (File.Exists(filePath)) // 删除已经存在的工作簿
                 {
                     File.Delete(filePath);
                 }
@@ -243,7 +236,8 @@ namespace OldW.Instrumentations
         private void BackgroundWorkerOnDoWork_ImportFromExcel(object sender, DoWorkEventArgs e)
         {
             // 
-            Dictionary<InstrumentationType, List<Instrumentation>> elems = e.Argument as Dictionary<InstrumentationType, List<Instrumentation>>;
+            Dictionary<InstrumentationType, List<Instrumentation>> elems =
+                e.Argument as Dictionary<InstrumentationType, List<Instrumentation>>;
             if (elems == null) throw new NullReferenceException("没有选择任何测点。");
             //
             int row = 0;
@@ -265,7 +259,6 @@ namespace OldW.Instrumentations
                 e.Cancel = true;
                 return;
             }
-
         }
 
         /// <summary>
@@ -297,20 +290,16 @@ namespace OldW.Instrumentations
                     Instrum_Line line = (Instrum_Line)ele;
                     table = line.ConvertToDatatable(_conn);
 
-                    table.TableName = line.GetMonitorName();
+                    table.TableName = ExcelMapping.ValidateSheetName(line.GetMonitorName());
 
                     // 创建一个Excel工作表中
                     ExcelDbHelper.CreateNewSheet(_conn, table);
-
-                    DataTable metaTable = _conn.GetSchema("Tables");
-                    DataTable names = metaTable.DefaultView.ToTable(false, new string[] { "TABLE_NAME" }); // 提取表格中的指定字段以构造新表
-                    List<object> TableNameList = metaTable.AsEnumerable().Select(r => r["TABLE_NAME"]).ToList();
 
                     //  将DataTable中的数据导出到Excel工作表中
                     ExcelDbHelper.InsertDataTable(_conn, table, table.TableName + "$");
                 }
             }
-            else if ((type & InstrumentationType.非数值线测点集合) > 0)  // 此类测点的每一个子节点类型导出为一个表
+            else if ((type & InstrumentationType.非数值线测点集合) > 0) // 此类测点的每一个子节点类型导出为一个表
             {
                 // 每一类测点导出为多个表
                 DataTable[] tables = Instrum_Line.ConvertToDatatables(elems.Select(r => r as Instrum_Line).ToList());
@@ -342,7 +331,8 @@ namespace OldW.Instrumentations
                 _conn.Close();
             }
             if (!e.Cancelled)
-            { // 不报错，则提交
+            {
+                // 不报错，则提交
                 // 刷新界面
                 Thread.Sleep(10);
                 labelProgress.Text = @"100%";
@@ -353,12 +343,12 @@ namespace OldW.Instrumentations
                 Close();
             }
             else
-            { // 报错则回滚
+            {
+                // 报错则回滚
                 DialogResult = DialogResult.Cancel;
             }
         }
 
         #endregion
-
     }
 }

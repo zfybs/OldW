@@ -286,7 +286,6 @@ namespace OldW.Commands
                 instrumsToBeRenamed.Add(ins, formInitializer.MonitorName);
             }
         }
-
     }
 
     /// <summary>

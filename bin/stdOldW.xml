@@ -88,6 +88,9 @@
             <typeparam name="TEntityClass">数据表所对应的实体类</typeparam>
             <returns></returns>
         </member>
+        <member name="M:stdOldW.DAL.DataTableHelper.FilterNull(System.Object)">
+            <summary> 如果输入的值为null，则返回 DBNull.Value，否则返回这个值本身 </summary>
+        </member>
         <member name="M:stdOldW.DAL.DataTableHelper.GetValue(System.Data.DataTable,System.String)">
             <summary>
             
@@ -186,7 +189,7 @@
             从对于Excel的数据连接中获取Excel工作簿中的所有工作表（不包含Excel中的命名区域NamedRange）
             </summary>
             <param name="conn"></param>
-            <returns>如果此连接不是连接到Excel数据库，则返回Nothing</returns>
+            <returns>集合中所有工作表的名称都带有后缀 $ 。如果此连接不是连接到Excel数据库，则返回Nothing</returns>
             <remarks></remarks>
         </member>
         <member name="M:stdOldW.DAL.ExcelDbHelper.GetFieldNames(System.Data.OleDb.OleDbConnection,System.String)">
@@ -696,27 +699,31 @@
             </summary>
             <remarks></remarks>
         </member>
-        <member name="M:stdOldW.Utils.ShowEnumerable(System.Collections.IEnumerable,System.String)">
+        <member name="M:stdOldW.Utils.ShowEnumerable(System.Collections.IEnumerable,System.String,System.Boolean)">
             <summary>
             将集合中的每一个元素的ToString函数的结果组合到一个字符串中进行显示
             </summary>
             <param name="V"></param>
+            <param name="title"></param>
+            <param name="newLineHandling"> 如果元素之间是以换行分隔，则为True，否则是以逗号分隔。 </param>
             <remarks></remarks>
         </member>
-        <member name="M:stdOldW.Utils.ShowEnumerableProperty(System.Collections.IEnumerable,System.String,System.String)">
+        <member name="M:stdOldW.Utils.ShowEnumerableProperty(System.Collections.IEnumerable,System.String,System.String,System.Boolean)">
             <summary>
             将集合中的每一个元素的指定属性的ToString函数的结果组合到一个字符串中进行显示
             </summary>
             <param name="V"></param>
             <param name="PropertyName">要读取的属性的名称，注意，此属性不能带参数。</param>
+            <param name="newLineHandling"> 如果元素之间是以换行分隔，则为True，否则是以逗号分隔。 </param>
             <remarks></remarks>
         </member>
-        <member name="M:stdOldW.Utils.ShowEnumerableField(System.Collections.IEnumerable,System.String,System.String)">
+        <member name="M:stdOldW.Utils.ShowEnumerableField(System.Collections.IEnumerable,System.String,System.String,System.Boolean)">
             <summary>
             将集合中的每一个元素的指定字段的ToString函数的结果组合到一个字符串中进行显示
             </summary>
             <param name="V"></param>
             <param name="FieldName">要读取的字段的名称。</param>
+            <param name="newLineHandling"> 如果元素之间是以换行分隔，则为True，否则是以逗号分隔。 </param>
             <remarks></remarks>
         </member>
         <member name="M:stdOldW.Utils.ShowDebugCatch(System.Exception,System.String,System.String)">

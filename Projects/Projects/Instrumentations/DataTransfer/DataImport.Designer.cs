@@ -57,6 +57,7 @@ namespace OldW.DataManager
             // ButtonImport
             // 
             this.ButtonImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.ButtonImport.Enabled = false;
             this.ButtonImport.Location = new System.Drawing.Point(554, 45);
             this.ButtonImport.Name = "ButtonImport";
             this.ButtonImport.Size = new System.Drawing.Size(75, 23);

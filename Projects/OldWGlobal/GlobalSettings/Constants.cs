@@ -155,6 +155,13 @@ namespace OldW.GlobalSettings
         /// <summary>  </summary>
         public const string ExcelDatabaseSheet_WaterTable = "水位";
 
+        /// <summary> 其他未在上面标记过的测点类型，其每一个点测点的监测数据都保存在工作表中的某个字段下。 </summary>
+        public const string ExcelDatabaseSheet_OtherPoint = "PM";
+
+        /// <summary> 其他未在上面标记过的测点类型，其每一个线测点中有多个子节点（类似于测斜管），
+        /// 一个测点的监测数据保存在一张工作表，而表中的每一个字段代表此线测点中的一个子节点。 </summary>
+        public const string ExcelDatabaseSheet_OtherLine = "LM";
+
         /// <summary>  Excel数据库中，每一个工作表的第一个字段名称，即主键名称必须是中文“时间” </summary>
         public const string ExcelDatabasePrimaryKeyName = "时间";
 

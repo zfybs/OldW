@@ -123,7 +123,7 @@
             this.textBoxFilePath.Name = "textBoxFilePath";
             this.textBoxFilePath.Size = new System.Drawing.Size(394, 21);
             this.textBoxFilePath.TabIndex = 9;
-            this.textBoxFilePath.Text = "F:\\Software\\Revit\\RevitDevelop\\OldW\\bin\\监测数据导出.xlsb";
+            this.textBoxFilePath.Text = "F:\\ProgrammingCases\\GitHubProjects\\OldW\\bin\\监测数据导出.xlsb";
             // 
             // buttonChooseFile
             // 

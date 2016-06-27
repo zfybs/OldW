@@ -214,7 +214,7 @@ namespace OldW.Instrumentations
         /// 对于线测点的子节点无数值意义的情况（墙顶位移），每一个子节点类型对应一个工作表；</remarks>
         public static DataTable[] ConvertToDatatables(IList<Instrum_Line> lines)
         {
-            // 确保集合中至少有一个元素
+            // 确保集合中至少有一个具有有效数据的测点
             if (lines == null || lines.Count == 0) throw new NullReferenceException("集合中没有线测点");
 
             // ---------------------------------------------------------------
@@ -229,26 +229,26 @@ namespace OldW.Instrumentations
             if (line1.NodesDigital) throw new InvalidOperationException("线测斜对象的子节点有明显的数值意义，不能将每一个子节点放置在一个工作表中。");
 
             // 先提取第一个线测点中的数据，并构建基本表格数据
+            string[] nodes1 = new string[] { };  // 第一个线测点的子节点集合。正常情况下，集合中其余所有的线测点都具有相同的子节点集合。
+            foreach (var line in lines)
+            {
+                if (line.GetMonitorData() != null)
+                {
+                    nodes1 = line.GetMonitorData().GetStringNodes();
+                    break;
+                }
+            }
+            if (nodes1 == null || nodes1.Length == 0) throw new NullReferenceException("未找到有效的子节点");
 
-            var data1 = line1.GetMonitorData();
+            // var data1 = line1.GetMonitorData();
 
             int nodeIndex;
-            string[] nodes1 = data1.GetStringNodes();  // 第一个线测点的子节点集合。正常情况下，集合中其余所有的线测点都具有相同的子节点集合。
-
             for (nodeIndex = 0; nodeIndex < nodes1.Length; nodeIndex++)// 每一个node对应了一个 Excel 工作表
             {
                 // 每一个节点类型对应一个工作表，键代表每一个测点的名称
                 Dictionary<string, List<MonitorData_Point>> nodesData = new Dictionary<string, List<MonitorData_Point>>();  // 一类子节点中的每一个线测点的监测数据
-
-                List<MonitorData_Point> oneNodeData = new List<MonitorData_Point>();
-                foreach (var oneDayData in data1.MonitorData)
-                {
-                    oneNodeData.Add(new MonitorData_Point(oneDayData.Key, oneDayData.Value[nodeIndex]));
-                }
-
-                nodesData.Add(line1.GetMonitorName(), oneNodeData);
                 dataSheets.Add(nodesData);  // 每一个节点类型对应一个工作表
-                
+
                 // ---------------------------------------------------------------
                 // 此时，dataSheets中应该已经为每一个节点类型创建一个表（Dictionary<string, List<MonitorData_Point>>）
                 // 而每一个表中都有了两个字段：第一个字段为主键“时间”，每二个字段为此线测点在工作表所对应的节点类型下的测点数据。
@@ -256,19 +256,28 @@ namespace OldW.Instrumentations
             }
 
             // 将后面其他的线测点的每一个节点的数据放置到与节点类型对应的表格中。
-            for (int lineIndex = 1; lineIndex < lines.Count; lineIndex++)
+            foreach (Instrum_Line line in lines)
             {
-                Instrum_Line line = lines[lineIndex];
-
                 if (line.Type != originType) throw new InvalidOperationException("集合中的线测点必须是同一种监测类型");
+
                 var data = line.GetMonitorData();
-                var nodes = data.GetStringNodes();  // 第 lineIndex 个线测点的所有子节点
-                if (nodes.Length != nodes1.Length) throw new InvalidOperationException("集合中的线测点元素必须包含相同数目的子节点");
+
+                // 如果此测点没有监测数据的话，则将此测点的名称添加到每一个子节点工作表的字段名中
+                if (data == null)
+                {
+                    data = new MonitorData_Line(nodes1, new SortedDictionary<DateTime, float?[]>(), false);
+                }
+                else
+                {
+                    // 检测测点的子节点是否与其他测点的子节点不相同
+                    var nodes = data.GetStringNodes();  // 第 lineIndex 个线测点的所有子节点
+                    if (nodes.Length != nodes1.Length) throw new InvalidOperationException("集合中的线测点元素必须包含相同数目的子节点");
+                }
 
                 // 将此线测点中每一个子节点的数据放置到对应的字典表格中
 
                 // 提取并重构监测数据
-                for (nodeIndex = 0; nodeIndex < nodes.Length; nodeIndex++)// 每一个node对应了一个 Excel 工作表
+                for (nodeIndex = 0; nodeIndex < nodes1.Length; nodeIndex++)// 每一个node对应了一个 Excel 工作表
                 {
                     // 每一个节点类型对应一个工作表，键代表每一个测点的名称
                     Dictionary<string, List<MonitorData_Point>> nodesData = dataSheets[nodeIndex];  // 一类子节点中的每一个线测点的监测数据
@@ -282,8 +291,7 @@ namespace OldW.Instrumentations
 
                     nodesData.Add(line.GetMonitorName(), oneNodeData);
                 }  // 某线测点的下一个子节点
-
-            }  // 下一个线测点
+            }
 
             // 转换为表格 DataTable
             DataTable[] tables = new DataTable[nodes1.Length];

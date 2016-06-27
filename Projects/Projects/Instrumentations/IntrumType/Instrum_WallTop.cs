@@ -91,7 +91,7 @@ namespace OldW.Instrumentations
                 }
             }
             enteredTransactionHashCode = tran.GetHashCode();
-            }
+        }
 
         /// <summary> 采用先清空的方式导入第一个子节点的监测数据 </summary>
         private void TruncateAndAddOneField(Transaction tran, OleDbConnection conn, string sheetName, string fieldName, byte nodeIndex)
@@ -108,7 +108,7 @@ namespace OldW.Instrumentations
                     values[nodeIndex] = Convert.ToSingle(r[1]);
                 }
                 // 记录这一天的监测数据信息
-                lineData.MonitorData.Add((DateTime)r[0], values);
+                lineData.MonitorData.Add(DateTime.Parse(r[0].ToString()), values);
             }
             SetMonitorData(tran, lineData);
 
@@ -125,7 +125,7 @@ namespace OldW.Instrumentations
             foreach (DataRow r in dt.Rows)
             {
                 float?[] values;
-                DateTime dtime = (DateTime)r[0];  // 日期数据
+                DateTime dtime = DateTime.Parse(r[0].ToString());  // 日期数据
                 if (lineData.MonitorData.Keys.Contains(dtime))
                 {
                     // 修改原有记录中的数据

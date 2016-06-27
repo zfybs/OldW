@@ -7,3 +7,12 @@ F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\Debug\stdOldW.csproj.Genera
 F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\Debug\stdOldW.dll
 F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\Debug\stdOldW.pdb
 F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\Debug\stdOldW.csprojResolveAssemblyReference.cache
+F:\ProgrammingCases\GitHubProjects\OldW\bin\stdOldW.xml
+F:\ProgrammingCases\GitHubProjects\OldW\bin\stdOldW.dll
+F:\ProgrammingCases\GitHubProjects\OldW\bin\stdOldW.pdb
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.WinFormHelper.eZDataGridView.resources
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.WinFormHelper.eZDataGridViewPaste.resources
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.csproj.GenerateResource.Cache
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.dll
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.pdb
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.csprojResolveAssemblyReference.cache

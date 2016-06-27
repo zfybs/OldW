@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -19,15 +20,28 @@ namespace stdOldW
         /// 将集合中的每一个元素的ToString函数的结果组合到一个字符串中进行显示
         /// </summary>
         /// <param name="V"></param>
+        /// <param name="title"></param>
+        /// <param name="newLineHandling"> 如果元素之间是以换行分隔，则为True，否则是以逗号分隔。 </param>
         /// <remarks></remarks>
-        public static void ShowEnumerable(IEnumerable V, string Title = "集合中的元素")
+        public static void ShowEnumerable(IEnumerable V, string title = "集合中的元素", bool newLineHandling = true)
         {
-            string str = "";
-            foreach (object o in V)
+            StringBuilder sb = new StringBuilder();
+            if (newLineHandling)
             {
-                str = str + o.ToString() + "\r\n";
+                foreach (object o in V)
+                {
+                    sb.AppendLine(o.ToString());
+                }
             }
-            MessageBox.Show(str, Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+            {
+                foreach (object o in V)
+                {
+                    sb.Append(o.ToString() + ",\t");
+                }
+            }
+
+            MessageBox.Show(sb.ToString(), title, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         /// <summary>
@@ -35,10 +49,12 @@ namespace stdOldW
         /// </summary>
         /// <param name="V"></param>
         /// <param name="PropertyName">要读取的属性的名称，注意，此属性不能带参数。</param>
+        /// <param name="newLineHandling"> 如果元素之间是以换行分隔，则为True，否则是以逗号分隔。 </param>
         /// <remarks></remarks>
-        public static void ShowEnumerableProperty(IEnumerable V, string PropertyName, string Title = "集合中的元素")
+        public static void ShowEnumerableProperty(IEnumerable V, string PropertyName, string Title = "集合中的元素", bool newLineHandling = true)
         {
-            string str = "";
+            List<string> strings = new List<string>();
+
             Type tp = default(Type);
             MethodInfo MdInfo = default(MethodInfo);
             string res = "";
@@ -46,11 +62,11 @@ namespace stdOldW
             {
                 tp = obj.GetType();
                 MdInfo = tp.GetProperty(PropertyName).GetMethod;
-                res = Convert.ToString(MdInfo.Invoke(obj, null).ToString());
+                res = MdInfo.Invoke(obj, null).ToString();
                 //
-                str = str + res + "\r\n";
+                strings.Add(res);
             }
-            MessageBox.Show(str, Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            ShowEnumerable(strings, Title, newLineHandling);
         }
 
         /// <summary>
@@ -58,10 +74,11 @@ namespace stdOldW
         /// </summary>
         /// <param name="V"></param>
         /// <param name="FieldName">要读取的字段的名称。</param>
+        /// <param name="newLineHandling"> 如果元素之间是以换行分隔，则为True，否则是以逗号分隔。 </param>
         /// <remarks></remarks>
-        public static void ShowEnumerableField(IEnumerable V, string FieldName, string Title = "集合中的元素")
+        public static void ShowEnumerableField(IEnumerable V, string FieldName, string Title = "集合中的元素", bool newLineHandling = true)
         {
-            string str = "";
+            List<string> strings = new List<string>();
             Type tp = default(Type);
 
             string res = "";
@@ -70,9 +87,9 @@ namespace stdOldW
                 tp = obj.GetType();
                 res = tp.GetField(FieldName).GetValue(obj).ToString();
                 //
-                str = str + res + "\r\n";
+                strings.Add(res);
             }
-            MessageBox.Show(str, Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            ShowEnumerable(strings, Title, newLineHandling);
         }
 
         #endregion

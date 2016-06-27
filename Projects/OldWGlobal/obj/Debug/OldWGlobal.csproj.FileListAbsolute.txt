@@ -11,3 +11,11 @@ F:\Software\Revit\RevitDevelop\OldW\Projects\OldWGlobal\obj\Debug\Properties.Res
 F:\Software\Revit\RevitDevelop\OldW\Projects\OldWGlobal\obj\Debug\OldWGlobal.csproj.GenerateResource.Cache
 F:\Software\Revit\RevitDevelop\OldW\Projects\OldWGlobal\obj\Debug\OldWGlobal.dll
 F:\Software\Revit\RevitDevelop\OldW\Projects\OldWGlobal\obj\Debug\OldWGlobal.pdb
+F:\ProgrammingCases\GitHubProjects\OldW\bin\OldWGlobal.dll
+F:\ProgrammingCases\GitHubProjects\OldW\bin\OldWGlobal.pdb
+F:\ProgrammingCases\GitHubProjects\OldW\bin\OldWGlobal.xml
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\OldWGlobal\obj\Debug\OldWGlobal.csprojResolveAssemblyReference.cache
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\OldWGlobal\obj\Debug\Properties.Resources.resources
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\OldWGlobal\obj\Debug\OldWGlobal.csproj.GenerateResource.Cache
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\OldWGlobal\obj\Debug\OldWGlobal.dll
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\OldWGlobal\obj\Debug\OldWGlobal.pdb

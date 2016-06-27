@@ -4,6 +4,7 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
@@ -134,7 +135,6 @@ namespace OldW.Instrumentations
 
         #endregion
 
-
         /// <summary> 将多个点测点（或者线测点中的多个子节点）的监测数据Revit中导出到Excel中。
         /// 如果指定的点测点（或者线测点中的多个子节点）中没有数据，则返回的表格中只有一个“时间”字段 </summary>
         /// <param name="fieldPoints"> 字典中的每一键代表多个点测点（或者线测点中的多个子节点）的测点名称，值代表此测点或者子节点每一天的监测数据 </param>
@@ -143,7 +143,7 @@ namespace OldW.Instrumentations
         {
             DataTable table = new DataTable()
             {
-                TableName = tableName
+                TableName = ExcelMapping.ValidateSheetName(tableName)
             };
 
             DataColumn colDate = new DataColumn // 主键的日期字段
@@ -182,7 +182,7 @@ namespace OldW.Instrumentations
                     if (index >= 0) // 说明有匹配项，此时应该在匹配下标所对应的行中添加数据
                     {
                         // 不用修改监测日期值，因为日期是主键，在添加数据行时已经赋值了。
-                        table.Rows[index][colField] = FilterNull(dataPoint.Value);      // 监测数据值 
+                        table.Rows[index][colField] = DataTableHelper.FilterNull(dataPoint.Value);      // 监测数据值 
 
                     }
                     else // 说明没有匹配项，此时应该在表格中添加一行新的数据
@@ -196,29 +196,16 @@ namespace OldW.Instrumentations
 
                         dtRow[colDate] = dataPoint.Date;
                         // 监测数据值 
-                        dtRow[colField] = FilterNull(dataPoint.Value);
+                        dtRow[colField] = DataTableHelper.FilterNull(dataPoint.Value);
 
                         // 先为数据行赋值，再将数据行添加到表格中，以避免出现不允许空值的列中出现空值。
                         table.Rows.InsertAt(dtRow, newIndex);
                     }
                 }
             }
-            Forms.MessageBox.Show(DataTableHelper.PrintTableOrView(table, tableName).ToString());
+
             return table;
-        }
-
-        /// <summary> 如果输入的值为null，则返回 DBNull.Value，否则返回这个值本身 </summary>
-        private static object FilterNull(object value)
-        {
-            if (value == null)
-            {
-                return DBNull.Value;
-            }
-            return value;
-
-
         }
 
     }
 }
-

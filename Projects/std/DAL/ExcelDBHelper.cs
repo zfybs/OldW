@@ -78,7 +78,7 @@ namespace stdOldW.DAL
         /// 从对于Excel的数据连接中获取Excel工作簿中的所有工作表（不包含Excel中的命名区域NamedRange）
         /// </summary>
         /// <param name="conn"></param>
-        /// <returns>如果此连接不是连接到Excel数据库，则返回Nothing</returns>
+        /// <returns>集合中所有工作表的名称都带有后缀 $ 。如果此连接不是连接到Excel数据库，则返回Nothing</returns>
         /// <remarks></remarks>
         public static List<string> GetSheetsName(OleDbConnection conn)
         {
@@ -387,8 +387,7 @@ namespace stdOldW.DAL
         /// <param name="sheetName"> 要进行插入的Excel工作表的名称，其格式为“Sheet1$”。请确保此工作表已经存在，而且已经包含与 tableSource 的列名相对应的字段 </param>
         public static void InsertDataTable(OleDbConnection conn, DataTable tableSource, string sheetName)
         {
-            Utils.ShowEnumerable(GetSheetsName(conn),"工作表集合");
-
+            
             //如果连接已经关闭，则先打开连接
             if (conn.State == ConnectionState.Closed)
             {

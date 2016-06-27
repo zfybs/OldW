@@ -281,41 +281,49 @@
         <member name="F:OldW.Instrumentations.InstrumentationType.点测点集合">
             <summary> 通过位运算进行组合的所有点测点的集合。 </summary>
         </member>
-        <member name="T:OldW.Instrumentations.InstrumTypeMappingExcel">
+        <member name="T:OldW.Instrumentations.ExcelMapping">
             <summary>
             将不同的Excel工作表字段的名称映射到Revit对应的测点中去
             </summary>
         </member>
-        <member name="F:OldW.Instrumentations.InstrumTypeMappingExcel.SheetOtherPoint">
-            <summary> 其他未在上面标记过的测点类型，其每一个点测点的监测数据都保存在工作表中的某个字段下。 </summary>
+        <member name="M:OldW.Instrumentations.ExcelMapping.ValidateSheetName(System.String)">
+            <summary>
+            验证给定的字符是否可以作为 Excel 的工作表的名称，如果不行，则按某种规则转换为有效的 Excel 工作表名称
+            </summary>
+            <param name="originalName"></param>
+            <returns> 转换后的有效的 Excel 工作表名称 </returns>
         </member>
-        <member name="F:OldW.Instrumentations.InstrumTypeMappingExcel.SheetOtherLine">
-            <summary> 其他未在上面标记过的测点类型，其每一个线测点中有多个子节点（类似于测斜管），
-            一个测点的监测数据保存在一张工作表，而表中的每一个字段代表此线测点中的一个子节点。 </summary>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumTypeMappingExcel.MultiPointsInSheet(System.String)">
+        <member name="M:OldW.Instrumentations.ExcelMapping.MultiPointsInSheet(System.String)">
             <summary> 指定的Excel工作表中是包含多个测点（点测点）还是只包含一个测点（线测点） </summary>
             <param name="excelSheetName"></param>
             <returns> 如果此工作表中有多个点测点，比如“地表隆沉”，则返回true；
             如果此工作表就代表一个线测点，则返回false。 </returns>
         </member>
-        <member name="M:OldW.Instrumentations.InstrumTypeMappingExcel.IsRevitLine(System.String)">
+        <member name="M:OldW.Instrumentations.ExcelMapping.IsRevitLine(System.String)">
             <summary> 此工作表名称所对应的测点类型在Revit中是否是一个线测点类型 </summary>
             <param name="excelSheetName"></param>
             <returns> 如果此工作表名称代表一类测点，比如“地表隆沉”，则返回true；
             如果此工作表就代表一个测斜测点，则返回false。 </returns>
         </member>
-        <member name="M:OldW.Instrumentations.InstrumTypeMappingExcel.MapToType(System.String)">
+        <member name="M:OldW.Instrumentations.ExcelMapping.MapToType(System.String)">
             <summary>
             由字段名称来匹配出对应的测点类型
             </summary>
             <param name="excelSheetName"> Excel工作表的名称，不包含后缀$</param>
             <returns></returns>
         </member>
-        <member name="M:OldW.Instrumentations.InstrumTypeMappingExcel.GetNumber(System.String)">
+        <member name="M:OldW.Instrumentations.ExcelMapping.GetNumberFromField(System.String)">
             <summary> 根据给出的字段名匹配出对应的测点编号 </summary>
             <param name="excelPointOrLineName"> Excel中的测点编号，此编号可以了线测点的编号如CX01，也可以是点测点的编号如DB01。 </param>
             <returns> 如果能匹配出编号12或者编号2-12这两种模式，则返回对应的数值字符，如果不能匹配，则返回空字符</returns>
+        </member>
+        <member name="M:OldW.Instrumentations.ExcelMapping.GetDigitalNodeName(System.String)">
+            <summary>
+            将数值子节点型的线测点在Excel中的子节点名称转换为对应的数值。如果不能转换成功，则报错。
+            </summary>
+            <param name="digitalNodeName"> 对于测斜管这类线测点，其每一个字段都是有严格的数值意义的，即代表了此子节点距离管顶的深度，
+            所以在Excel工作表中，这些子节点的字段名的格式为“123、0#50、0.5、0dot5”，这时就要将其转换为对应的可以表示数值的“2.50”。 </param>
+            <returns> 进行转换后的数值字符，如"2.50" </returns>
         </member>
         <member name="T:OldW.Instrumentations.InstrumCollector">
             <summary>
@@ -399,9 +407,6 @@
             如果指定的点测点（或者线测点中的多个子节点）中没有数据，则返回的表格中只有一个“时间”字段 </summary>
             <param name="fieldPoints"> 字典中的每一键代表多个点测点（或者线测点中的多个子节点）的测点名称，值代表此测点或者子节点每一天的监测数据 </param>
             <param name="tableName"> 表格的标题名称，此名称在后期自然是可以修改的。 </param>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumDoc.FilterNull(System.Object)">
-            <summary> 如果输入的值为null，则返回 DBNull.Value，否则返回这个值本身 </summary>
         </member>
         <member name="T:OldW.Instrumentations.Instrum_WallTop">
             <summary>

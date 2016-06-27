@@ -153,6 +153,12 @@ namespace stdOldW.DAL
 
         #endregion
 
+        /// <summary> 如果输入的值为null，则返回 DBNull.Value，否则返回这个值本身 </summary>
+        public static object FilterNull(object value)
+        {
+            return value ?? DBNull.Value;
+        }
+
         #region 将表格打印为格式化的字符
 
         /// <summary>
