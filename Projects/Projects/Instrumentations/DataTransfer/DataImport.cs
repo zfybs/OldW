@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -93,6 +94,7 @@ namespace OldW.DataManager
             ColumnImport.DataPropertyName = "Transport";
             ColumnImport.HeaderText = "导入";
             ColumnImport.Width = 50;
+            ColumnImport.Resizable = DataGridViewTriState.False;
             // 
             // ColumnDrawData
             // 
@@ -103,6 +105,7 @@ namespace OldW.DataManager
             ColumnDrawData.Text = "查看";
             ColumnDrawData.UseColumnTextForButtonValue = true;
             ColumnDrawData.Width = 50;
+            ColumnDrawData.Resizable = DataGridViewTriState.False;
             // 
             // ColumnSheet
             // 
@@ -154,13 +157,13 @@ namespace OldW.DataManager
 
         #endregion
 
-        #region ---   数据库字段与测点的匹配映射
+        #region ---   Mapping 数据库字段与测点的匹配映射
 
         /// <summary> 准备将选择的工作表中的监测数据输入Datagridview控件，并重新刷新界面 </summary>
         /// <param name="sender"></param> <param name="e"></param>
         private void buttonMapping_Click(object sender, EventArgs e)
         {
-            string workbookPath = textBox1.Text;
+            string workbookPath = textBoxFilePath.Text;
             if (File.Exists(workbookPath))
             {
                 string strExt = Path.GetExtension(workbookPath);
@@ -171,8 +174,16 @@ namespace OldW.DataManager
                     Mapping(workbookPath);
 
                     // 刷新界面
+                    ButtonImport.Enabled = true;
                     buttonCheckMultiple.Visible = true;
                     buttonUnCheckMultiple.Visible = true;
+
+                    // 刷新进度条
+                    labelProgress.Text = "";
+                    progressBar1.Value = 0;
+
+                    // 下次再按Enter就执行导入操作
+                    AcceptButton = ButtonImport;
                 }
                 else
                 {
@@ -209,12 +220,14 @@ namespace OldW.DataManager
             foreach (var shtName in sheetsName)
             {
                 // 如果工作表的名称能够匹配出相对的测点类型，则开始搜索字段
-                if (InstrumTypeMapping.MultiPointsInSheet(shtName.Substring(0, shtName.Length - 1)))
+                if (ExcelMapping.MultiPointsInSheet(shtName.Substring(0, shtName.Length - 1)))
                 {
                     var ptNames = GetPointNames(_excelConnection, shtName);
                     foreach (var ptname in ptNames)
                     {
-                        points.Add(new MonitorEntityExcel(shtName, ptname,
+                        points.Add(new MonitorEntityExcel(
+                            sheetName: shtName, 
+                            fieldName: ptname,
                             storedInField: true,
                             possibleMatches: _selectedInstrum));
                     }
@@ -261,12 +274,14 @@ namespace OldW.DataManager
                 return new List<string>();
             }
 
-            // 检查工作表中“时间”字段的数据类型是否为时间类型（对应的数值为5）
+            // 检查工作表中“时间”字段的数据类型是否为时间类型（对应的数值为7，另外，整数或者小数对应的为5，字符对应130）
             int dataTypeIndex;
             int.TryParse(dt.Rows[indexTime]["DATA_TYPE"].ToString(), out dataTypeIndex);
             if (dataTypeIndex != 7)
             {
-                return new List<string>();
+                Debug.Print(@"Excel 工作表中“时间”字段的数据类型不是DateTime。");
+                // 但是由于 Excel 中并无严格的数据类型的概念，很容易出现异常的情况，所以这里就不报错了。
+                // return new List<string>();
             }
 
             // 一切检查通过，开始提取字段名
@@ -398,7 +413,6 @@ namespace OldW.DataManager
 
         private void ButtonImport_Click(object sender, EventArgs e)
         {
-
             if (dataGridViewExcel != null && dataGridViewExcel.DataSource != null)
             {      // 首先检测有没有出现Revit中的某一个
                 int errorRow;
@@ -500,11 +514,11 @@ namespace OldW.DataManager
             // 
             MonitorEntityExcel monitorEntity;  // 每一个要导入的数据库字段与Revit测点信息
             Instrumentation ins;
-
+            int row = 0;
             try
             {
                 // tran.Start();
-                for (int row = 0; row < count; row++)
+                for (row = 0; row < count; row++)
                 {
                     monitorEntity = datasource[row];
                     if (monitorEntity.Transport && monitorEntity.MappedItem != null)  // 进行此字段的数据导入的必要条件
@@ -525,7 +539,7 @@ namespace OldW.DataManager
             {
                 e.Cancel = true;
                 // _tranImport.RollBack();
-                Utils.ShowDebugCatch(ex, "将Excel中的监测数据导入Revit中的测点单元出错");
+                DebugUtils.ShowDebugCatch(ex, $"将Excel中的监测数据导入Revit中的测点单元出错，出错行：{row + 1} 。");
             }
         }
 
@@ -544,6 +558,10 @@ namespace OldW.DataManager
                 Thread.Sleep(10);
                 labelProgress.Text = @"100%";
                 progressBar1.Value = 100;
+
+
+                // 下次再按Enter就执行导入操作
+                AcceptButton = buttonMapping;
             }
             else
             { // 报错则回滚
@@ -566,6 +584,21 @@ namespace OldW.DataManager
             _backgroundWorker.Dispose();
         }
 
+        private void ButtonExit_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void buttonChooseFile_Click(object sender, EventArgs e)
+        {
+            string filePath = WindowsUtil.ChooseOpenExcel("选择Excel数据库");
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                textBoxFilePath.Text = filePath;
+            }
+        }
         #endregion
+
+
     }
 }

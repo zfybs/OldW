@@ -111,7 +111,7 @@ namespace OldW.DataManager
                     }
                     catch (Exception ex)
                     {
-                        Utils.ShowDebugCatch(ex, "无法保存监测数据到对象参数中。");
+                        DebugUtils.ShowDebugCatch(ex, "无法保存监测数据到对象参数中。");
                         tran.RollBack();
                     }
                 }
@@ -145,7 +145,7 @@ namespace OldW.DataManager
             /// <param name="data"></param>
             public Chart_MonitorData DrawData()
             {
-                Chart_MonitorData Chart1 = new Chart_MonitorData(InstrumentationType.地表隆沉);
+                Chart_MonitorData Chart1 = new Chart_MonitorData(type: activeInstru.Type);
 
                 var pts = ConvertBindingList(bindedTableData);
 

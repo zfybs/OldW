@@ -3,4 +3,8 @@ F:\Software\Revit\RevitDevelop\OldW\bin\OldWRibbonTab.pdb
 F:\Software\Revit\RevitDevelop\OldW\bin\OldWRibbonTab.xml
 F:\Software\Revit\RevitDevelop\OldW\Projects\OldWRibbonTab\obj\Debug\OldWRibbonTab.dll
 F:\Software\Revit\RevitDevelop\OldW\Projects\OldWRibbonTab\obj\Debug\OldWRibbonTab.pdb
-F:\Software\Revit\RevitDevelop\OldW\Projects\OldWRibbonTab\obj\Debug\OldWRibbonTab.csprojResolveAssemblyReference.cache
+F:\ProgrammingCases\GitHubProjects\OldW\bin\OldWRibbonTab.dll
+F:\ProgrammingCases\GitHubProjects\OldW\bin\OldWRibbonTab.pdb
+F:\ProgrammingCases\GitHubProjects\OldW\bin\OldWRibbonTab.xml
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\OldWRibbonTab\obj\Debug\OldWRibbonTab.dll
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\OldWRibbonTab\obj\Debug\OldWRibbonTab.pdb

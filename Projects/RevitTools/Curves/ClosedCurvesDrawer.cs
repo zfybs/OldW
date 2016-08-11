@@ -1,24 +1,12 @@
-// VBConversions Note: VB project level imports
 using System.Collections.Generic;
 using System;
 using System.Windows.Forms;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using System.Data;
-using System.Xml.Linq;
-using Microsoft.VisualBasic;
-using System.Collections;
-using System.Linq;
-// End of VB project level imports
-
 using Autodesk.Revit.DB;
-using Autodesk.Revit.DB.Events;
 using Autodesk.Revit.UI;
-using rvtTools;
-using stdOldW;
 
 
-namespace rvtTools
+
+namespace rvtTools.Curves
 {
     /// <summary>
     /// 绘制多重封闭的曲线

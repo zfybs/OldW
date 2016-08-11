@@ -11,6 +11,7 @@ namespace stdOldW.WinFormHelper
     /// </summary>
     public class WindowsUtil
     {
+        #region  ---   发送鼠标键盘消息
         /// <summary>
         /// 向任意进程发送键盘消息
         /// </summary>
@@ -80,6 +81,48 @@ namespace stdOldW.WinFormHelper
             /// <Summary> 标示是否采用绝对坐标 </Summary>
             MouseEventF_Absolute = 0x8000,  // 标示是否采用绝对坐标
         }
-    }
+        #endregion
 
+        #region  ---   文件选择对话框
+
+        /// <summary> 通过选择文件对话框选择要进行数据提取的Excel文件 </summary>
+        /// <returns> 要进行数据提取的Excel文件的绝对路径 </returns>
+        public static string ChooseOpenExcel(string title)
+        {
+            OpenFileDialog ofd = new OpenFileDialog
+            {
+                Title = title,
+                CheckFileExists = true,
+                AddExtension = true,
+                Filter = @"Excel文件(*.xls; *.xlsx; *.xlsb)| *.xls; *.xlsx; *.xlsb",
+                FilterIndex = 2,
+                Multiselect = false,
+            };
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                return ofd.FileName.Length > 0 ? ofd.FileName : "";
+            }
+            return "";
+        }
+
+        /// <summary> 通过选择文件对话框选择要进行数据写入的Excel文件 </summary>
+        /// <returns> 要进行数据写入的Excel文件的绝对路径 </returns>
+        public static string ChooseSaveExcel(string title)
+        {
+            SaveFileDialog ofd = new SaveFileDialog
+            {
+                Title = title,
+                CheckFileExists = false,
+                AddExtension = true,
+                Filter = @" Excel工作簿(*.xlsx)|*.xlsx| Excel二进制工作簿(*.xlsb) |*.xlsb| Excel 97-2003 工作簿(*.xls)|*.xls",
+                FilterIndex = 2,  // 默认选择第2项。
+            };
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                return ofd.FileName.Length > 0 ? ofd.FileName : "";
+            }
+            return "";
+        }
+        #endregion
+    }
 }

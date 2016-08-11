@@ -6,7 +6,7 @@ namespace OldW.DataManager
     /// <summary>
     /// 对测点的编号进行重命名
     /// </summary>
-    public partial class FormReNameElement : Form
+    public partial class ElementInitialize : Form
     {
         /// <summary>
         /// 测点的新名称
@@ -19,10 +19,12 @@ namespace OldW.DataManager
         /// 构造函数
         /// </summary>
         /// <param name="oldName"></param>
-        public FormReNameElement(string oldName)
+        public ElementInitialize(string oldName)
         {
             InitializeComponent();
             KeyPreview = true;  // 优先于子控件而获得键盘事件
+
+            textBoxName.Focus();
             textBoxName.Text = oldName;
             MonitorName = oldName;
             this.KeyDown += Form_KeyDown;

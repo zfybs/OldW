@@ -87,16 +87,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Curves\ContiguousCurveChain.cs" />
+    <Compile Include="Curves\CurvesConverter.cs" />
+    <Compile Include="Setup\AddinFile.cs" />
     <Compile Include="DllActivator_RevitTools.cs" />
     <Compile Include="Curves\ClosedCurvesDrawer.cs" />
     <Compile Include="Curves\ClosedCurveSelector.cs" />
     <Compile Include="Curves\CurveCheckEnums.cs" />
     <Compile Include="Curves\CurvesFormator.cs" />
-    <Compile Include="Curves\CurvesFormator_ContiguousCurves.cs" />
     <Compile Include="Curves\ModelCurvesDrawer.cs" />
     <Compile Include="Curves\ModelCurvesSelector.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="GeoHelper.cs" />
+    <Compile Include="Setup\PostEvent.cs" />
     <Compile Include="Tests_Templates\classTemplate.cs" />
     <Compile Include="Tests_Templates\Test_Grammer.cs" />
     <Compile Include="rvtTools.cs" />

@@ -29,9 +29,15 @@ namespace OldW.Commands
             OldWDocument WDoc = OldWDocument.SearchOrCreate(WApp, doc);
             InstrumDoc insDoc = new InstrumDoc(WDoc);
 
+
+            ICollection<Instrumentation> ins;
             //
             ICollection<ElementId> eleIds = uiApp.ActiveUIDocument.Selection.GetElementIds();
-            ICollection<Instrumentation> ins = Instrumentation.Lookup(doc, eleIds);
+            //
+            // 如果没有执行任何单元，则从整个文档中进行搜索 
+            ins = eleIds.Count == 0
+                ? Instrumentation.Lookup(doc)
+                : Instrumentation.Lookup(doc, eleIds);
 
             ElementDataManager frm = new ElementDataManager(ins, insDoc);
             frm.ShowDialog();
@@ -62,8 +68,8 @@ namespace OldW.Commands
 
             //
             // 如果没有执行任何单元，则从整个文档中进行搜索 
-            ins = eleIds.Count == 0 
-                ? Instrumentation.Lookup(doc) 
+            ins = eleIds.Count == 0
+                ? Instrumentation.Lookup(doc)
                 : Instrumentation.Lookup(doc, eleIds);
 
             DataImport frm = new DataImport(ins, insDoc);
@@ -86,8 +92,23 @@ namespace OldW.Commands
             //
             UIApplication uiApp = commandData.Application;
             Document doc = uiApp.ActiveUIDocument.Document;
+            OldWApplication WApp = OldWApplication.Create(uiApp.Application);
+            OldWDocument WDoc = OldWDocument.SearchOrCreate(WApp, doc);
+            InstrumDoc insDoc = new InstrumDoc(WDoc);
+
+            // 
+            ICollection<Instrumentation> ins;
             ICollection<ElementId> eleIds = uiApp.ActiveUIDocument.Selection.GetElementIds();
 
+            //
+            // 如果没有执行任何单元，则从整个文档中进行搜索 
+            ins = eleIds.Count == 0
+                ? Instrumentation.Lookup(doc)
+                : Instrumentation.Lookup(doc, eleIds);
+
+            DataExport frm = new DataExport(ins, insDoc);
+            frm.ShowDialog();
+            //
             return Result.Succeeded;
         }
     }

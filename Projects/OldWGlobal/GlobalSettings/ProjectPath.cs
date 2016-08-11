@@ -1,5 +1,6 @@
 using System.IO;
 using System.Reflection;
+using Autodesk.Revit.UI;
 
 namespace OldW.GlobalSettings
 {
@@ -13,22 +14,17 @@ namespace OldW.GlobalSettings
         /// Application的Dll所对应的路径，也就是“bin”文件夹的目录。
         /// </summary>
         /// <remarks>等效于：Dim thisAssemblyPath As String = System.Reflection.Assembly.GetExecutingAssembly().Location</remarks>
-        private static  string Path_Dlls
+        private static string Path_Dlls
         {
             get
             {
                 // 在最终的发布中，Path_Dlls的值是等于“ My.Application.Info.DirectoryPath”的，但是，在调试过程中，如果使用Revit的AddinManager插件进行调试，
                 // 则在每次调试时，AddinManager都会将对应的dll复制到一个新的临时文件夹中，如果将此复制后的dll的路作为Path_Dlls的值，那么其后面的Path_Solution等路径都是无效路径了。
-                if (Directory.Exists("F:\\Software\\Revit\\RevitDevelop\\OldW\\bin"))
-                {
-                    return "F:\\Software\\Revit\\RevitDevelop\\OldW\\bin";
-                }
-                else
-                {
-                    return Assembly.GetExecutingAssembly().Location;
-                    // 等效于：Dim thisAssemblyPath As String = System.Reflection.Assembly.GetExecutingAssembly().Location
-                    // 等效于：(new Microsoft.VisualBasic.ApplicationServices.ConsoleApplicationBase()).Info.DirectoryPath
-                }
+                string path = @"F:\ProgrammingCases\GitHubProjects\OldW\bin";
+                return Directory.Exists(path) ? path : (new FileInfo( Assembly.GetExecutingAssembly().Location)).DirectoryName;
+                // 等效于：Dim thisAssemblyPath As String = System.Reflection.Assembly.GetExecutingAssembly().Location
+                // 等效于：(new Microsoft.VisualBasic.ApplicationServices.ConsoleApplicationBase()).Info.DirectoryPath
+
             }
         }
 
@@ -52,10 +48,10 @@ namespace OldW.GlobalSettings
         /// </summary>
         /// <remarks>先通过application.SharedParametersFilename来设置当前的SharedParametersFilename的路径，
         /// 然后通过application.OpenSharedParameterFile方法来返回对应的DefinitionFile对象。</remarks>
-        public static readonly string Path_SharedParametersFile =Path.Combine(Path_family, "global.txt");
+        public static readonly string Path_SharedParametersFile = Path.Combine(Path_family, "global.txt");
 
         /// <summary> 监测警戒规范的绝对文件路径 </summary>
-        public static readonly string Path_WarningValueUsing =Path.Combine(Path_data, "WarningValueUsing.dat");
+        public static readonly string Path_WarningValueUsing = Path.Combine(Path_data, "WarningValueUsing.dat");
 
         /// <summary> 存入不同节点数的线测点的实体类所对应的dll的绝对文件夹路径 </summary>
         /// <remarks> 此文件夹中存放了多个dll文件，分别代表监测数据处理中的线测点所对应的实体类。

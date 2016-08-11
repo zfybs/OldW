@@ -8,11 +8,11 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Structure;
 using Autodesk.Revit.UI;
 using OldW.GlobalSettings;
-using stdOldW;
+using rvtTools;
 using Application = Autodesk.Revit.ApplicationServices.Application;
 using Document = Autodesk.Revit.DB.Document;
 using View = Autodesk.Revit.DB.View;
-using rvtTools;
+
 
 namespace OldW.Excavation
 {
@@ -47,6 +47,10 @@ namespace OldW.Excavation
 
         #endregion
 
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="OldWDoc"></param>
         public ExcavationDoc(OldWDocument OldWDoc) : base(OldWDoc.Document)
         {
             this.App = Document.Application;
@@ -65,37 +69,36 @@ namespace OldW.Excavation
         /// <remarks></remarks>
         public Soil_Model CreateModelSoil(double Depth, CurveArrArray CurveArrArr)
         {
+            if (CurveArrArr.IsEmpty) throw new NullReferenceException("用来绘制土体所用的轮廓为空。");
+
             Soil_Model SM = null;
 
-            if (!CurveArrArr.IsEmpty)
+            // 构造一个族文档
+            Document famDoc = CreateFamilyFromProfile(Depth, CurveArrArr);
+
+            // 将族加载到项目文档中
+            Family fam = famDoc.LoadFamily(Document, UIDocument.GetRevitUIFamilyLoadOptions());
+            famDoc.Close(false);
+            // 获取一个族类型，以加载一个族实例到项目文档中
+            FamilySymbol fs = fam.GetFamilySymbolIds().First().Element(Document) as FamilySymbol;
+
+            using (Transaction tranDoc = new Transaction(Document, "将模型土体的族在项目文档中创建一个实例并放置到组中"))
             {
-                // 构造一个族文档
-                Document FamilyDoc = CreateSoilFamily();
-                ExtrusionAndBindingDimension(FamilyDoc, CurveArrArr, Depth);
-
-                // 将族加载到项目文档中
-                Family fam = FamilyDoc.LoadFamily(Document, UIDocument.GetRevitUIFamilyLoadOptions());
-                FamilyDoc.Close(false);
-                // 获取一个族类型，以加载一个族实例到项目文档中
-                FamilySymbol fs = fam.GetFamilySymbolIds().First().Element(Document) as FamilySymbol;
-
-                using (Transaction t = new Transaction(Document, "添加族实例"))
+                try
                 {
-                    t.Start();
-                    // 将模型土体放到Group中
+                    tranDoc.Start();
 
+                    // 将模型土体放到Group中
                     List<ElementId> GroupMems = new List<ElementId>();
                     GroupType gptp =
-                        (GroupType)
-                            rvtTools.RvtTools.FindElement(Document, typeof(GroupType), targetName: Constants.FamilyName_Soil);
+                        (GroupType) Document.FindElement(typeof (GroupType), targetName: Constants.FamilyName_Soil);
                     // 组类型中包含有族实例，所以要找到对应的组类型，然后找到对应的组实例，再将组实例解组。
                     // 这是为了避免在删除“基坑土体”族及其实例时，UI界面中会出现“删除组实例中的最后一个成员”的警告。
                     Group gp = default(Group);
                     if (gptp != null)
                     {
                         gp =
-                            (Group)
-                                rvtTools.RvtTools.FindElement(Document, typeof(Group), targetName: Constants.FamilyName_Soil);
+                            (Group) Document.FindElement(typeof (Group), targetName: Constants.FamilyName_Soil);
                         if (gp != null)
                         {
                             GroupMems = gp.GetMemberIds() as List<ElementId>;
@@ -136,9 +139,20 @@ namespace OldW.Excavation
                     GroupMems.Add(fi.Id);
                     gp = Document.Create.NewGroup(GroupMems);
                     gp.GroupType.Name = Constants.FamilyName_Soil;
+
+                    // 将模型组在Revit界面中显示出来
+                    Document.ActiveView.UnhideElements(new ElementId[] {gp.Id});
+
                     //
                     SM = Soil_Model.Create(this, fi);
-                    t.Commit();
+
+                    tranDoc.Commit();
+                }
+                catch (Exception ex)
+                {
+                    // Utils.ShowDebugCatch(ex, $"事务“{tranDoc.GetName()}”出错");
+                    tranDoc.RollBack();
+                    throw new InvalidOperationException($"事务“{tranDoc.GetName()}”出错", ex);
                 }
             }
             return SM;
@@ -147,138 +161,170 @@ namespace OldW.Excavation
         /// <summary>
         /// 创建开挖土体，此土体单元在模型中可以有很多个。
         /// </summary>
-        /// <param name="p_ModelSoil">在创建开挖土体之前，请先确保已经创建好了模型土体。
+        /// <param name="modelSoil">在创建开挖土体之前，请先确保已经创建好了模型土体。
         /// 在此方法中，模型土体对象并不起任何作用，只是用来确保模型土体对象已经创建。</param>
-        /// <param name="CurveArrArr"> 要进行拉伸的平面轮廓（可以由多个封闭的曲线组成） </param>
-        /// <param name="Depth">开挖土体的深度，单位为m，数值为正表示向下的深度，反之表示向上的高度。</param>
-        /// <param name="DesiredName">此开挖土体实例的名称（推荐以开挖完成的日期）。如果此名称已经被使用，则以默认的名称来命名。</param>
+        /// <param name="curveArrArr"> 要进行拉伸的平面轮廓（可以由多个封闭的曲线组成） </param>
+        /// <param name="depth">开挖土体的深度，单位为m，数值为正表示向下的深度，反之表示向上的高度。</param>
+        /// <param name="desiredName">此开挖土体实例的名称（推荐以开挖完成的日期）。如果此名称已经被使用，则以默认的名称来命名。</param>
         /// <returns></returns>
-        public Soil_Excav CreateExcavationSoil(Soil_Model p_ModelSoil, double Depth, CurveArrArray CurveArrArr,
-            string DesiredName)
+        public Soil_Excav CreateExcavationSoil(Soil_Model modelSoil, double depth, CurveArrArray curveArrArr,
+            string desiredName)
         {
-            Soil_Excav SE = null;
-            if (this.ModelSoil != null)
+            if (this.ModelSoil == null) throw new NullReferenceException("请先在文档中创建出对应的模型土体。");
+            if (curveArrArr.IsEmpty) throw new NullReferenceException("用来绘制土体所用的轮廓为空。");
+
+            // 
+            Soil_Excav excavSoil = null;
+
+            // 构造一个族文档
+            Document famDoc = CreateFamilyFromProfile(depth, curveArrArr);
+
+            // 对于开挖土体族，其与模型土体不同的地方在于，它还是
+            using (Transaction tranFam = new Transaction(famDoc))
             {
-                // 获得用来创建实体的模型线
-
-                if (!CurveArrArr.IsEmpty)
+                try
                 {
-                    // 构造一个族文档
-                    Document FamDoc = CreateSoilFamily();
-                    ExtrusionAndBindingDimension(FamDoc, CurveArrArr, Depth);
-                    //
-                    using (Transaction t = new Transaction(FamDoc, "添加参数：开挖的开始与完成日期"))
-                    {
-                        try
-                        {
-                            t.Start();
-                            // 添加参数
-                            FamilyManager FM = FamDoc.FamilyManager;
+                    tranFam.SetName("添加参数：开挖的开始与完成日期");
+                    tranFam.Start();
+                    // ---------------------------------------------------------------------------------------------------------
 
-                            // 开挖开始
-                            DefinitionGroup defGroup = RvtTools.GetOldWDefinitionGroup(App);
-                            ExternalDefinition ExDef =defGroup.Definitions.get_Item(Constants.SP_ExcavationStarted) as ExternalDefinition;
+                    // 添加参数
+                    FamilyManager FM = famDoc.FamilyManager;
 
-                            FM.AddParameter(ExDef, BuiltInParameterGroup.PG_DATA, true);
+                    // 开挖开始
+                    DefinitionGroup defGroup = RvtTools.GetOldWDefinitionGroup(App);
+                    ExternalDefinition ExDef =
+                        defGroup.Definitions.get_Item(Constants.SP_ExcavationStarted) as ExternalDefinition;
 
-                            // 开挖完成
-                            ExDef =defGroup.Definitions.get_Item(Constants.SP_ExcavationCompleted) as ExternalDefinition;
+                    FM.AddParameter(ExDef, BuiltInParameterGroup.PG_DATA, true);
 
-                            FM.AddParameter(ExDef, BuiltInParameterGroup.PG_DATA, true);
-                            t.Commit();
-                        }
-                        catch (Exception ex)
-                        {
-                            Utils.ShowDebugCatch(ex, "添加开挖的完成日期参数失败！");
-                            t.RollBack();
-                        }
-                    }
+                    // 开挖完成
+                    ExDef = defGroup.Definitions.get_Item(Constants.SP_ExcavationCompleted) as ExternalDefinition;
 
-
-                    // 将族加载到项目文档中
-                    Family fam = FamDoc.LoadFamily(Document, UIDocument.GetRevitUIFamilyLoadOptions());
-                    FamDoc.Close(false);
-                    // 获取一个族类型，以加载一个族实例到项目文档中
-                    FamilySymbol fs = (FamilySymbol)fam.GetFamilySymbolIds().First().Element(Document);
-                    using (Transaction t = new Transaction(Document, "添加族实例"))
-                    {
-                        t.Start();
-                        // 族或族类型的重命名
-
-                        string soilName = GetValidExcavationSoilName(Document, DesiredName);
-                        fam.Name = soilName;
-                        fs.Name = soilName;
-
-                        // 创建实例
-                        if (!fs.IsActive)
-                        {
-                            fs.Activate();
-                        }
-                        FamilyInstance fi = Document.Create.NewFamilyInstance(new XYZ(), fs, StructuralType.NonStructural);
-                        SE = Soil_Excav.Create(fi, p_ModelSoil);
-                        t.Commit();
-                    }
+                    FM.AddParameter(ExDef, BuiltInParameterGroup.PG_DATA, true);
+                    tranFam.Commit();
+                }
+                catch (Exception ex)
+                {
+                    // Utils.ShowDebugCatch(ex, $"事务“{tranFam.GetName()}” 出错！");
+                    tranFam.RollBack();
+                    throw new InvalidOperationException($"事务“{tranFam.GetName()}”出错", ex);
                 }
             }
-            else
+
+            // 将族加载到项目文档中
+            Family fam = famDoc.LoadFamily(Document, UIDocument.GetRevitUIFamilyLoadOptions());
+            famDoc.Close(false);
+
+            // 获取一个族类型，以加载一个族实例到项目文档中
+            FamilySymbol fs = (FamilySymbol) fam.GetFamilySymbolIds().First().Element(Document);
+
+            using (Transaction tranDoc = new Transaction(Document, "将开挖土体的族在项目文档中创建一个实例并放置到组中"))
             {
-                throw new NullReferenceException("请先在文档中创建出对应的模型土体。");
+                try
+                {
+                    tranDoc.Start();
+                    // 族或族类型的重命名
+
+                    string soilName = GetValidExcavationSoilName(Document, desiredName);
+                    fs.Name = soilName;
+                    fam.Name = soilName;
+
+                    // 创建实例
+                    if (!fs.IsActive)
+                    {
+                        fs.Activate();
+                    }
+                    FamilyInstance fi = Document.Create.NewFamilyInstance(new XYZ(), fs, StructuralType.NonStructural);
+                    excavSoil = Soil_Excav.Create(fi, modelSoil);
+
+                    tranDoc.Commit();
+                }
+                catch (Exception ex)
+                {
+                    tranDoc.RollBack();
+
+                    // 删除前面加载到项目文档中的族
+                    using (Transaction tranDelectFamaiy = new Transaction(Document, "删除前面加载到项目文档中的族"))
+                    {
+                        tranDelectFamaiy.Start();
+                        Document.Delete(new ElementId[] {fam.Id});
+                        tranDelectFamaiy.Commit();
+                    }
+
+                    throw new InvalidOperationException($"事务“{tranDoc.GetName()}”出错", ex);
+                }
             }
-            return SE;
+            return excavSoil;
         }
 
         #endregion
 
         /// <summary>
-        /// 创建一个模型土体（或者是开挖土体）的族文档，并将其打开。
+        /// 根据输入的平面轮廓信息，以及对应的模型深度，创建出模型土体或者开挖土体族
         /// </summary>
-        private Document CreateSoilFamily()
+        /// <param name="Depth"></param>
+        /// <param name="CurveArrArr"></param>
+        /// <returns></returns>
+        private Document CreateFamilyFromProfile(double Depth, CurveArrArray CurveArrArr)
         {
-            var app = Document.Application;
             string TemplateName = Path.Combine(ProjectPath.Path_family, Constants.FamilyTemplateName_Soil);
             if (!File.Exists(TemplateName))
             {
                 throw new FileNotFoundException("在创建土体时，族样板文件没有找到", TemplateName);
             }
-            else
-            {
-                // 创建族文档
-                Document FamDoc = App.NewFamilyDocument(TemplateName);
-                using (Transaction T = new Transaction(FamDoc, "设置族类别"))
-                {
-                    T.Start();
-                    // 设置族的族类别
-                    FamDoc.OwnerFamily.FamilyCategory = FamDoc.Settings.Categories.get_Item(BuiltInCategory.OST_Site);
-                    // 设置族的名称
-                    T.Commit();
-                }
 
-                return FamDoc;
+            // 从族样板文件创建族文档
+            Document famDoc = App.NewFamilyDocument(TemplateName);
+
+            using (Transaction tranFam = new Transaction(famDoc))
+            {
+                try
+                {
+                    tranFam.SetName("设置族类别");
+                    tranFam.Start();
+                    // 设置族的族类别
+                    famDoc.OwnerFamily.FamilyCategory = famDoc.Settings.Categories.get_Item(BuiltInCategory.OST_Site);
+
+                    // 绘制拉伸实体，并关联深度参数
+                    ExtrusionAndBindingDimension(tranFam, famDoc, CurveArrArr, Depth);
+
+                    tranFam.Commit();
+                }
+                catch (Exception ex)
+                {
+                    // Utils.ShowDebugCatch(ex, $" 事务 {tranFam.GetName()} 出错");
+                    tranFam.RollBack();
+                    throw new InvalidOperationException($" 事务 {tranFam.GetName()} 出错", ex);
+                }
             }
+            return famDoc;
         }
 
         /// <summary>
         /// 绘制拉伸实体，并将其深度值与具体参数关联起来。
         /// </summary>
-        /// <param name="FamDoc">实体所在的族文档，此文档当前已经处于打开状态。</param>
-        /// <param name="CurveAA">用来绘制实体的闭合轮廓</param>
-        /// <param name="Depth">模型土体的深度，单位为m，数值为正表示向下的深度，反之表示向上的高度。</param>
+        /// <param name="tranFam"></param>
+        /// <param name="famDoc">实体所在的族文档，此文档当前已经处于打开状态。</param>
+        /// <param name="curveArrArr">用来绘制实体的闭合轮廓</param>
+        /// <param name="depth">模型土体的深度，单位为m，数值为正表示向下的深度，反之表示向上的高度。</param>
         /// <remarks></remarks>
-        private void ExtrusionAndBindingDimension(Document FamDoc, CurveArrArray CurveAA, double Depth)
+        private void ExtrusionAndBindingDimension(Transaction tranFam, Document famDoc, CurveArrArray curveArrArr,
+            double depth)
         {
             // 获取拉伸轮廓所在水平面的Z坐标值。
-            Curve c = CurveAA.get_Item(0).get_Item(0).Clone();
+            Curve c = curveArrArr.get_Item(0).get_Item(0).Clone();
             c.MakeBound(0, 1);
             double TopZ = Convert.ToDouble(c.GetEndPoint(0).Z);
             c.Dispose();
 
             // 确定拉伸方向与拉伸长度
             SByte Direction = 0;
-            if (Depth > 0) // 说明是向下拉伸
+            if (depth > 0) // 说明是向下拉伸
             {
                 Direction = -1;
             }
-            else if (Depth < 0) // 说明是向上拉伸
+            else if (depth < 0) // 说明是向上拉伸
             {
                 Direction = 1;
             }
@@ -286,7 +332,7 @@ namespace OldW.Excavation
             {
                 throw new ArgumentException("深度值不能为0！");
             }
-            Depth = Math.Abs(UnitUtils.ConvertToInternalUnits(Depth, DisplayUnitType.DUT_METERS)); // 将米转换为英尺。
+            depth = Math.Abs(UnitUtils.ConvertToInternalUnits(depth, DisplayUnitType.DUT_METERS)); // 将米转换为英尺。
 
 
             // 定义参考平面
@@ -294,149 +340,78 @@ namespace OldW.Excavation
             ReferencePlane RefP_Top = default(ReferencePlane);
 
             // 在族文档中绘制实体
-            using (Transaction trans = new Transaction(FamDoc, "添加实体与参数关联"))
+
+            tranFam.SetName("添加实体与参数关联");
+            View V = famDoc.FindElement(typeof (View), BuiltInCategory.OST_Views, "前") as View;
+            // 定义视图
+            if (V == null)
             {
-                trans.Start();
-                try
-                {
-                    View V =
-                        rvtTools.RvtTools.FindElement(FamDoc, typeof(View), BuiltInCategory.OST_Views, "前") as View;
-                    // 定义视图
-                    if (V == null)
-                    {
-                        throw new NullReferenceException("当前视图为空。");
-                    }
-
-                    RefP_Top = FamDoc.FamilyCreate.NewReferencePlane(P_Top.Origin, P_Top.Origin + P_Top.XVec, P_Top.YVec,
-                        V);
-                    RefP_Top.Name = "SoilTop";
-
-                    FamilyItemFactory FamilyCreation = FamDoc.FamilyCreate;
-
-                    // 创建拉伸实体
-                    SketchPlane sp = SketchPlane.Create(FamDoc, P_Top); // P_Top 为坐标原点所在的水平面
-                    Extrusion extru = FamilyCreation.NewExtrusion(true, CurveAA, sp, Depth); // 创建拉伸实体
-
-                    // 将拉伸实体的顶面与参数平面进行绑定  '  ElementTransformUtils.MoveElement(FamDoc, extru.Id, New XYZ(0, 0, 0))
-                    PlanarFace Ftop = GeoHelper.FindFace(extru, new XYZ(0, 0, 1));
-                    FamilyCreation.NewAlignment(V, Ftop.Reference, RefP_Top.GetReference());
-
-                    //' 添加深度参数
-                    FamilyManager FM = FamDoc.FamilyManager;
-                    //’在进行参数读写之前，首先需要判断当前族类型是否存在，如果不存在，读写族参数都是不可行的
-                    if (FM.CurrentType == null)
-                    {
-                        FM.NewType("CurrentType"); // 随便取个名字即可，后期会将族中的第一个族类型名称统一进行修改。
-                    }
-                    FamilyParameter Para_Depth = FM.AddParameter("Depth", BuiltInParameterGroup.PG_GEOMETRY,
-                        ParameterType.Length, false);
-                    //' give initial values
-                    FM.Set(Para_Depth, Depth); // 这里不知为何为给出报错：InvalidOperationException:There is no current type.
-
-
-                    // 添加标注
-                    PlanarFace TopFace = GeoHelper.FindFace(extru, new XYZ(0, 0, 1));
-                    PlanarFace BotFace = GeoHelper.FindFace(extru, new XYZ(0, 0, -1));
-
-                    // make an array of references
-                    ReferenceArray refArray = new ReferenceArray();
-                    refArray.Append(TopFace.Reference);
-                    refArray.Append(BotFace.Reference);
-                    // define a demension line
-                    var a = GeoHelper.FindFace(extru, new XYZ(0, 0, 1)).Origin;
-                    Line DimLine = Line.CreateBound(TopFace.Origin, BotFace.Origin);
-                    // create a dimension
-                    Dimension DimDepth = FamilyCreation.NewDimension(V, DimLine, refArray);
-
-                    // 将深度参数与其拉伸实体的深度值关联起来
-                    DimDepth.FamilyLabel = Para_Depth;
-                    trans.Commit();
-                }
-                catch (Exception ex)
-                {
-                    Utils.ShowDebugCatch(ex, "创建拉伸实体与参数关联出错");
-                    trans.RollBack();
-                }
+                throw new NullReferenceException("当前视图为空。");
             }
+
+            RefP_Top = famDoc.FamilyCreate.NewReferencePlane(P_Top.Origin, P_Top.Origin + P_Top.XVec, P_Top.YVec, V);
+            RefP_Top.Name = "SoilTop";
+
+            FamilyItemFactory familyCreation = famDoc.FamilyCreate;
+
+            // 创建拉伸实体
+            SketchPlane sp = SketchPlane.Create(famDoc, P_Top); // P_Top 为坐标原点所在的水平面
+
+            // ----------------------------------------------------------------------------------------------------------------------------------------
+
+            if (curveArrArr.IsEmpty || sp == null || !sp.IsValidObject)
+            {
+                MessageBox.Show(@"创建土体模型的轮廓出错。");
+            }
+
+            Extrusion extru = familyCreation.NewExtrusion(
+                isSolid: true,
+                profile: curveArrArr,
+                sketchPlane: sp,
+                end: depth); // 创建拉伸实体
+
+            // ----------------------------------------------------------------------------------------------------------------------------------------
+
+            // 将拉伸实体的顶面与参数平面进行绑定  '  ElementTransformUtils.MoveElement(FamDoc, extru.Id, New XYZ(0, 0, 0))
+            PlanarFace Ftop = GeoHelper.FindFace(extru, new XYZ(0, 0, 1));
+            familyCreation.NewAlignment(V, Ftop.Reference, RefP_Top.GetReference());
+
+            //' 添加深度参数
+            FamilyManager FM = famDoc.FamilyManager;
+            //’在进行参数读写之前，首先需要判断当前族类型是否存在，如果不存在，读写族参数都是不可行的
+            if (FM.CurrentType == null)
+            {
+                FM.NewType("CurrentType"); // 随便取个名字即可，后期会将族中的第一个族类型名称统一进行修改。
+            }
+
+            // ExternalDefinition familyDefinition = null;
+            DefinitionGroup defGroup = RvtTools.GetOldWDefinitionGroup(App);
+            ExternalDefinition ExDef = defGroup.Definitions.get_Item(Constants.SP_SoilDepth) as ExternalDefinition;
+            FamilyParameter Para_Depth = FM.AddParameter(ExDef, BuiltInParameterGroup.PG_GEOMETRY, isInstance: true);
+
+            //' give initial values
+            FM.Set(Para_Depth, depth); // 这里不知为何为给出报错：InvalidOperationException:There is no current type.
+
+
+            // 添加标注
+            PlanarFace TopFace = GeoHelper.FindFace(extru, new XYZ(0, 0, 1));
+            PlanarFace BotFace = GeoHelper.FindFace(extru, new XYZ(0, 0, -1));
+
+            // make an array of references
+            ReferenceArray refArray = new ReferenceArray();
+            refArray.Append(TopFace.Reference);
+            refArray.Append(BotFace.Reference);
+            // define a demension line
+            var a = GeoHelper.FindFace(extru, new XYZ(0, 0, 1)).Origin;
+            Line DimLine = Line.CreateBound(TopFace.Origin, BotFace.Origin);
+            // create a dimension
+            Dimension DimDepth = familyCreation.NewDimension(V, DimLine, refArray);
+
+            // 将深度参数与其拉伸实体的深度值关联起来
+            DimDepth.FamilyLabel = Para_Depth;
         }
 
         // 开挖土体族的命名
-        /// <summary>
-        /// 在当前模型文档中，构造出一个有效的名称，来供开挖土体族使用。
-        /// </summary>
-        /// <param name="doc"></param>
-        /// <param name="ExcavationCompleteDate">日期的数据中请保证不包含小时或者更小的值，即请用“Date对象.Date”来进行赋值。</param>
-        /// <returns></returns>
-        /// <remarks>其基本格式为：开挖土体-2016/04/03-02</remarks>
-        private string GetValidExcavationSoilNameFromDate(Document doc, DateTime ExcavationCompleteDate)
-        {
-            string prefix = "开挖土体-";
-            List<Family> Fams = Document.FindFamilies(BuiltInCategory.OST_Site);
-
-            // 构造一个字典，其中包括的所有开挖土体族的名称中，每一个日期，以及对应的可能编号
-            Dictionary<DateTime, List<UInt16>> Date_Count = new Dictionary<DateTime, List<UInt16>>();
-
-            //
-            DateTime dt = default(DateTime);
-            ushort Id = 0;
-            string FamName = "";
-            //
-            foreach (Family f in Fams)
-            {
-                FamName = Convert.ToString(f.Name);
-                if (FamName.StartsWith(prefix)) // 说明可能是开挖土体
-                {
-                    FamName = FamName.Substring(prefix.Length);
-                    string[] Cps = FamName.Split('-');
-                    if (Cps.Count() > 0)
-                    {
-                        if (DateTime.TryParse(Cps[0], out dt)) // 说明找到了一个开挖土体族，其对应的日期为dt
-                        {
-                            List<UInt16> Ids = default(List<UInt16>);
-
-                            if (Date_Count.Keys.Contains(dt)) // 说明此日期前面已经出现过了
-                            {
-                                Ids = Date_Count[dt]; // 返回日期所对应的值
-                                if (Ids == null) // 字典中的集合可能还未初始化
-                                {
-                                    Ids = new List<UInt16>();
-                                    Date_Count[dt] = Ids;
-                                }
-                            }
-                            else // 说明此日期第一次出现
-                            {
-                                Ids = new List<UInt16>();
-                                Date_Count.Add(dt, Ids);
-                            }
-
-                            if ((Cps.Count() == 2) && UInt16.TryParse(Cps[1], out Id)) // 说明族名称中同时记录了日期与序号
-                            {
-                                Ids.Add(Id);
-                            }
-                            else // 说明族名称中只记录了日期
-                            {
-                                Ids.Add(0);
-                            }
-                        }
-                    }
-                }
-            }
-
-            //
-            string NewName = prefix + DateTime.Today.Date.ToString("yyyy/MM/dd"); // 先赋一个初值，避免出现问题
-
-            if (!Date_Count.Keys.Contains(ExcavationCompleteDate))
-            {
-                NewName = prefix + ExcavationCompleteDate.ToString("yyyy/MM/dd");
-            }
-            else
-            {
-                UInt16 maxId = (ushort)(Date_Count[ExcavationCompleteDate].Max() + 1);
-                NewName = prefix + ExcavationCompleteDate.ToString("yyyy/MM/dd") + "-" + maxId.ToString("00");
-            }
-            return NewName;
-        }
-
         /// <summary>
         /// 在当前模型文档中，构造出一个有效的名称，来供开挖土体族使用。
         /// </summary>
@@ -450,16 +425,15 @@ namespace OldW.Excavation
 
             List<Family> Fams = Document.FindFamilies(BuiltInCategory.OST_Site);
             // 构造一个字典，其中包括的所有开挖土体族的名称中，每一个日期，以及对应的可能编号
-            List<string> FamNames = new List<string>();
+            List<string> exFamis = new List<string>();
             string FamName = "";
-
             // 提取所有的开挖土体族名称
             foreach (Family f in Fams)
             {
                 FamName = Convert.ToString(f.Name);
                 if (FamName.StartsWith(prefix)) // 说明是开挖土体
                 {
-                    FamNames.Add(FamName);
+                    exFamis.Add(FamName);
                 }
             }
 
@@ -470,7 +444,7 @@ namespace OldW.Excavation
             if (string.IsNullOrEmpty(DesiredName)) // 命名为“开挖-01”
             {
                 int Max = 0;
-                foreach (string n in FamNames)
+                foreach (string n in exFamis)
                 {
                     if (n.StartsWith(prefix) && int.TryParse(n.Substring(prefix.Length), out Num))
                     {
@@ -482,7 +456,7 @@ namespace OldW.Excavation
             else
             {
                 DesiredName = prefix + DesiredName;
-                if (FamNames.Contains(DesiredName))
+                if (exFamis.Contains(DesiredName))
                 {
                     if (HasSuffixNum(DesiredName, ref Num, ref Pre))
                     {
@@ -493,7 +467,7 @@ namespace OldW.Excavation
                         // 要确保修改后的名称不包含在现有的名称集合中！！
                         // 即确保添加的后缀编号的唯一性。
                         int Max = 0;
-                        foreach (string n in FamNames)
+                        foreach (string n in exFamis)
                         {
                             if (n.StartsWith(DesiredName + "-") &&
                                 int.TryParse(n.Substring(Convert.ToInt32((DesiredName + "-").Length)), out Num))
@@ -524,7 +498,7 @@ namespace OldW.Excavation
                 Prefix = "";
                 for (var i = 0; i <= n - 2; i++)
                 {
-                    Prefix = Prefix + parts[(int)i] + "-";
+                    Prefix = Prefix + parts[(int) i] + "-";
                 }
                 return true;
             }
@@ -583,7 +557,7 @@ namespace OldW.Excavation
                     string FMessage = null;
                     if (Soil_Model.IsSoildModel(doc, SoilElementId, ref FMessage))
                     {
-                        Soil = (FamilyInstance)Document.GetElement(SoilElementId);
+                        Soil = (FamilyInstance) Document.GetElement(SoilElementId);
                     }
                     else
                     {
@@ -622,7 +596,7 @@ namespace OldW.Excavation
                     }
                     else
                     {
-                        Soil = (FamilyInstance)soils[0].Element(doc); // 找到有效且唯一的土体单元 ^_^
+                        Soil = (FamilyInstance) soils[0].Element(doc); // 找到有效且唯一的土体单元 ^_^
                     }
                 }
             }
@@ -637,35 +611,35 @@ namespace OldW.Excavation
         /// <summary>
         /// 搜索文档中与模型土体位于同一个Group中的所有的开挖土体。
         /// </summary>
-        /// <param name="SoilM">文档中的模型土体单元，可以通过 ExcavationDoc.GetSoilModel 函数获得</param>
+        /// <param name="soilM">文档中的模型土体单元，可以通过 ExcavationDoc.GetSoilModel 函数获得</param>
         /// <returns></returns>
         /// <remarks></remarks>
-        public List<Soil_Excav> FindExcavSoils(Soil_Model SoilM)
+        public List<Soil_Excav> FindExcavSoils(Soil_Model soilM)
         {
             List<Soil_Excav> SoilEx = new List<Soil_Excav>();
+            if (soilM == null) return SoilEx;
+
             //
             // 首先在模型Group中进行搜索
-            Group gp = SoilM.Group;
-            FamilyInstance sm = SoilM.Soil;
-            List<ElementId> ElemIds = gp.GetMemberIds() as List<ElementId>;
-            if (ElemIds.Count > 0)
+            Group gp = soilM.Group;
+            FamilyInstance sm = soilM.Soil;
+            List<ElementId> elemIds = gp.GetMemberIds() as List<ElementId>;
+            if (elemIds != null && elemIds.Count > 0)
             {
-                FilteredElementCollector col = new FilteredElementCollector(Document, ElemIds);
+                FilteredElementCollector col = new FilteredElementCollector(Document, elemIds);
                 // 所有的模型土体与开挖土体集合
                 List<Element> Elems =
-                    col.OfClass(typeof(FamilyInstance))
+                    col.OfClass(typeof (FamilyInstance))
                         .OfCategoryId(new ElementId(BuiltInCategory.OST_Site))
                         .ToElements() as List<Element>;
 
-                // 排队模型土体并生成对应的开挖土体对象
-                ElementId smId = SoilM.Soil.Id;
-                foreach (Element e in Elems)
-                {
-                    if (e.Id != smId) // 说明是开挖土体
-                    {
-                        SoilEx.Add(Soil_Excav.Create((FamilyInstance)e, SoilM));
-                    }
-                }
+                // 排除模型土体并生成对应的开挖土体对象 
+                ElementId smId = soilM.Soil.Id;
+                SoilEx.AddRange(
+                    from e in Elems
+                    where e.Id != smId
+                    // 说明是开挖土体
+                    select Soil_Excav.Create((FamilyInstance) e, soilM));
             }
             return SoilEx;
         }
@@ -682,7 +656,7 @@ namespace OldW.Excavation
         public bool DeleteEmptySoilFamily()
         {
             bool blnSuc = false;
-            using (Transaction t = new Transaction(Document, "删除文档中没有实例对象的土体族。"))
+            using (Transaction tran = new Transaction(Document, "删除文档中没有实例对象的土体族。"))
             {
                 try
                 {
@@ -697,17 +671,19 @@ namespace OldW.Excavation
                             deletedFamilyName = deletedFamilyName + f.Name + "\r\n";
                         }
                     }
-                    t.Start();
+                    tran.Start();
                     Document.Delete(FamsToDelete);
-                    t.Commit();
-                    //  MessageBox.Show("删除空的土体族对象成功。删除掉的族对象有：" & vbCrLf & DeletedFamilyName, "恭喜", MessageBoxButtons.OK, MessageBoxIcon.None)
+                    tran.Commit();
+                    MessageBox.Show(@"删除空的土体族对象成功。删除掉的族对象有：" + "\r\n （" + deletedFamilyName + @"）", @"成功",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.None);
                     blnSuc = true;
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("删除空的土体族对象失败" + "\r\n" + ex.Message, "Error", MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
-                    t.RollBack();
+                    tran.RollBack();
                     blnSuc = false;
                 }
             }
