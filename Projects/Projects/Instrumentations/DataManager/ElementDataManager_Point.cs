@@ -111,7 +111,7 @@ namespace OldW.DataManager
                     }
                     catch (Exception ex)
                     {
-                        Utils.ShowDebugCatch(ex, "无法保存监测数据到对象参数中。");
+                        DebugUtils.ShowDebugCatch(ex, "无法保存监测数据到对象参数中。");
                         tran.RollBack();
                     }
                 }

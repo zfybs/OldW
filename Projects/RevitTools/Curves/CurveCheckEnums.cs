@@ -12,7 +12,7 @@ using System.Linq;
 // End of VB project level imports
 
 
-namespace rvtTools
+namespace rvtTools.Curves
 {
 	
 	/// <summary>

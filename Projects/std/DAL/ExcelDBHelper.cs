@@ -521,7 +521,7 @@ namespace stdOldW.DAL
         /// <param name="conn"></param>
         /// <param name="sql"> 用来执行的非查询sql语句</param>
         /// <remarks></remarks>
-        public static void ExecuteNoneQuery(OleDbConnection conn, string sql)
+        private static void ExecuteNoneQuery(OleDbConnection conn, string sql)
         {
             //如果连接已经关闭，则先打开连接
             if (conn.State == ConnectionState.Closed)

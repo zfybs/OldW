@@ -50,31 +50,24 @@ namespace OldW.Instrumentations
             ElementId foundId = null;
 
             //是否存在族
-            Boolean found = FilterTools.existFamliyByName(uidoc.Document, monitorType.ToString(), out foundId);
+            Boolean found = (uidoc.Document.FindFamily(monitorType.ToString()) != null);
 
-            Family family = null;
-            if (found == true)
+            Family family = uidoc.Document.FindFamily(monitorType.ToString());
+            //如果存在，获得文件该族 ； 如果不存在，载入族
+            if (family == null)
             {
-                //如果存在，获得文件该族
-                family = uidoc.Document.GetElement(foundId) as Family;
-            }
-            else
-            {
+                using (Transaction trans = new Transaction(uidoc.Document, "trans"))
                 {
-                    //如果不存在，载入族
-                    using (Transaction trans = new Transaction(uidoc.Document, "trans"))
+                    try
                     {
-                        try
-                        {
-                            trans.Start();
-                            uidoc.Document.LoadFamily(Path.Combine(ProjectPath.Path_family,
-                                monitorType.ToString() + ".rfa"), out family);
-                            trans.Commit();
-                        }
-                        catch (Exception ex)
-                        {
-                            throw;
-                        }
+                        trans.Start();
+                        uidoc.Document.LoadFamily(Path.Combine(ProjectPath.Path_family,
+                            monitorType.ToString() + ".rfa"), out family);
+                        trans.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw;
                     }
                 }
             }
@@ -82,7 +75,6 @@ namespace OldW.Instrumentations
             //获得该族的族类型，并且放置族实例
             FamilySymbol symbol = uidoc.Document.GetElement(family.GetFamilySymbolIds().ElementAt(0)) as FamilySymbol;
             uidoc.PostRequestForElementTypePlacement(symbol);
-
         }
 
         #region    ---   组合列表框 ComboBox 的操作

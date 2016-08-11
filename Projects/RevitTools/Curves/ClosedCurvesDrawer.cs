@@ -6,7 +6,7 @@ using Autodesk.Revit.UI;
 
 
 
-namespace rvtTools
+namespace rvtTools.Curves
 {
     /// <summary>
     /// 绘制多重封闭的曲线

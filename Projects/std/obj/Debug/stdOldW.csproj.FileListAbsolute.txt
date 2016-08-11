@@ -15,4 +15,10 @@ F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.WinFormHe
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.csproj.GenerateResource.Cache
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.dll
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.pdb
-F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.csprojResolveAssemblyReference.cache
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\WinFormHelper\ShowDialogWinTemplate.g.cs
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\GeneratedInternalTypeHelper.g.cs
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW_MarkupCompile.cache
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW_MarkupCompile.lref
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\WinFormHelper\ShowDialogWinTemplate.baml
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.g.resources
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.WinFormHelper.ShowDialogFormTemplate.resources

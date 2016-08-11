@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using rvtTools;
+using rvtTools.Curves;
 using stdOldW;
 using Control = System.Windows.Forms.Control;
 
@@ -334,7 +335,7 @@ namespace OldW.Excavation
             }
             catch (Exception ex)
             {
-                Utils.ShowDebugCatch(ex, "外部事件执行出错", "出错");
+                DebugUtils.ShowDebugCatch(ex, "外部事件执行出错", "出错");
             }
             finally
             {
@@ -385,7 +386,7 @@ namespace OldW.Excavation
                     catch (Exception ex)
                     {
                         tran.RollBack();
-                        Utils.ShowDebugCatch(ex, $"事务“{tran.GetName()}”出错");
+                        DebugUtils.ShowDebugCatch(ex, $"事务“{tran.GetName()}”出错");
                     }
                 }
             }
@@ -449,7 +450,7 @@ namespace OldW.Excavation
                         CurveArr.Append(c.GeometryCurve);
                     }
                     // 必须将曲线集合进行重排以使其连续。
-                    CurvesFormator.GetContiguousCurvesFromCurveArray(CurveArr, out CurveArr);
+                    CurvesFormator.GetContiguousCurvesFromCurves(CurveArr, out CurveArr);
                     drawnCurveArrArr.Append(CurveArr);
                 }
                 DrawnCurveIds = AddedCurves;

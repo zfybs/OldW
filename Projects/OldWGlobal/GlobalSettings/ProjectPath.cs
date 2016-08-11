@@ -21,7 +21,7 @@ namespace OldW.GlobalSettings
                 // 在最终的发布中，Path_Dlls的值是等于“ My.Application.Info.DirectoryPath”的，但是，在调试过程中，如果使用Revit的AddinManager插件进行调试，
                 // 则在每次调试时，AddinManager都会将对应的dll复制到一个新的临时文件夹中，如果将此复制后的dll的路作为Path_Dlls的值，那么其后面的Path_Solution等路径都是无效路径了。
                 string path = @"F:\ProgrammingCases\GitHubProjects\OldW\bin";
-                return Directory.Exists(path) ? path : Assembly.GetExecutingAssembly().Location;
+                return Directory.Exists(path) ? path : (new FileInfo( Assembly.GetExecutingAssembly().Location)).DirectoryName;
                 // 等效于：Dim thisAssemblyPath As String = System.Reflection.Assembly.GetExecutingAssembly().Location
                 // 等效于：(new Microsoft.VisualBasic.ApplicationServices.ConsoleApplicationBase()).Info.DirectoryPath
 

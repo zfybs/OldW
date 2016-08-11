@@ -159,7 +159,7 @@ namespace stdOldW.DAL
             return value ?? DBNull.Value;
         }
 
-        #region 将表格打印为格式化的字符
+        #region ---   提取表格中的数据
 
         /// <summary>
         /// 
@@ -172,7 +172,8 @@ namespace stdOldW.DAL
         {
             List<Object> ls = table.AsEnumerable().Select(r => r[columnName]).ToList();
             return ls;
-        } 
+        }
+
         #endregion
 
         #region 将表格打印为格式化的字符

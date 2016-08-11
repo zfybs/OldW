@@ -280,7 +280,7 @@ namespace OldW.DataManager
                 }
                 catch (Exception ex)
                 {
-                    Utils.ShowDebugCatch(ex, "SelectedIndexChanged时出错。");
+                    DebugUtils.ShowDebugCatch(ex, "SelectedIndexChanged时出错。");
                 }
             }
         }

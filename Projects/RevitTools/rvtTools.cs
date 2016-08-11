@@ -39,12 +39,11 @@ namespace rvtTools
             DefinitionGroup myGroup = myGroups.get_Item(Constants.SP_GroupName);
             return myGroup;
         }
-		
-		
-		/// <summary>
-		/// 撤消 Revit 的操作
-		/// </summary>
-		public static void Undo()
+
+        /// <summary>
+        /// 撤消 Revit 的操作
+        /// </summary>
+        public static void Undo()
 		{
             UIntPtr ptr0=new UIntPtr(0);
             // 第一步，先取消当前的所有操作

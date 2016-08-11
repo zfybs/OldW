@@ -539,7 +539,7 @@ namespace OldW.DataManager
             {
                 e.Cancel = true;
                 // _tranImport.RollBack();
-                Utils.ShowDebugCatch(ex, $"将Excel中的监测数据导入Revit中的测点单元出错，出错行：{row + 1} 。");
+                DebugUtils.ShowDebugCatch(ex, $"将Excel中的监测数据导入Revit中的测点单元出错，出错行：{row + 1} 。");
             }
         }
 

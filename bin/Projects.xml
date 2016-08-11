@@ -945,6 +945,15 @@
             </summary>
             <returns>此函数仅为示例，并不在此类中执行。外部代码可以参数本函数来创建出对应的 CodeCompileUnit 源代码结构 </returns>
         </member>
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.GetNewConstructedDataSource(OldW.DataManager.ElementDataManager.DgvLine.TableBindedData,System.Reflection.Assembly,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="sourceObject"></param>
+            <param name="desAssembly"></param>
+            <param name="desEntityName"></param>
+            <returns></returns>
+        </member>
         <member name="M:OldW.DataManager.ElementDataManager.DgvLine.DrawData">
             <summary>
             绘制图表
@@ -1896,6 +1905,27 @@
             </summary>
             <remarks></remarks>
         </member>
+        <member name="M:OldW.Excavation.Soil_Model.RemoveSoil(Autodesk.Revit.DB.Transaction,OldW.Excavation.Soil_Excav)">
+            <summary>
+            从当前的开挖状态中，移除指定的一块土，用来模拟土体的开挖
+            </summary>
+            <param name="soilToRemove"></param>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Excavation.Soil_Model.RemoveSoils(Autodesk.Revit.DB.Transaction,System.Collections.Generic.List{OldW.Excavation.Soil_Excav})">
+            <summary>
+            从当前的开挖状态中，移除指定的一块土，用来模拟土体的开挖
+            </summary>
+            <param name="soilsToRemove"></param>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Excavation.Soil_Model.FillSoil(OldW.Excavation.Soil_Excav)">
+            <summary>
+            从当前的开挖状态中，添加进指定的一块土，用来模拟土方的回填，或者反向回滚开挖状态
+            </summary>
+            <param name="SoilToRemove"></param>
+            <remarks></remarks>
+        </member>
         <member name="P:OldW.Excavation.Soil_Model.Group">
             <summary>
             此模型土体所位于的组。
@@ -1930,27 +1960,6 @@
             <param name="ExcavDoc"></param>
             <param name="SoilElement"></param>
             <returns></returns>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.Excavation.Soil_Model.RemoveSoil(Autodesk.Revit.DB.Transaction,OldW.Excavation.Soil_Excav)">
-            <summary>
-            从当前的开挖状态中，移除指定的一块土，用来模拟土体的开挖
-            </summary>
-            <param name="soilToRemove"></param>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.Excavation.Soil_Model.RemoveSoils(Autodesk.Revit.DB.Transaction,System.Collections.Generic.List{OldW.Excavation.Soil_Excav})">
-            <summary>
-            从当前的开挖状态中，移除指定的一块土，用来模拟土体的开挖
-            </summary>
-            <param name="soilsToRemove"></param>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldW.Excavation.Soil_Model.FillSoil(OldW.Excavation.Soil_Excav)">
-            <summary>
-            从当前的开挖状态中，添加进指定的一块土，用来模拟土方的回填，或者反向回滚开挖状态
-            </summary>
-            <param name="SoilToRemove"></param>
             <remarks></remarks>
         </member>
         <member name="T:OldWApplication">

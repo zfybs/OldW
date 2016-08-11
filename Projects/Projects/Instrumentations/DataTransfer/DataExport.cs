@@ -255,7 +255,7 @@ namespace OldW.Instrumentations
             }
             catch (Exception ex)
             {
-                Utils.ShowDebugCatch(ex, $"将Excel中的监测数据导入Revit中的测点单元出错，出错行：{row + 1} 。");
+                DebugUtils.ShowDebugCatch(ex, $"将Excel中的监测数据导入Revit中的测点单元出错，出错行：{row + 1} 。");
                 e.Cancel = true;
                 return;
             }
