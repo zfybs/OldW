@@ -5,11 +5,12 @@ using System.Windows.Forms;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Events;
 using Autodesk.Revit.UI;
+using rvtTools.Curves;
 using stdOldW.WinFormHelper;
 using Application = Autodesk.Revit.ApplicationServices.Application;
 
 
-namespace rvtTools
+namespace rvtTools.Curves
 {
     /// <summary>
     /// 在UI界面中按指定的要求绘制模型线，并将这些模型线保存在对应的列表中。

@@ -201,7 +201,7 @@ namespace OldW.Commands
             }
             catch (Exception ex)
             {
-                Utils.ShowDebugCatch(ex, "放置测点出错。");
+                DebugUtils.ShowDebugCatch(ex, "放置测点出错。");
                 message = ex.Message;
                 return Result.Failed;
             }
@@ -259,7 +259,7 @@ namespace OldW.Commands
                     }
                     catch (Exception ex)
                     {
-                        Utils.ShowDebugCatch(ex, "测点重命名出错");
+                        DebugUtils.ShowDebugCatch(ex, "测点重命名出错");
                         // tran.RollBack();
                     }
                 }
@@ -286,7 +286,6 @@ namespace OldW.Commands
                 instrumsToBeRenamed.Add(ins, formInitializer.MonitorName);
             }
         }
-
     }
 
     /// <summary>

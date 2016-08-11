@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -173,6 +174,7 @@ namespace OldW.DataManager
                     Mapping(workbookPath);
 
                     // 刷新界面
+                    ButtonImport.Enabled = true;
                     buttonCheckMultiple.Visible = true;
                     buttonUnCheckMultiple.Visible = true;
 
@@ -218,12 +220,14 @@ namespace OldW.DataManager
             foreach (var shtName in sheetsName)
             {
                 // 如果工作表的名称能够匹配出相对的测点类型，则开始搜索字段
-                if (InstrumTypeMappingExcel.MultiPointsInSheet(shtName.Substring(0, shtName.Length - 1)))
+                if (ExcelMapping.MultiPointsInSheet(shtName.Substring(0, shtName.Length - 1)))
                 {
                     var ptNames = GetPointNames(_excelConnection, shtName);
                     foreach (var ptname in ptNames)
                     {
-                        points.Add(new MonitorEntityExcel(shtName, ptname,
+                        points.Add(new MonitorEntityExcel(
+                            sheetName: shtName, 
+                            fieldName: ptname,
                             storedInField: true,
                             possibleMatches: _selectedInstrum));
                     }
@@ -275,7 +279,9 @@ namespace OldW.DataManager
             int.TryParse(dt.Rows[indexTime]["DATA_TYPE"].ToString(), out dataTypeIndex);
             if (dataTypeIndex != 7)
             {
-                return new List<string>();
+                Debug.Print(@"Excel 工作表中“时间”字段的数据类型不是DateTime。");
+                // 但是由于 Excel 中并无严格的数据类型的概念，很容易出现异常的情况，所以这里就不报错了。
+                // return new List<string>();
             }
 
             // 一切检查通过，开始提取字段名
@@ -533,7 +539,7 @@ namespace OldW.DataManager
             {
                 e.Cancel = true;
                 // _tranImport.RollBack();
-                Utils.ShowDebugCatch(ex, $"将Excel中的监测数据导入Revit中的测点单元出错，出错行：{row + 1} 。");
+                DebugUtils.ShowDebugCatch(ex, $"将Excel中的监测数据导入Revit中的测点单元出错，出错行：{row + 1} 。");
             }
         }
 

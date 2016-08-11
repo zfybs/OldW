@@ -298,7 +298,7 @@ namespace OldW.DataManager
                     }
                     catch (Exception ex)
                     {
-                        Utils.ShowDebugCatch(ex, "无法保存监测数据到对象参数中。");
+                        DebugUtils.ShowDebugCatch(ex, "无法保存监测数据到对象参数中。");
                         tran.RollBack();
                     }
                 }
@@ -663,6 +663,13 @@ namespace OldW.DataManager
                 return compunit;
             }
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="sourceObject"></param>
+            /// <param name="desAssembly"></param>
+            /// <param name="desEntityName"></param>
+            /// <returns></returns>
             private BindingList<object> GetNewConstructedDataSource(TableBindedData sourceObject, Assembly desAssembly, string desEntityName)
             {
                 Type type1 = sourceObject.Assembly.GetType(NamespaceName + "." + sourceObject.EntityName);

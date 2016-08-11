@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using OldW.GlobalSettings;
+using stdOldW;
 using stdOldW.DAL;
 
 namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关的一些接口、枚举等的定义
@@ -46,11 +47,10 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
         {
             return (from DataRow row in table.Rows
                     select Convert.IsDBNull(row[indexValue])
-                    ? new MonitorData_Point((DateTime)row[indexDate], null)
-                    : new MonitorData_Point((DateTime)row[indexDate], Convert.ToSingle(row[indexValue]))).ToList();
+                    ? new MonitorData_Point(DateTime.Parse(row[indexDate].ToString()), null)
+                    : new MonitorData_Point(DateTime.Parse(row[indexDate].ToString()), Convert.ToSingle(row[indexValue]))).ToList();
         }
     }
-
 
     /// <summary>
     /// 线测点中的每一天的监测数据
@@ -112,10 +112,12 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
         /// <returns>对于测斜管这类线测点，其每一个字段都是有严格的数值意义的，即代表了此子节点距离管顶的深度。</returns>
         public float[] GetDigitalNodes()
         {
+
             if (NodesDigital)
             {
                 return _nodes.Select(Convert.ToSingle).ToArray();
             }
+
             throw new InvalidCastException("此类监测数据的节点并不是数值类型，无法转换为数值。");
         }
 
@@ -140,32 +142,18 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
             string[] nodes = new string[nodesCount];
             if (convertStringToSingle)
             {
-                // 列名格式为：“123、0#50、0.5、0dot5”，即表示深度为0.50处的子节点，所以这里要先将其转换为数值
-                string pattern = @"\b\s*\d*(\.|#|" + Constants.ExcelDatabaseDot + @"dot)??\d*\s*\b";
-
                 for (int i = 0; i < nodesCount; i++)
                 {
-                    string tableName = table.Columns[i + 1].ColumnName;
-                    var match = Regex.Match(tableName, pattern);
-                    if (match.Success)
-                    {
-                        string dot = match.Groups[1].Value;
-
-                        // 如果是整数就直接返回整数就可以了。
-                        nodes[i] = string.IsNullOrEmpty(dot) ? nodes[i] = match.Value : nodes[i] = match.Value.Replace(dot, ".");
-
-                    }
-                    else
-                    {
-                        throw new InvalidCastException("表示节点的字段名不能转换为数值！");
-                    }
+                    string fieldName = table.Columns[i + 1].ColumnName;
+                    nodes[i] = ExcelMapping.GetDigitalNodeName(fieldName);
                 }
+
             }
             else
             {
                 for (int i = 0; i < nodesCount; i++)
                 {
-                    // 列名格式为：“0#50”，即表示深度为0.50处的子节点，所以这里要先将其转换为数值
+                    // 子节点名称没有数值意义，直接以字符输出就可以了
                     nodes[i] = table.Columns[i + 1].ColumnName;
                 }
             }
@@ -189,7 +177,7 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
                     }
                 }
                 // 添加一条记录
-                monitoredData.Add((DateTime)row[0], values);
+                monitoredData.Add(DateTime.Parse(row[0].ToString()), values);
             }
             return new MonitorData_Line(nodes, monitoredData, convertStringToSingle);
         }

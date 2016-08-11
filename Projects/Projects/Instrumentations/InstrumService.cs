@@ -10,7 +10,6 @@ using OldW.GlobalSettings;
 
 namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关的一些接口、枚举等的定义
 {
-
     #region ---   enum(InstrumentationType) ：监测仪器的族名称（也是族文件的名称），同时也作为监测仪器的类型判断 
 
     /// <summary>
@@ -70,20 +69,53 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
 
     #endregion
 
-    #region ---   Class(InstrumTypeMapping)将不同的Excel工作表字段的名称映射到Revit对应的测点中去 
+    #region ---   Class(InstrumTypeMapping)将不同的 Excel 工作表字段的名称映射到Revit对应的测点中去 
 
     /// <summary>
     /// 将不同的Excel工作表字段的名称映射到Revit对应的测点中去
     /// </summary>
-    public static class InstrumTypeMappingExcel
+    public static class ExcelMapping
     {
-        /// <summary> 其他未在上面标记过的测点类型，其每一个点测点的监测数据都保存在工作表中的某个字段下。 </summary>
-        private const string SheetOtherPoint = "PM";
-        /// <summary> 其他未在上面标记过的测点类型，其每一个线测点中有多个子节点（类似于测斜管），
-        /// 一个测点的监测数据保存在一张工作表，而表中的每一个字段代表此线测点中的一个子节点。 </summary>
-        private const string SheetOtherLine = "LM";
 
         #region ---   工作表名 相关的匹配
+
+        /// <summary>
+        /// 验证给定的字符是否可以作为 Excel 的工作表的名称，如果不行，则按某种规则转换为有效的 Excel 工作表名称
+        /// </summary>
+        /// <param name="originalName"></param>
+        /// <returns> 转换后的有效的 Excel 工作表名称 </returns>
+        public static string ValidateSheetName(string originalName)
+        {
+            string newName = originalName.Trim();
+
+            // 特殊字符替换
+            newName = newName.Replace("-", "_");
+            newName = newName.Replace(".", "_");
+            newName = newName.Replace("^", "_");
+
+            // 其他 Excel 工作表名称的规则
+            Match m;
+
+            // 1. 不能以数字开头
+            string pattern = @"\b\d+";
+            m = Regex.Match(newName, pattern);
+            if (m.Success)
+            {
+                newName = "_" + newName;
+            }
+
+            // 2. 如果表名要以“非数值 + 数值”的格式命名，则前面的非数值部分至少要多于三个字符，比如CXCX2是可以的，但是CXC1会给出报错.
+            pattern = @"\b\D{1,3}(\d+)\b";
+            m = Regex.Match(newName, pattern);
+            if (m.Success)
+            {
+                var ind = m.Groups[1].Index;  // 数字所在的位置
+                newName = newName.Insert(ind, "_");  // 在数字前面添加一个下划线
+            }
+
+            return newName;
+        }
+
 
         /// <summary> 指定的Excel工作表中是包含多个测点（点测点）还是只包含一个测点（线测点） </summary>
         /// <param name="excelSheetName"></param>
@@ -93,7 +125,7 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
         {
             if (excelSheetName.StartsWith(Constants.ExcelDatabaseSheet_SoilIncine, StringComparison.OrdinalIgnoreCase)
                 || excelSheetName.StartsWith(Constants.ExcelDatabaseSheet_WallIncline, StringComparison.OrdinalIgnoreCase)
-                || excelSheetName.StartsWith(SheetOtherLine, StringComparison.OrdinalIgnoreCase))
+                || excelSheetName.StartsWith(Constants.ExcelDatabaseSheet_OtherLine, StringComparison.OrdinalIgnoreCase))
             {
                 return false;
             }
@@ -110,7 +142,7 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
                 || excelSheetName.StartsWith(Constants.ExcelDatabaseSheet_WallIncline, StringComparison.OrdinalIgnoreCase)
                 || excelSheetName.StartsWith(Constants.ExcelDatabaseSheet_WallTopH, StringComparison.OrdinalIgnoreCase)
                 || excelSheetName.StartsWith(Constants.ExcelDatabaseSheet_WallTopV, StringComparison.OrdinalIgnoreCase)
-                || excelSheetName.StartsWith(SheetOtherLine, StringComparison.OrdinalIgnoreCase))
+                || excelSheetName.StartsWith(Constants.ExcelDatabaseSheet_OtherLine, StringComparison.OrdinalIgnoreCase))
             {
                 return false;
             }
@@ -134,11 +166,11 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
             {
                 tp = InstrumentationType.地表隆沉;
             }
-            else if (excelSheetName.StartsWith(SheetOtherLine))
+            else if (excelSheetName.StartsWith(Constants.ExcelDatabaseSheet_OtherLine))
             {
                 tp = InstrumentationType.其他线测点;
             }
-            else if (excelSheetName.StartsWith(SheetOtherPoint))
+            else if (excelSheetName.StartsWith(Constants.ExcelDatabaseSheet_OtherPoint))
             {
                 tp = InstrumentationType.其他点测点;
             }
@@ -180,37 +212,68 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
         /// <summary> 根据给出的字段名匹配出对应的测点编号 </summary>
         /// <param name="excelPointOrLineName"> Excel中的测点编号，此编号可以了线测点的编号如CX01，也可以是点测点的编号如DB01。 </param>
         /// <returns> 如果能匹配出编号12或者编号2-12这两种模式，则返回对应的数值字符，如果不能匹配，则返回空字符</returns>
-        public static string GetNumber(string excelPointOrLineName)
+        public static string GetNumberFromField(string excelPointOrLineName)
         {
             if (string.IsNullOrEmpty(excelPointOrLineName)) { return ""; }
 
             excelPointOrLineName = excelPointOrLineName.Trim(); // 清除前后空白
             string strNum = "";
 
-            string Pattern1 = @"\d+-\d+$"; // DB2-12 模式
+            // DB2-12 模式 或者 DB2_12 
+            string Pattern1 = @"\d+(-|_)\d+$";  // $ 表示匹配必须出现在字符串或者一行的结尾。
+            Match match = Regex.Match(excelPointOrLineName, Pattern1);
 
-            strNum = Regex.Match(excelPointOrLineName, Pattern1).Value;
-            if (string.IsNullOrEmpty(strNum)) // 如果不能匹配，再看是否能匹配 CX12 模式
-            {
-                string Pattern2 = @"\d+$"; // CX12 模式
-                strNum = Regex.Match(excelPointOrLineName, Pattern2).Value;
+            if (match.Success) // 如果不能匹配，再看是否能匹配 CX12 模式
+            {  // 成功匹配
+                strNum = match.Value;
 
-                if (string.IsNullOrEmpty(strNum)) // 如果不能匹配，再看是否能
-                {
-                    return "";  // 如果不能匹配，则返回空字符
-                }
-                // 成功匹配
-                strNum = int.Parse(strNum).ToString(); // 将字符“010”转换为“10”
-            }
-            else
-            {
-                // 成功匹配
-                var s = strNum.Split('-');
+                var s = strNum.Split(match.Groups[1].Value.ToCharArray());
                 strNum = int.Parse(s[0]) + "-" + int.Parse(s[1]); // 将字符“010-012”转换为“10-12”
+                return strNum;
             }
+
+            string Pattern2 = @"\d+$"; // CX12 模式
+            strNum = Regex.Match(excelPointOrLineName, Pattern2).Value;
+
+            if (string.IsNullOrEmpty(strNum)) // 如果不能匹配，再看是否能
+            {
+                return "";  // 如果不能匹配，则返回空字符
+            }
+            // 成功匹配
+            strNum = int.Parse(strNum).ToString(); // 将字符“010”转换为“10”
+
             return strNum;
         }
         #endregion
+
+        #region ---   线测点监测数据中 字段名 相关的匹配
+
+        /// <summary>
+        /// 将数值子节点型的线测点在Excel中的子节点名称转换为对应的数值。如果不能转换成功，则报错。
+        /// </summary>
+        /// <param name="digitalNodeName"> 对于测斜管这类线测点，其每一个字段都是有严格的数值意义的，即代表了此子节点距离管顶的深度，
+        /// 所以在Excel工作表中，这些子节点的字段名的格式为“123、0#50、0.5、0dot5”，这时就要将其转换为对应的可以表示数值的“2.50”。 </param>
+        /// <returns> 进行转换后的数值字符，如"2.50" </returns>
+        public static string GetDigitalNodeName(string digitalNodeName)
+        {
+            // 列名格式为：“123、0#50、0.5、0dot5”，即表示深度为0.50处的子节点，所以这里要先将其转换为数值
+            const string pattern = @"\b\s*\d*(\.|#|" + Constants.ExcelDatabaseDot + @")??\d*\s*\b";
+
+            var match = Regex.Match(digitalNodeName, pattern, RegexOptions.IgnoreCase);
+            if (match.Success)
+            {
+                var dot = match.Groups[1].Value;
+                // 如果是整数就直接返回整数就可以了。
+                return string.IsNullOrEmpty(dot) ? match.Value : match.Value.Replace(dot, ".");
+            }
+            else
+            {
+                throw new InvalidCastException("Excel 工作表中表示节点的字段名不能转换为数值！");
+            }
+        }
+
+        #endregion
+
     }
 
     #endregion
@@ -230,32 +293,12 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
             get { return _allInstrumentations; }
         }
 
-        #region ---   不同的测点集合 
-
-        ///// <summary> 立柱隆沉测点 </summary>
-        //public readonly List<Instrum_ColumnHeave> ColumnHeave;
-
-        ///// <summary> 地表隆沉测点 </summary>
-        //public readonly List<Instrum_GroundSettlement> GroundSettlement;
-
-        ///// <summary> 测斜点 </summary>
-        //public readonly List<Instrum_WallIncline> Incline;
-
-        ///// <summary> 支撑轴力点 </summary>
-        //public readonly List<Instrum_StrutAxialForce> StrutAxialForce;
-
-        #endregion
-
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="instrums"> 要进行测点分类的测点集合 </param>
         public InstrumCollector(IEnumerable<Instrumentation> instrums)
         {
-            //ColumnHeave = new List<Instrum_ColumnHeave>();
-            //GroundSettlement = new List<Instrum_GroundSettlement>();
-            //Incline = new List<Instrum_WallIncline>();
-            //StrutAxialForce = new List<Instrum_StrutAxialForce>();
             //
             _allInstrumentations = new List<Instrumentation>();
 
@@ -269,10 +312,6 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
         /// <param name="instrums"></param>
         public void Truncate(IEnumerable<Instrumentation> instrums)
         {
-            //ColumnHeave.Clear();
-            //GroundSettlement.Clear();
-            //Incline.Clear();
-            //StrutAxialForce.Clear();
             //
             _allInstrumentations.Clear();
 
@@ -285,25 +324,6 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
         /// <param name="instrums"></param>
         public void Append(IEnumerable<Instrumentation> instrums)
         {
-            //foreach (Instrumentation inst in instrums)
-            //{
-            //    if (inst is Instrum_ColumnHeave)
-            //    {
-            //        ColumnHeave.Add((Instrum_ColumnHeave)inst);
-            //    }
-            //    else if (inst is Instrum_GroundSettlement)
-            //    {
-            //        GroundSettlement.Add((Instrum_GroundSettlement)inst);
-            //    }
-            //    else if (inst is Instrum_WallIncline)
-            //    {
-            //        Incline.Add((Instrum_WallIncline)inst);
-            //    }
-            //    else if (inst is Instrum_StrutAxialForce)
-            //    {
-            //        StrutAxialForce.Add((Instrum_StrutAxialForce)inst);
-            //    }
-            //}
             _allInstrumentations.AddRange(instrums);
 
         }

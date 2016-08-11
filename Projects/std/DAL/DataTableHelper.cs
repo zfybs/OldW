@@ -153,7 +153,13 @@ namespace stdOldW.DAL
 
         #endregion
 
-        #region 将表格打印为格式化的字符
+        /// <summary> 如果输入的值为null，则返回 DBNull.Value，否则返回这个值本身 </summary>
+        public static object FilterNull(object value)
+        {
+            return value ?? DBNull.Value;
+        }
+
+        #region ---   提取表格中的数据
 
         /// <summary>
         /// 
@@ -166,7 +172,8 @@ namespace stdOldW.DAL
         {
             List<Object> ls = table.AsEnumerable().Select(r => r[columnName]).ToList();
             return ls;
-        } 
+        }
+
         #endregion
 
         #region 将表格打印为格式化的字符

@@ -557,7 +557,7 @@ namespace OldW.Excavation
                             catch (Exception ex)
                             {
                                 tran.RollBack();
-                                Utils.ShowDebugCatch(ex, "重新设置土体剪切时出错");
+                                DebugUtils.ShowDebugCatch(ex, "重新设置土体剪切时出错");
 
                             }
 

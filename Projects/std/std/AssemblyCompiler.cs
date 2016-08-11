@@ -7,9 +7,7 @@ using Microsoft.CSharp;
 
 namespace stdOldW
 {
-    /// <summary>
-    /// 动态编译程序集
-    /// </summary>
+    /// <summary> 动态编译程序集。在程序运行的过程中动态地编译出一个程序集 .dll 或者 .exe。 </summary>
     public class AssemblyCompiler
     {
         #region Fields
@@ -31,8 +29,7 @@ namespace stdOldW
 
 
         #endregion
-
-
+        
         #region Properties
 
         /// <summary> 在执行了CompileAssembly方法后所得到的编译结果 </summary>
@@ -47,7 +44,7 @@ namespace stdOldW
         /// <summary>
         /// 编译出对应的 CompilerResults 对象，可以通过CompilerResults.CompiledAssembly属性来返回编译成功的Assembly对象。
         /// </summary>
-        /// <param name="codeUnit">源代码的架构</param>
+        /// <param name="codeUnit">源代码的架构。 codeUnit 对象的创建可以参考<see cref="CompileUnit"/>示例方法。</param>
         /// <param name="referenceDlls">要引用的Dll的路径名称，比如"System.dll"</param>
         /// <returns></returns>
         public AssemblyCompiler(CodeCompileUnit codeUnit, string[] referenceDlls)
@@ -114,7 +111,9 @@ namespace stdOldW
         /// <summary>
         /// 示例代码：生成CodeDOM图，这一步是最复杂的部分，后面生成代码与编译都是以这里的东西为蓝本
         /// </summary>
-        /// <returns>此函数仅为示例，并不在此类中执行。外部代码可以参数本函数来创建出对应的 CodeCompileUnit 源代码结构 </returns>
+        /// <returns> 创建好的 CodeCompileUnit 中，包含了要生成的程序集中的全部代码，
+        /// 后面只需要将通过 ICodeGenerator.GenerateCodeFromCompileUnit()方法即可以将这些代码编译为程序集。 </returns>
+        /// <remarks>此函数仅为示例，并不在此类中执行。外部代码可以参数本函数来创建出对应的 CodeCompileUnit 源代码结构 </remarks>
         private static CodeCompileUnit CompileUnit()
         {
             //生成一个可编译的单元，这是最根部的东西

@@ -88,6 +88,9 @@
             <typeparam name="TEntityClass">数据表所对应的实体类</typeparam>
             <returns></returns>
         </member>
+        <member name="M:stdOldW.DAL.DataTableHelper.FilterNull(System.Object)">
+            <summary> 如果输入的值为null，则返回 DBNull.Value，否则返回这个值本身 </summary>
+        </member>
         <member name="M:stdOldW.DAL.DataTableHelper.GetValue(System.Data.DataTable,System.String)">
             <summary>
             
@@ -186,7 +189,7 @@
             从对于Excel的数据连接中获取Excel工作簿中的所有工作表（不包含Excel中的命名区域NamedRange）
             </summary>
             <param name="conn"></param>
-            <returns>如果此连接不是连接到Excel数据库，则返回Nothing</returns>
+            <returns>集合中所有工作表的名称都带有后缀 $ 。如果此连接不是连接到Excel数据库，则返回Nothing</returns>
             <remarks></remarks>
         </member>
         <member name="M:stdOldW.DAL.ExcelDbHelper.GetFieldNames(System.Data.OleDb.OleDbConnection,System.String)">
@@ -314,9 +317,7 @@
             <returns> Excel中的数据类型 </returns>
         </member>
         <member name="T:stdOldW.AssemblyCompiler">
-            <summary>
-            动态编译程序集
-            </summary>
+            <summary> 动态编译程序集。在程序运行的过程中动态地编译出一个程序集 .dll 或者 .exe。 </summary>
         </member>
         <member name="F:stdOldW.AssemblyCompiler.CodeUnit">
             <summary>
@@ -343,7 +344,7 @@
             <summary>
             编译出对应的 CompilerResults 对象，可以通过CompilerResults.CompiledAssembly属性来返回编译成功的Assembly对象。
             </summary>
-            <param name="codeUnit">源代码的架构</param>
+            <param name="codeUnit">源代码的架构。 codeUnit 对象的创建可以参考<see cref="M:stdOldW.AssemblyCompiler.CompileUnit"/>示例方法。</param>
             <param name="referenceDlls">要引用的Dll的路径名称，比如"System.dll"</param>
             <returns></returns>
         </member>
@@ -358,10 +359,25 @@
             <summary>
             示例代码：生成CodeDOM图，这一步是最复杂的部分，后面生成代码与编译都是以这里的东西为蓝本
             </summary>
-            <returns>此函数仅为示例，并不在此类中执行。外部代码可以参数本函数来创建出对应的 CodeCompileUnit 源代码结构 </returns>
+            <returns> 创建好的 CodeCompileUnit 中，包含了要生成的程序集中的全部代码，
+            后面只需要将通过 ICodeGenerator.GenerateCodeFromCompileUnit()方法即可以将这些代码编译为程序集。 </returns>
+            <remarks>此函数仅为示例，并不在此类中执行。外部代码可以参数本函数来创建出对应的 CodeCompileUnit 源代码结构 </remarks>
         </member>
         <member name="M:stdOldW.AssemblyCompiler.DeleteAssembly">
             <summary> 删除编译生成的程序集文件 </summary>
+        </member>
+        <member name="T:stdOldW.Utils">
+            <summary>
+            提供一些基础性的操作工具
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="M:stdOldW.Utils.GetNullableGenericArgurment(System.Type)">
+            <summary>
+            返回Nullable所对应的泛型。如果不是Nullable泛型，则返回null。
+            </summary>
+            <param name="typeIn"></param>
+            <returns></returns>
         </member>
         <member name="T:stdOldW.WinFormHelper.OwnerWindow">
             <summary> 将任意一个窗体作为Form的父窗口，并用在Form.Show(IWin32Window)中 </summary>
@@ -517,6 +533,136 @@
             什么也没有选择
             </summary>
             <remarks></remarks>
+        </member>
+        <member name="T:stdOldW.WinFormHelper.HideMethodReturnedProc">
+            <summary>
+            用在 ShowDialogWin 或者 ShowDialogForm 类中。
+            当 DialogForm 被隐藏并执行完与Revit交互的hideProc方法后被触发。此事件响应完会即会立即执行  System.Windows.Window.ShowDialog();
+            </summary>
+            <param name="returnedValue"> hideProc 方法执行完成后的返回值，如果 hideProc 方法没有返回值，则 returnedValue 为 null。</param>
+        </member>
+        <member name="T:stdOldW.WinFormHelper.IShowDialogThread">
+            <summary>
+            对于ShowDialog打开的 WinForm 或 WPF window 进行隐藏，并在隐藏后执行相关的界面交互操作。
+            </summary>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.IShowDialogThread.HideAndOperate(System.Delegate,stdOldW.WinFormHelper.HideMethodReturnedProc,System.Object[])">
+            <summary>
+            一个伪异步方法，此方法会在执行Hide之后立即返回。
+            </summary>
+            <param name="hideProc"> 要与 Revit 进行交互的方法的委托。请在此方法中自行设置异常处理。
+            此方法如果有返回值，则通过响应 reternProc 事件来获取返回值。 </param>
+            <param name="reternProc"> 当 hideProc 执行完成并得到了返回值后接着执行reternProc方法，请在此方法中自行设置异常处理。
+            执行完reternProc后，即会立即执行 Form.ShowDialog(); </param>
+            <param name="hideProcArgs"> 方法 hideProc 中的输入参数，如果没有参数，则输入 null </param>
+            <remarks>此方法后面不要再有任何的代码语句，如果要处理 hideProc 返回的结果，请在 reternProc 中进行操作。</remarks>
+        </member>
+        <member name="T:stdOldW.WinFormHelper.ShowDialogForm">
+            <summary>
+            一个抽象类，用来对以Form.ShowDialog()方法开启的窗口进行操作。
+            对于此类的派生类而言，可以通过 <see cref="M:stdOldW.WinFormHelper.ShowDialogForm.HideAndOperate(System.Delegate,stdOldW.WinFormHelper.HideMethodReturnedProc,System.Object[])"/> 方法来将窗口进行隐藏，
+            并在隐藏的状态下进行一些常规隐藏窗口下不能进行的操作（比如与 Revit 进行 UI 上的 PickObject() 交互）。
+            </summary>
+            <remarks> ModelDialog 与 Revit 进行UI交互的原理：在Form打开时，不支持与Revit的UI交互，
+            所以，此类通过 HideAndOperate 先将窗口进行隐藏，以跳出当前的ShowDialog的线程阻塞，
+            跳出后的线程即返回到 Standard Revit API Context，此时便可以与Revit进行UI交互了。
+            在 交互操作 _hideProc 执行完成并通过 _hideMethodReturnedProc 处理完其返回值后，再次通过 Form.ShowDialog() 将窗口显示出来。</remarks>
+        </member>
+        <member name="F:stdOldW.WinFormHelper.ShowDialogForm._hideProc">
+            <summary> 在窗口隐藏状态下与 Revit 进行交互 的方法 </summary>
+        </member>
+        <member name="F:stdOldW.WinFormHelper.ShowDialogForm._hideProcArgs">
+            <summary> _hideProc 方法的输入参数 </summary>
+        </member>
+        <member name="F:stdOldW.WinFormHelper.ShowDialogForm.ReturnValue">
+            <summary> _hideProc 方法的返回值 </summary>
+        </member>
+        <member name="F:stdOldW.WinFormHelper.ShowDialogForm._hideMethodReturnedProc">
+            <summary> 在 _hideProc 执行完成后对其返回值进行处理 </summary>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.ShowDialogForm.ShowDialog">
+            <summary>
+            以 可隐藏的方式显示窗口
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.ShowDialogForm.HideAndOperate(System.Delegate,stdOldW.WinFormHelper.HideMethodReturnedProc,System.Object[])">
+            <summary>
+            一个伪异步方法，此方法会在执行Hide之后立即返回。
+            </summary>
+            <param name="hideProc"> 要与 Revit 进行交互的方法的委托。请在此方法中自行设置异常处理。
+            此方法如果有返回值，则通过响应 reternProc 事件来获取返回值。 </param>
+            <param name="reternProc"> 当 hideProc 执行完成并得到了返回值后接着执行reternProc方法，请在此方法中自行设置异常处理。
+            执行完reternProc后，即会立即执行 Form.ShowDialog(); </param>
+            <param name="hideProcArgs"> 方法 hideProc 中的输入参数，如果没有参数，则输入 null </param>
+            <remarks>此方法后面不要再有任何的代码语句，如果要处理 hideProc 返回的结果，请在 reternProc 中进行操作。</remarks>
+        </member>
+        <member name="F:stdOldW.WinFormHelper.ShowDialogFormTemplate.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.ShowDialogFormTemplate.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.ShowDialogFormTemplate.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:stdOldW.WinFormHelper.ShowDialogWin">
+            <summary>
+            一个抽象类，用来对以Window.ShowDialog()方法开启的窗口进行操作。
+            对于此类的派生类而言，可以通过 <see cref="M:stdOldW.WinFormHelper.ShowDialogWin.HideAndOperate(System.Delegate,stdOldW.WinFormHelper.HideMethodReturnedProc,System.Object[])"/> 方法来将窗口进行隐藏，
+            并在隐藏的状态下进行一些常规隐藏窗口下不能进行的操作（比如与 Revit 进行 UI 上的 PickObject() 交互）。
+            </summary>
+            <remarks> ModelDialog 与 Revit 进行UI交互的原理：在Form打开时，不支持与Revit的UI交互，
+            所以，此类通过 HideAndOperate 先将窗口进行隐藏，以跳出当前的ShowDialog的线程阻塞，
+            跳出后的线程即返回到 Standard Revit API Context，此时便可以与Revit进行UI交互了。
+            在 交互操作 _hideProc 执行完成并通过 _hideMethodReturnedProc 处理完其返回值后，再次通过 Window.ShowDialog() 将窗口显示出来。</remarks>
+        </member>
+        <member name="F:stdOldW.WinFormHelper.ShowDialogWin._hideProc">
+            <summary> 在窗口隐藏状态下与 Revit 进行交互 的方法 </summary>
+        </member>
+        <member name="F:stdOldW.WinFormHelper.ShowDialogWin._hideProcArgs">
+            <summary> _hideProc 方法的输入参数 </summary>
+        </member>
+        <member name="F:stdOldW.WinFormHelper.ShowDialogWin.ReturnValue">
+            <summary> _hideProc 方法的返回值 </summary>
+        </member>
+        <member name="F:stdOldW.WinFormHelper.ShowDialogWin._hideMethodReturnedProc">
+            <summary> 在 _hideProc 执行完成后对其返回值进行处理 </summary>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.ShowDialogWin.ShowDialog">
+            <summary>
+            以 可隐藏的方式显示窗口
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.ShowDialogWin.HideAndOperate(System.Delegate,stdOldW.WinFormHelper.HideMethodReturnedProc,System.Object[])">
+            <summary>
+            一个伪异步方法，此方法会在执行Hide之后立即返回。
+            </summary>
+            <param name="hideProc"> 要与 Revit 进行交互的方法的委托。请在此方法中自行设置异常处理。
+            此方法如果有返回值，则通过响应 reternProc 事件来获取返回值。 </param>
+            <param name="reternProc"> 当 hideProc 执行完成并得到了返回值后接着执行reternProc方法，请在此方法中自行设置异常处理。
+            执行完reternProc后，即会立即执行 Window.ShowDialog(); </param>
+            <param name="hideProcArgs"> 方法 hideProc 中的输入参数，如果没有参数，则输入 null </param>
+            <remarks>此方法后面不要再有任何的代码语句，如果要处理 hideProc 返回的结果，请在 reternProc 中进行操作。</remarks>
+        </member>
+        <member name="T:stdOldW.WinFormHelper.ShowDialogWinTemplate">
+            <summary>
+            Interaction logic for MainWindow.xaml
+            </summary>
+        </member>
+        <member name="M:stdOldW.WinFormHelper.ShowDialogWinTemplate.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
         </member>
         <member name="T:stdOldW.WinFormHelper.WindowsUtil">
             <summary>
@@ -690,36 +836,40 @@
             <param name="resultedDate">字符所对应的日期。如果不能转换为日期，则返回Null</param>
             <returns></returns>
         </member>
-        <member name="T:stdOldW.Utils">
+        <member name="T:stdOldW.DebugUtils">
             <summary>
             提供一些基础性的操作工具
             </summary>
             <remarks></remarks>
         </member>
-        <member name="M:stdOldW.Utils.ShowEnumerable(System.Collections.IEnumerable,System.String)">
+        <member name="M:stdOldW.DebugUtils.ShowEnumerable(System.Collections.IEnumerable,System.String,System.Boolean)">
             <summary>
             将集合中的每一个元素的ToString函数的结果组合到一个字符串中进行显示
             </summary>
             <param name="V"></param>
+            <param name="title"></param>
+            <param name="newLineHandling"> 如果元素之间是以换行分隔，则为True，否则是以逗号分隔。 </param>
             <remarks></remarks>
         </member>
-        <member name="M:stdOldW.Utils.ShowEnumerableProperty(System.Collections.IEnumerable,System.String,System.String)">
+        <member name="M:stdOldW.DebugUtils.ShowEnumerableProperty(System.Collections.IEnumerable,System.String,System.String,System.Boolean)">
             <summary>
             将集合中的每一个元素的指定属性的ToString函数的结果组合到一个字符串中进行显示
             </summary>
             <param name="V"></param>
             <param name="PropertyName">要读取的属性的名称，注意，此属性不能带参数。</param>
+            <param name="newLineHandling"> 如果元素之间是以换行分隔，则为True，否则是以逗号分隔。 </param>
             <remarks></remarks>
         </member>
-        <member name="M:stdOldW.Utils.ShowEnumerableField(System.Collections.IEnumerable,System.String,System.String)">
+        <member name="M:stdOldW.DebugUtils.ShowEnumerableField(System.Collections.IEnumerable,System.String,System.String,System.Boolean)">
             <summary>
             将集合中的每一个元素的指定字段的ToString函数的结果组合到一个字符串中进行显示
             </summary>
             <param name="V"></param>
             <param name="FieldName">要读取的字段的名称。</param>
+            <param name="newLineHandling"> 如果元素之间是以换行分隔，则为True，否则是以逗号分隔。 </param>
             <remarks></remarks>
         </member>
-        <member name="M:stdOldW.Utils.ShowDebugCatch(System.Exception,System.String,System.String)">
+        <member name="M:stdOldW.DebugUtils.ShowDebugCatch(System.Exception,System.String,System.String)">
             <summary>
             在调试阶段，为每一种报错显示对应的报错信息及出错位置。
             在软件发布前，应将此方法中的内容修改为常规的报错提醒。
@@ -727,57 +877,6 @@
             <param name="ex"> Catch 块中的 Exception 对象</param>
             <param name="message">报错信息提示</param>
             <param name="title"> 报错对话框的标题 </param>
-        </member>
-        <member name="M:stdOldW.Utils.GetNullableGenericArgurment(System.Type)">
-            <summary>
-            返回Nullable所对应的泛型。如果不是Nullable泛型，则返回null。
-            </summary>
-            <param name="typeIn"></param>
-            <returns></returns>
-        </member>
-        <member name="M:stdOldW.Utils.SetDllDirectory(System.String)">
-            <summary>
-            将指定的文件夹添加到此程序的DLL文件的搜索路径中。
-            这个函数只用来在开发时用于AddinManager调试之用，在最终的Release版本中，此函数中的内容可以直接删除。
-            </summary>
-            <param name="SearchPath">要添加的文件夹路径</param>
-            <remarks></remarks>
-        </member>
-        <member name="M:stdOldW.Utils.SetDllDirectoryW(System.String)">
-            <summary>
-            将指定的文件夹添加到此程序的DLL文件的搜索路径中.
-            adds a directory to the search path used to locate DLLs for the application.
-            </summary>
-            <param name="lpPathName">要添加的文件夹路径</param>
-            <remarks>Pretty straight-forward to use. Obviously, is usually going to be called before calling LoadLibraryEx().
-            另外,在PInvoke中,只有SetDllDirectory这个函数,但是它的真实的名称是SetDllDirectoryW.</remarks>
-        </member>
-        <member name="M:stdOldW.Utils.LoadLibraryEx(System.String,System.IntPtr,stdOldW.Utils.LoadLibraryFlags)">
-            <summary>
-            装载指定的动态链接库，并为当前进程把它映射到地址空间。一旦载入，就可以访问库内保存的资源。一旦不需要，用FreeLibrary函数释放DLL
-            </summary>
-            <param name="lpFileName">指定要载入的动态链接库的名称。采用与CreateProcess函数的lpCommandLine参数指定的同样的搜索顺序</param>
-            <param name="hReservedNull">未用，设为零</param>
-            <param name="dwFlags"></param>
-            <returns>成功则返回库模块的句柄，零表示失败。会设置GetLastError</returns>
-            <remarks>参考 http://www.pinvoke.net/default.aspx/kernel32/LoadLibraryEx.html .
-            If you only want to load resources from the library, specify LoadLibraryFlags.LoadLibraryAsDatafile as dwFlags.
-            In this case, nothing is done to execute or prepare to execute the mapped file.</remarks>
-        </member>
-        <member name="T:stdOldW.Utils.LoadLibraryFlags">
-            <summary>
-            用在 LoadLibraryEx 函数中
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="F:stdOldW.Utils.LoadLibraryFlags.DONT_RESOLVE_DLL_REFERENCES">
-            <summary> 不对DLL进行初始化，仅用于NT </summary>
-        </member>
-        <member name="F:stdOldW.Utils.LoadLibraryFlags.LOAD_LIBRARY_AS_DATAFILE">
-            <summary> 不准备DLL执行。如装载一个DLL只是为了访问它的资源，就可以改善一部分性能 </summary>
-        </member>
-        <member name="F:stdOldW.Utils.LoadLibraryFlags.LOAD_WITH_ALTERED_SEARCH_PATH">
-            <summary> 指定搜索的路径 </summary>
         </member>
         <member name="T:OldW.DllActivator.IDllActivator">
             <summary>
@@ -799,6 +898,36 @@
         <member name="M:OldW.DllActivator.DllActivator_std.ActivateReferences">
             <summary>
             激活本DLL所引用的那些DLLs
+            </summary>
+        </member>
+        <member name="T:XamlGeneratedNamespace.GeneratedInternalTypeHelper">
+            <summary>
+            GeneratedInternalTypeHelper
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.CreateInstance(System.Type,System.Globalization.CultureInfo)">
+            <summary>
+            CreateInstance
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.GetPropertyValue(System.Reflection.PropertyInfo,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            GetPropertyValue
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.SetPropertyValue(System.Reflection.PropertyInfo,System.Object,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            SetPropertyValue
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.CreateDelegate(System.Type,System.Object,System.String)">
+            <summary>
+            CreateDelegate
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.AddEventHandler(System.Reflection.EventInfo,System.Object,System.Delegate)">
+            <summary>
+            AddEventHandler
             </summary>
         </member>
     </members>

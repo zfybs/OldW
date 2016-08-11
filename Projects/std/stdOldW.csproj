@@ -68,15 +68,19 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DAL\SqlDataSetHelper.cs" />
@@ -84,6 +88,7 @@
     <Compile Include="DAL\SqlModelHelper.cs" />
     <Compile Include="DAL\ExcelDBHelper.cs" />
     <Compile Include="std\AssemblyCompiler.cs" />
+    <Compile Include="std\Utils.cs" />
     <Compile Include="WinFormHelper\OwnerWindow.cs" />
     <Compile Include="std\ExtensionMethods.cs" />
     <Compile Include="IDllActivator.cs" />
@@ -97,7 +102,20 @@
     <Compile Include="WinFormHelper\LstbxDisplayAndItem.cs" />
     <Compile Include="std\Serializer.cs" />
     <Compile Include="std\DateTimeHelper.cs" />
-    <Compile Include="std\Utils.cs" />
+    <Compile Include="std\DebugUtils.cs" />
+    <Compile Include="WinFormHelper\ShowDialogForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WinFormHelper\ShowDialogFormTemplate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WinFormHelper\ShowDialogFormTemplate.Designer.cs">
+      <DependentUpon>ShowDialogFormTemplate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WinFormHelper\ShowDialogWin.cs" />
+    <Compile Include="WinFormHelper\ShowDialogWinTemplate.xaml.cs">
+      <DependentUpon>ShowDialogWinTemplate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WinFormHelper\WindowsUtil.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -107,9 +125,18 @@
     <EmbeddedResource Include="WinFormHelper\eZDataGridViewPaste.resx">
       <DependentUpon>eZDataGridViewPaste.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="WinFormHelper\ShowDialogFormTemplate.resx">
+      <DependentUpon>ShowDialogFormTemplate.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="WinFormHelper\ShowDialogWinTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

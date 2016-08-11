@@ -145,7 +145,7 @@ namespace stdOldW.WinFormHelper
             }
             catch (Exception ex)
             {
-                Utils.ShowDebugCatch(ex, $"粘贴数据出错,出错的单元格为第 {rowIndex + 1} 行,第 {colIndex + 1} 列）");
+                DebugUtils.ShowDebugCatch(ex, $"粘贴数据出错,出错的单元格为第 {rowIndex + 1} 行,第 {colIndex + 1} 列）");
             }
         }
     }
