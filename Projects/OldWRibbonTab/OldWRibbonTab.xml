@@ -48,26 +48,17 @@
         <member name="M:OldW.AppAddRibbonTab.AddPushButtonExcavationInfo(Autodesk.Revit.UI.RibbonPanel)">
             <summary> 添加“开挖信息”的按钮 </summary>
         </member>
-        <member name="M:OldW.AppAddRibbonTab.AddTextBoxCurrentDate">
-            <summary> 添加“当前时间”的文本框 </summary>
-        </member>
-        <member name="M:OldW.AppAddRibbonTab.SetTextBoxViewStageStyle(Autodesk.Revit.UI.TextBox)">
-            <summary> 设置“当前时间”的文本框的格式 </summary>
-        </member>
-        <member name="M:OldW.AppAddRibbonTab.AddPushButtonDataViewStage">
-            <summary> 添加“查看某一天的开挖工况”的按钮 </summary>
-        </member>
-        <member name="M:OldW.AppAddRibbonTab.AddPushButtonDataViewStageManually">
-            <summary> 添加“手动查看开挖工况”的按钮 </summary>
-        </member>
-        <member name="M:OldW.AppAddRibbonTab.AddPushButtonViewStageDynamically(Autodesk.Revit.UI.RibbonPanel)">
-            <summary> 添加“自动查看开挖工况”的按钮 </summary>
-        </member>
         <member name="M:OldW.AppAddRibbonTab.AddPushButtonSetWarning(Autodesk.Revit.UI.RibbonPanel)">
             <summary> 添加“警戒值设定”的按钮 </summary>
         </member>
         <member name="M:OldW.AppAddRibbonTab.AddPushButtonAnalysis(Autodesk.Revit.UI.RibbonPanel)">
             <summary> 添加“分析”的按钮 </summary>
+        </member>
+        <member name="M:OldW.AppAddRibbonTab.AddTextBoxCurrentDate(Autodesk.Revit.UI.RibbonPanel)">
+            <summary> 添加“当前时间”的文本框 </summary>
+        </member>
+        <member name="M:OldW.AppAddRibbonTab.AddPushButtViewStage(Autodesk.Revit.UI.RibbonPanel)">
+            <summary> 添加“查看开挖工况”的按钮 </summary>
         </member>
         <member name="M:OldW.AppAddRibbonTab.AddPushButtonAbout(Autodesk.Revit.UI.RibbonPanel)">
             <summary> 添加“关于”的按钮 </summary>

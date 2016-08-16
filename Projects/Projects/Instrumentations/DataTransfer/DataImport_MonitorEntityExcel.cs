@@ -11,7 +11,7 @@ namespace OldW.DataManager
     partial class DataImport
     {
         /// <summary>
-        /// DataGridViewExcel中每一个测点记录所对应的实体类
+        /// DataGridViewExcel中所对应的实体类
         /// </summary>
         private class MonitorEntityExcel
         {
@@ -68,10 +68,6 @@ namespace OldW.DataManager
             /// <param name="possibleMatches"> 在进行字段匹配时，此测点可能匹配到的所有测点的集合。 </param>
             public MonitorEntityExcel(string sheetName, string fieldName, bool storedInField, InstrumCollector possibleMatches)
             {
-                if (!possibleMatches.AllInstrumentations.Any())
-                {
-                    throw new ArgumentException("请为测点集合中存储至少一个测点");
-                }
                 _possibleMatches = possibleMatches;
                 FieldName = fieldName;
                 SheetName = sheetName;
@@ -115,7 +111,7 @@ namespace OldW.DataManager
                     }
                 }
 
-                // 如果整个模型中还没有旋转任何测点，则 searchingInstrums 集合中的元素个数为0
+
                 // 3. 匹配可能的字段名
                 Instrumentation possibleInstrum = searchingInstrums.First();
                 var num1 = ExcelMapping.GetNumberFromField(FieldName);

@@ -7,10 +7,10 @@ F:\Software\Revit\RevitDevelop\OldW\Projects\RevitTools\obj\Debug\RevitTools.dll
 F:\Software\Revit\RevitDevelop\OldW\Projects\RevitTools\obj\Debug\RevitTools.pdb
 F:\Software\Revit\RevitDevelop\OldW\Projects\RevitTools\obj\Debug\rvtTools.Test.Template_ModelessForm.resources
 F:\ProgrammingCases\GitHubProjects\OldW\bin\RevitTools.xml
+F:\ProgrammingCases\GitHubProjects\OldW\bin\RevitTools.dll
 F:\ProgrammingCases\GitHubProjects\OldW\bin\RevitTools.pdb
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\RevitTools\obj\Debug\RevitTools.csprojResolveAssemblyReference.cache
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\RevitTools\obj\Debug\rvtTools.Test.Template_ModelessForm.resources
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\RevitTools\obj\Debug\RevitTools.csproj.GenerateResource.Cache
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\RevitTools\obj\Debug\RevitTools.dll
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\RevitTools\obj\Debug\RevitTools.pdb
-F:\ProgrammingCases\GitHubProjects\OldW\bin\RevitTools.exe
-F:\ProgrammingCases\GitHubProjects\OldW\Projects\RevitTools\obj\Debug\RevitTools.exe
-F:\ProgrammingCases\GitHubProjects\OldW\Projects\RevitTools\obj\Debug\rvtTools.Tests_Templates.Template_ModelessForm.resources

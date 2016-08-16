@@ -200,11 +200,10 @@ namespace OldW.Excavation
             strDate = this.TextBox_StartedDate.Text;
             if (!string.IsNullOrEmpty(strDate))
             {
-                StartedDate = DateTimeHelper.String2Date(strDate);
-                if (StartedDate != null)
+                if (DateTimeHelper.String2Date(strDate, ref this.StartedDate)) // 说明不能直接转化为日期
                 {
                 }
-                else // 说明不能直接转化为日期
+                else
                 {
                     MessageBox.Show("请输入正确格式的开挖完成日期。", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
@@ -214,12 +213,11 @@ namespace OldW.Excavation
             strDate = this.TextBox_CompletedDate.Text;
             if (!string.IsNullOrEmpty(strDate))
             {
-                CompletedDate = DateTimeHelper.String2Date(strDate);
-                if (CompletedDate != null)
+                if (DateTimeHelper.String2Date(strDate, ref this.CompletedDate)) // 说明不能直接转化为日期
                 {
                     DesiredName = Convert.ToString(this.CompletedDate.Value.ToShortDateString());
                 }
-                else // 说明不能直接转化为日期
+                else
                 {
                     MessageBox.Show("请输入正确格式的开挖完成日期。", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
@@ -324,12 +322,8 @@ namespace OldW.Excavation
                             ClosedCurveSelector cs = new ClosedCurveSelector(uiDoc, true);
                             CurveArrArr = cs.SendSelect();
 
-                            if (!CurveArrArr.IsEmpty)
-                            {
-                                // 根据选择好的轮廓线来进行土体的建模
-                                DrawSoilFromCurve(CurveArrArr);
-
-                            }
+                            // 根据选择好的轮廓线来进行土体的建模
+                            DrawSoilFromCurve(CurveArrArr);
 
                             // -------------------------------------------------------------------------------------------------------------------------
                         }
@@ -452,7 +446,7 @@ namespace OldW.Excavation
                     CurveArray CurveArr = new CurveArray();
                     foreach (ElementId cid in cs)
                     {
-                        c = (ModelCurve)this.Document.GetElement(cid);
+                        c = (ModelCurve) this.Document.GetElement(cid);
                         CurveArr.Append(c.GeometryCurve);
                     }
                     // 必须将曲线集合进行重排以使其连续。

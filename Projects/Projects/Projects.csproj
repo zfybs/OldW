@@ -68,8 +68,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="RevitAPI">
       <HintPath>D:\Program Files (x86)\Civil Engineering\Autodesk Revit 2016\RevitAPI.dll</HintPath>
       <Private>False</Private>
@@ -83,18 +81,13 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
-    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="UIAutomationProvider" />
-    <Reference Include="WindowsBase" />
-    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\cmd_ViewStage.cs" />
     <Compile Include="Commands\ElementInitialize.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -108,15 +101,6 @@
       <DependentUpon>PickInstrums.cs</DependentUpon>
     </Compile>
     <Compile Include="DllActivator_Projects.cs" />
-    <Compile Include="DynamicStages\ViewStageDynamicallyHandler.cs" />
-    <Compile Include="DynamicStages\ViewStageManuallyHandler.cs" />
-    <Compile Include="DynamicStages\ReviewDoc.cs" />
-    <Compile Include="DynamicStages\ViewStageDynamically.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DynamicStages\ViewStageDynamically.Designer.cs">
-      <DependentUpon>ViewStageDynamically.cs</DependentUpon>
-    </Compile>
     <Compile Include="Instrumentations\DataManager\ElementDataManager_Line.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -143,15 +127,15 @@
     <Compile Include="Instrumentations\IntrumType\Instrum_WallTop.cs" />
     <Compile Include="Instrumentations\MonitorData.cs" />
     <Compile Include="SafetyWarnings\Analysis.cs" />
-    <Compile Include="Commands\cmd_Analyze.cs" />
+    <Compile Include="Commands\cmds_Analyses.cs" />
     <Compile Include="Commands\cmds_Excavation.cs" />
     <Compile Include="Commands\cmds_Monitoring.cs" />
     <Compile Include="Commands\cmds_test.cs" />
-    <Compile Include="DynamicStages\ViewStageManually.cs">
+    <Compile Include="ConstructionReview\ConstructionReview.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DynamicStages\ViewStageManually.Designer.cs">
-      <DependentUpon>ViewStageManually.cs</DependentUpon>
+    <Compile Include="ConstructionReview\ConstructionReview.Designer.cs">
+      <DependentUpon>ConstructionReview.cs</DependentUpon>
     </Compile>
     <Compile Include="Instrumentations\DataTransfer\DataImport.cs">
       <SubType>Form</SubType>
@@ -219,11 +203,8 @@
     <EmbeddedResource Include="Commands\PickInstrums.resx">
       <DependentUpon>PickInstrums.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DynamicStages\ViewStageDynamically.resx">
-      <DependentUpon>ViewStageDynamically.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DynamicStages\ViewStageManually.resx">
-      <DependentUpon>ViewStageManually.cs</DependentUpon>
+    <EmbeddedResource Include="ConstructionReview\ConstructionReview.resx">
+      <DependentUpon>ConstructionReview.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Instrumentations\DataTransfer\DataImport.resx">
       <DependentUpon>DataImport.cs</DependentUpon>

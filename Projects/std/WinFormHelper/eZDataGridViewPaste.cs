@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using stdOldW.WinFormHelper;
 
-namespace stdOldW.UserControls
+namespace stdOldW.WinFormHelper
 {
     /// <summary>
     /// 支持复制粘贴功能的表格控件

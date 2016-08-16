@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace rvtTools.Tests_Templates
+namespace rvtTools.Test
 {
     /// <summary>
     /// 一个基本的类的模板
@@ -69,7 +69,8 @@ namespace rvtTools.Tests_Templates
         {
             set { }
         }
-        
+
+
         /// <summary>
         /// 方法模板
         /// </summary>

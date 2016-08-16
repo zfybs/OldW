@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Windows.Media.Imaging;
 using Autodesk.Revit.UI;
@@ -63,13 +62,11 @@ namespace OldW
             string tabName = AppName;
             application.CreateRibbonTab(tabName);
 
-            // -------------------------------------------------------------------------------
             // 建模面板
             RibbonPanel ribbonPanelModeling = application.CreateRibbonPanel(tabName, "开挖");
             AddPushButtonExcavation(ribbonPanelModeling);
             AddPushButtonExcavationInfo(ribbonPanelModeling);
 
-            // -------------------------------------------------------------------------------
             // 监测数据面板
             RibbonPanel ribbonPanelData = application.CreateRibbonPanel(tabName, "监测");
             AddPushButtonFilterInstrums(ribbonPanelData);
@@ -78,26 +75,16 @@ namespace OldW
             AddPushButtonDataImport(ribbonPanelData);
             AddPushButtonDataExport(ribbonPanelData);
 
-            // -------------------------------------------------------------------------------
             // 查看面板
-            RibbonPanel ribbonPanelView = application.CreateRibbonPanel(tabName, "工况展示");
-            //
-            var pbdCurrentDate = AddTextBoxCurrentDate();
-            var pbdViewStage = AddPushButtonDataViewStage();
-            var pbdViewStageManually = AddPushButtonDataViewStageManually();
-            var viewItem = ribbonPanelView.AddStackedItems(pbdCurrentDate, pbdViewStage, pbdViewStageManually);
-            // 
-            SetTextBoxViewStageStyle(viewItem.First(r => r.Name == "CurrentDate") as TextBox);
-            //
-            AddPushButtonViewStageDynamically(ribbonPanelView);
+            RibbonPanel ribbonPanelView = application.CreateRibbonPanel(tabName, "查看");
+            AddTextBoxCurrentDate(ribbonPanelView);
+            AddPushButtViewStage(ribbonPanelView);
 
-            // -------------------------------------------------------------------------------
             // 分析面板
             RibbonPanel ribbonPanelAnalysis = application.CreateRibbonPanel(tabName, "分析");
             AddPushButtonSetWarning(ribbonPanelAnalysis);
             AddPushButtonAnalysis(ribbonPanelAnalysis);
 
-            // -------------------------------------------------------------------------------
             // 关于面板
             RibbonPanel ribbonPanelAbout = application.CreateRibbonPanel(tabName, "关于");
             AddPushButtonAbout(ribbonPanelAbout); //添加关于
@@ -300,82 +287,6 @@ namespace OldW
 
         #endregion
 
-        #region   ---  工况动态展示 ViewStage
-
-        /// <summary> 添加“当前时间”的文本框 </summary>
-        private TextBoxData AddTextBoxCurrentDate()
-        {
-            TextBoxData currentDate = new TextBoxData("CurrentDate");
-
-            // Create a new push button
-            // TextBox textBox = panel.AddItem() as TextBox;
-
-            // Set Icon
-            currentDate.ToolTip = "当前时间，用来查看开挖情况与显示对应的监测数据。可以精确到分钟，推荐的格式为“ 2016/6/6 13:06 ”。";
-            // Set Contextual help
-            ContextualHelp contextHelp = new ContextualHelp(ContextualHelpType.Url, "http://www.autodesk.com");
-            currentDate.SetContextualHelp(contextHelp);
-            // Set Icon
-            currentDate.Image = new BitmapImage(new Uri(Path.Combine(Path_icons, "ViewStage_16.png")));
-
-            return currentDate;
-        }
-
-        /// <summary> 设置“当前时间”的文本框的格式 </summary>
-        private void SetTextBoxViewStageStyle(TextBox textboxViewStage)
-        {
-            textboxViewStage.Width = 100;
-            textboxViewStage.Value = DateTime.Today.ToShortDateString();
-            textboxViewStage.SelectTextOnFocus = false;
-        }
-
-        /// <summary> 添加“查看某一天的开挖工况”的按钮 </summary>
-        private PushButtonData AddPushButtonDataViewStage()
-        {
-            PushButtonData viewStage = new PushButtonData("ViewStage", "查看当天", Path.Combine(Path_Dlls, Dll_Projects),
-                    "OldW.Commands.cmd_ViewStage");
-
-            viewStage.ToolTip = "查看选项卡中指定的某一天的开挖工况";
-
-            ContextualHelp contextHelp = new ContextualHelp(ContextualHelpType.Url, "http://www.autodesk.com");
-            viewStage.SetContextualHelp(contextHelp);
-            // Set Icon
-            viewStage.Image = new BitmapImage(new Uri(Path.Combine(Path_icons, "ViewStage_16.png")));
-            return viewStage;
-        }
-
-        /// <summary> 添加“手动查看开挖工况”的按钮 </summary>
-        private PushButtonData AddPushButtonDataViewStageManually()
-        {
-            PushButtonData viewStage = new PushButtonData("ViewStageManually", "手动查看", Path.Combine(Path_Dlls, Dll_Projects),
-                    "OldW.Commands.cmd_ViewStageManually");
-
-            viewStage.ToolTip = "通过在窗口中手动点击在查看任意时间的开挖工况";
-
-            ContextualHelp contextHelp = new ContextualHelp(ContextualHelpType.Url, "http://www.autodesk.com");
-            viewStage.SetContextualHelp(contextHelp);
-            // Set Icon
-            viewStage.Image = new BitmapImage(new Uri(Path.Combine(Path_icons, "ViewStage_16.png")));
-            return viewStage;
-        }
-
-        /// <summary> 添加“自动查看开挖工况”的按钮 </summary>
-        private void AddPushButtonViewStageDynamically(RibbonPanel panel)
-        {
-            // Create a new push button
-            PushButton pushButton =
-                panel.AddItem(new PushButtonData("ViewStageDynamically", "动态展示", Path.Combine(Path_Dlls, Dll_Projects),
-                    "OldW.Commands.cmd_ViewStageDynamically")) as PushButton;
-            pushButton.ToolTip = "动态查看指定日期的开挖工况";
-            // Set Contextual help
-            ContextualHelp contextHelp = new ContextualHelp(ContextualHelpType.Url, "http://www.autodesk.com");
-            pushButton.SetContextualHelp(contextHelp);
-            // Set Icon
-            pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "ViewStage_32.png")));
-        }
-
-        #endregion
-
         #region   ---  警戒与分析
 
         /// <summary> 添加“警戒值设定”的按钮 </summary>
@@ -412,6 +323,41 @@ namespace OldW
         }
 
         #endregion
+
+        /// <summary> 添加“当前时间”的文本框 </summary>
+        private void AddTextBoxCurrentDate(RibbonPanel panel)
+        {
+            // Create a new push button
+            TextBox TextBox = panel.AddItem(new TextBoxData("CurrentDate")) as TextBox;
+
+            // Set Icon
+            TextBox.ToolTip = "当前时间，用来查看开挖情况与显示对应的监测数据。可以精确到分钟。";
+            // Set Contextual help
+            ContextualHelp contextHelp = new ContextualHelp(ContextualHelpType.Url, "http://www.autodesk.com");
+            TextBox.SetContextualHelp(contextHelp);
+            // Set Icon
+            TextBox.Image = new BitmapImage(new Uri(Path.Combine(Path_icons, "ViewStage_16.png")));
+            // "Excavation-32.png"
+            TextBox.Width = 100;
+            TextBox.Value = DateTime.Today.ToShortDateString();
+            TextBox.SelectTextOnFocus = true;
+        }
+
+        /// <summary> 添加“查看开挖工况”的按钮 </summary>
+        private void AddPushButtViewStage(RibbonPanel panel)
+        {
+            // Create a new push button
+            PushButton pushButton =
+                panel.AddItem(new PushButtonData("ViewStage", "开挖工况", Path.Combine(Path_Dlls, Dll_Projects),
+                    "OldW.Commands.cmd_ViewStage")) as PushButton;
+            pushButton.ToolTip = "查看指定日期的开挖工况。";
+            // Set Contextual help
+            ContextualHelp contextHelp = new ContextualHelp(ContextualHelpType.Url, "http://www.autodesk.com");
+            pushButton.SetContextualHelp(contextHelp);
+            // Set Icon
+            pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "ViewStage_32.png")));
+            // "Excavation-32.png"
+        }
 
         /// <summary> 添加“关于”的按钮 </summary>
         private void AddPushButtonAbout(RibbonPanel panel)

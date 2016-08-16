@@ -1,8 +1,6 @@
 #region
 
 using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
@@ -73,15 +71,10 @@ namespace OldW.Commands
             ins = eleIds.Count == 0
                 ? Instrumentation.Lookup(doc)
                 : Instrumentation.Lookup(doc, eleIds);
-            if (ins.Any())
-            {
-                DataImport frm = new DataImport(ins, insDoc);
-                frm.ShowDialog();
-            }
-            else
-            {
-                MessageBox.Show(@"在 Revit 模型中没有找到任何测点单元，请先放置测点。", "提示", MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
-            }
+
+            DataImport frm = new DataImport(ins, insDoc);
+            frm.ShowDialog();
+
             return Result.Succeeded;
         }
     }

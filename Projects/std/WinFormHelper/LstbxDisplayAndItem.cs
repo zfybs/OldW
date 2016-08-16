@@ -1,4 +1,4 @@
-namespace stdOldW.UserControls
+namespace stdOldW.WinFormHelper
 {
   
     /// <summary>

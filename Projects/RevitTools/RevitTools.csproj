@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{13378FF8-0B99-4A4E-8529-DB04F4B8EC4D}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>rvtTools</RootNamespace>
     <AssemblyName>RevitTools</AssemblyName>
@@ -67,11 +67,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>rvtTools.Tests_Templates.ExeTest</StartupObject>
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationCore" />
     <Reference Include="RevitAPI">
       <HintPath>D:\Program Files (x86)\Civil Engineering\Autodesk Revit 2016\RevitAPI.dll</HintPath>
       <Private>False</Private>
@@ -89,7 +85,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Curves\ContiguousCurveChain.cs" />
@@ -106,8 +101,6 @@
     <Compile Include="GeoHelper.cs" />
     <Compile Include="Setup\PostEvent.cs" />
     <Compile Include="Tests_Templates\classTemplate.cs" />
-    <Compile Include="Tests_Templates\ExeTest.cs" />
-    <Compile Include="Tests_Templates\Test_EditFamily.cs" />
     <Compile Include="Tests_Templates\Test_Grammer.cs" />
     <Compile Include="rvtTools.cs" />
     <Compile Include="Tests_Templates\Template_ModelessForm.cs">

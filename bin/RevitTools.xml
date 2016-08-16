@@ -631,32 +631,32 @@
             <param name="externalApplicationGuid">对 .addin 文件中的 匹配的 ClientId 所对应的子插件进行路径的修改。
             如果不指定此参数，则会将addin文件中所有的子插件的Assembly字段都修改为这一个绝对路径。</param>
         </member>
-        <member name="T:rvtTools.Tests_Templates.classTemplate">
+        <member name="T:rvtTools.Test.classTemplate">
             <summary>
             一个基本的类的模板
             </summary>
         </member>
-        <member name="F:rvtTools.Tests_Templates.classTemplate.Tfiled">
+        <member name="F:rvtTools.Test.classTemplate.Tfiled">
             <summary>
             字段模板
             </summary>
         </member>
-        <member name="F:rvtTools.Tests_Templates.classTemplate.Tconstant">
+        <member name="F:rvtTools.Test.classTemplate.Tconstant">
             <summary>
             常数模板
             </summary>
         </member>
-        <member name="E:rvtTools.Tests_Templates.classTemplate.Tevent">
+        <member name="E:rvtTools.Test.classTemplate.Tevent">
             <summary>
             事件模板
             </summary>
         </member>
-        <member name="M:rvtTools.Tests_Templates.classTemplate.#ctor">
+        <member name="M:rvtTools.Test.classTemplate.#ctor">
             <summary>
             构造函数
             </summary>
         </member>
-        <member name="M:rvtTools.Tests_Templates.classTemplate.Finalize">
+        <member name="M:rvtTools.Test.classTemplate.Finalize">
             <summary>
             析构函数 Destructor
             </summary>
@@ -666,7 +666,7 @@
              程序员不能控制解构器何时将被执行因为这是由垃圾收集器决定的。解构器也在程序退出时被调用。
             </remarks>
         </member>
-        <member name="P:rvtTools.Tests_Templates.classTemplate.Tproperty">
+        <member name="P:rvtTools.Test.classTemplate.Tproperty">
             <summary>
             可读可写属性模板
             </summary>
@@ -675,18 +675,18 @@
             当取消属性中的get或者set块的时候，此属性就成了只写或者只读属性。
             </remarks>
         </member>
-        <member name="P:rvtTools.Tests_Templates.classTemplate.TwriteOnlyProperty">
+        <member name="P:rvtTools.Test.classTemplate.TwriteOnlyProperty">
             <summary>
             只写属性
             </summary>
         </member>
-        <member name="M:rvtTools.Tests_Templates.classTemplate.Tmethod(System.String[])">
+        <member name="M:rvtTools.Test.classTemplate.Tmethod(System.String[])">
             <summary>
             方法模板
             </summary>
             <param name="paraParam">参考</param>
         </member>
-        <member name="M:rvtTools.Tests_Templates.classTemplate.Tfunction(System.String,System.String@,System.String@)">
+        <member name="M:rvtTools.Test.classTemplate.Tfunction(System.String,System.String@,System.String@)">
             <summary>
             函数模板
             </summary>
@@ -694,41 +694,35 @@
             <param name="paraRef">地址传递，在调用时要在输入实参前面加上 ref 。</param>
             <param name="paraOut">用来输出的参数，在调用时要在输入实参前面加上 out 。</param>
         </member>
-        <member name="M:rvtTools.Tests_Templates.classTemplate.Main(System.String[])">
+        <member name="M:rvtTools.Test.classTemplate.Main(System.String[])">
             <summary>
             主程序入口
             </summary>
         </member>
-        <member name="T:rvtTools.Tests_Templates.ExeTest">
-            <summary> </summary>
-        </member>
-        <member name="M:rvtTools.Tests_Templates.ExeTest.Main">
-            <summary> </summary>
-        </member>
-        <member name="T:rvtTools.Tests_Templates.Template_ModelessForm">
+        <member name="T:rvtTools.Test.Template_ModelessForm">
             <summary>
             无模态窗口的模板
             此窗口可以直接通过Form.Show来进行调用
             </summary>
             <remarks></remarks>
         </member>
-        <member name="T:rvtTools.Tests_Templates.Template_ModelessForm.RequestParameter">
+        <member name="T:rvtTools.Test.Template_ModelessForm.RequestParameter">
             <summary>
             每一个外部事件调用时所提出的需求，为了在Execute方法中充分获取窗口的需求，
             所以将调用外部事件的窗口控件以及对应的触发事件参数也传入Execute方法中。
             </summary>
             <remarks></remarks>
         </member>
-        <member name="P:rvtTools.Tests_Templates.Template_ModelessForm.RequestParameter.sender">
+        <member name="P:rvtTools.Test.Template_ModelessForm.RequestParameter.sender">
             <summary> 引发Form事件控件对象 </summary>
         </member>
-        <member name="P:rvtTools.Tests_Templates.Template_ModelessForm.RequestParameter.e">
+        <member name="P:rvtTools.Test.Template_ModelessForm.RequestParameter.e">
             <summary> Form中的事件所对应的事件参数 </summary>
         </member>
-        <member name="P:rvtTools.Tests_Templates.Template_ModelessForm.RequestParameter.Id">
+        <member name="P:rvtTools.Test.Template_ModelessForm.RequestParameter.Id">
             <summary> 具体的需求 </summary>
         </member>
-        <member name="M:rvtTools.Tests_Templates.Template_ModelessForm.RequestParameter.#ctor(rvtTools.Tests_Templates.Template_ModelessForm.Request,System.EventArgs,System.Object)">
+        <member name="M:rvtTools.Test.Template_ModelessForm.RequestParameter.#ctor(rvtTools.Test.Template_ModelessForm.Request,System.EventArgs,System.Object)">
             <summary>
             定义事件需求与窗口中引发此事件的控件对象及对应的事件参数
             </summary>
@@ -737,42 +731,42 @@
             <param name="sender">引发Form事件控件对象</param>
             <remarks></remarks>
         </member>
-        <member name="T:rvtTools.Tests_Templates.Template_ModelessForm.Request">
+        <member name="T:rvtTools.Test.Template_ModelessForm.Request">
             <summary>
             ModelessForm的操作需求，用来从窗口向IExternalEventHandler对象传递需求。
             </summary>
             <remarks></remarks>
         </member>
-        <member name="F:rvtTools.Tests_Templates.Template_ModelessForm.Request.Pick">
+        <member name="F:rvtTools.Test.Template_ModelessForm.Request.Pick">
             <summary>
             与Revit用户界面进行交互。弥补了Form.ShowDialog不能进行Selection.PickObjects等操作的缺陷。
             </summary>
             <remarks></remarks>
         </member>
-        <member name="F:rvtTools.Tests_Templates.Template_ModelessForm.Request.Delete">
+        <member name="F:rvtTools.Test.Template_ModelessForm.Request.Delete">
             <summary>
             开启Revit事务以修改Revit文档。弥补了Form.Show后开启事务时给出报错：
             “Starting a transaction from an external application running outside of APIcontext is not allowed.”的问题。
             </summary>
             <remarks></remarks>
         </member>
-        <member name="F:rvtTools.Tests_Templates.Template_ModelessForm.ExEvent">
+        <member name="F:rvtTools.Test.Template_ModelessForm.ExEvent">
             <summary>用来触发外部事件（通过其Raise方法） </summary>
             <remarks>ExEvent属性是必须有的，它用来执行Raise方法以触发事件。</remarks>
         </member>
-        <member name="F:rvtTools.Tests_Templates.Template_ModelessForm.RequestPara">
+        <member name="F:rvtTools.Test.Template_ModelessForm.RequestPara">
             <summary> Execute方法所要执行的需求 </summary>
             <remarks>在Form中要执行某一个操作时，先将对应的操作需求信息赋值为一个RequestId枚举值，然后再执行ExternalEvent.Raise()方法。
             然后Revit会在会在下个闲置时间（idling time cycle）到来时调用IExternalEventHandler.Excute方法，在这个Execute方法中，
             再通过RequestId来提取对应的操作需求，</remarks>
         </member>
-        <member name="M:rvtTools.Tests_Templates.Template_ModelessForm.DozeOff">
+        <member name="M:rvtTools.Test.Template_ModelessForm.DozeOff">
             <summary> 在Revit执行相关操作时，禁用窗口中的控件 </summary>
         </member>
-        <member name="M:rvtTools.Tests_Templates.Template_ModelessForm.WarmUp">
+        <member name="M:rvtTools.Test.Template_ModelessForm.WarmUp">
             <summary> 在外部事件RequestHandler中的Execute方法执行完成后，用来激活窗口中的控件 </summary>
         </member>
-        <member name="M:rvtTools.Tests_Templates.Template_ModelessForm.Execute(Autodesk.Revit.UI.UIApplication)">
+        <member name="M:rvtTools.Test.Template_ModelessForm.Execute(Autodesk.Revit.UI.UIApplication)">
             <summary>
             在执行ExternalEvent.Raise()方法之前，请先将操作需求信息赋值给其RequestHandler对象的RequestId属性。
             当ExternalEvent.Raise后，Revit会在下个闲置时间（idling time cycle）到来时调用IExternalEventHandler.Execute方法的实现。
@@ -781,39 +775,39 @@
             <remarks>由于在通过外部程序所引发的操作中，如果出现异常，Revit并不会给出任何提示或者报错，
             而是直接退出函数。所以要将整个操作放在一个Try代码块中，以处理可能出现的任何报错。</remarks>
         </member>
-        <member name="M:rvtTools.Tests_Templates.ExternalApplication.NewRibbon(Autodesk.Revit.UI.UIControlledApplication)">
+        <member name="M:rvtTools.Test.ExternalApplication.NewRibbon(Autodesk.Revit.UI.UIControlledApplication)">
             <summary>
             创建一个新的 Ribbon
             </summary>
         </member>
-        <member name="T:rvtTools.Tests_Templates.Test_ExamplesCodes">
+        <member name="T:rvtTools.Test.Test_ExamplesCodes">
             <summary>
             一些效果实现的示例代码
             </summary>
             <remarks></remarks>
         </member>
-        <member name="M:rvtTools.Tests_Templates.Test_ExamplesCodes.GetGeometry">
+        <member name="M:rvtTools.Test.Test_ExamplesCodes.GetGeometry">
             <summary>
             返回Element的几何数据
             </summary>
             <remarks></remarks>
         </member>
-        <member name="M:rvtTools.Tests_Templates.Test_ExamplesCodes.FindSupporting">
+        <member name="M:rvtTools.Test.Test_ExamplesCodes.FindSupporting">
             <summary> 射线法：找到与梁相交的所有墙对象 </summary>
         </member>
-        <member name="M:rvtTools.Tests_Templates.Test_ExamplesCodes.FindIntersectWallsByElement">
+        <member name="M:rvtTools.Test.Test_ExamplesCodes.FindIntersectWallsByElement">
             <summary> 找到与某Element的几何实体相交的Elements </summary>
         </member>
-        <member name="M:rvtTools.Tests_Templates.Test_ExamplesCodes.FindIntersectWallsByGeometry">
+        <member name="M:rvtTools.Test.Test_ExamplesCodes.FindIntersectWallsByGeometry">
             <summary>ElementIntersectsSolidFilter: 找到与某Solid相交的Elements </summary>
         </member>
-        <member name="M:rvtTools.Tests_Templates.Test_ExamplesCodes.ElementParameterFilter_FindOjbectsInSpecificRoom(Autodesk.Revit.UI.ExternalCommandData)">
+        <member name="M:rvtTools.Test.Test_ExamplesCodes.ElementParameterFilter_FindOjbectsInSpecificRoom(Autodesk.Revit.UI.ExternalCommandData)">
             <summary>
             ElementParameterFilter 参数过滤器：找到一个房间内的所有对象
             </summary>
             <remarks>提示: 参数过滤条件可能比其他的类型过滤条件要快，但是这要视条件而定。毕竟这是一个慢过，使用时请按照过滤标准的复杂程度而异。</remarks>
         </member>
-        <member name="M:rvtTools.Tests_Templates.Test_ExamplesCodes.ElementParameterFilter_FindRooms(Autodesk.Revit.DB.Document)">
+        <member name="M:rvtTools.Test.Test_ExamplesCodes.ElementParameterFilter_FindRooms(Autodesk.Revit.DB.Document)">
             <summary>
             ElementParameterFilter参数过滤器 Creates an ElementParameter filter to find rooms whose area is greater than specified value
             </summary>
@@ -836,9 +830,6 @@
             <summary>
             撤消 Revit 的操作
             </summary>
-        </member>
-        <member name="M:rvtTools.RvtTools.FormatTimeToMinite(System.DateTime)">
-            <summary> 将时间数值转换为字符串，其显示精度为分钟 </summary>
         </member>
         <member name="M:rvtTools.FilterTools.Instances(Autodesk.Revit.DB.Family,Autodesk.Revit.DB.BuiltInCategory)">
             <summary> 返回项目文档中某族Family的所有实例 </summary>

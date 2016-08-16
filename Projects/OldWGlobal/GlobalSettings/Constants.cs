@@ -171,12 +171,5 @@ namespace OldW.GlobalSettings
         public const string ExcelDatabaseDot = "Dot";
 
         #endregion
-
-        /// <summary>
-        /// 在“替换视图中的图形 > 表面填充图案 > 填充图案”中，表示实体填充的FillPattern的名称。
-        /// 此变量的设置是为了应对不同的语言环境下，“实体填充”这一项的名称可能会不同的问题。
-        /// </summary>
-        public static string SolidFillPattern = "实体填充";
-
     }
 }

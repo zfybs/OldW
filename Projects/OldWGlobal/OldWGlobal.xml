@@ -181,12 +181,6 @@
             <remarks>Excel监测数据中，有一些线测点的子节点的具有数值意义的，此时表示节点数值的字段名大概为“12.5”，
             但是在ADO.NET操作Excel时，Insert 语句不支持名称中含有“#”或者“.”的字段名，所以，用此替换常数来替换小数点。 </remarks>
         </member>
-        <member name="F:OldW.GlobalSettings.Constants.SolidFillPattern">
-            <summary>
-            在“替换视图中的图形 > 表面填充图案 > 填充图案”中，表示实体填充的FillPattern的名称。
-            此变量的设置是为了应对不同的语言环境下，“实体填充”这一项的名称可能会不同的问题。
-            </summary>
-        </member>
         <member name="M:OldW.GlobalSettings.Operations.DeActivateControls(Autodesk.Revit.UI.UIApplication)">
             <summary>
             将程序插件中的所有面板禁用
@@ -196,15 +190,6 @@
             <summary>
             将程序插件中的所有面板激活
             </summary>
-        </member>
-        <member name="M:OldW.GlobalSettings.Operations.GetRibbonItem(Autodesk.Revit.UI.UIApplication,System.String,System.String)">
-            <summary>
-            获取OldW插件中指定名称的按钮或者文本框等控件
-            </summary>
-            <param name="uiApp"></param>
-            <param name="panelName"></param>
-            <param name="itemName"></param>
-            <returns></returns>
         </member>
         <member name="T:My.Resources.Resources">
             <summary>

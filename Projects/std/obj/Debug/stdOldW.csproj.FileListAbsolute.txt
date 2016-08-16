@@ -8,8 +8,12 @@ F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\Debug\stdOldW.dll
 F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\Debug\stdOldW.pdb
 F:\Software\Revit\RevitDevelop\OldW\Projects\std\obj\Debug\stdOldW.csprojResolveAssemblyReference.cache
 F:\ProgrammingCases\GitHubProjects\OldW\bin\stdOldW.xml
+F:\ProgrammingCases\GitHubProjects\OldW\bin\stdOldW.dll
 F:\ProgrammingCases\GitHubProjects\OldW\bin\stdOldW.pdb
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.WinFormHelper.eZDataGridView.resources
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.WinFormHelper.eZDataGridViewPaste.resources
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.csproj.GenerateResource.Cache
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.dll
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.pdb
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\WinFormHelper\ShowDialogWinTemplate.g.cs
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\GeneratedInternalTypeHelper.g.cs
@@ -18,9 +22,3 @@ F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW_MarkupCom
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\WinFormHelper\ShowDialogWinTemplate.baml
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.g.resources
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.WinFormHelper.ShowDialogFormTemplate.resources
-F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.UserControls.eZDataGridView.resources
-F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.UserControls.eZDataGridViewPaste.resources
-F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.UserControls.NumberChanging.resources
-F:\ProgrammingCases\GitHubProjects\OldW\bin\stdOldW.exe
-F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.exe
-F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.Tests_Templates.Form1.resources

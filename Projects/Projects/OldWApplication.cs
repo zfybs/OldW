@@ -109,7 +109,7 @@ public OldWDocument ActiveDocument
 			}
 			else
 			{
-				MessageBox.Show(@"在程序测试中，出现上一个外部命令的Application对象的IsValidObject属性为False的情况，请及时调试并解决", "warnning");
+				MessageBox.Show("在程序测试中，出现上一个外部命令的Application对象的IsValidObject属性为False的情况，请及时调试并解决", "warnning");
 				LoadedApplication = new OldWApplication(App);
 				return LoadedApplication;
 			}

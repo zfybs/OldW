@@ -40,7 +40,7 @@ namespace rvtTools.Curves
                 blnStop = true;
                 CurveLoop cvLoop = GetLoopedCurve();
                 // 检验并添加
-                if (cvLoop != null && cvLoop.Any())
+                if (cvLoop.Count() > 0)
                 {
                     CurveArray cvArr = new CurveArray();
                     foreach (Curve c in cvLoop)
@@ -74,14 +74,13 @@ namespace rvtTools.Curves
             Document Doc = this.uiDoc.Document;
             //
             IList<Reference> Boundaries = base.SelectModelCurve();
-            if (!Boundaries.Any()) return null;
 
             CurveLoop cvLoop = new CurveLoop();
             try
             {
                 if (Boundaries.Count == 1) // 要么是封闭的圆或圆弧，要么就不封闭
                 {
-                    Curve c = ((ModelCurve)Doc.GetElement(Boundaries[0])).GeometryCurve;
+                    Curve c = ((ModelCurve) Doc.GetElement(Boundaries[0])).GeometryCurve;
                     if ((c is Arc || c is Ellipse) && !c.IsBound)
                     {
                         cvLoop.Append(c);

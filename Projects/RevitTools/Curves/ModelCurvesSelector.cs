@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
@@ -50,18 +48,8 @@ namespace rvtTools.Curves
         /// <returns></returns>
         protected IList<Reference> SelectModelCurve()
         {
-            IList<Reference> boundaries;
-            try
-            {
-                boundaries = uiDoc.Selection.PickObjects(ObjectType.Element, new CurveSelectionFilter(),
-                           "选择一组封闭的模型线。");
-            }
-            catch (Exception ex)
-            {
-                // MessageBox.Show(ex.Message + "\n\r"+  ex.GetType().Name);
-                boundaries = new List<Reference>();
-            }
-
+            IList<Reference> boundaries = uiDoc.Selection.PickObjects(ObjectType.Element, new CurveSelectionFilter(),
+                "选择一组封闭的模型线。");
             return boundaries;
         }
 

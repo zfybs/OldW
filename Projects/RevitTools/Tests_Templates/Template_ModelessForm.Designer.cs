@@ -13,7 +13,7 @@ using System.Linq;
 
 
 
-namespace rvtTools.Tests_Templates
+namespace rvtTools.Test
 {
 public partial class Template_ModelessForm : System.Windows.Forms.Form
 	{

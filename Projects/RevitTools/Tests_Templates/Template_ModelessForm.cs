@@ -16,7 +16,7 @@ using Autodesk.Revit.DB;
 using Forms = System.Windows.Forms;
 using Autodesk.Revit.UI.Selection;
 
-namespace rvtTools.Tests_Templates
+namespace rvtTools.Test
 {
 	
 	/// <summary>

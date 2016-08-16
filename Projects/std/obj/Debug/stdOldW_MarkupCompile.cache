@@ -1,7 +1,7 @@
 ﻿stdOldW
 
 
-exe
+library
 C#
 .cs
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\
@@ -12,7 +12,7 @@ DEBUG;TRACE
 
 1-100652239
 
-28101485177
+221664037208
 141012385901
 WinFormHelper\ShowDialogWinTemplate.xaml;
 
