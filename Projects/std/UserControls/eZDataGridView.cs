@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace stdOldW.WinFormHelper
+namespace stdOldW.UserControls
 {
     /// <summary>
     /// 自定义控件：DataGridView，向其中增加了：插入行、删除行、显示行号等功能.

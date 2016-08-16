@@ -18,10 +18,10 @@ namespace stdOldW
         public static Int32 Time2Int(DateTime dt)
         {
             // 先分别获取日期与小时、分钟的数据
-            Int32 day = (int) dt.Date.ToOADate();
+            Int32 day = (int)dt.Date.ToOADate();
 
             // 分钟信息最多有24*60=1440个值，所以可以用11位二进制值来保存； 
-            Int32 mins = dt.Hour*60 + dt.Minute;
+            Int32 mins = dt.Hour * 60 + dt.Minute;
 
             // 将日期的二进制值的后面补上11个零，用以放置分钟数据
             day <<= 11;
@@ -49,17 +49,14 @@ namespace stdOldW
         /// 还增加了20160406（ 即 2016/04/06），以及 201604061330（即 2016/04/06 13:30）
         /// </summary>
         /// <param name="text">要转换为日期的字符。</param>
-        /// <param name="resultedDate">字符所对应的日期。如果不能转换为日期，则返回Null</param>
-        /// <returns></returns>
-        public static bool String2Date(string text, ref DateTime? resultedDate)
+        /// <returns> 字符所对应的日期。如果不能转换为日期，则返回Null</returns>
+        public static DateTime? String2Date(string text)
         {
-            bool blnSucceed = false;
             // 模式1. 正常的日期格式
             DateTime outDateTime;
             if (DateTime.TryParse(text, out outDateTime))
             {
-                resultedDate = outDateTime;
-                return true;
+                return outDateTime;
             }
 
             // 模式2. 20160406 ， 即 2016/04/06
@@ -67,15 +64,13 @@ namespace stdOldW
             {
                 try
                 {
-                    resultedDate = new DateTime(int.Parse(text.Substring(0, 4)),
+                    return new DateTime(int.Parse(text.Substring(0, 4)),
                         int.Parse(text.Substring(4, 2)),
                         int.Parse(text.Substring(6, 2)));
-                    return true;
                 }
                 catch (Exception)
                 {
-                    resultedDate = null;
-                    return false;
+                    return null;
                 }
             }
 
@@ -84,20 +79,18 @@ namespace stdOldW
             {
                 try
                 {
-                    resultedDate = new DateTime(int.Parse(text.Substring(0, 4)),
+                    return new DateTime(int.Parse(text.Substring(0, 4)),
                         int.Parse(text.Substring(4, 2)),
                         int.Parse(text.Substring(6, 2)),
                         int.Parse(text.Substring(8, 2)),
                         int.Parse(text.Substring(10, 2)), 0);
-                    return true;
                 }
                 catch (Exception)
                 {
-                    resultedDate = null;
-                    return false;
+                    return null;
                 }
             }
-            return blnSucceed;
+            return null;
         }
     }
 }

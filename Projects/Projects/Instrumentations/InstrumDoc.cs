@@ -12,7 +12,7 @@ using OldW.GlobalSettings;
 using rvtTools;
 using stdOldW;
 using stdOldW.DAL;
-using stdOldW.WinFormHelper;
+using stdOldW.UserControls;
 using Forms = System.Windows.Forms;
 
 namespace OldW.Instrumentations
@@ -21,7 +21,6 @@ namespace OldW.Instrumentations
     /// <remarks></remarks>
     public class InstrumDoc : OldWDocument
     {
-
         #region    ---   Types
 
         #endregion
@@ -198,6 +197,5 @@ namespace OldW.Instrumentations
 
             return table;
         }
-
     }
 }

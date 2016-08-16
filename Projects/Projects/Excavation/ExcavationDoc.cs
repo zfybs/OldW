@@ -91,14 +91,14 @@ namespace OldW.Excavation
                     // 将模型土体放到Group中
                     List<ElementId> GroupMems = new List<ElementId>();
                     GroupType gptp =
-                        (GroupType) Document.FindElement(typeof (GroupType), targetName: Constants.FamilyName_Soil);
+                        (GroupType)Document.FindElement(typeof(GroupType), targetName: Constants.FamilyName_Soil);
                     // 组类型中包含有族实例，所以要找到对应的组类型，然后找到对应的组实例，再将组实例解组。
                     // 这是为了避免在删除“基坑土体”族及其实例时，UI界面中会出现“删除组实例中的最后一个成员”的警告。
                     Group gp = default(Group);
                     if (gptp != null)
                     {
                         gp =
-                            (Group) Document.FindElement(typeof (Group), targetName: Constants.FamilyName_Soil);
+                            (Group)Document.FindElement(typeof(Group), targetName: Constants.FamilyName_Soil);
                         if (gp != null)
                         {
                             GroupMems = gp.GetMemberIds() as List<ElementId>;
@@ -141,7 +141,7 @@ namespace OldW.Excavation
                     gp.GroupType.Name = Constants.FamilyName_Soil;
 
                     // 将模型组在Revit界面中显示出来
-                    Document.ActiveView.UnhideElements(new ElementId[] {gp.Id});
+                    Document.ActiveView.UnhideElements(new ElementId[] { gp.Id });
 
                     //
                     SM = Soil_Model.Create(this, fi);
@@ -197,7 +197,6 @@ namespace OldW.Excavation
                         defGroup.Definitions.get_Item(Constants.SP_ExcavationStarted) as ExternalDefinition;
 
                     FM.AddParameter(ExDef, BuiltInParameterGroup.PG_DATA, true);
-
                     // 开挖完成
                     ExDef = defGroup.Definitions.get_Item(Constants.SP_ExcavationCompleted) as ExternalDefinition;
 
@@ -217,7 +216,7 @@ namespace OldW.Excavation
             famDoc.Close(false);
 
             // 获取一个族类型，以加载一个族实例到项目文档中
-            FamilySymbol fs = (FamilySymbol) fam.GetFamilySymbolIds().First().Element(Document);
+            FamilySymbol fs = (FamilySymbol)fam.GetFamilySymbolIds().First().Element(Document);
 
             using (Transaction tranDoc = new Transaction(Document, "将开挖土体的族在项目文档中创建一个实例并放置到组中"))
             {
@@ -248,7 +247,7 @@ namespace OldW.Excavation
                     using (Transaction tranDelectFamaiy = new Transaction(Document, "删除前面加载到项目文档中的族"))
                     {
                         tranDelectFamaiy.Start();
-                        Document.Delete(new ElementId[] {fam.Id});
+                        Document.Delete(new ElementId[] { fam.Id });
                         tranDelectFamaiy.Commit();
                     }
 
@@ -342,7 +341,7 @@ namespace OldW.Excavation
             // 在族文档中绘制实体
 
             tranFam.SetName("添加实体与参数关联");
-            View V = famDoc.FindElement(typeof (View), BuiltInCategory.OST_Views, "前") as View;
+            View V = famDoc.FindElement(typeof(View), BuiltInCategory.OST_Views, "前") as View;
             // 定义视图
             if (V == null)
             {
@@ -498,7 +497,7 @@ namespace OldW.Excavation
                 Prefix = "";
                 for (var i = 0; i <= n - 2; i++)
                 {
-                    Prefix = Prefix + parts[(int) i] + "-";
+                    Prefix = Prefix + parts[(int)i] + "-";
                 }
                 return true;
             }
@@ -510,7 +509,7 @@ namespace OldW.Excavation
 
         #endregion
 
-        #region    ---    Document中的土体单元搜索
+        #region    ---    Document中的土体单元 搜索
 
         /// <summary>
         /// 模型中的土体单元
@@ -557,7 +556,7 @@ namespace OldW.Excavation
                     string FMessage = null;
                     if (Soil_Model.IsSoildModel(doc, SoilElementId, ref FMessage))
                     {
-                        Soil = (FamilyInstance) Document.GetElement(SoilElementId);
+                        Soil = (FamilyInstance)Document.GetElement(SoilElementId);
                     }
                     else
                     {
@@ -596,7 +595,7 @@ namespace OldW.Excavation
                     }
                     else
                     {
-                        Soil = (FamilyInstance) soils[0].Element(doc); // 找到有效且唯一的土体单元 ^_^
+                        Soil = (FamilyInstance)soils[0].Element(doc); // 找到有效且唯一的土体单元 ^_^
                     }
                 }
             }
@@ -628,10 +627,10 @@ namespace OldW.Excavation
             {
                 FilteredElementCollector col = new FilteredElementCollector(Document, elemIds);
                 // 所有的模型土体与开挖土体集合
-                List<Element> Elems =
-                    col.OfClass(typeof (FamilyInstance))
+                IList<Element> Elems =
+                    col.OfClass(typeof(FamilyInstance))
                         .OfCategoryId(new ElementId(BuiltInCategory.OST_Site))
-                        .ToElements() as List<Element>;
+                        .ToElements();
 
                 // 排除模型土体并生成对应的开挖土体对象 
                 ElementId smId = soilM.Soil.Id;
@@ -639,9 +638,74 @@ namespace OldW.Excavation
                     from e in Elems
                     where e.Id != smId
                     // 说明是开挖土体
-                    select Soil_Excav.Create((FamilyInstance) e, soilM));
+                    select Soil_Excav.Create((FamilyInstance)e, soilM));
             }
             return SoilEx;
+        }
+
+
+        /// <summary>
+        /// 根据施工日期来判断土体的开挖状态
+        /// </summary>
+        /// <param name="excavSoils">要进行过滤的开挖土体集合</param>
+        /// <param name="constructionTime"> 要考查的施工日期 </param>
+        /// <returns> excavSoils 集合中每一个开挖土体所对应的开挖状态 </returns>
+        public Dictionary<Soil_Excav, ExcavationStage> FilterExcavSoils(
+            IEnumerable<Soil_Excav> excavSoils, DateTime constructionTime)
+        {
+            Dictionary<Soil_Excav, ExcavationStage> soils = new Dictionary<Soil_Excav, ExcavationStage>();
+            //
+
+            foreach (Soil_Excav es in excavSoils)
+            {
+                if (soils.ContainsKey(es)) continue;
+                //
+                var startTime = es.GetExcavatedDate(true);
+                var endTime = es.GetExcavatedDate(false);
+                //
+                if (startTime == null && endTime == null)
+                {
+                    soils.Add(es, ExcavationStage.UnKown);
+                }
+                else if (startTime == null && endTime != null)  // 只知道结束日期
+                {
+                    if (constructionTime > endTime.Value)
+                    {
+                        soils.Add(es, ExcavationStage.Completed);
+                    }
+                    else
+                    {
+                        soils.Add(es, ExcavationStage.UnKown);
+                    }
+                }
+                else if (startTime != null && endTime == null)  // 只知道开始日期
+                {
+                    if (constructionTime < startTime.Value)
+                    {
+                        soils.Add(es, ExcavationStage.UnStarted);
+                    }
+                    else
+                    {
+                        soils.Add(es, ExcavationStage.Excavating);
+                    }
+                }
+                else if (startTime != null && endTime != null)
+                {
+                    if (constructionTime < startTime.Value)
+                    {
+                        soils.Add(es, ExcavationStage.UnStarted);
+                    }
+                    else if (constructionTime > endTime.Value)
+                    {
+                        soils.Add(es, ExcavationStage.Completed);
+                    }
+                    else
+                    {
+                        soils.Add(es, ExcavationStage.Excavating);
+                    }
+                }
+            }
+            return soils;
         }
 
         #endregion

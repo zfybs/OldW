@@ -22,7 +22,6 @@ F:\ProgrammingCases\GitHubProjects\OldW\bin\Projects.pdb
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\Projects\obj\Debug\Projects.csprojResolveAssemblyReference.cache
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\Projects\obj\Debug\OldW.Commands.ElementInitializer.resources
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\Projects\obj\Debug\OldW.Instrumentations.PickInstrums.resources
-F:\ProgrammingCases\GitHubProjects\OldW\Projects\Projects\obj\Debug\OldW.DynamicReview.ConstructionReview.resources
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\Projects\obj\Debug\OldW.DataManager.DataImport.resources
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\Projects\obj\Debug\OldW.Excavation.frm_DrawExcavation.resources
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\Projects\obj\Debug\OldW.Excavation.frm_ExcavationInfo.resources
@@ -34,3 +33,5 @@ F:\ProgrammingCases\GitHubProjects\OldW\Projects\Projects\obj\Debug\OldW.SafetyW
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\Projects\obj\Debug\Projects.csproj.GenerateResource.Cache
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\Projects\obj\Debug\Projects.dll
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\Projects\obj\Debug\Projects.pdb
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\Projects\obj\Debug\OldW.DynamicStages.ViewStageDynamically.resources
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\Projects\obj\Debug\OldW.DynamicStages.ViewStageManually.resources

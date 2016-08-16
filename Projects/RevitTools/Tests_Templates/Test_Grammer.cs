@@ -3,7 +3,7 @@ using System;
 
 // End of VB project level imports
 
-namespace rvtTools.Test
+namespace rvtTools.Tests_Templates
 {
 
 

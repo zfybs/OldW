@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace rvtTools.Tests_Templates
+{
+    /// <summary> </summary>
+    public class ExeTest
+    {
+
+        /// <summary> </summary>
+        [STAThread]
+        public static void Main()
+        {
+
+        }
+    }
+}

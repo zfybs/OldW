@@ -1,5 +1,3 @@
-#region
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,9 +15,9 @@ using OldW.GlobalSettings;
 using OldW.Instrumentations;
 using stdOldW;
 using stdOldW.DAL;
+using stdOldW.UserControls;
 using stdOldW.WinFormHelper;
 
-#endregion
 
 namespace OldW.DataManager
 {
@@ -48,8 +46,14 @@ namespace OldW.DataManager
         /// <remarks></remarks>
         public DataImport(ICollection<Instrumentation> eleIdCollection, InstrumDoc document)
         {
+
             InitializeComponent();
 
+            //
+            if (!eleIdCollection.Any())
+            {
+                throw new ArgumentException("用来进行测点匹配的集合中没有任何测点。");
+            }
             //
             _document = document;
             _selectedInstrum = new InstrumCollector(eleIdCollection);
@@ -226,7 +230,7 @@ namespace OldW.DataManager
                     foreach (var ptname in ptNames)
                     {
                         points.Add(new MonitorEntityExcel(
-                            sheetName: shtName, 
+                            sheetName: shtName,
                             fieldName: ptname,
                             storedInField: true,
                             possibleMatches: _selectedInstrum));
