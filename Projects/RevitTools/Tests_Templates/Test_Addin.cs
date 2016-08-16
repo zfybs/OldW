@@ -15,7 +15,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 
 
-namespace rvtTools.Test
+namespace rvtTools.Tests_Templates
 {
 	
 	[Autodesk.Revit.Attributes.Transaction(Autodesk.Revit.Attributes.TransactionMode.Manual)]public class ExternalCommand : IExternalCommand

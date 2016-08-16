@@ -1,18 +1,10 @@
-// VBConversions Note: VB project level imports
-
-#region
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
 using OldW.GlobalSettings;
 using rvtTools;
-//using Autodesk.Revit.DB;
-//using Autodesk.Revit.UI;
-// End of VB project level imports
-
-#endregion
+using Color = System.Drawing.Color;
 
 namespace OldW.Excavation
 {
@@ -20,50 +12,17 @@ namespace OldW.Excavation
     /// <remarks></remarks>
     public class Soil_Excav : Soil_Element
     {
+
         #region    ---   Properties
 
         /// <summary> 开挖土体单元所附着的模型土体 </summary>
         private Soil_Model F_ModelSoil;
-
         /// <summary> 开挖土体单元所附着的模型土体 </summary>
         public Soil_Model ModelSoil
         {
             get { return F_ModelSoil; }
         }
 
-        private Nullable<DateTime> F_CompletedDate;
-
-        /// <summary>
-        /// 每一个开挖土体都有一个开挖完成的时间。由于记录的不完整，这个时间可能暂时不知道，但是后期要可以指定。
-        /// </summary>
-        public Nullable<DateTime> CompletedDate
-        {
-            get
-            {
-                if (F_CompletedDate == null)
-                {
-                    F_CompletedDate = GetExcavatedDate(false);
-                }
-                return F_CompletedDate;
-            }
-        }
-
-        private Nullable<DateTime> F_StartedDate;
-
-        /// <summary>
-        /// 每一个开挖土体都有一个开始开挖的时间。由于记录的不完整，这个时间可能暂时不知道，但是后期要可以指定。
-        /// </summary>
-        public Nullable<DateTime> StartedDate
-        {
-            get
-            {
-                if (F_StartedDate == null)
-                {
-                    F_StartedDate = GetExcavatedDate(true);
-                }
-                return F_StartedDate;
-            }
-        }
 
         #endregion
 
@@ -136,7 +95,6 @@ namespace OldW.Excavation
 
         #endregion
 
-
         /// <summary>
         /// 得到开挖土体的顶面或者底面的在模型中的标高
         /// </summary>
@@ -154,35 +112,42 @@ namespace OldW.Excavation
 
         #region    ---   为开挖土体设置与读取对应的开挖完成的时间
 
+
         /// <summary>
         /// 为多个开挖土体设置对应的开挖完成的时间
         /// </summary>
         /// <param name="Started">如果要设置土体开始开挖的时间，则设置为True，反之则是设置土体开挖完成的时间</param>
         /// <param name="Soil_Date">一个字典集合，其中包括要进行日期设置的所有开挖土体。土体开挖完成的时间，可以精确到分钟</param>
         /// <remarks></remarks>
-        public static void SetExcavatedDate(Document doc, bool Started, Dictionary<Soil_Excav, DateTime> Soil_Date)
+        public static void SetExcavatedDate(Transaction tran, Document doc, bool Started, Dictionary<Soil_Excav, DateTime> Soil_Date)
         {
             Soil_Excav Exs = default(Soil_Excav);
-            using (Transaction t = new Transaction(doc, "设置土体开挖完成的时间"))
+            tran.SetName("设置土体开挖完成的时间");
+            for (int Ind = 0; Ind <= Soil_Date.Count; Ind++)
             {
-                t.Start();
-                for (int Ind = 0; Ind <= Soil_Date.Count; Ind++)
-                {
-                    Exs = Soil_Date.Keys.ToArray()[Ind];
-                    Exs.SetExcavatedDate(t, Started, Soil_Date.Values.ToArray()[Ind]);
-                }
-                t.Commit();
+                Exs = Soil_Date.Keys.ToArray()[Ind];
+                Exs.SetExcavatedDate(tran, Started, Soil_Date.Values.ToArray()[Ind]);
             }
         }
+
+        /// <summary> 每一个开挖土体都有一个开挖完成的时间。由于记录的不完整，这个时间可能暂时不知道，但是后期要可以指定。 </summary>
+        private DateTime? _completedDate;
+        /// <summary> 开挖土体的开挖完成日期已经从Revit中刷新到内存中。 </summary>
+        private bool _completedDateInMemory = false;
+
+        /// <summary> 每一个开挖土体都有一个开始开挖的时间。由于记录的不完整，这个时间可能暂时不知道，但是后期要可以指定。 </summary>
+        private DateTime? _startedDate;
+        /// <summary> 开挖土体的开挖开始日期已经从Revit中刷新到内存中。 </summary>
+        private bool _startedDateInMemory = false;
 
         /// <summary>
         /// 为开挖土体设置对应的开挖完成的时间
         /// </summary>
-        /// <param name="Tran">Revit事务对象，在此函数中此事务并不会Start或者Commit，所以在调用此函数时，请确保此事务对象已经Started了。</param>
+        /// <param name="tran">Revit事务对象，在此函数中此事务并不会Start或者Commit，所以在调用此函数时，请确保此事务对象已经Started了。</param>
         /// <param name="Started">如果要设置土体开始开挖的时间，则设置为True，反之则是设置土体开挖完成的时间</param>
         /// <param name="ResDate">土体开挖开始或者完成的时间，可以精确到分钟。如果要清空日期字符，则设置其为Nothing。</param>
         /// <remarks></remarks>
-        public void SetExcavatedDate(Transaction Tran, bool Started, Nullable<DateTime> ResDate)
+        public void SetExcavatedDate(Transaction tran, bool Started, Nullable<DateTime> ResDate)
         {
             Parameter pa = default(Parameter);
             if (Started)
@@ -214,11 +179,13 @@ namespace OldW.Excavation
 
                 if (Started)
                 {
-                    this.F_StartedDate = ResDate;
+                    this._startedDate = ResDate;
+                    this._startedDateInMemory = true;
                 }
                 else
                 {
-                    this.F_CompletedDate = ResDate;
+                    this._completedDate = ResDate;
+                    this._completedDateInMemory = true;
                 }
             }
             else
@@ -228,24 +195,34 @@ namespace OldW.Excavation
         }
 
         /// <summary>
-        /// 从开挖土体的单元中读取开挖完成的日期
+        /// 从开挖土体的单元中读取开挖开始或者开挖完成的日期
         /// </summary>
-        /// <param name="Started">如果要提取土体开始开挖的时间，则设置为True，反之则是提取土体开挖完成的时间</param>
-        private Nullable<DateTime> GetExcavatedDate(bool Started)
+        /// <param name="started">如果要提取土体开始开挖的时间，则设置为True，反之则是提取土体开挖完成的时间</param>
+        public DateTime? GetExcavatedDate(bool started)
         {
             Parameter pa = default(Parameter);
             string paName = "";
-            if (Started)
+            if (started)
             {
+                if (this._startedDateInMemory)
+                {
+                    return _startedDate;
+                }
                 pa = Soil.get_Parameter(Constants.SP_ExcavationStarted_Guid);
                 paName = Constants.SP_ExcavationStarted;
             }
             else
             {
+                if (_completedDateInMemory)
+                {
+                    return _completedDate;
+                }
                 pa = Soil.get_Parameter(Constants.SP_ExcavationCompleted_Guid);
                 paName = Constants.SP_ExcavationCompleted;
             }
             //
+            DateTime? excavateDate = null;
+
             string strDate = "";
             if (pa != null)
             {
@@ -253,19 +230,32 @@ namespace OldW.Excavation
                 DateTime dt = default(DateTime);
                 if (DateTime.TryParse(strDate, out dt))
                 {
-                    return dt;
+                    excavateDate = dt;
                 }
                 else // 说明此字符为空或者不能转换为日期
                 {
                     //MessageBox.Show(String.Format("土体单元{0}中的参数""{1}""的值""{2}""不能正确地转换为日期。",
                     //                                          Me.Soil.Id, Constants.SP_ExcavationCompleted, strDate))
-                    return default(Nullable<DateTime>);
+                    excavateDate = null;
                 }
             }
             else
             {
                 throw new NullReferenceException(string.Format("土体单元中未找到指定的参数\"{0}\"", paName));
             }
+
+            // 将最新的结果刷新到内存中
+            if (started)
+            {
+                _startedDate = excavateDate;
+                _startedDateInMemory = true;
+            }
+            else
+            {
+                _completedDate = excavateDate;
+                _completedDateInMemory = true;
+            }
+            return excavateDate;
         }
 
         #endregion
@@ -291,5 +281,125 @@ namespace OldW.Excavation
         }
 
         #endregion
+
+        #region    ---   根据不同的工况状态来设置开挖土体的显示样式
+
+        /// <summary>
+        /// 根据开挖土体当前的开挖状态来设置其在Revit中的显示样式
+        /// </summary>
+        /// <param name="tranDoc"></param>
+        /// <param name="view"></param>
+        /// <param name="stage">开挖土体当前的开挖状态</param>
+        public void RefreshByStage(Transaction tranDoc, View view, ExcavationStage stage)
+        {
+
+            switch (stage)
+            {
+                case ExcavationStage.UnStarted: SetStyle_UnStarted(tranDoc, view, new ElementId[] { Soil.Id }); break;
+                case ExcavationStage.Excavating: SetStyle_Excavating(tranDoc, view, new ElementId[] { Soil.Id }); break;
+                case ExcavationStage.Completed: SetStyle_Completed(tranDoc, view, new ElementId[] { Soil.Id }); break;
+                case ExcavationStage.UnKown: SetStyle_UnKown(tranDoc, view, new ElementId[] { Soil.Id }); break;
+            }
+        }
+
+        private void SetStyle_UnStarted(Transaction tranDoc, View view,ICollection<ElementId> excavSoils )
+        {
+            // 让其以一般土体的样式显示出来
+            view.UnhideElements(excavSoils);
+
+            // 设置其显示颜色
+            System.Drawing.Color c1 = Color.DarkGray;
+            Autodesk.Revit.DB.Color c;
+            RvtTools.ConvertColor(c1, out c);
+            SetColor(Document, view, c);
+        }
+
+        private void SetStyle_Excavating(Transaction tranDoc, View view, ICollection<ElementId> excavSoils)
+        {
+            // 让其以正在开挖的土体的样式显示出来
+            view.UnhideElements(excavSoils);
+
+            // 设置其显示颜色
+            System.Drawing.Color c1 = Color.Red;
+            Autodesk.Revit.DB.Color c;
+            RvtTools.ConvertColor(c1, out c);
+            SetColor(Document, view, c, 40);
+        }
+
+        private void SetStyle_Completed(Transaction tranDoc, View view, ICollection<ElementId> excavSoils)
+        {
+            // 让其隐藏
+            view.HideElements(excavSoils);
+
+        }
+
+        private void SetStyle_UnKown(Transaction tranDoc, View view, ICollection<ElementId> excavSoils)
+        {
+            // 让其以其本来的材质样式显示出来
+            view.UnhideElements(excavSoils);
+
+
+            // 设置其显示颜色
+            System.Drawing.Color c1 = Color.DarkGoldenrod;
+            Autodesk.Revit.DB.Color c;
+            RvtTools.ConvertColor(c1, out c);
+            SetColor(Document, view, c, 25);
+
+        }
+
+        /// <summary>
+        /// 设置土体的显示颜色、透明度
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="v"></param>
+        /// <param name="fillColor">如果不指定颜色，则“按材质”显示</param>
+        /// <param name="transparency"> 表面填充的透明度，0表示不透明，100表示全透明 </param>
+        private void SetColor(Document doc, View v, Autodesk.Revit.DB.Color fillColor = null, int transparency = 0)
+        {
+            OverrideGraphicSettings gs = v.GetElementOverrides(Soil.Id);
+            string fillPatternName;
+
+            if (fillColor == null)
+            {
+                // 填充模式
+                // fillPatternName ="" ;
+                gs.SetProjectionFillPatternId(ElementId.InvalidElementId);  // 设置为“按材质”
+                gs.SetCutFillColor(Autodesk.Revit.DB.Color.InvalidColorValue);
+            }
+            else
+            {
+                // 填充颜色
+                gs.SetProjectionFillColor(fillColor);
+
+                // 填充模式
+                fillPatternName = Constants.SolidFillPattern;
+
+                FillPatternElement fpe = FillPatternElement.GetFillPatternElementByName(doc, FillPatternTarget.Drafting, fillPatternName);
+                if (fpe == null)
+                {
+                    fpe = FillPatternElement.Create(doc,
+                          new FillPattern(fillPatternName, FillPatternTarget.Drafting, FillPatternHostOrientation.ToHost));
+                }
+                gs.SetSurfaceTransparency(transparency);
+                gs.SetProjectionFillPatternId(fpe.Id);
+            }
+            v.SetElementOverrides(Soil.Id, gs);
+
+        }
+
+        #endregion
+    }
+
+    /// <summary> 开挖土体当前的开挖状态 </summary>
+    public enum ExcavationStage
+    {
+        /// <summary> 还未开始开挖 </summary>
+        UnStarted,
+        /// <summary> 当前正在开挖 </summary>
+        Excavating,
+        /// <summary> 已经开挖完成 </summary>
+        Completed,
+        /// <summary> 开挖状态未知 </summary>
+        UnKown
     }
 }

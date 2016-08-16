@@ -4,6 +4,15 @@
         <name>Projects</name>
     </assembly>
     <members>
+        <member name="T:OldW.Commands.cmd_ViewStage">
+            <summary> 查看Revit的Panel中指定的某一天的开挖工况 </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_ViewStageManually">
+            <summary> 手动查看指定日期的开挖工况 </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_ViewStageDynamically">
+            <summary> 自动动态查看指定日期的开挖工况 </summary>
+        </member>
         <member name="F:OldW.Commands.ElementInitializer.MonitorName">
             <summary> 测点名称 </summary>
         </member>
@@ -28,9 +37,6 @@
             Required method for Designer support - do not modify
             the contents of this method with the code editor.
             </summary>
-        </member>
-        <member name="T:OldW.Commands.cmd_ViewStage">
-            <summary> 查看指定日期的开挖工况 </summary>
         </member>
         <member name="T:OldW.Commands.cmd_ExcavationInfo">
             <summary> 提取模型中的开挖土体信息 </summary>
@@ -786,6 +792,169 @@
             激活本DLL所引用的那些DLLs
             </summary>
         </member>
+        <member name="E:OldW.DynamicStages.ViewStageDynamicallyHandler.CurrentTimeChanged">
+            <summary> 当前播放和进度 CurrentTime 属性改变时触发 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.SpanValue">
+            <summary> 每一帧动画所对应的施工日期跨度 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._intervals">
+            <summary> 每一帧动画之间的时间间隔，单位为毫秒 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.Intervals">
+            <summary> 每一帧动画之间的时间间隔，单位为毫秒 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.CurrentTime">
+            <summary> 当前动画正在展示的时间 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.LoopPlay">
+            <summary> 循环播放，在播放到结尾时，再转到开始时间继续播放 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.BackPlay">
+            <summary> 倒退播放，从最后面的时间向最开始的时间播放 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._timer">
+            <summary> 用来展示动画的计时器 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._exEvent">
+            <summary> 用来在Revit中进行施工工况的动画刷新的外部事件 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.#ctor(Autodesk.Revit.UI.UIApplication)">
+            <summary> 构造函数 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.Finalize">
+            <summary> 析构函数 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.SetBackPlay">
+            <summary> 设置为倒退播放 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.GetTimeBasedOnRatio(System.Int32)">
+            <summary> 根据指定的比例返回对应的施工日期 </summary>
+            <param name="ratio">输入的值范围为[0,100]，0代表开始时间，100代表结束时间</param>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.GetRatioBasedOnTime(System.DateTime)">
+            <summary> 根据指定的日期返回其在 StartTime 与 EndTime 之间的比例 </summary>
+            <param name="time"> 某一个施工日期 </param>
+            <returns>返回一个位于[0,100]的整数值</returns>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.Play">
+            <summary> 开始播放 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.Pause">
+            <summary> 暂停播放 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.Stop">
+            <summary> 停止播放 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._isPlaying">
+            <summary> 当前正在执行Revit动画展示，此时不能再次进行触发。 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.TimerOnTick(System.Object,System.EventArgs)">
+            <summary> 在每一次计时器脉冲时，进行动画的刷新。 </summary>
+            <param name="sender"></param>
+            <param name="e"></param> 
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.CheckProgress(System.DateTime,System.DateTime@)">
+            <summary> 检查当前播放进度，并按需要（是否超出指定的起止界限）调整实际播放的工况日期 </summary>
+            <param name="desiredTime"> 想要播放的工况日期，但是此日期有可能超出了指定的起止界限 </param>
+            <param name="playTime"> 实际要播放的工况日期 </param>
+            <returns>如果返回true，则继续播放，如果返回false，则表示可以停止播放了。</returns>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.ExternalRefreshView(System.DateTime)">
+            <summary> 根据指定的施工日期来刷新 Revit 界面 </summary>
+            <param name="currentTime"> 此 currentTime 必须是位于 StartTime 与 EndTime 之间的一个有效日期 </param>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.RefreshView(System.DateTime)">
+            <summary> 根据指定的施工日期来刷新 Revit 界面 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageManuallyHandler.ExternalEventArgs">
+            <summary> Execute 的参数 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageManuallyHandler.OnConstructionDateChanged(Autodesk.Revit.DB.Transaction,Autodesk.Revit.DB.View,System.DateTime)">
+            <summary> 根据施工日期刷新模型 </summary>
+            <param name="tranDoc"></param>
+            <param name="uiApp"></param>
+            <param name="constructionTime"></param>
+        </member>
+        <member name="T:OldW.DynamicStages.ReviewDoc">
+            <summary> 在基坑开挖模拟中，对 指定的开挖土体集合 进行不同时间下的动态开挖展示 </summary>
+            <remarks></remarks>
+        </member>
+        <member name="F:OldW.DynamicStages.ReviewDoc._excavSoils">
+            <summary> 用来进行开挖预览的开挖土体单元 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ReviewDoc._excavDoc">
+            <summary> 用来进行开挖模拟 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ReviewDoc.#ctor(OldWDocument,System.Collections.Generic.ICollection{OldW.Excavation.Soil_Excav})">
+            <summary> 构造函数 </summary>
+            <param name="oldWDoc"></param>
+            <param name="excavSoils">用来进行开挖预览的开挖土体单元</param>
+        </member>
+        <member name="M:OldW.DynamicStages.ReviewDoc.CreateFromActiveDocument(Autodesk.Revit.UI.UIApplication,Autodesk.Revit.DB.Document)">
+            <summary> 将指定的文档中的 所有开挖土体 都进行开挖工况的动画展示 </summary>
+            <param name="uiApp"></param>
+            <param name="doc">将会提取此文档中的所有开挖土体所组成的集合，来进行开挖工况的动画展示</param>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.DynamicStages.ReviewDoc.ShowExcavation(Autodesk.Revit.DB.Transaction,System.DateTime,Autodesk.Revit.DB.View)">
+            <summary>
+            根据指定的时间在Revit视图中显示出每一个开挖分块的开挖状态
+            </summary>
+            <param name="constructionTime"></param>
+            <param name="view"></param>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamically.ScrollBarMaximumValue">
+            <summary>
+            正常情况下，这个值应该是和 hScrollBar1.Maximum 相等的，但是的 Win 10 系统下，
+            即使设置Maximum = 100，而不论滚动条的UI尺寸大小如何，在界面上可能滚动出来的最大值却竟然都是只有91。
+            </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamically.#ctor(Autodesk.Revit.UI.UIApplication)">
+            <summary> 构造函数 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamically.InitializeUI">
+            <summary> 在构造完成 _VSDHandler 之后进行其他的界面设置 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamically.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamically.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamically.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:OldW.DynamicStages.ViewStageManually">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageManually._exEvent">
+            <summary>用来触发外部事件（通过其Raise方法） </summary>
+            <remarks>ExEvent属性是必须有的，它用来执行Raise方法以触发事件。</remarks>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageManually.ReqHandler">
+            <summary> 用来响应外部事件中的不同需求（通过其Execute方法）。 </summary>
+            <remarks>由于RequestHandler 对象是在构造ExternalEvent对象时就已经保存在ExternalEvent中的了，
+            所以，如果Execute方法中并不需要判断到底要实现哪一个需求，则此属性是不必要的。</remarks>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageManually.ActiveTime">
+            <summary>
+            当前的施工日期。通过指定此属性，即可以自动执行Revit中视图的刷新。
+            </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageManually.#ctor(Autodesk.Revit.UI.UIApplication)">
+            <summary> 构造函数 </summary>
+        </member>
         <member name="T:OldW.DataManager.ElementDataManager">
             <summary>
             模型中的测点的监测数据的添加，删除，导入导出等
@@ -860,7 +1029,7 @@
             当前以经打开并且提取过监测数据的线测点对象。
             </summary>
         </member>
-        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.#ctor(Autodesk.Revit.DB.Document,stdOldW.WinFormHelper.eZDataGridViewPaste)">
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.#ctor(Autodesk.Revit.DB.Document,stdOldW.UserControls.eZDataGridViewPaste)">
             <summary>
             构造函数
             </summary>
@@ -991,7 +1160,7 @@
             表格中当前处理的那个测点。在为此属性赋值的过程中，会执行相关的刷新操作
             </summary>
         </member>
-        <member name="M:OldW.DataManager.ElementDataManager.DgvPoint.#ctor(Autodesk.Revit.DB.Document,stdOldW.WinFormHelper.eZDataGridViewPaste)">
+        <member name="M:OldW.DataManager.ElementDataManager.DgvPoint.#ctor(Autodesk.Revit.DB.Document,stdOldW.UserControls.eZDataGridViewPaste)">
             <summary>
             构造函数
             </summary>
@@ -1155,7 +1324,7 @@
         </member>
         <member name="T:OldW.DataManager.DataImport.MonitorEntityExcel">
             <summary>
-            DataGridViewExcel中所对应的实体类
+            DataGridViewExcel中每一个测点记录所对应的实体类
             </summary>
         </member>
         <member name="F:OldW.DataManager.DataImport.MonitorEntityExcel._transport">
@@ -1499,6 +1668,14 @@
             <returns></returns>
             <remarks></remarks>
         </member>
+        <member name="M:OldW.Excavation.ExcavationDoc.FilterExcavSoils(System.Collections.Generic.IEnumerable{OldW.Excavation.Soil_Excav},System.DateTime)">
+            <summary>
+            根据施工日期来判断土体的开挖状态
+            </summary>
+            <param name="excavSoils">要进行过滤的开挖土体集合</param>
+            <param name="constructionTime"> 要考查的施工日期 </param>
+            <returns> excavSoils 集合中每一个开挖土体所对应的开挖状态 </returns>
+        </member>
         <member name="M:OldW.Excavation.ExcavationDoc.DeleteEmptySoilFamily">
             <summary>
             在Revit的项目浏览器中，土体族位于“族>场地”之中，常规情况下，每一个族中只有一个族类型，
@@ -1821,16 +1998,6 @@
         <member name="P:OldW.Excavation.Soil_Excav.ModelSoil">
             <summary> 开挖土体单元所附着的模型土体 </summary>
         </member>
-        <member name="P:OldW.Excavation.Soil_Excav.CompletedDate">
-            <summary>
-            每一个开挖土体都有一个开挖完成的时间。由于记录的不完整，这个时间可能暂时不知道，但是后期要可以指定。
-            </summary>
-        </member>
-        <member name="P:OldW.Excavation.Soil_Excav.StartedDate">
-            <summary>
-            每一个开挖土体都有一个开始开挖的时间。由于记录的不完整，这个时间可能暂时不知道，但是后期要可以指定。
-            </summary>
-        </member>
         <member name="M:OldW.Excavation.Soil_Excav.#ctor(Autodesk.Revit.DB.FamilyInstance,OldW.Excavation.Soil_Model)">
             <summary>
             构造函数：用来模拟分块开挖的土体元素。
@@ -1867,7 +2034,7 @@
             <returns>指定表面的标高值（单位为m）。the elevation of the specified surface, in the unit of meter.</returns>
             <remarks>不用Element.Geometry（）方法，因为此方法包含大量的数据结构转换，太消耗CPU。而应使用GetBoundingBox与GetTransform等方法。</remarks>
         </member>
-        <member name="M:OldW.Excavation.Soil_Excav.SetExcavatedDate(Autodesk.Revit.DB.Document,System.Boolean,System.Collections.Generic.Dictionary{OldW.Excavation.Soil_Excav,System.DateTime})">
+        <member name="M:OldW.Excavation.Soil_Excav.SetExcavatedDate(Autodesk.Revit.DB.Transaction,Autodesk.Revit.DB.Document,System.Boolean,System.Collections.Generic.Dictionary{OldW.Excavation.Soil_Excav,System.DateTime})">
             <summary>
             为多个开挖土体设置对应的开挖完成的时间
             </summary>
@@ -1875,20 +2042,32 @@
             <param name="Soil_Date">一个字典集合，其中包括要进行日期设置的所有开挖土体。土体开挖完成的时间，可以精确到分钟</param>
             <remarks></remarks>
         </member>
+        <member name="F:OldW.Excavation.Soil_Excav._completedDate">
+            <summary> 每一个开挖土体都有一个开挖完成的时间。由于记录的不完整，这个时间可能暂时不知道，但是后期要可以指定。 </summary>
+        </member>
+        <member name="F:OldW.Excavation.Soil_Excav._completedDateInMemory">
+            <summary> 开挖土体的开挖完成日期已经从Revit中刷新到内存中。 </summary>
+        </member>
+        <member name="F:OldW.Excavation.Soil_Excav._startedDate">
+            <summary> 每一个开挖土体都有一个开始开挖的时间。由于记录的不完整，这个时间可能暂时不知道，但是后期要可以指定。 </summary>
+        </member>
+        <member name="F:OldW.Excavation.Soil_Excav._startedDateInMemory">
+            <summary> 开挖土体的开挖开始日期已经从Revit中刷新到内存中。 </summary>
+        </member>
         <member name="M:OldW.Excavation.Soil_Excav.SetExcavatedDate(Autodesk.Revit.DB.Transaction,System.Boolean,System.Nullable{System.DateTime})">
             <summary>
             为开挖土体设置对应的开挖完成的时间
             </summary>
-            <param name="Tran">Revit事务对象，在此函数中此事务并不会Start或者Commit，所以在调用此函数时，请确保此事务对象已经Started了。</param>
+            <param name="tran">Revit事务对象，在此函数中此事务并不会Start或者Commit，所以在调用此函数时，请确保此事务对象已经Started了。</param>
             <param name="Started">如果要设置土体开始开挖的时间，则设置为True，反之则是设置土体开挖完成的时间</param>
             <param name="ResDate">土体开挖开始或者完成的时间，可以精确到分钟。如果要清空日期字符，则设置其为Nothing。</param>
             <remarks></remarks>
         </member>
         <member name="M:OldW.Excavation.Soil_Excav.GetExcavatedDate(System.Boolean)">
             <summary>
-            从开挖土体的单元中读取开挖完成的日期
+            从开挖土体的单元中读取开挖开始或者开挖完成的日期
             </summary>
-            <param name="Started">如果要提取土体开始开挖的时间，则设置为True，反之则是提取土体开挖完成的时间</param>
+            <param name="started">如果要提取土体开始开挖的时间，则设置为True，反之则是提取土体开挖完成的时间</param>
         </member>
         <member name="M:OldW.Excavation.Soil_Excav.GetName">
             <summary> 获取开挖土体的名称，这里取的是族实例所对应的族类型的名称 </summary>
@@ -1898,6 +2077,38 @@
             族实例所对应的族类型的名称 </summary>
             <param name="tran">  </param>
             <param name="newName"> 这里会将开挖土体对应所对应的族类型，以及其族都设置为此名称。 </param>
+        </member>
+        <member name="M:OldW.Excavation.Soil_Excav.RefreshByStage(Autodesk.Revit.DB.Transaction,Autodesk.Revit.DB.View,OldW.Excavation.ExcavationStage)">
+            <summary>
+            根据开挖土体当前的开挖状态来设置其在Revit中的显示样式
+            </summary>
+            <param name="tranDoc"></param>
+            <param name="view"></param>
+            <param name="stage">开挖土体当前的开挖状态</param>
+        </member>
+        <member name="M:OldW.Excavation.Soil_Excav.SetColor(Autodesk.Revit.DB.Document,Autodesk.Revit.DB.View,Autodesk.Revit.DB.Color,System.Int32)">
+            <summary>
+            设置土体的显示颜色、透明度
+            </summary>
+            <param name="doc"></param>
+            <param name="v"></param>
+            <param name="fillColor">如果不指定颜色，则“按材质”显示</param>
+            <param name="transparency"> 表面填充的透明度，0表示不透明，100表示全透明 </param>
+        </member>
+        <member name="T:OldW.Excavation.ExcavationStage">
+            <summary> 开挖土体当前的开挖状态 </summary>
+        </member>
+        <member name="F:OldW.Excavation.ExcavationStage.UnStarted">
+            <summary> 还未开始开挖 </summary>
+        </member>
+        <member name="F:OldW.Excavation.ExcavationStage.Excavating">
+            <summary> 当前正在开挖 </summary>
+        </member>
+        <member name="F:OldW.Excavation.ExcavationStage.Completed">
+            <summary> 已经开挖完成 </summary>
+        </member>
+        <member name="F:OldW.Excavation.ExcavationStage.UnKown">
+            <summary> 开挖状态未知 </summary>
         </member>
         <member name="T:OldW.Excavation.Soil_Model">
             <summary>

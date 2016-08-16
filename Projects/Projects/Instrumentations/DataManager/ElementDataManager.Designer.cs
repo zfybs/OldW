@@ -37,7 +37,7 @@ namespace OldW.DataManager
             this.cmbx_elements = new System.Windows.Forms.ComboBox();
             this.Label1 = new System.Windows.Forms.Label();
             this.btnDraw = new System.Windows.Forms.Button();
-            this.DataGridView_pointMonitor = new stdOldW.WinFormHelper.eZDataGridViewPaste();
+            this.DataGridView_pointMonitor = new stdOldW.UserControls.eZDataGridViewPaste();
             this.groupBoxPoints = new System.Windows.Forms.GroupBox();
             this.checkBox_OtherPoint = new System.Windows.Forms.CheckBox();
             this.checkBox_strutaxisforce = new System.Windows.Forms.CheckBox();
@@ -52,7 +52,7 @@ namespace OldW.DataManager
             this.checkBox_WallIncline = new System.Windows.Forms.CheckBox();
             this.btnSetNodes = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.DataGridView_LineMonitor = new stdOldW.WinFormHelper.eZDataGridViewPaste();
+            this.DataGridView_LineMonitor = new stdOldW.UserControls.eZDataGridViewPaste();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btnActivateDatagridview = new System.Windows.Forms.Button();
             this.btnRename = new System.Windows.Forms.Button();
@@ -357,7 +357,7 @@ namespace OldW.DataManager
             this.PerformLayout();
 
         }
-        internal stdOldW.WinFormHelper.eZDataGridViewPaste DataGridView_pointMonitor;
+        internal stdOldW.UserControls.eZDataGridViewPaste DataGridView_pointMonitor;
         internal System.Windows.Forms.Button btnSaveChange;
         internal System.Windows.Forms.ComboBox cmbx_elements;
         internal System.Windows.Forms.Label Label1;
@@ -369,7 +369,7 @@ namespace OldW.DataManager
         private GroupBox groupBoxLines;
         private CheckBox checkBox_WallIncline;
         internal Label label2;
-        internal stdOldW.WinFormHelper.eZDataGridViewPaste DataGridView_LineMonitor;
+        internal stdOldW.UserControls.eZDataGridViewPaste DataGridView_LineMonitor;
         internal Button btnSetNodes;
         private ToolTip toolTip1;
         private System.ComponentModel.IContainer components;

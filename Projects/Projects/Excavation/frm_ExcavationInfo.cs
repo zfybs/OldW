@@ -594,8 +594,8 @@ namespace OldW.Excavation
                     EsI.Name = es.GetName();
                     EsI.Depth = es.GetDepth();
                     EsI.Id = es.Soil.Id;
-                    EsI.StartedDate = es.StartedDate;
-                    EsI.CompletedDate = es.CompletedDate;
+                    EsI.StartedDate = es.GetExcavatedDate(true);
+                    EsI.CompletedDate = es.GetExcavatedDate(false);
                     EsI.Visible = !es.Soil.IsHidden(V);
                     ExcSoils.Add(EsI);
                 }
