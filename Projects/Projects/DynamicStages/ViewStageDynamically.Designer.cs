@@ -114,12 +114,13 @@ namespace OldW.DynamicStages
             // buttonPlay
             // 
             this.buttonPlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonPlay.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
             this.buttonPlay.Location = new System.Drawing.Point(304, 12);
             this.buttonPlay.Name = "buttonPlay";
             this.buttonPlay.Size = new System.Drawing.Size(75, 23);
             this.buttonPlay.TabIndex = 4;
             this.buttonPlay.Text = "播放";
-            this.buttonPlay.UseVisualStyleBackColor = true;
+            this.buttonPlay.UseVisualStyleBackColor = false;
             this.buttonPlay.Click += new System.EventHandler(this.buttonPlay_Click);
             // 
             // label2
@@ -163,12 +164,13 @@ namespace OldW.DynamicStages
             // buttonStop
             // 
             this.buttonStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonStop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.buttonStop.Location = new System.Drawing.Point(304, 65);
             this.buttonStop.Name = "buttonStop";
             this.buttonStop.Size = new System.Drawing.Size(75, 23);
             this.buttonStop.TabIndex = 4;
             this.buttonStop.Text = "停止";
-            this.buttonStop.UseVisualStyleBackColor = true;
+            this.buttonStop.UseVisualStyleBackColor = false;
             this.buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
             // 
             // checkBoxLoopPlay

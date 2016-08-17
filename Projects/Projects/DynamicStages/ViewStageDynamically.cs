@@ -48,15 +48,16 @@ namespace OldW.DynamicStages
                                                                    //
             InitializeUI();
 
-            // _VSDHandler 
+            // _VSDHandler 事件绑定
             _VSDHandler.CurrentTimeChanged += VsdHandlerOnCurrentTimeChanged;  // 事件绑定
+            _VSDHandler.PlayerStopped += VsdHandlerOnPlayerStopped;
         }
 
         /// <summary> 在构造完成 _VSDHandler 之后进行其他的界面设置 </summary>
         private void InitializeUI()
         {
             textBoxNumInterval.PositiveOnly = true;
-            textBoxNumInterval.Text = 0.1.ToString(CultureInfo.InvariantCulture);
+            textBoxNumInterval.Text = 0.5.ToString(CultureInfo.InvariantCulture); // 初始设置每秒2帧的播放速度
             //
             textBoxNumSpan.IntegerOnly = true;
             textBoxNumSpan.PositiveOnly = true;
@@ -85,14 +86,34 @@ namespace OldW.DynamicStages
 
         #region ---   为 _VSDHandler 赋值
 
+        private DateTime _invalidStartTime;
         private void dateTimePicker_Start_ValueChanged(object sender, EventArgs e)
         {
-            _VSDHandler.StartTime = dateTimePicker_Start.Value;
+            try
+            {
+                _VSDHandler.StartTime = dateTimePicker_Start.Value;
+                _invalidStartTime = dateTimePicker_Start.Value;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(@"开始时间必须要早于结束时间", @"提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                dateTimePicker_Start.Value = _invalidStartTime;
+            }
         }
+        private DateTime _invalidEndTime;
 
         private void dateTimePicker_End_ValueChanged(object sender, EventArgs e)
         {
-            _VSDHandler.EndTime = dateTimePicker_End.Value;
+            try
+            {
+                _VSDHandler.EndTime = dateTimePicker_End.Value;
+                _invalidEndTime = dateTimePicker_End.Value;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(@"开始时间必须要早于结束时间", @"提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                dateTimePicker_End.Value = _invalidEndTime;
+            }
         }
 
         //   _VSDHandler.SpanValue
@@ -161,17 +182,26 @@ namespace OldW.DynamicStages
         private void buttonPlay_Click(object sender, EventArgs e)
         {
             _VSDHandler.Play();
+            buttonPlay.Enabled = false;
+            this.buttonPlay.UseVisualStyleBackColor = true; // 用自定义的色彩显示
         }
 
         private void buttonPause_Click(object sender, EventArgs e)
         {
             _VSDHandler.Pause();
-
+            buttonPlay.Enabled = true;
+            this.buttonPlay.UseVisualStyleBackColor = false; // 还原为平常的灰显
         }
 
         private void buttonStop_Click(object sender, EventArgs e)
         {
             _VSDHandler.Stop();
+        }
+
+        private void VsdHandlerOnPlayerStopped(object sender, EventArgs eventArgs)
+        {
+            buttonPlay.Enabled = true;
+            this.buttonPlay.UseVisualStyleBackColor = false; // 还原为平常的灰显
         }
 
         #region ---   滚动条滚动操作
@@ -185,13 +215,15 @@ namespace OldW.DynamicStages
             // 在松开鼠标左键以停止滚动时才触发视图刷新事件
             if (e.Type == ScrollEventType.EndScroll)
             {
-                // MessageBox.Show(e.NewValue.ToString());
                 _VSDHandler.Pause();
                 var playTime = _VSDHandler.GetTimeBasedOnRatio(e.NewValue);
-                _VSDHandler.ExternalRefreshView(playTime);
+                //
+                // MessageBox.Show(playTime.ToString());
+                _VSDHandler.StopFromScroll(playTime);
             }
             else
             {
+                // 在移动滚动条时显示对应的日期
                 var playTime = _VSDHandler.GetTimeBasedOnRatio(e.NewValue);
                 labelCurrentTime.Text = RvtTools.FormatTimeToMinite(playTime);
             }
@@ -199,7 +231,6 @@ namespace OldW.DynamicStages
 
         #endregion
 
-        #endregion
-
+        #endregion 
     }
 }

@@ -108,6 +108,7 @@
       <DependentUpon>PickInstrums.cs</DependentUpon>
     </Compile>
     <Compile Include="DllActivator_Projects.cs" />
+    <Compile Include="DynamicStages\ViewStageDynamicallyHandler1.cs" />
     <Compile Include="DynamicStages\ViewStageDynamicallyHandler.cs" />
     <Compile Include="DynamicStages\ViewStageManuallyHandler.cs" />
     <Compile Include="DynamicStages\ReviewDoc.cs" />

@@ -8,7 +8,6 @@ using System.Timers;
 using System.Windows.Forms;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Autodesk.Revit.UI.Events;
 using stdOldW;
 using stdOldW.UserControls;
 using Timer = System.Timers.Timer;
@@ -16,16 +15,10 @@ using View = Autodesk.Revit.DB.View;
 
 namespace OldW.DynamicStages
 {
-    internal class ViewStageDynamicallyHandler : IDisposable, IExternalEventHandler
+    internal class ViewStageDynamicallyHandler1 : IDisposable, IExternalEventHandler
     {
-        #region ---   Properties
         /// <summary> 当前播放和进度 CurrentTime 属性改变时触发 </summary>
         public event EventHandler<DateTime> CurrentTimeChanged = delegate (object sender, DateTime time) { };
-
-        /// <summary> 播放器停止播放 </summary>
-        public event EventHandler PlayerStopped = delegate (object sender, EventArgs args) { };
-
-        #endregion
 
         #region ---   Properties
 
@@ -77,6 +70,7 @@ namespace OldW.DynamicStages
             }
             set
             {
+                _timer.Interval = value;
                 _intervals = value;
             }
         }
@@ -97,6 +91,7 @@ namespace OldW.DynamicStages
         /// <summary> 循环播放，在播放到结尾时，再转到开始时间继续播放 </summary>
         public bool LoopPlay { get; set; }
 
+
         private bool _backPlay;
         /// <summary> 倒退播放，从最后面的时间向最开始的时间播放 </summary>
         public bool BackPlay
@@ -116,33 +111,37 @@ namespace OldW.DynamicStages
 
         #region ---   Fields
 
+        /// <summary> 用来展示动画的计时器 </summary>
+        private System.Windows.Forms.Timer _timer = new System.Windows.Forms.Timer();
+        // private Timer _timer = new Timer();
+
         private UIApplication _uiApp;
 
         private readonly ReviewDoc _reviewDoc;
 
-        private View _view;
+        private readonly View _view;
 
         /// <summary> 用来在Revit中进行施工工况的动画刷新的外部事件 </summary>
         private ExternalEvent _exEvent;
-
-        private PlayOption _playOption;
 
         #endregion
 
         #region ---   构造函数 与 关闭
 
         /// <summary> 构造函数 </summary>
-        public ViewStageDynamicallyHandler(UIApplication uiApp)
+        public ViewStageDynamicallyHandler1(UIApplication uiApp)
         {
             //
             _uiApp = uiApp;
             UIDocument uiDoc = uiApp.ActiveUIDocument;
+            _view = uiDoc.ActiveGraphicalView;
             Document doc = uiDoc.Document;
             //
-            Intervals = 500;
+            Intervals = 3000;
             // 
             _reviewDoc = ReviewDoc.CreateFromActiveDocument(uiApp, doc);
             // 事件绑定
+            _timer.Tick += TimerOnTick;
 
             //' ------ 将所有的初始化工作完成后，执行外部事件的绑定 ----------------
             this._exEvent = ExternalEvent.Create(this);
@@ -152,27 +151,31 @@ namespace OldW.DynamicStages
         { return @"基坑群施工工况的动画展示"; }
 
         /// <summary> 析构函数 </summary>
-        ~ViewStageDynamicallyHandler()
+        ~ViewStageDynamicallyHandler1()
         {
             this.Dispose();
         }
 
         public void Dispose()
         {
-            if (_exEvent != null)
+            // 关闭计时器
+            if (_timer != null)
             {
-                // 关闭事件关联
-                _playOption = PlayOption.Stop;
-                _exEvent.Raise();
-
-                _exEvent.Dispose();
-                _exEvent = null;
+                _timer.Stop();
+                _timer.Dispose();
+                _timer = null;
             }
         }
 
         #endregion
 
         #region ---   播放参数设置
+
+        /// <summary> 设置为倒退播放 </summary>
+        public void SetBackPlay()
+        {
+
+        }
 
         /// <summary> 根据指定的比例返回对应的施工日期 </summary>
         /// <param name="ratio">输入的值范围为[0,100]，0代表开始时间，100代表结束时间</param>
@@ -202,70 +205,18 @@ namespace OldW.DynamicStages
         /// <summary> 开始播放 </summary>
         public void Play()
         {
-            _playOption = PlayOption.Play;
-            _exEvent.Raise();
-            //_timer.Start();
+            _timer.Start();
         }
         /// <summary> 暂停播放 </summary>
         public void Pause()
         {
-            _playOption = PlayOption.Pause;
-            _exEvent.Raise();
+            _timer.Stop();
         }
         /// <summary> 停止播放 </summary>
         public void Stop()
         {
-            _playOption = PlayOption.Stop;
-            _exEvent.Raise();
-        }
-
-        private DateTime _scollTime;
-
-        /// <summary>  </summary>
-        /// <param name="currentTime"> 此 currentTime 必须是位于 StartTime 与 EndTime 之间的一个有效日期 </param>
-        public void StopFromScroll(DateTime currentTime)
-        {
-            _scollTime = currentTime;
-            //
-            _playOption = PlayOption.ShowOneTime;
-            _exEvent.Raise();
-        }
-
-        public void Execute(UIApplication app)
-        {
-            switch (_playOption)
-            {
-                case PlayOption.Play:
-                    {
-                        _view = _uiApp.ActiveUIDocument.ActiveGraphicalView;
-                        _uiApp.Idling += UiAppOnIdling;
-                        break;
-                    }
-                case PlayOption.Pause:
-                    {
-                        _uiApp.Idling -= UiAppOnIdling;
-                        break;
-                    }
-                case PlayOption.Stop:
-                    {
-                        // 触发事件
-                        PlayerStopped(this, new EventArgs());
-
-                        // 取消事件关联
-                        _uiApp.Idling -= UiAppOnIdling;
-                        //
-                        CurrentTime = StartTime;
-                        break;
-                    }
-                case PlayOption.ShowOneTime:
-                    {
-                        _view = _uiApp.ActiveUIDocument.ActiveGraphicalView;
-                        _uiApp.Idling -= UiAppOnIdling;
-                        //
-                        RefreshView(_scollTime);
-                        break;
-                    }
-            }
+            CurrentTime = StartTime;
+            _timer.Stop();
         }
 
         #endregion
@@ -275,62 +226,26 @@ namespace OldW.DynamicStages
         /// <summary> 当前正在执行Revit动画展示，此时不能再次进行触发。 </summary>
         private bool _isPlaying;
 
-        /// <summary> 在每一次 Iding 事件时，进行动画的刷新。 </summary>
+        /// <summary> 在每一次计时器脉冲时，进行动画的刷新。 </summary>
         /// <param name="sender"></param>
-        /// <param name="idlingEventArgs"></param>
-        private void UiAppOnIdling(object sender, IdlingEventArgs idlingEventArgs)
+        /// <param name="e"></param> 
+        private void TimerOnTick(object sender, EventArgs eventArgs)
         {
-            // 当Revit中的视图发生变化时，停止动画显示
-            var v = (sender as UIApplication).ActiveUIDocument.ActiveGraphicalView;
-            if (v.Id.IntegerValue != _view.Id.IntegerValue)
+            var desiredTime = Utils.GetTimeFromTimeSpan(_currentTime, SpanValue, SpanUnit);
+            DateTime playTime;
+            if (CheckProgress(desiredTime, out playTime))
             {
-                Stop();
-            }
+                // DebugUtils.ShowEnumerable(new object[]{ _currentTime,SpanValue,SpanUnit,desiredTime,playTime});
 
-            //
-            if (CheckIntervals())
-            {
-                var desiredTime = Utils.GetTimeFromTimeSpan(_currentTime, SpanValue, SpanUnit);
-                DateTime playTime;
-                if (CheckProgress(desiredTime, out playTime))
-                {
-                    // DebugUtils.ShowEnumerable(new object[]{ _currentTime,SpanValue,SpanUnit,desiredTime,playTime});
-                    RefreshView(playTime);
-                }
-                else
-                {
-                    CurrentTime = playTime;
-                    Stop();
-                }
-            }
-            // 此语句是必须的，否则不会出现动画的刷新显示
-            idlingEventArgs.SetRaiseWithoutDelay();
-
-        }
-
-        #region ---   有效性检查
-
-        /// <summary>上一次成功发出Idling脉冲以及进行动画显示的时间 </summary>
-        private DateTime _lastPulseTime;
-
-        /// <summary>
-        /// 检查两次 Idling 事件之间的时间间隔是否满足指定的速度Interval的要求。
-        /// </summary>
-        /// <returns></returns>
-        private bool CheckIntervals()
-        {
-            DateTime dtNew = DateTime.Now;
-            var interval = (dtNew - _lastPulseTime).TotalMilliseconds;
-            if (interval > Intervals)
-            {
-                _lastPulseTime = dtNew;
-                return true;
+                ExternalRefreshView(playTime);
             }
             else
             {
-                return false;
+                CurrentTime = playTime;
+                Stop();
             }
         }
+
 
         /// <summary> 检查当前播放进度，并按需要（是否超出指定的起止界限）调整实际播放的工况日期 </summary>
         /// <param name="desiredTime"> 想要播放的工况日期，但是此日期有可能超出了指定的起止界限 </param>
@@ -376,11 +291,10 @@ namespace OldW.DynamicStages
             }
         }
 
-        #endregion
 
         /// <summary> 根据指定的施工日期来刷新 Revit 界面 </summary>
         /// <param name="currentTime"> 此 currentTime 必须是位于 StartTime 与 EndTime 之间的一个有效日期 </param>
-        private void RefreshView(DateTime currentTime)
+        public void ExternalRefreshView(DateTime currentTime)
         {
             Debug.Print(_isPlaying.ToString() + "   ***   " + _exEvent.IsPending);
             if (!_isPlaying && !_exEvent.IsPending)
@@ -390,26 +304,8 @@ namespace OldW.DynamicStages
                 CurrentTime = currentTime;
 
                 // 播放动画
-                using (Transaction tranDoc = new Transaction(_reviewDoc.Document, "施工工况动态展示"))
-                {
-                    try
-                    {
-                        tranDoc.Start();
-
-                        // 根据施工日期刷新模型
-                        _reviewDoc.ShowExcavation(tranDoc, currentTime, _view);
-                        //
-                        tranDoc.Commit();
-
-                        // MessageBox.Show("完成  " + currentTime.ToString());
-                    }
-                    catch (Exception ex)
-                    {
-                        tranDoc.RollBack();
-                        Stop();
-                        DebugUtils.ShowDebugCatch(ex, "施工工况动态展示出错");
-                    }
-                }
+                _exEvent.Raise();
+              
 
                 Debug.Print("执行 Raise");
 
@@ -417,16 +313,39 @@ namespace OldW.DynamicStages
             }
         }
 
-        #endregion
-    }
+        public void Execute(UIApplication app)
+        {
+            RefreshView(CurrentTime);
+        }
 
-    /// <summary> 控件播放器的播放选项 </summary>
-    internal enum PlayOption
-    {
-        Play,
-        Pause,
-        Stop,
-        /// <summary> 在指定的时间下显示一次，并不再关联Idling事件 </summary>
-        ShowOneTime,
+        /// <summary> 根据指定的施工日期来刷新 Revit 界面 </summary>
+        private void RefreshView(DateTime currentTime)
+        {
+            _isPlaying = true;
+
+            using (Transaction tranDoc = new Transaction(_reviewDoc.Document, "施工工况动态展示"))
+            {
+                try
+                {
+                    tranDoc.Start();
+
+                    // 根据施工日期刷新模型
+                    _reviewDoc.ShowExcavation(tranDoc, currentTime, _view);
+                    //
+                    tranDoc.Commit();
+
+                    // MessageBox.Show("完成  " + currentTime.ToString());
+                }
+                catch (Exception ex)
+                {
+                    tranDoc.RollBack();
+                    Stop();
+                    DebugUtils.ShowDebugCatch(ex, "施工工况动态展示出错");
+                }
+            }
+            _isPlaying = false;
+        }
+
+        #endregion
     }
 }
