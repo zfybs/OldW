@@ -792,8 +792,86 @@
             激活本DLL所引用的那些DLLs
             </summary>
         </member>
+        <member name="E:OldW.DynamicStages.ViewStageDynamicallyHandler1.CurrentTimeChanged">
+            <summary> 当前播放和进度 CurrentTime 属性改变时触发 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.SpanValue">
+            <summary> 每一帧动画所对应的施工日期跨度 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler1._intervals">
+            <summary> 每一帧动画之间的时间间隔，单位为毫秒 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.Intervals">
+            <summary> 每一帧动画之间的时间间隔，单位为毫秒 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.CurrentTime">
+            <summary> 当前动画正在展示的时间 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.LoopPlay">
+            <summary> 循环播放，在播放到结尾时，再转到开始时间继续播放 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.BackPlay">
+            <summary> 倒退播放，从最后面的时间向最开始的时间播放 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler1._timer">
+            <summary> 用来展示动画的计时器 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler1._exEvent">
+            <summary> 用来在Revit中进行施工工况的动画刷新的外部事件 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.#ctor(Autodesk.Revit.UI.UIApplication)">
+            <summary> 构造函数 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.Finalize">
+            <summary> 析构函数 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.SetBackPlay">
+            <summary> 设置为倒退播放 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.GetTimeBasedOnRatio(System.Int32)">
+            <summary> 根据指定的比例返回对应的施工日期 </summary>
+            <param name="ratio">输入的值范围为[0,100]，0代表开始时间，100代表结束时间</param>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.GetRatioBasedOnTime(System.DateTime)">
+            <summary> 根据指定的日期返回其在 StartTime 与 EndTime 之间的比例 </summary>
+            <param name="time"> 某一个施工日期 </param>
+            <returns>返回一个位于[0,100]的整数值</returns>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.Play">
+            <summary> 开始播放 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.Pause">
+            <summary> 暂停播放 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.Stop">
+            <summary> 停止播放 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler1._isPlaying">
+            <summary> 当前正在执行Revit动画展示，此时不能再次进行触发。 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.TimerOnTick(System.Object,System.EventArgs)">
+            <summary> 在每一次计时器脉冲时，进行动画的刷新。 </summary>
+            <param name="sender"></param>
+            <param name="e"></param> 
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.CheckProgress(System.DateTime,System.DateTime@)">
+            <summary> 检查当前播放进度，并按需要（是否超出指定的起止界限）调整实际播放的工况日期 </summary>
+            <param name="desiredTime"> 想要播放的工况日期，但是此日期有可能超出了指定的起止界限 </param>
+            <param name="playTime"> 实际要播放的工况日期 </param>
+            <returns>如果返回true，则继续播放，如果返回false，则表示可以停止播放了。</returns>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.ExternalRefreshView(System.DateTime)">
+            <summary> 根据指定的施工日期来刷新 Revit 界面 </summary>
+            <param name="currentTime"> 此 currentTime 必须是位于 StartTime 与 EndTime 之间的一个有效日期 </param>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.RefreshView(System.DateTime)">
+            <summary> 根据指定的施工日期来刷新 Revit 界面 </summary>
+        </member>
         <member name="E:OldW.DynamicStages.ViewStageDynamicallyHandler.CurrentTimeChanged">
             <summary> 当前播放和进度 CurrentTime 属性改变时触发 </summary>
+        </member>
+        <member name="E:OldW.DynamicStages.ViewStageDynamicallyHandler.PlayerStopped">
+            <summary> 播放器停止播放 </summary>
         </member>
         <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.SpanValue">
             <summary> 每一帧动画所对应的施工日期跨度 </summary>
@@ -813,9 +891,6 @@
         <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.BackPlay">
             <summary> 倒退播放，从最后面的时间向最开始的时间播放 </summary>
         </member>
-        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._timer">
-            <summary> 用来展示动画的计时器 </summary>
-        </member>
         <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._exEvent">
             <summary> 用来在Revit中进行施工工况的动画刷新的外部事件 </summary>
         </member>
@@ -824,9 +899,6 @@
         </member>
         <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.Finalize">
             <summary> 析构函数 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.SetBackPlay">
-            <summary> 设置为倒退播放 </summary>
         </member>
         <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.GetTimeBasedOnRatio(System.Int32)">
             <summary> 根据指定的比例返回对应的施工日期 </summary>
@@ -846,13 +918,26 @@
         <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.Stop">
             <summary> 停止播放 </summary>
         </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.StopFromScroll(System.DateTime)">
+            <summary>  </summary>
+            <param name="currentTime"> 此 currentTime 必须是位于 StartTime 与 EndTime 之间的一个有效日期 </param>
+        </member>
         <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._isPlaying">
             <summary> 当前正在执行Revit动画展示，此时不能再次进行触发。 </summary>
         </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.TimerOnTick(System.Object,System.EventArgs)">
-            <summary> 在每一次计时器脉冲时，进行动画的刷新。 </summary>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.UiAppOnIdling(System.Object,Autodesk.Revit.UI.Events.IdlingEventArgs)">
+            <summary> 在每一次 Iding 事件时，进行动画的刷新。 </summary>
             <param name="sender"></param>
-            <param name="e"></param> 
+            <param name="idlingEventArgs"></param>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._lastPulseTime">
+            <summary>上一次成功发出Idling脉冲以及进行动画显示的时间 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.CheckIntervals">
+            <summary>
+            检查两次 Idling 事件之间的时间间隔是否满足指定的速度Interval的要求。
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.CheckProgress(System.DateTime,System.DateTime@)">
             <summary> 检查当前播放进度，并按需要（是否超出指定的起止界限）调整实际播放的工况日期 </summary>
@@ -860,12 +945,15 @@
             <param name="playTime"> 实际要播放的工况日期 </param>
             <returns>如果返回true，则继续播放，如果返回false，则表示可以停止播放了。</returns>
         </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.ExternalRefreshView(System.DateTime)">
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.RefreshView(System.DateTime)">
             <summary> 根据指定的施工日期来刷新 Revit 界面 </summary>
             <param name="currentTime"> 此 currentTime 必须是位于 StartTime 与 EndTime 之间的一个有效日期 </param>
         </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.RefreshView(System.DateTime)">
-            <summary> 根据指定的施工日期来刷新 Revit 界面 </summary>
+        <member name="T:OldW.DynamicStages.PlayOption">
+            <summary> 控件播放器的播放选项 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.PlayOption.ShowOneTime">
+            <summary> 在指定的时间下显示一次，并不再关联Idling事件 </summary>
         </member>
         <member name="F:OldW.DynamicStages.ViewStageManuallyHandler.ExternalEventArgs">
             <summary> Execute 的参数 </summary>

@@ -24,3 +24,4 @@ F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.UserContr
 F:\ProgrammingCases\GitHubProjects\OldW\bin\stdOldW.exe
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.exe
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.Tests_Templates.Form1.resources
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\std\obj\Debug\stdOldW.csprojResolveAssemblyReference.cache

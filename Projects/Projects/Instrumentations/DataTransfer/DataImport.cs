@@ -448,6 +448,7 @@ namespace OldW.DataManager
             }
         }
 
+
         /// <summary>
         /// 检查列表框中有没有出现Revit中的一个元素（除了“墙顶位移”外）对应的Excel中的多个数据字段的情况。
         /// </summary>
@@ -602,7 +603,5 @@ namespace OldW.DataManager
             }
         }
         #endregion
-
-
     }
 }
