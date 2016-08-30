@@ -8,9 +8,10 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using stdOldW;
-using stdOldW.DAL;
-using stdOldW.WinFormHelper;
+using eZstd;
+using eZstd.Data;
+using eZstd.Miscellaneous;
+using eZstd.Windows;
 
 namespace OldW.Instrumentations
 {

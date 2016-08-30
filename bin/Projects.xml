@@ -4,6 +4,25 @@
         <name>Projects</name>
     </assembly>
     <members>
+        <member name="T:OldW.Commands.cmd_ExcavSoilReCut">
+            <summary> 修复开挖土体对模型土体的剪切关系，并将其放置到同一个组中。 </summary>
+            <remarks>
+            修改所有开挖土体对于基坑土体的剪切关系。
+            在某些情况下（比如用新的模型土体替换了旧的模型土体时），
+            开挖土体可能会失去对于模型土体的剪切关系，以致于开挖土体虽然位于模型土体的组中，但是模型土体并没有被切割。
+            </remarks>
+        </member>
+        <member name="T:OldW.Commands.cmd_DeleteRedundantExcavations">
+            <summary> 将模型土体或者开挖土体族中，没有对应实例的那些族及对应的族类型删除 </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_FilterInstrums">
+            <summary>
+            监测数据管理系统
+            </summary>
+        </member>
+        <member name="T:OldW.Commands.cmd_ShowOldWModel">
+            <summary> 查看Revit的Panel中指定的某一天的开挖工况 </summary>
+        </member>
         <member name="T:OldW.Commands.cmd_ViewStage">
             <summary> 查看Revit的Panel中指定的某一天的开挖工况 </summary>
         </member>
@@ -12,31 +31,6 @@
         </member>
         <member name="T:OldW.Commands.cmd_ViewStageDynamically">
             <summary> 自动动态查看指定日期的开挖工况 </summary>
-        </member>
-        <member name="F:OldW.Commands.ElementInitializer.MonitorName">
-            <summary> 测点名称 </summary>
-        </member>
-        <member name="M:OldW.Commands.ElementInitializer.#ctor(System.String)">
-            <summary>
-            构造函数
-            </summary>
-        </member>
-        <member name="F:OldW.Commands.ElementInitializer.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:OldW.Commands.ElementInitializer.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="M:OldW.Commands.ElementInitializer.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
         </member>
         <member name="T:OldW.Commands.cmd_ExcavationInfo">
             <summary> 提取模型中的开挖土体信息 </summary>
@@ -101,76 +95,490 @@
             其他线测点
             </summary>
         </member>
-        <member name="T:OldW.Commands.PlaceMonitor">
-            <summary>
-            放置任意类型的监测测点
-            </summary>
-        </member>
-        <member name="M:OldW.Commands.PlaceMonitor.PlaceInstrumentation(Autodesk.Revit.UI.ExternalCommandData@,System.String@,Autodesk.Revit.DB.ElementSet@,OldW.Instrumentations.InstrumentationType)">
-            <summary> 放置各种类型的监测测点 </summary>
-        </member>
-        <member name="M:OldW.Commands.PlaceMonitor.idling_RenameAddedInstrums(System.Object,Autodesk.Revit.UI.Events.IdlingEventArgs)">
-            <summary> 在闲置事件中对新添加的测点进行重命名。 </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
-        </member>
-        <member name="M:OldW.Commands.PlaceMonitor.InitializeInstrumentation(OldW.Instrumentations.Instrumentation)">
-            <summary>
-            监测单元的初始化
-            </summary>
-            <param name="ins"></param>
-        </member>
-        <member name="T:OldW.Commands.cmd_FilterInstrums">
-            <summary>
-            监测数据管理系统
-            </summary>
-        </member>
         <member name="T:OldW.Commands.cmd_SetWarning">
             <summary>
             test command
             </summary>
         </member>
-        <member name="T:OldW.Instrumentations.PickInstrums">
+        <member name="F:OldW.DynamicStages.Form1.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.Form1.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OldW.DynamicStages.Form1.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="E:OldW.DynamicStages.ViewStageDynamicallyHandler1.CurrentTimeChanged">
+            <summary> 当前播放和进度 CurrentTime 属性改变时触发 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.SpanValue">
+            <summary> 每一帧动画所对应的施工日期跨度 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler1._intervals">
+            <summary> 每一帧动画之间的时间间隔，单位为毫秒 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.Intervals">
+            <summary> 每一帧动画之间的时间间隔，单位为毫秒 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.CurrentTime">
+            <summary> 当前动画正在展示的时间 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.LoopPlay">
+            <summary> 循环播放，在播放到结尾时，再转到开始时间继续播放 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.BackPlay">
+            <summary> 倒退播放，从最后面的时间向最开始的时间播放 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler1._timer">
+            <summary> 用来展示动画的计时器 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler1._exEvent">
+            <summary> 用来在Revit中进行施工工况的动画刷新的外部事件 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.#ctor(Autodesk.Revit.UI.UIApplication)">
+            <summary> 构造函数 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.Finalize">
+            <summary> 析构函数 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.SetBackPlay">
+            <summary> 设置为倒退播放 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.GetTimeBasedOnRatio(System.Int32)">
+            <summary> 根据指定的比例返回对应的施工日期 </summary>
+            <param name="ratio">输入的值范围为[0,100]，0代表开始时间，100代表结束时间</param>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.GetRatioBasedOnTime(System.DateTime)">
+            <summary> 根据指定的日期返回其在 StartTime 与 EndTime 之间的比例 </summary>
+            <param name="time"> 某一个施工日期 </param>
+            <returns>返回一个位于[0,100]的整数值</returns>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.Play">
+            <summary> 开始播放 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.Pause">
+            <summary> 暂停播放 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.Stop">
+            <summary> 停止播放 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler1._isPlaying">
+            <summary> 当前正在执行Revit动画展示，此时不能再次进行触发。 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.TimerOnTick(System.Object,System.EventArgs)">
+            <summary> 在每一次计时器脉冲时，进行动画的刷新。 </summary>
+            <param name="sender"></param>
+            <param name="e"></param> 
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.CheckProgress(System.DateTime,System.DateTime@)">
+            <summary> 检查当前播放进度，并按需要（是否超出指定的起止界限）调整实际播放的工况日期 </summary>
+            <param name="desiredTime"> 想要播放的工况日期，但是此日期有可能超出了指定的起止界限 </param>
+            <param name="playTime"> 实际要播放的工况日期 </param>
+            <returns>如果返回true，则继续播放，如果返回false，则表示可以停止播放了。</returns>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.ExternalRefreshView(System.DateTime)">
+            <summary> 根据指定的施工日期来刷新 Revit 界面 </summary>
+            <param name="currentTime"> 此 currentTime 必须是位于 StartTime 与 EndTime 之间的一个有效日期 </param>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.RefreshView(System.DateTime)">
+            <summary> 根据指定的施工日期来刷新 Revit 界面 </summary>
+        </member>
+        <member name="E:OldW.DynamicStages.ViewStageDynamicallyHandler.CurrentTimeChanged">
+            <summary> 当前播放和进度 CurrentTime 属性改变时触发 </summary>
+        </member>
+        <member name="E:OldW.DynamicStages.ViewStageDynamicallyHandler.PlayerStopped">
+            <summary> 播放器停止播放 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.SpanValue">
+            <summary> 每一帧动画所对应的施工日期跨度 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._intervals">
+            <summary> 每一帧动画之间的时间间隔，单位为毫秒 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.Intervals">
+            <summary> 每一帧动画之间的时间间隔，单位为毫秒 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.CurrentTime">
+            <summary> 当前动画正在展示的时间 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.LoopPlay">
+            <summary> 循环播放，在播放到结尾时，再转到开始时间继续播放 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.BackPlay">
+            <summary> 倒退播放，从最后面的时间向最开始的时间播放 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._exEvent">
+            <summary> 用来在Revit中进行施工工况的动画刷新的外部事件 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.#ctor(Autodesk.Revit.UI.UIApplication)">
+            <summary> 构造函数 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.PlayOptionsInitialize">
+            <summary> 对播放器的播放属性进行初始化 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.Finalize">
+            <summary> 析构函数 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.GetTimeBasedOnRatio(System.Int32)">
+            <summary> 根据指定的比例返回对应的施工日期 </summary>
+            <param name="ratio">输入的值范围为[0,100]，0代表开始时间，100代表结束时间</param>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.GetRatioBasedOnTime(System.DateTime)">
+            <summary> 根据指定的日期返回其在 StartTime 与 EndTime 之间的比例 </summary>
+            <param name="time"> 某一个施工日期 </param>
+            <returns>返回一个位于[0,100]的整数值</returns>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.Play">
+            <summary> 开始播放 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.Pause">
+            <summary> 暂停播放 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.Stop">
+            <summary> 停止播放 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.StopFromScroll(System.DateTime)">
+            <summary>  </summary>
+            <param name="currentTime"> 此 currentTime 必须是位于 StartTime 与 EndTime 之间的一个有效日期 </param>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._isPlaying">
+            <summary> 当前正在执行Revit动画展示，此时不能再次进行触发。 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.UiAppOnIdling(System.Object,Autodesk.Revit.UI.Events.IdlingEventArgs)">
+            <summary> 在每一次 Iding 事件时，进行动画的刷新。 </summary>
+            <param name="sender"></param>
+            <param name="idlingEventArgs"></param>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._lastPulseTime">
+            <summary>上一次成功发出Idling脉冲以及进行动画显示的时间 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.CheckIntervals">
+            <summary>
+            检查两次 Idling 事件之间的时间间隔是否满足指定的速度Interval的要求。
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.CheckProgress(System.DateTime,System.DateTime@)">
+            <summary> 检查当前播放进度，并按需要（是否超出指定的起止界限）调整实际播放的工况日期 </summary>
+            <param name="desiredTime"> 想要播放的工况日期，但是此日期有可能超出了指定的起止界限 </param>
+            <param name="playTime"> 实际要播放的工况日期 </param>
+            <returns>如果返回true，则继续播放，如果返回false，则表示可以停止播放了。</returns>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.RefreshView(System.DateTime)">
+            <summary> 根据指定的施工日期来刷新 Revit 界面 </summary>
+            <param name="currentTime"> 此 currentTime 必须是位于 StartTime 与 EndTime 之间的一个有效日期 </param>
+        </member>
+        <member name="T:OldW.DynamicStages.PlayOption">
+            <summary> 控件播放器的播放选项 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.PlayOption.PlayAndStop">
+            <summary> 在指定的时间下显示一次，然后停止播放 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageManuallyHandler.ExternalEventArgs">
+            <summary> Execute 的参数 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageManuallyHandler.OnConstructionDateChanged(Autodesk.Revit.DB.Transaction,Autodesk.Revit.DB.View,System.DateTime)">
+            <summary> 根据施工日期刷新模型 </summary>
+            <param name="tranDoc"></param>
+            <param name="uiApp"></param>
+            <param name="constructionTime"></param>
+        </member>
+        <member name="T:OldW.DynamicStages.ReviewDoc">
+            <summary> 在基坑开挖模拟中，对 指定的开挖土体集合 进行不同时间下的动态开挖展示 </summary>
+            <remarks></remarks>
+        </member>
+        <member name="F:OldW.DynamicStages.ReviewDoc._excavSoils">
+            <summary> 用来进行开挖预览的开挖土体单元 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ReviewDoc._excavDoc">
+            <summary> 用来进行开挖模拟 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ReviewDoc.#ctor(OldWDocument,System.Collections.Generic.ICollection{OldW.Excavation.Soil_Excav})">
+            <summary> 构造函数 </summary>
+            <param name="oldWDoc"></param>
+            <param name="excavSoils">用来进行开挖预览的开挖土体单元</param>
+        </member>
+        <member name="M:OldW.DynamicStages.ReviewDoc.CreateFromActiveDocument(Autodesk.Revit.UI.UIApplication,Autodesk.Revit.DB.Document)">
+            <summary> 将指定的文档中的 所有开挖土体 都进行开挖工况的动画展示 </summary>
+            <param name="uiApp"></param>
+            <param name="doc">将会提取此文档中的所有开挖土体所组成的集合，来进行开挖工况的动画展示</param>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.DynamicStages.ReviewDoc.ShowExcavation(Autodesk.Revit.DB.Transaction,System.DateTime,Autodesk.Revit.DB.View)">
+            <summary>
+            根据指定的时间在Revit视图中显示出每一个开挖分块的开挖状态
+            </summary>
+            <param name="constructionTime"></param>
+            <param name="view"></param>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamically.ScrollBarMaximumValue">
+            <summary>
+            正常情况下，这个值应该是和 hScrollBar1.Maximum 相等的，但是的 Win 10 系统下，
+            即使设置Maximum = 100，而不论滚动条的UI尺寸大小如何，在界面上可能滚动出来的最大值却竟然都是只有91。
+            </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamically.#ctor(Autodesk.Revit.UI.UIApplication)">
+            <summary> 构造函数 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamically.InitializeUI">
+            <summary> 在构造完成 _VSDHandler 之后进行其他的界面设置 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamically.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamically.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamically.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:OldW.DynamicStages.ViewStageManually">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageManually._exEvent">
+            <summary>用来触发外部事件（通过其Raise方法） </summary>
+            <remarks>ExEvent属性是必须有的，它用来执行Raise方法以触发事件。</remarks>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageManually.ReqHandler">
+            <summary> 用来响应外部事件中的不同需求（通过其Execute方法）。 </summary>
+            <remarks>由于RequestHandler 对象是在构造ExternalEvent对象时就已经保存在ExternalEvent中的了，
+            所以，如果Execute方法中并不需要判断到底要实现哪一个需求，则此属性是不必要的。</remarks>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageManually.ActiveTime">
+            <summary>
+            当前的施工日期。通过指定此属性，即可以自动执行Revit中视图的刷新。
+            </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageManually.#ctor(Autodesk.Revit.UI.UIApplication)">
+            <summary> 构造函数 </summary>
+        </member>
+        <member name="T:OldW.Instrumentations.ExcelMapping">
+            <summary>
+            将不同的Excel工作表字段的名称映射到Revit对应的测点中去
+            </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.ExcelMapping.ValidateSheetName(System.String)">
+            <summary>
+            验证给定的字符是否可以作为 Excel 的工作表的名称，如果不行，则按某种规则转换为有效的 Excel 工作表名称
+            </summary>
+            <param name="originalName"></param>
+            <returns> 转换后的有效的 Excel 工作表名称 </returns>
+        </member>
+        <member name="M:OldW.Instrumentations.ExcelMapping.MultiPointsInSheet(System.String)">
+            <summary> 指定的Excel工作表中是包含多个测点（点测点）还是只包含一个测点（线测点） </summary>
+            <param name="excelSheetName"></param>
+            <returns> 如果此工作表中有多个点测点，比如“地表隆沉”，则返回true；
+            如果此工作表就代表一个线测点，则返回false。 </returns>
+        </member>
+        <member name="M:OldW.Instrumentations.ExcelMapping.IsRevitLine(System.String)">
+            <summary> 此工作表名称所对应的测点类型在Revit中是否是一个线测点类型 </summary>
+            <param name="excelSheetName"></param>
+            <returns> 如果此工作表名称代表一类测点，比如“地表隆沉”，则返回true；
+            如果此工作表就代表一个测斜测点，则返回false。 </returns>
+        </member>
+        <member name="M:OldW.Instrumentations.ExcelMapping.MapToType(System.String)">
+            <summary>
+            由字段名称来匹配出对应的测点类型
+            </summary>
+            <param name="excelSheetName"> Excel工作表的名称，不包含后缀$</param>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.Instrumentations.ExcelMapping.GetNumberFromField(System.String)">
+            <summary> 根据给出的字段名匹配出对应的测点编号 </summary>
+            <param name="excelPointOrLineName"> Excel中的测点编号，此编号可以了线测点的编号如CX01，也可以是点测点的编号如DB01。 </param>
+            <returns> 如果能匹配出编号12或者编号2-12这两种模式，则返回对应的数值字符，如果不能匹配，则返回空字符</returns>
+        </member>
+        <member name="M:OldW.Instrumentations.ExcelMapping.GetDigitalNodeName(System.String)">
+            <summary>
+            将数值子节点型的线测点在Excel中的子节点名称转换为对应的数值。如果不能转换成功，则报错。
+            </summary>
+            <param name="digitalNodeName"> 对于测斜管这类线测点，其每一个字段都是有严格的数值意义的，即代表了此子节点距离管顶的深度，
+            所以在Excel工作表中，这些子节点的字段名的格式为“123、0#50、0.5、0dot5”，这时就要将其转换为对应的可以表示数值的“2.50”。 </param>
+            <returns> 进行转换后的数值字符，如"2.50" </returns>
+        </member>
+        <member name="T:OldW.Instrumentations.InstrumCollector">
+            <summary>
+            测点收集器，用来对测点集合进行分类管理以及过滤等操作
+            </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.InstrumCollector._allInstrumentations">
+            <summary> 所有的测点的集合 </summary>
+        </member>
+        <member name="P:OldW.Instrumentations.InstrumCollector.AllInstrumentations">
+            <summary> 所有的测点的集合 </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.#ctor(System.Collections.Generic.IEnumerable{OldW.Instrumentations.Instrumentation})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="instrums"> 要进行测点分类的测点集合 </param>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.Truncate(System.Collections.Generic.IEnumerable{OldW.Instrumentations.Instrumentation})">
+            <summary>
+            清空原测点集合中的元素，并重新添加新的元素
+            </summary>
+            <param name="instrums"></param>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.Append(System.Collections.Generic.IEnumerable{OldW.Instrumentations.Instrumentation})">
+            <summary>
+            直接向集合中附加新的测点
+            </summary>
+            <param name="instrums"></param>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.GetMonitors(OldW.Instrumentations.InstrumentationType)">
+            <summary> 按指定的类型过滤出集合中所有的测点 </summary>
+            <param name="type"> 多种监测类型的按位组合 </param>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.GetLineMonitors">
+            <summary> 过滤出集合中所有的线测点 </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.GetLineMonitors(OldW.Instrumentations.InstrumentationType)">
+            <summary> 按指定的选项过滤出集合中所有的线测点 </summary>
+            <param name="type"> 多种监测类型的按位组合 </param>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.GetPointMonitors">
+            <summary> 过滤出集合中所有的线测点 </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.InstrumCollector.GetPointMonitors(OldW.Instrumentations.InstrumentationType)">
+            <summary> 按指定的选项过滤出集合中所有的点测点 </summary>
+            <param name="type"> 多种监测类型的按位组合 </param>
+        </member>
+        <member name="T:OldW.Instrumentations.MonitorSetterGetter.ChooseFamilySymbol">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:OldW.Instrumentations.MonitorSetterGetter.ChooseFamilySymbol.Symbol">
+            <summary> 用户在界面中选择的那一个族类型，如果未成功选择，则默认为集合中的第一个族类型。 </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.MonitorSetterGetter.ChooseFamilySymbol.#ctor(Autodesk.Revit.DB.Document,System.Collections.Generic.IEnumerable{Autodesk.Revit.DB.ElementId})">
+            <summary> 构造函数 </summary>
+            <param name="doc"></param>
+            <param name="symbolIds"></param>
+        </member>
+        <member name="F:OldW.Instrumentations.MonitorSetterGetter.ChooseFamilySymbol.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.MonitorSetterGetter.ChooseFamilySymbol.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OldW.Instrumentations.MonitorSetterGetter.ChooseFamilySymbol.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:OldW.Instrumentations.MonitorSetterGetter.ElementInitializer">
+            <summary> 在放置测点单元时，进行测点初始化，比如进行命名 </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.MonitorSetterGetter.ElementInitializer.MonitorName">
+            <summary> 测点名称 </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.MonitorSetterGetter.ElementInitializer.#ctor(System.String)">
+            <summary>
+            构造函数
+            </summary>
+        </member>
+        <member name="F:OldW.Instrumentations.MonitorSetterGetter.ElementInitializer.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.MonitorSetterGetter.ElementInitializer.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OldW.Instrumentations.MonitorSetterGetter.ElementInitializer.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:OldW.Instrumentations.MonitorSetterGetter.PickInstrums">
             <summary>
             测点过滤器
             </summary>
         </member>
-        <member name="F:OldW.Instrumentations.PickInstrums.FilterdInstrumentations">
+        <member name="F:OldW.Instrumentations.MonitorSetterGetter.PickInstrums.FilterdInstrumentations">
             <summary> 最终决定要选择的测点单元 </summary>
         </member>
-        <member name="M:OldW.Instrumentations.PickInstrums.#ctor(System.Collections.Generic.ICollection{OldW.Instrumentations.Instrumentation},OldW.Instrumentations.InstrumDoc)">
+        <member name="M:OldW.Instrumentations.MonitorSetterGetter.PickInstrums.#ctor(System.Collections.Generic.ICollection{OldW.Instrumentations.Instrumentation},OldW.Instrumentations.InstrumDoc)">
             <summary> 构造函数 </summary>
             <param name="eleIdCollection">所有要进行处理的测点元素的Id集合</param>
             <param name="document"></param>
             <remarks></remarks>
         </member>
-        <member name="M:OldW.Instrumentations.PickInstrums.ConstructTreeView(System.Collections.Generic.ICollection{OldW.Instrumentations.Instrumentation})">
+        <member name="M:OldW.Instrumentations.MonitorSetterGetter.PickInstrums.ConstructTreeView(System.Collections.Generic.ICollection{OldW.Instrumentations.Instrumentation})">
             <summary> 构造树形控件。一共分两级，第一级是测点类型，第二级是每种类型下的测点集合 </summary>
             <param name="allInstrums"></param>
         </member>
-        <member name="M:OldW.Instrumentations.PickInstrums.TreeViewIns_AfterCheck(System.Object,System.Windows.Forms.TreeViewEventArgs)">
+        <member name="M:OldW.Instrumentations.MonitorSetterGetter.PickInstrums.TreeViewIns_AfterCheck(System.Object,System.Windows.Forms.TreeViewEventArgs)">
             <summary>
             在选择或者取消选择父节点时，对其子节点进行相同的操作
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="F:OldW.Instrumentations.PickInstrums.components">
+        <member name="F:OldW.Instrumentations.MonitorSetterGetter.PickInstrums.components">
             <summary>
             Required designer variable.
             </summary>
         </member>
-        <member name="M:OldW.Instrumentations.PickInstrums.Dispose(System.Boolean)">
+        <member name="M:OldW.Instrumentations.MonitorSetterGetter.PickInstrums.Dispose(System.Boolean)">
             <summary>
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="M:OldW.Instrumentations.PickInstrums.InitializeComponent">
+        <member name="M:OldW.Instrumentations.MonitorSetterGetter.PickInstrums.InitializeComponent">
             <summary>
             Required method for Designer support - do not modify
             the contents of this method with the code editor.
             </summary>
+        </member>
+        <member name="T:OldW.Instrumentations.MonitorSetterGetter.PlaceMonitor">
+            <summary> 放置任意类型的监测测点 </summary>
+        </member>
+        <member name="M:OldW.Instrumentations.MonitorSetterGetter.PlaceMonitor.PlaceInstrumentation(Autodesk.Revit.UI.ExternalCommandData@,System.String@,Autodesk.Revit.DB.ElementSet@,OldW.Instrumentations.InstrumentationType)">
+            <summary> 放置各种类型的监测测点 </summary>
+            <param name="type"> 要放置的测点类型 </param>
+        </member>
+        <member name="M:OldW.Instrumentations.MonitorSetterGetter.PlaceMonitor.idling_RenameAddedInstrums(System.Object,Autodesk.Revit.UI.Events.IdlingEventArgs)">
+            <summary> 在闲置事件中对新添加的测点进行重命名。 </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:OldW.Instrumentations.MonitorSetterGetter.PlaceMonitor.InitializeInstrumentation(OldW.Instrumentations.Instrumentation)">
+            <summary>
+            监测单元的初始化
+            </summary>
+            <param name="ins"></param>
         </member>
         <member name="T:OldW.Instrumentations.DataExport">
             <summary>
@@ -286,97 +694,6 @@
         </member>
         <member name="F:OldW.Instrumentations.InstrumentationType.点测点集合">
             <summary> 通过位运算进行组合的所有点测点的集合。 </summary>
-        </member>
-        <member name="T:OldW.Instrumentations.ExcelMapping">
-            <summary>
-            将不同的Excel工作表字段的名称映射到Revit对应的测点中去
-            </summary>
-        </member>
-        <member name="M:OldW.Instrumentations.ExcelMapping.ValidateSheetName(System.String)">
-            <summary>
-            验证给定的字符是否可以作为 Excel 的工作表的名称，如果不行，则按某种规则转换为有效的 Excel 工作表名称
-            </summary>
-            <param name="originalName"></param>
-            <returns> 转换后的有效的 Excel 工作表名称 </returns>
-        </member>
-        <member name="M:OldW.Instrumentations.ExcelMapping.MultiPointsInSheet(System.String)">
-            <summary> 指定的Excel工作表中是包含多个测点（点测点）还是只包含一个测点（线测点） </summary>
-            <param name="excelSheetName"></param>
-            <returns> 如果此工作表中有多个点测点，比如“地表隆沉”，则返回true；
-            如果此工作表就代表一个线测点，则返回false。 </returns>
-        </member>
-        <member name="M:OldW.Instrumentations.ExcelMapping.IsRevitLine(System.String)">
-            <summary> 此工作表名称所对应的测点类型在Revit中是否是一个线测点类型 </summary>
-            <param name="excelSheetName"></param>
-            <returns> 如果此工作表名称代表一类测点，比如“地表隆沉”，则返回true；
-            如果此工作表就代表一个测斜测点，则返回false。 </returns>
-        </member>
-        <member name="M:OldW.Instrumentations.ExcelMapping.MapToType(System.String)">
-            <summary>
-            由字段名称来匹配出对应的测点类型
-            </summary>
-            <param name="excelSheetName"> Excel工作表的名称，不包含后缀$</param>
-            <returns></returns>
-        </member>
-        <member name="M:OldW.Instrumentations.ExcelMapping.GetNumberFromField(System.String)">
-            <summary> 根据给出的字段名匹配出对应的测点编号 </summary>
-            <param name="excelPointOrLineName"> Excel中的测点编号，此编号可以了线测点的编号如CX01，也可以是点测点的编号如DB01。 </param>
-            <returns> 如果能匹配出编号12或者编号2-12这两种模式，则返回对应的数值字符，如果不能匹配，则返回空字符</returns>
-        </member>
-        <member name="M:OldW.Instrumentations.ExcelMapping.GetDigitalNodeName(System.String)">
-            <summary>
-            将数值子节点型的线测点在Excel中的子节点名称转换为对应的数值。如果不能转换成功，则报错。
-            </summary>
-            <param name="digitalNodeName"> 对于测斜管这类线测点，其每一个字段都是有严格的数值意义的，即代表了此子节点距离管顶的深度，
-            所以在Excel工作表中，这些子节点的字段名的格式为“123、0#50、0.5、0dot5”，这时就要将其转换为对应的可以表示数值的“2.50”。 </param>
-            <returns> 进行转换后的数值字符，如"2.50" </returns>
-        </member>
-        <member name="T:OldW.Instrumentations.InstrumCollector">
-            <summary>
-            测点收集器，用来对测点集合进行分类管理
-            </summary>
-        </member>
-        <member name="F:OldW.Instrumentations.InstrumCollector._allInstrumentations">
-            <summary> 所有的测点的集合 </summary>
-        </member>
-        <member name="P:OldW.Instrumentations.InstrumCollector.AllInstrumentations">
-            <summary> 所有的测点的集合 </summary>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumCollector.#ctor(System.Collections.Generic.IEnumerable{OldW.Instrumentations.Instrumentation})">
-            <summary>
-            构造函数
-            </summary>
-            <param name="instrums"> 要进行测点分类的测点集合 </param>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumCollector.Truncate(System.Collections.Generic.IEnumerable{OldW.Instrumentations.Instrumentation})">
-            <summary>
-            清空原测点集合中的元素，并重新添加新的元素
-            </summary>
-            <param name="instrums"></param>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumCollector.Append(System.Collections.Generic.IEnumerable{OldW.Instrumentations.Instrumentation})">
-            <summary>
-            直接向集合中附加新的测点
-            </summary>
-            <param name="instrums"></param>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumCollector.GetMonitors(OldW.Instrumentations.InstrumentationType)">
-            <summary> 按指定的类型过滤出集合中所有的测点 </summary>
-            <param name="type"> 多种监测类型的按位组合 </param>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumCollector.GetLineMonitors">
-            <summary> 过滤出集合中所有的线测点 </summary>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumCollector.GetLineMonitors(OldW.Instrumentations.InstrumentationType)">
-            <summary> 按指定的选项过滤出集合中所有的线测点 </summary>
-            <param name="type"> 多种监测类型的按位组合 </param>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumCollector.GetPointMonitors">
-            <summary> 过滤出集合中所有的线测点 </summary>
-        </member>
-        <member name="M:OldW.Instrumentations.InstrumCollector.GetPointMonitors(OldW.Instrumentations.InstrumentationType)">
-            <summary> 按指定的选项过滤出集合中所有的点测点 </summary>
-            <param name="type"> 多种监测类型的按位组合 </param>
         </member>
         <member name="T:OldW.Instrumentations.InstrumDoc">
             <summary> 用来执行基坑中的测点布置，监测数据管理等操作 </summary>
@@ -792,257 +1109,6 @@
             激活本DLL所引用的那些DLLs
             </summary>
         </member>
-        <member name="E:OldW.DynamicStages.ViewStageDynamicallyHandler1.CurrentTimeChanged">
-            <summary> 当前播放和进度 CurrentTime 属性改变时触发 </summary>
-        </member>
-        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.SpanValue">
-            <summary> 每一帧动画所对应的施工日期跨度 </summary>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler1._intervals">
-            <summary> 每一帧动画之间的时间间隔，单位为毫秒 </summary>
-        </member>
-        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.Intervals">
-            <summary> 每一帧动画之间的时间间隔，单位为毫秒 </summary>
-        </member>
-        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.CurrentTime">
-            <summary> 当前动画正在展示的时间 </summary>
-        </member>
-        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.LoopPlay">
-            <summary> 循环播放，在播放到结尾时，再转到开始时间继续播放 </summary>
-        </member>
-        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.BackPlay">
-            <summary> 倒退播放，从最后面的时间向最开始的时间播放 </summary>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler1._timer">
-            <summary> 用来展示动画的计时器 </summary>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler1._exEvent">
-            <summary> 用来在Revit中进行施工工况的动画刷新的外部事件 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.#ctor(Autodesk.Revit.UI.UIApplication)">
-            <summary> 构造函数 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.Finalize">
-            <summary> 析构函数 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.SetBackPlay">
-            <summary> 设置为倒退播放 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.GetTimeBasedOnRatio(System.Int32)">
-            <summary> 根据指定的比例返回对应的施工日期 </summary>
-            <param name="ratio">输入的值范围为[0,100]，0代表开始时间，100代表结束时间</param>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.GetRatioBasedOnTime(System.DateTime)">
-            <summary> 根据指定的日期返回其在 StartTime 与 EndTime 之间的比例 </summary>
-            <param name="time"> 某一个施工日期 </param>
-            <returns>返回一个位于[0,100]的整数值</returns>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.Play">
-            <summary> 开始播放 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.Pause">
-            <summary> 暂停播放 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.Stop">
-            <summary> 停止播放 </summary>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler1._isPlaying">
-            <summary> 当前正在执行Revit动画展示，此时不能再次进行触发。 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.TimerOnTick(System.Object,System.EventArgs)">
-            <summary> 在每一次计时器脉冲时，进行动画的刷新。 </summary>
-            <param name="sender"></param>
-            <param name="e"></param> 
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.CheckProgress(System.DateTime,System.DateTime@)">
-            <summary> 检查当前播放进度，并按需要（是否超出指定的起止界限）调整实际播放的工况日期 </summary>
-            <param name="desiredTime"> 想要播放的工况日期，但是此日期有可能超出了指定的起止界限 </param>
-            <param name="playTime"> 实际要播放的工况日期 </param>
-            <returns>如果返回true，则继续播放，如果返回false，则表示可以停止播放了。</returns>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.ExternalRefreshView(System.DateTime)">
-            <summary> 根据指定的施工日期来刷新 Revit 界面 </summary>
-            <param name="currentTime"> 此 currentTime 必须是位于 StartTime 与 EndTime 之间的一个有效日期 </param>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.RefreshView(System.DateTime)">
-            <summary> 根据指定的施工日期来刷新 Revit 界面 </summary>
-        </member>
-        <member name="E:OldW.DynamicStages.ViewStageDynamicallyHandler.CurrentTimeChanged">
-            <summary> 当前播放和进度 CurrentTime 属性改变时触发 </summary>
-        </member>
-        <member name="E:OldW.DynamicStages.ViewStageDynamicallyHandler.PlayerStopped">
-            <summary> 播放器停止播放 </summary>
-        </member>
-        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.SpanValue">
-            <summary> 每一帧动画所对应的施工日期跨度 </summary>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._intervals">
-            <summary> 每一帧动画之间的时间间隔，单位为毫秒 </summary>
-        </member>
-        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.Intervals">
-            <summary> 每一帧动画之间的时间间隔，单位为毫秒 </summary>
-        </member>
-        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.CurrentTime">
-            <summary> 当前动画正在展示的时间 </summary>
-        </member>
-        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.LoopPlay">
-            <summary> 循环播放，在播放到结尾时，再转到开始时间继续播放 </summary>
-        </member>
-        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.BackPlay">
-            <summary> 倒退播放，从最后面的时间向最开始的时间播放 </summary>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._exEvent">
-            <summary> 用来在Revit中进行施工工况的动画刷新的外部事件 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.#ctor(Autodesk.Revit.UI.UIApplication)">
-            <summary> 构造函数 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.Finalize">
-            <summary> 析构函数 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.GetTimeBasedOnRatio(System.Int32)">
-            <summary> 根据指定的比例返回对应的施工日期 </summary>
-            <param name="ratio">输入的值范围为[0,100]，0代表开始时间，100代表结束时间</param>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.GetRatioBasedOnTime(System.DateTime)">
-            <summary> 根据指定的日期返回其在 StartTime 与 EndTime 之间的比例 </summary>
-            <param name="time"> 某一个施工日期 </param>
-            <returns>返回一个位于[0,100]的整数值</returns>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.Play">
-            <summary> 开始播放 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.Pause">
-            <summary> 暂停播放 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.Stop">
-            <summary> 停止播放 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.StopFromScroll(System.DateTime)">
-            <summary>  </summary>
-            <param name="currentTime"> 此 currentTime 必须是位于 StartTime 与 EndTime 之间的一个有效日期 </param>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._isPlaying">
-            <summary> 当前正在执行Revit动画展示，此时不能再次进行触发。 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.UiAppOnIdling(System.Object,Autodesk.Revit.UI.Events.IdlingEventArgs)">
-            <summary> 在每一次 Iding 事件时，进行动画的刷新。 </summary>
-            <param name="sender"></param>
-            <param name="idlingEventArgs"></param>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._lastPulseTime">
-            <summary>上一次成功发出Idling脉冲以及进行动画显示的时间 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.CheckIntervals">
-            <summary>
-            检查两次 Idling 事件之间的时间间隔是否满足指定的速度Interval的要求。
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.CheckProgress(System.DateTime,System.DateTime@)">
-            <summary> 检查当前播放进度，并按需要（是否超出指定的起止界限）调整实际播放的工况日期 </summary>
-            <param name="desiredTime"> 想要播放的工况日期，但是此日期有可能超出了指定的起止界限 </param>
-            <param name="playTime"> 实际要播放的工况日期 </param>
-            <returns>如果返回true，则继续播放，如果返回false，则表示可以停止播放了。</returns>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.RefreshView(System.DateTime)">
-            <summary> 根据指定的施工日期来刷新 Revit 界面 </summary>
-            <param name="currentTime"> 此 currentTime 必须是位于 StartTime 与 EndTime 之间的一个有效日期 </param>
-        </member>
-        <member name="T:OldW.DynamicStages.PlayOption">
-            <summary> 控件播放器的播放选项 </summary>
-        </member>
-        <member name="F:OldW.DynamicStages.PlayOption.ShowOneTime">
-            <summary> 在指定的时间下显示一次，并不再关联Idling事件 </summary>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageManuallyHandler.ExternalEventArgs">
-            <summary> Execute 的参数 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageManuallyHandler.OnConstructionDateChanged(Autodesk.Revit.DB.Transaction,Autodesk.Revit.DB.View,System.DateTime)">
-            <summary> 根据施工日期刷新模型 </summary>
-            <param name="tranDoc"></param>
-            <param name="uiApp"></param>
-            <param name="constructionTime"></param>
-        </member>
-        <member name="T:OldW.DynamicStages.ReviewDoc">
-            <summary> 在基坑开挖模拟中，对 指定的开挖土体集合 进行不同时间下的动态开挖展示 </summary>
-            <remarks></remarks>
-        </member>
-        <member name="F:OldW.DynamicStages.ReviewDoc._excavSoils">
-            <summary> 用来进行开挖预览的开挖土体单元 </summary>
-        </member>
-        <member name="F:OldW.DynamicStages.ReviewDoc._excavDoc">
-            <summary> 用来进行开挖模拟 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ReviewDoc.#ctor(OldWDocument,System.Collections.Generic.ICollection{OldW.Excavation.Soil_Excav})">
-            <summary> 构造函数 </summary>
-            <param name="oldWDoc"></param>
-            <param name="excavSoils">用来进行开挖预览的开挖土体单元</param>
-        </member>
-        <member name="M:OldW.DynamicStages.ReviewDoc.CreateFromActiveDocument(Autodesk.Revit.UI.UIApplication,Autodesk.Revit.DB.Document)">
-            <summary> 将指定的文档中的 所有开挖土体 都进行开挖工况的动画展示 </summary>
-            <param name="uiApp"></param>
-            <param name="doc">将会提取此文档中的所有开挖土体所组成的集合，来进行开挖工况的动画展示</param>
-            <returns></returns>
-        </member>
-        <member name="M:OldW.DynamicStages.ReviewDoc.ShowExcavation(Autodesk.Revit.DB.Transaction,System.DateTime,Autodesk.Revit.DB.View)">
-            <summary>
-            根据指定的时间在Revit视图中显示出每一个开挖分块的开挖状态
-            </summary>
-            <param name="constructionTime"></param>
-            <param name="view"></param>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageDynamically.ScrollBarMaximumValue">
-            <summary>
-            正常情况下，这个值应该是和 hScrollBar1.Maximum 相等的，但是的 Win 10 系统下，
-            即使设置Maximum = 100，而不论滚动条的UI尺寸大小如何，在界面上可能滚动出来的最大值却竟然都是只有91。
-            </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamically.#ctor(Autodesk.Revit.UI.UIApplication)">
-            <summary> 构造函数 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamically.InitializeUI">
-            <summary> 在构造完成 _VSDHandler 之后进行其他的界面设置 </summary>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageDynamically.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamically.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamically.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="T:OldW.DynamicStages.ViewStageManually">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageManually._exEvent">
-            <summary>用来触发外部事件（通过其Raise方法） </summary>
-            <remarks>ExEvent属性是必须有的，它用来执行Raise方法以触发事件。</remarks>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageManually.ReqHandler">
-            <summary> 用来响应外部事件中的不同需求（通过其Execute方法）。 </summary>
-            <remarks>由于RequestHandler 对象是在构造ExternalEvent对象时就已经保存在ExternalEvent中的了，
-            所以，如果Execute方法中并不需要判断到底要实现哪一个需求，则此属性是不必要的。</remarks>
-        </member>
-        <member name="P:OldW.DynamicStages.ViewStageManually.ActiveTime">
-            <summary>
-            当前的施工日期。通过指定此属性，即可以自动执行Revit中视图的刷新。
-            </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageManually.#ctor(Autodesk.Revit.UI.UIApplication)">
-            <summary> 构造函数 </summary>
-        </member>
         <member name="T:OldW.DataManager.ElementDataManager">
             <summary>
             模型中的测点的监测数据的添加，删除，导入导出等
@@ -1117,7 +1183,7 @@
             当前以经打开并且提取过监测数据的线测点对象。
             </summary>
         </member>
-        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.#ctor(Autodesk.Revit.DB.Document,stdOldW.UserControls.eZDataGridViewPaste)">
+        <member name="M:OldW.DataManager.ElementDataManager.DgvLine.#ctor(Autodesk.Revit.DB.Document,eZstd.UserControls.eZDataGridView)">
             <summary>
             构造函数
             </summary>
@@ -1248,7 +1314,7 @@
             表格中当前处理的那个测点。在为此属性赋值的过程中，会执行相关的刷新操作
             </summary>
         </member>
-        <member name="M:OldW.DataManager.ElementDataManager.DgvPoint.#ctor(Autodesk.Revit.DB.Document,stdOldW.UserControls.eZDataGridViewPaste)">
+        <member name="M:OldW.DataManager.ElementDataManager.DgvPoint.#ctor(Autodesk.Revit.DB.Document,eZstd.UserControls.eZDataGridView)">
             <summary>
             构造函数
             </summary>
@@ -1496,6 +1562,13 @@
         </member>
         <member name="M:OldW.DataManager.DataImport.buttonUnCheckMultiple_Click(System.Object,System.EventArgs)">
             <summary> 取消选择多个 </summary>
+        </member>
+        <member name="M:OldW.DataManager.DataImport.DataGridViewExcelOnCellContentClick(System.Object,System.Windows.Forms.DataGridViewCellEventArgs)">
+            <summary>
+            点击表格中的任意单元格，包括表头或者列头
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
         </member>
         <member name="M:OldW.DataManager.DataImport.DataGridViewExcelOnCurrentCellDirtyStateChanged(System.Object,System.EventArgs)">
             <summary> 修改 Checkbox 是否要导入 </summary>
@@ -1749,12 +1822,10 @@
             <remarks></remarks>
         </member>
         <member name="M:OldW.Excavation.ExcavationDoc.FindExcavSoils(OldW.Excavation.Soil_Model)">
-            <summary>
-            搜索文档中与模型土体位于同一个Group中的所有的开挖土体。
-            </summary>
+            <summary> 搜索文档中与模型土体位于同一个Group中的所有的开挖土体。 </summary>
             <param name="soilM">文档中的模型土体单元，可以通过 ExcavationDoc.GetSoilModel 函数获得</param>
             <returns></returns>
-            <remarks></remarks>
+            <remarks> 搜索的基本准则是开挖土体与模型土体位于同一个组中。但是开挖土体并不一定要剪切模型土体。 </remarks>
         </member>
         <member name="M:OldW.Excavation.ExcavationDoc.FilterExcavSoils(System.Collections.Generic.IEnumerable{OldW.Excavation.Soil_Excav},System.DateTime)">
             <summary>
@@ -1764,7 +1835,7 @@
             <param name="constructionTime"> 要考查的施工日期 </param>
             <returns> excavSoils 集合中每一个开挖土体所对应的开挖状态 </returns>
         </member>
-        <member name="M:OldW.Excavation.ExcavationDoc.DeleteEmptySoilFamily">
+        <member name="M:OldW.Excavation.ExcavationDoc.DeleteEmptySoilFamily(Autodesk.Revit.DB.Transaction)">
             <summary>
             在Revit的项目浏览器中，土体族位于“族>场地”之中，常规情况下，每一个族中只有一个族类型，
             因为每一个模型土体或者开挖土体，都是通过唯一的曲线创建出来的（在后期的开发中，可能会将其修改为通过“自适应常规模型”来创建土体。）。
@@ -1935,19 +2006,9 @@
         <member name="F:OldW.Excavation.frm_ExcavationInfo.Request.SetVisibility">
             <summary> 设置选定图元在当前视图中的可见性 </summary>
         </member>
-        <member name="F:OldW.Excavation.frm_ExcavationInfo.Request.ClearEmpty">
-            <summary> 清理模型中没有实例图元的开挖土体族 </summary>
-        </member>
         <member name="F:OldW.Excavation.frm_ExcavationInfo.Request.SetMultiVisibility">
             <summary>
             设置列表中选择的每一行所对应的开挖土体的可见性。
-            </summary>
-        </member>
-        <member name="F:OldW.Excavation.frm_ExcavationInfo.Request.ReCut">
-            <summary>
-            修改所有开挖土体对于基坑土体的剪切关系。
-            在某些情况下（比如用新的模型土体替换了旧的模型土体时），
-            开挖土体可能会失去对于模型土体的剪切关系，以致于开挖土体虽然位于模型土体的组中，但是模型土体并没有被切割。
             </summary>
         </member>
         <member name="F:OldW.Excavation.frm_ExcavationInfo.ExEvent">
@@ -2009,11 +2070,6 @@
             <param name="tran"></param>
             <param name="show"> True代表设置其为可见 </param>
             <param name="view">当前视图对象</param>
-        </member>
-        <member name="M:OldW.Excavation.frm_ExcavationInfo.BtnClearEmpty_Click(System.Object,System.EventArgs)">
-            <summary>
-            清理在Revit中没有实例对象的开挖土体族
-            </summary>
         </member>
         <member name="M:OldW.Excavation.frm_ExcavationInfo.Execute(Autodesk.Revit.UI.UIApplication)">
             <summary>
@@ -2204,18 +2260,39 @@
             </summary>
             <remarks></remarks>
         </member>
+        <member name="P:OldW.Excavation.Soil_Model.Group">
+            <summary>
+            此模型土体所位于的组。
+            注意：所有的土体开挖模型都会位于此组中，如果将开挖土体从此组中移除，则不会被识别为开挖土体。
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="F:OldW.Excavation.Soil_Model._isUnGrouped">
+            <summary> 当前土体模型是否处于解组状态 </summary>
+        </member>
         <member name="M:OldW.Excavation.Soil_Model.RemoveSoil(Autodesk.Revit.DB.Transaction,OldW.Excavation.Soil_Excav)">
             <summary>
             从当前的开挖状态中，移除指定的一块土，用来模拟土体的开挖
             </summary>
-            <param name="soilToRemove"></param>
+            <param name="tranDoc"></param>
+            <param name="soilToRemove"> 此开挖土体应该与模型土体位于同一个 Group 内，
+            但是如果不在同一个组内，本方法也会将其转移到同一个组内。 </param>
             <remarks></remarks>
         </member>
         <member name="M:OldW.Excavation.Soil_Model.RemoveSoils(Autodesk.Revit.DB.Transaction,System.Collections.Generic.List{OldW.Excavation.Soil_Excav})">
             <summary>
-            从当前的开挖状态中，移除指定的一块土，用来模拟土体的开挖
+            从当前的开挖状态中，移除指定的开挖土体集合，用来模拟土体的开挖
             </summary>
-            <param name="soilsToRemove"></param>
+            <param name="tranDoc"></param>
+            <param name="soilsToRemove"> 集合中的开挖土体应该与模型土体位于同一个 Group 内，
+            但是如果不在同一个组内，本方法也会将其转移到同一个组内。</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldW.Excavation.Soil_Model.RemoveSoils(Autodesk.Revit.DB.Transaction)">
+            <summary>
+            设置模型土体所在的 group 中所有的开挖土体集合与此模型土体的剪切关系
+            </summary>
+            <param name="tranDoc"></param>
             <remarks></remarks>
         </member>
         <member name="M:OldW.Excavation.Soil_Model.FillSoil(OldW.Excavation.Soil_Excav)">
@@ -2223,15 +2300,6 @@
             从当前的开挖状态中，添加进指定的一块土，用来模拟土方的回填，或者反向回滚开挖状态
             </summary>
             <param name="SoilToRemove"></param>
-            <remarks></remarks>
-        </member>
-        <member name="P:OldW.Excavation.Soil_Model.Group">
-            <summary>
-            此模型土体所位于的组。
-            注意：所有的土体开挖模型都会位于此组中，如果将开挖土体从此组中移除，则有会被识别为开挖土体。
-            </summary>
-            <Value></Value>
-            <returns></returns>
             <remarks></remarks>
         </member>
         <member name="M:OldW.Excavation.Soil_Model.#ctor(OldW.Excavation.ExcavationDoc,Autodesk.Revit.DB.FamilyInstance)">
@@ -2261,88 +2329,102 @@
             <returns></returns>
             <remarks></remarks>
         </member>
+        <member name="M:OldW.Excavation.Soil_Model.UnGroup(Autodesk.Revit.DB.Transaction)">
+            <summary>
+            将模型土体所在的 group 进行解组操作，并返回其中的开挖土体。
+            注意在解组后务必还要通过 ReGroup 方法进行重组。
+            </summary>
+            <param name="tranDoc"></param>
+            <returns> 此组合中所有的开挖土体单元 </returns>
+        </member>
+        <member name="M:OldW.Excavation.Soil_Model.ReGroup(Autodesk.Revit.DB.Transaction,System.Collections.Generic.ICollection{Autodesk.Revit.DB.ElementId})">
+            <summary>
+            将通过 UnGroup 方法进行解组后的 group 重新组合起来
+            </summary>
+            <param name="tranDoc"></param>
+            <param name="excavSoils"> 开挖土体单元的集合，集合中也可以包含模型土体单元。</param>
+        </member>
+        <member name="M:OldW.Excavation.Soil_Model.ContainsExcavSoil(Autodesk.Revit.DB.ElementId)">
+            <summary>
+            模型土体所在的 Group 中是否包含指定的单元（除了模型土体单元本身）
+            </summary>
+            <param name="soilId"> 要搜索的开挖土体的 Id 值（可以包含模型土体，但是对应的值会返回 false）</param>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.Excavation.Soil_Model.ContainsExcavSoils(System.Collections.Generic.ICollection{Autodesk.Revit.DB.ElementId})">
+            <summary>
+            模型土体所在的 Group 中是否包含指定的单元（除了模型土体单元本身）
+            </summary>
+            <param name="soilIds">要搜索的开挖土体的 Id 值（可以包含模型土体，但是对应的值会返回 false）</param>
+            <returns> 与 soilIds 集合相对应，表示每一个开挖土体是否包含在集合中。 </returns>
+        </member>
+        <member name="M:OldW.Excavation.Soil_Model.GetExcavSoilsInGroup">
+            <summary> 获取模型土体所在的 group 中的其他所有的（开挖土体）单元 </summary>
+            <returns></returns>
+        </member>
         <member name="T:OldWApplication">
             <summary>
             OldW程序中的应用程序级的操作。通常用来存储或者处理Document或者Element之上的对象。比如程序中所有打开的OldWDocument对象。
             </summary>
             <remarks></remarks>
         </member>
-        <member name="F:OldWApplication.F_Application">
-            <summary>
-            当前正在运行的Revit的Application程序对象
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="P:OldWApplication.Application">
-            <summary>
-            当前正在运行的Revit的Application程序对象
-            </summary>
-            <Value></Value>
-            <returns></returns>
+        <member name="P:OldWApplication.UIApplication">
+            <summary> 当前正在运行的Revit的Application程序对象 </summary>
             <remarks>在每一次通过IExternalCommand接口执行的外部命令中，都可以从中提取出一个Application对象，
             从变量上来说，每次的这个Application之间都是 not equal的，但是，这些Application对象都是代表Revit当前正在运行的应用程序，即其本质上是相同的。</remarks>
         </member>
-        <member name="F:OldWApplication.F_OpenedDocuments">
+        <member name="P:OldWApplication.Application">
+            <summary> 当前正在运行的Revit的Application程序对象 </summary>
+            <remarks>在每一次通过IExternalCommand接口执行的外部命令中，都可以从中提取出一个Application对象，
+            从变量上来说，每次的这个Application之间都是 not equal的，但是，这些Application对象都是代表Revit当前正在运行的应用程序，即其本质上是相同的。</remarks>
+        </member>
+        <member name="F:OldWApplication._openedDocuments">
             <summary>
             整个系统中，所有打开的 OldWDocument 文档
             </summary>
             <remarks></remarks>
         </member>
         <member name="P:OldWApplication.OpenedDocuments">
-            <summary>
-            整个系统中，所有打开的 OldWDocument 文档
-            </summary>
+            <summary> 整个系统中，所有打开的 OldWDocument 文档 </summary>
             <remarks></remarks>
         </member>
-        <member name="F:OldWApplication.LoadedApplication">
-            <summary>
-            程序中已经加载进来的唯一的OldWApplication实例
-            </summary>
-            <remarks></remarks>
+        <member name="F:OldWApplication._uniqueApplication">
+            <summary> 程序中已经加载进来的唯一的OldWApplication实例 </summary>
         </member>
-        <member name="F:OldWApplication.IsLoaded">
-            <summary>
-            程序中是否已经有加载过OldWApplication对象。
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldWApplication.Create(Autodesk.Revit.ApplicationServices.Application)">
+        <member name="M:OldWApplication.GetUniqueApplication(Autodesk.Revit.UI.UIApplication)">
             <summary>
             OldWApplication类在整个程序中只有一个实例，为了保证这一点，会在Create方法中进行判断，
             看在程序中是否已经存在对应的OldWApplication实例，如果有，则直接返回，如果没有，则创建一个新的。
             </summary>
-            <param name="App"></param>
+            <param name="uiApp"></param>
             <returns>返回程序中唯一的那一个OldWApplication对象，如果不能正常返回，则抛出异常。</returns>
-            <remarks>由于OldWApplication中，对Revit的Application对象进行了很多事件处理，
-            所以，如果程序中有n个OldWApplication实例，那么，每一次触发Revit的Application中的事件，
-            在OldWApplication中，每一个实例都会对此事件进行一次操作，这会极大地造成程序的混乱。</remarks>
+            <remarks>
+            1.   由于OldWApplication中，对Revit的Application对象进行了很多事件处理，
+                 所以，如果程序中有n个OldWApplication实例，那么，每一次触发Revit的Application中的事件，
+                 在OldWApplication中，每一个实例都会对此事件进行一次操作，这会极大地造成程序的混乱。
+            2..  即使同时开启多个Revit进程，每个进程中的内存信息肯定是相互独立的，所以不用担心
+                 出现两个Revit进程对应同一个 OldWApplication 对象的情况。</remarks>
         </member>
-        <member name="M:OldWApplication.#ctor(Autodesk.Revit.ApplicationServices.Application)">
-            <summary>
-            为了确保程序中只有唯一的OldWApplication实例，应该将其New方法设置为Private，然后将Create设置为Shared。
-            </summary>
-            <param name="App"></param>
+        <member name="M:OldWApplication.#ctor(Autodesk.Revit.UI.UIApplication)">
+            <summary> 构造函数。 为了确保程序中只有唯一的OldWApplication实例，应该将其New方法设置为Private，然后将Create设置为Shared。 </summary>
+            <param name="uiApp"></param>
             <remarks></remarks>
         </member>
-        <member name="M:OldWApplication.SearchOldWDocument(Autodesk.Revit.DB.Document,System.Int32@)">
+        <member name="M:OldWApplication.SearchOrCreateOldWDocument(Autodesk.Revit.DB.Document)">
+            <summary> 在OldWApplication.OpenedDocuments 集合中，搜索是否有与指定的Document相对应的OldWDocument对象 </summary>
+            <returns>有相对应的对象，则返回之，否则则抛出异常。</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:OldWApplication.MatchOldWDocument(Autodesk.Revit.DB.Document,System.Int32@)">
             <summary> 在整个系统的集合中，搜索是否有与指定的Document相对应的OldWDocument对象，如果没有，则返回Nothing。 </summary>
-            <param name="Doc"></param>
-            <param name="ClosingDocumentIndex">即将删除的Document文档中程序的 OpenedDocuments 集合中的下标位置，如果此Document文档不在OpenedDocuments集合中，则其值为-1。</param>
+            <param name="doc"></param>
+            <param name="matchedOldDocumentIndex"> OpenedDocuments 集合中匹配的 OldWDocument 的下标位置，
+            如果此Document文档不在OpenedDocuments集合中，则其值为-1。</param>
             <returns>有相对应的对象，则返回之，否则返回Nothing。</returns>
             <remarks></remarks>
         </member>
-        <member name="F:OldWApplication.DocumentIdTobeClosed">
-            <summary>
-            在 Application.DocumentClosing 事件中，即将要关闭的那个Document的Id值。
-            对于同一个Revit文档，在其每次触发 Application.DocumentClosing事件时，其对应的DocumentId值都是不一样的。
-            这个DocumentId值只是为了与对应的Application.DocumentClosed事件中的DocumentId值进行匹配。
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="F:OldWApplication.DocumentIndexTobeClosed">
-            <summary>
-            即将删除的Document文档中程序的 OpenedDocuments 集合中的下标位置，如果此Document文档不在OpenedDocuments集合中，则其值为-1。
-            </summary>
+        <member name="M:OldWApplication.ValidateOpenedOldWDocuments">
+            <summary> 对 _openedDocuments 中的元素进行验证，以剔除其中因为被关闭或者其他原因而成为非 IsValidObject 的文档。 </summary>
         </member>
         <member name="T:OldWDocument">
             <summary>
@@ -2353,7 +2435,7 @@
             此类中没有具体的操作方法，要进行具体的操作，请创建对应的的派生类，比如ExcavationDoc用来进行与基坑开挖相关的模拟。
             </summary>
         </member>
-        <member name="F:OldWDocument.Doc">
+        <member name="F:OldWDocument._doc">
             <summary> 每一个OldWDocument对象都绑定了一个Revit的Document对象。 </summary>
         </member>
         <member name="P:OldWDocument.Document">
@@ -2369,17 +2451,9 @@
             <remarks></remarks>
         </member>
         <member name="M:OldWDocument.#ctor(Autodesk.Revit.DB.Document)">
-            <summary>
-            构造函数
-            </summary>
-            <param name="Doc"></param>
-            <remarks></remarks>
-        </member>
-        <member name="M:OldWDocument.SearchOrCreate(OldWApplication,Autodesk.Revit.DB.Document)">
-            <summary> 在OldWApplication.OpenedDocuments 集合中，搜索是否有与指定的Document相对应的OldWDocument对象 </summary>
-            <param name="OldWApp">整个系统的OldWApplication对象，可以通过OldWApplication.Create方法获得。</param>
-            <returns>有相对应的对象，则返回之，否则则抛出异常。</returns>
-            <remarks></remarks>
+            <summary> 直接构造 OldWDocument 对象，但是不保证此文档的有效性，即是否有对应的项目参数。
+            推荐使用  OldWApplication.SearchOrCreateOldWDocument(doc) 来获取有效的 OldWDocument 对象 </summary>
+            <param name="doc"></param>
         </member>
         <member name="M:OldWDocument.Create(OldWApplication,Autodesk.Revit.DB.Document)">
             <summary> 不在OldWApplication.OpenedDocuments 集合中进行搜索，而直接创建一个OldWDocument对象，并添加到OpenedDocuments集合中。 </summary>
@@ -2390,12 +2464,11 @@
             <returns>有相对应的对象，则返回之，否则则抛出异常。</returns>
             <remarks></remarks>
         </member>
-        <member name="M:OldWDocument.CreateNew(OldWApplication,Autodesk.Revit.DB.Document)">
+        <member name="M:OldWDocument.CreateNewAndBindParameter(Autodesk.Revit.DB.Document)">
             <summary>
-            将一个非OldWDocument类型的文档创建成为一个OldWDocument对象，即在其项目信息中添加参数OldW_Project
+            将一个非OldWDocument类型的文档创建成为一个OldWDocument对象，并在其项目信息中添加参数OldW_Project
             </summary>
-            <param name="OldWApp"></param>
-            <param name="Doc">注意默认OldWDocument.IsOldWDocument(Doc)为false，如果此Doc的项目信息中有参数OldW_Project，则重新进行绑定可能会出错。</param>
+            <param name="doc">注意默认OldWDocument.IsOldWDocument(Doc)为false，如果此Doc的项目信息中有参数OldW_Project，则重新进行绑定可能会出错。</param>
             <returns></returns>
             <remarks></remarks>
         </member>
@@ -2403,7 +2476,7 @@
             <summary>
             判断一个Document文档是否是一个OldW的项目文档，其判断的依据是：：此Document对象所对应的项目，在其“管理-项目信息”中，有一个参数：OldW_Project。
             </summary>
-            <param name="Doc">要进行判断的Revit的Document文档</param>
+            <param name="doc">要进行判断的Revit的Document文档</param>
             <returns></returns>
         </member>
         <member name="M:OldWDocument.SetProjectInfo(OldWProjectInfo)">

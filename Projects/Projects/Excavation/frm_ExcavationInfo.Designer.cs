@@ -109,7 +109,6 @@ public
             this.BtnClearEmpty.Text = "清理冗余";
             this.ToolTip1.SetToolTip(this.BtnClearEmpty, "清理Revit模型中，没有实例对象的开挖土体族。");
             this.BtnClearEmpty.UseVisualStyleBackColor = true;
-            this.BtnClearEmpty.Click += new System.EventHandler(this.BtnClearEmpty_Click);
             // 
             // CheckBox_MultiVisible
             // 
@@ -146,7 +145,6 @@ public
             this.buttonReCut.Text = "修复剪切";
             this.ToolTip1.SetToolTip(this.buttonReCut, "修改所有开挖土体对于基坑土体的剪切关系。");
             this.buttonReCut.UseVisualStyleBackColor = true;
-            this.buttonReCut.Click += new System.EventHandler(this.buttonReCut_Click);
             // 
             // frm_ExcavationInfo
             // 

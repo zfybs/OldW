@@ -49,8 +49,8 @@ namespace OldW.DynamicStages
         /// <returns></returns>
         public static ReviewDoc CreateFromActiveDocument(UIApplication uiApp, Document doc)
         {
-            OldWApplication WApp = OldWApplication.Create(uiApp.Application);
-            OldWDocument oldWDoc = OldWDocument.SearchOrCreate(WApp, doc);
+            OldWApplication WApp = OldWApplication.GetUniqueApplication(uiApp);
+            OldWDocument oldWDoc = WApp.SearchOrCreateOldWDocument(doc);//OldWDocument.SearchOrCreate(WApp, doc);
             ExcavationDoc exDoc = new ExcavationDoc(oldWDoc);
             //
             // 对开挖土体按时间进行开挖状态的分类

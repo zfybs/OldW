@@ -9,8 +9,9 @@ using System.Windows.Forms.DataVisualization.Charting;
 using Autodesk.Revit.DB;
 using OldW.DataManager;
 using OldW.Instrumentations;
-using stdOldW;
-using stdOldW.UserControls;
+using eZstd;
+using eZstd.Miscellaneous;
+using eZstd.UserControls;
 
 namespace OldW.DataManager
 {
@@ -21,7 +22,7 @@ namespace OldW.DataManager
             #region    ---   Fields
             private readonly Document doc;
 
-            private eZDataGridViewPaste dataGridViewPoint;
+            private eZDataGridView dataGridViewPoint;
 
             #endregion
 
@@ -40,7 +41,7 @@ namespace OldW.DataManager
             /// </summary>
             /// <param name="doc"></param>
             /// <param name="dataGridViewLine"></param>
-            public DgvPoint(Document doc, eZDataGridViewPaste dataGridViewPoint)
+            public DgvPoint(Document doc, eZDataGridView dataGridViewPoint)
             {
                 this.doc = doc;
                 this.dataGridViewPoint = dataGridViewPoint;

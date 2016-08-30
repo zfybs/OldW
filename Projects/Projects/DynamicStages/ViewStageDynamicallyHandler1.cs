@@ -8,8 +8,9 @@ using System.Timers;
 using System.Windows.Forms;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using stdOldW;
-using stdOldW.UserControls;
+using eZstd;
+using eZstd.Miscellaneous;
+using eZstd.UserControls;
 using Timer = System.Timers.Timer;
 using View = Autodesk.Revit.DB.View;
 
@@ -57,7 +58,7 @@ namespace OldW.DynamicStages
 
         /// <summary> 每一帧动画所对应的施工日期跨度 </summary>
         public double SpanValue { get; set; }
-        public TimeSpanUnit SpanUnit { get; set; }
+        public TimeSpan2.TimeSpanUnit SpanUnit { get; set; }
 
         /// <summary> 每一帧动画之间的时间间隔，单位为毫秒 </summary>
         private int _intervals;
@@ -231,7 +232,7 @@ namespace OldW.DynamicStages
         /// <param name="e"></param> 
         private void TimerOnTick(object sender, EventArgs eventArgs)
         {
-            var desiredTime = Utils.GetTimeFromTimeSpan(_currentTime, SpanValue, SpanUnit);
+            var desiredTime = TimeSpan2.GetTimeFromTimeSpan(_currentTime, SpanValue, SpanUnit);
             DateTime playTime;
             if (CheckProgress(desiredTime, out playTime))
             {

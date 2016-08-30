@@ -13,10 +13,11 @@ using System.Windows.Forms.DataVisualization.Charting;
 using Autodesk.Revit.DB;
 using OldW.GlobalSettings;
 using OldW.Instrumentations;
-using stdOldW;
-using stdOldW.DAL;
-using stdOldW.UserControls;
-using stdOldW.WinFormHelper;
+using eZstd;
+using eZstd.Data;
+using eZstd.Miscellaneous;
+using eZstd.UserControls;
+using eZstd.Windows;
 
 
 namespace OldW.DataManager
@@ -62,7 +63,8 @@ namespace OldW.DataManager
             _BindedExcelPoints = new BindingList<MonitorEntityExcel>();
             ConstructdataGridViewExcel();
 
-            //
+            // 显示表格的行号
+            dataGridViewExcel.ShowRowNumber = true;
 
             // BackgroundWorker 的设置
             _backgroundWorker = new BackgroundWorker();
@@ -87,7 +89,7 @@ namespace OldW.DataManager
             // 如果AutoGenerateColumns 为False，那么当设置DataSource 后，用户必须要手动为指定的属性值添加数据列。参考：第六篇2.1.6的AutoGenerateColumns：自动生成数据列。
             dataGridViewExcel.AutoGenerateColumns = false;
             dataGridViewExcel.DataSource = _BindedExcelPoints;
-
+            
 
             //-------- 将已有的数据源集合中的每一个元素的不同属性在不同的列中显示出来 -------
             //
@@ -134,8 +136,8 @@ namespace OldW.DataManager
             ColumnMappedItem.DataPropertyName = "MappedItem";
             ColumnMappedItem.HeaderText = "目标";
             //
-            ColumnMappedItem.DisplayMember = LstbxValue<Instrumentation>.DisplayMember;
-            ColumnMappedItem.ValueMember = LstbxValue<Instrumentation>.ValueMember;
+            ColumnMappedItem.DisplayMember = ListControlValue<Instrumentation>.DisplayMember;
+            ColumnMappedItem.ValueMember = ListControlValue<Instrumentation>.ValueMember;
             ColumnMappedItem.DataSource = _document.GetComboboxDatasource(_selectedInstrum.AllInstrumentations); ;
             ColumnMappedItem.Width = 250;
 
@@ -350,24 +352,31 @@ namespace OldW.DataManager
 
         }
 
+        /// <summary>
+        /// 点击表格中的任意单元格，包括表头或者列头
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DataGridViewExcelOnCellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-
-            string columnName = dataGridViewExcel.Columns[e.ColumnIndex].Name;
-            // 绘制指定监测点的曲线图
-            if (e.RowIndex >= 0 && columnName == "ColumnDrawData")
+            if (e.ColumnIndex >= 0)  // RowHeader 所对应的列号为 -1
             {
-                var rData = (MonitorEntityExcel)dataGridViewExcel.Rows[e.RowIndex].DataBoundItem;
+                string columnName = dataGridViewExcel.Columns[e.ColumnIndex].Name;
+                // 绘制指定监测点的曲线图
+                if (e.RowIndex >= 0 && columnName == "ColumnDrawData")
+                {
+                    var rData = (MonitorEntityExcel)dataGridViewExcel.Rows[e.RowIndex].DataBoundItem;
 
-                if (rData.StoredInField)
-                {
-                    DrawMonitorData(_excelConnection, rData.SheetName, rData.FieldName);
-                }
-                else
-                {
-                    // 说明不能绘图
-                    DataGridViewButtonCell btn = (DataGridViewButtonCell)dataGridViewExcel.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                    btn.UseColumnTextForButtonValue = false;
+                    if (rData.StoredInField)
+                    {
+                        DrawMonitorData(_excelConnection, rData.SheetName, rData.FieldName);
+                    }
+                    else
+                    {
+                        // 说明不能绘图
+                        DataGridViewButtonCell btn = (DataGridViewButtonCell)dataGridViewExcel.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                        btn.UseColumnTextForButtonValue = false;
+                    }
                 }
             }
         }
@@ -544,7 +553,8 @@ namespace OldW.DataManager
             {
                 e.Cancel = true;
                 // _tranImport.RollBack();
-                DebugUtils.ShowDebugCatch(ex, $"将Excel中的监测数据导入Revit中的测点单元出错，出错行：{row + 1} 。");
+                DebugUtils.ShowDebugCatch(ex, $"将Excel中的监测数据导入Revit中的测点单元出错，出错行：{row + 1} 。 \n\r " +
+                                              $"可能的原因是用来进行数据导入的Excel工作簿在其他应用中已经打开。");
             }
         }
 
@@ -603,5 +613,6 @@ namespace OldW.DataManager
             }
         }
         #endregion
+
     }
 }

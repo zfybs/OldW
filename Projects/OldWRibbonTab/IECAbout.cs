@@ -37,7 +37,7 @@ namespace OldW
 
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
-            string aboutString = "OldW 基坑施工工况与监测数据同步管理 \r\n" + "by 张威、曾凡云";
+            string aboutString = "OldW 基坑施工工况与监测信息同步管理 \r\n" + "by 张威、曾凡云";
             TaskDialog.Show("About", aboutString);
             return Result.Succeeded;
         }

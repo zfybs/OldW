@@ -35,11 +35,11 @@ namespace OldW.DynamicStages
             this.labelStartTime = new System.Windows.Forms.Label();
             this.labelEndTime = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.textBoxNumInterval = new stdOldW.UserControls.TextBoxNum();
+            this.textBoxNumInterval = new eZstd.UserControls.TextBoxNum();
             this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
             this.buttonPlay = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBoxNumSpan = new stdOldW.UserControls.TextBoxNum();
+            this.textBoxNumSpan = new eZstd.UserControls.TextBoxNum();
             this.comboBoxSpanUnit = new System.Windows.Forms.ComboBox();
             this.buttonPause = new System.Windows.Forms.Button();
             this.buttonStop = new System.Windows.Forms.Button();
@@ -100,7 +100,7 @@ namespace OldW.DynamicStages
             this.textBoxNumInterval.Name = "textBoxNumInterval";
             this.textBoxNumInterval.Size = new System.Drawing.Size(76, 21);
             this.textBoxNumInterval.TabIndex = 2;
-            this.textBoxNumInterval.ValueNumberChanged += new System.EventHandler<double>(this.TextBoxNumIntervalOnValueNumberChanged);
+            this.textBoxNumInterval.ValueNumberChanged += this.TextBoxNumIntervalOnValueNumberChanged;
             // 
             // hScrollBar1
             // 
@@ -138,11 +138,11 @@ namespace OldW.DynamicStages
             this.textBoxNumSpan.Name = "textBoxNumSpan";
             this.textBoxNumSpan.Size = new System.Drawing.Size(48, 21);
             this.textBoxNumSpan.TabIndex = 2;
-            this.textBoxNumSpan.ValueNumberChanged += new System.EventHandler<double>(this.textBoxNumSpan_ValueNumberChanged);
-            // 
-            // comboBoxSpanUnit
-            // 
-            this.comboBoxSpanUnit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.textBoxNumSpan.ValueNumberChanged += this.textBoxNumSpan_ValueNumberChanged;
+           // 
+           // comboBoxSpanUnit
+           // 
+           this.comboBoxSpanUnit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxSpanUnit.FormattingEnabled = true;
             this.comboBoxSpanUnit.Location = new System.Drawing.Point(123, 65);
             this.comboBoxSpanUnit.Name = "comboBoxSpanUnit";
@@ -269,11 +269,11 @@ namespace OldW.DynamicStages
         private System.Windows.Forms.Label labelStartTime;
         private System.Windows.Forms.Label labelEndTime;
         private System.Windows.Forms.Label label1;
-        private stdOldW.UserControls.TextBoxNum textBoxNumInterval;
+        private eZstd.UserControls.TextBoxNum textBoxNumInterval;
         private System.Windows.Forms.HScrollBar hScrollBar1;
         private System.Windows.Forms.Button buttonPlay;
         private System.Windows.Forms.Label label2;
-        private stdOldW.UserControls.TextBoxNum textBoxNumSpan;
+        private eZstd.UserControls.TextBoxNum textBoxNumSpan;
         private System.Windows.Forms.ComboBox comboBoxSpanUnit;
         private System.Windows.Forms.Button buttonPause;
         private System.Windows.Forms.Button buttonStop;

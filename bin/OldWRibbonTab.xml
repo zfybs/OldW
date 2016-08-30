@@ -27,6 +27,18 @@
         <member name="M:OldW.AppAddRibbonTab.OnStartup(Autodesk.Revit.UI.UIControlledApplication)">
             <summary> Ribbon界面设计 </summary>
         </member>
+        <member name="M:OldW.AppAddRibbonTab.AddPushButtonExcavation(Autodesk.Revit.UI.RibbonPanel)">
+            <summary> 添加“开挖”的按钮 </summary>
+        </member>
+        <member name="M:OldW.AppAddRibbonTab.AddPushButtonExcavationInfo(Autodesk.Revit.UI.RibbonPanel)">
+            <summary> 添加“开挖信息”的按钮 </summary>
+        </member>
+        <member name="M:OldW.AppAddRibbonTab.AddPushButtonDataExcavSoilReCut">
+            <summary> 添加“修复剪切”的按钮 </summary>
+        </member>
+        <member name="M:OldW.AppAddRibbonTab.AddPushButtonDataDeleteRedundantExcavations">
+            <summary> 添加“清理冗余”的按钮 </summary>
+        </member>
         <member name="M:OldW.AppAddRibbonTab.AddPushButtonFilterInstrums(Autodesk.Revit.UI.RibbonPanel)">
             <summary> 添加“监测数据管理”的按钮 </summary>
         </member>
@@ -42,11 +54,8 @@
         <member name="M:OldW.AppAddRibbonTab.AddPushButtonDataExport(Autodesk.Revit.UI.RibbonPanel)">
             <summary> 添加“数据导出”的按钮 </summary>
         </member>
-        <member name="M:OldW.AppAddRibbonTab.AddPushButtonExcavation(Autodesk.Revit.UI.RibbonPanel)">
-            <summary> 添加“开挖”的按钮 </summary>
-        </member>
-        <member name="M:OldW.AppAddRibbonTab.AddPushButtonExcavationInfo(Autodesk.Revit.UI.RibbonPanel)">
-            <summary> 添加“开挖信息”的按钮 </summary>
+        <member name="M:OldW.AppAddRibbonTab.AddPushButtonShowOldWModel(Autodesk.Revit.UI.RibbonPanel)">
+            <summary> 添加“手动查看开挖工况”的按钮 </summary>
         </member>
         <member name="M:OldW.AppAddRibbonTab.AddTextBoxCurrentDate">
             <summary> 添加“当前时间”的文本框 </summary>

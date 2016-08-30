@@ -13,8 +13,8 @@ namespace OldW.Commands
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             UIApplication uiApp = commandData.Application;
-            OldWApplication WApp = OldWApplication.Create(uiApp.Application);
-            OldWDocument WDoc = OldWDocument.SearchOrCreate(WApp, uiApp.ActiveUIDocument.Document);
+            OldWApplication WApp = OldWApplication.GetUniqueApplication(uiApp);
+            OldWDocument WDoc = WApp.SearchOrCreateOldWDocument(uiApp.ActiveUIDocument.Document);//OldWDocument.SearchOrCreate(WApp, uiApp.ActiveUIDocument.Document);
 
             Document doc = uiApp.ActiveUIDocument.Document;
             //

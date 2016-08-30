@@ -63,6 +63,12 @@
             </summary>
             <remarks></remarks>
         </member>
+        <member name="F:OldW.GlobalSettings.Constants.SoilGroupName">
+            <summary>
+            基坑中的模型土体与开挖土体所在的 group 的名称
+            </summary>
+            <remarks></remarks>
+        </member>
         <member name="F:OldW.GlobalSettings.Constants.FamilyName_Soil">
             <summary>
             基坑中的土体族文件，此土体族在整个模型中只有一个。

@@ -9,6 +9,7 @@ using Autodesk.Revit.DB.Structure;
 using Autodesk.Revit.UI;
 using OldW.GlobalSettings;
 using rvtTools;
+using eZstd;
 using Application = Autodesk.Revit.ApplicationServices.Application;
 using Document = Autodesk.Revit.DB.Document;
 using View = Autodesk.Revit.DB.View;
@@ -146,6 +147,10 @@ namespace OldW.Excavation
                     //
                     SM = Soil_Model.Create(this, fi);
 
+                    // 将此模型土体所在的组中的其他开挖土体来剪切此模型土体
+                    SM.RemoveSoils(tranDoc);
+
+                    //
                     tranDoc.Commit();
                 }
                 catch (Exception ex)
@@ -155,6 +160,7 @@ namespace OldW.Excavation
                     throw new InvalidOperationException($"事务“{tranDoc.GetName()}”出错", ex);
                 }
             }
+
             return SM;
         }
 
@@ -607,12 +613,10 @@ namespace OldW.Excavation
             return SM;
         }
 
-        /// <summary>
-        /// 搜索文档中与模型土体位于同一个Group中的所有的开挖土体。
-        /// </summary>
+        /// <summary> 搜索文档中与模型土体位于同一个Group中的所有的开挖土体。 </summary>
         /// <param name="soilM">文档中的模型土体单元，可以通过 ExcavationDoc.GetSoilModel 函数获得</param>
         /// <returns></returns>
-        /// <remarks></remarks>
+        /// <remarks> 搜索的基本准则是开挖土体与模型土体位于同一个组中。但是开挖土体并不一定要剪切模型土体。 </remarks>
         public List<Soil_Excav> FindExcavSoils(Soil_Model soilM)
         {
             List<Soil_Excav> SoilEx = new List<Soil_Excav>();
@@ -620,9 +624,8 @@ namespace OldW.Excavation
 
             //
             // 首先在模型Group中进行搜索
-            Group gp = soilM.Group;
             FamilyInstance sm = soilM.Soil;
-            List<ElementId> elemIds = gp.GetMemberIds() as List<ElementId>;
+            List<ElementId> elemIds = soilM.Group.GetMemberIds() as List<ElementId>;
             if (elemIds != null && elemIds.Count > 0)
             {
                 FilteredElementCollector col = new FilteredElementCollector(Document, elemIds);
@@ -717,43 +720,35 @@ namespace OldW.Excavation
         /// </summary>
         /// <returns></returns>
         /// <remarks></remarks>
-        public bool DeleteEmptySoilFamily()
+        public void DeleteEmptySoilFamily(Transaction tranDoc)
         {
-            bool blnSuc = false;
-            using (Transaction tran = new Transaction(Document, "删除文档中没有实例对象的土体族。"))
+            try
             {
-                try
+                tranDoc.SetName("删除没有实例的土体族及对应的族类型");
+
+                List<Family> fams = Document.FindFamilies(BuiltInCategory.OST_Site);
+                List<ElementId> famsToDelete = new List<ElementId>();
+                string deletedFamilyName = "";
+                foreach (Family f in fams)
                 {
-                    List<Family> Fams = Document.FindFamilies(BuiltInCategory.OST_Site);
-                    List<ElementId> FamsToDelete = new List<ElementId>();
-                    string deletedFamilyName = "";
-                    foreach (Family f in Fams)
+                    if (!f.Instances(BuiltInCategory.OST_Site).Any())
                     {
-                        if (f.Instances(BuiltInCategory.OST_Site).Count() == 0)
-                        {
-                            FamsToDelete.Add(f.Id);
-                            deletedFamilyName = deletedFamilyName + f.Name + "\r\n";
-                        }
+                        famsToDelete.Add(f.Id);
+                        deletedFamilyName = deletedFamilyName + f.Name + "\r\n";
                     }
-                    tran.Start();
-                    Document.Delete(FamsToDelete);
-                    tran.Commit();
-                    MessageBox.Show(@"删除空的土体族对象成功。删除掉的族对象有：" + "\r\n （" + deletedFamilyName + @"）", @"成功",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.None);
-                    blnSuc = true;
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("删除空的土体族对象失败" + "\r\n" + ex.Message, "Error", MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
-                    tran.RollBack();
-                    blnSuc = false;
-                }
+
+                Document.Delete(famsToDelete);
+
+                MessageBox.Show(@"删除空的土体族对象成功。删除掉的族对象有：" + "\r\n （" + deletedFamilyName + @"）", @"成功",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
             }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("删除空的土体族对象失败", ex);
 
-
-            return blnSuc;
+            }
         }
     }
 }

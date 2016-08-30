@@ -1,5 +1,6 @@
 using System;
 using System.Windows.Forms;
+using eZstd.UserControls;
 
 namespace OldW.DataManager
 {
@@ -32,7 +33,7 @@ namespace OldW.DataManager
             this.components = new System.ComponentModel.Container();
             this.Label2 = new System.Windows.Forms.Label();
             this.ButtonImport = new System.Windows.Forms.Button();
-            this.dataGridViewExcel = new System.Windows.Forms.DataGridView();
+            this.dataGridViewExcel = new eZstd.UserControls.eZDataGridView();
             this.buttonChooseFile = new System.Windows.Forms.Button();
             this.textBoxFilePath = new System.Windows.Forms.TextBox();
             this.buttonMapping = new System.Windows.Forms.Button();
@@ -72,10 +73,14 @@ namespace OldW.DataManager
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridViewExcel.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewExcel.KeyDelete = false;
             this.dataGridViewExcel.Location = new System.Drawing.Point(12, 74);
             this.dataGridViewExcel.Name = "dataGridViewExcel";
             this.dataGridViewExcel.RowTemplate.Height = 23;
+            this.dataGridViewExcel.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewExcel.ShowRowNumber = false;
             this.dataGridViewExcel.Size = new System.Drawing.Size(625, 402);
+            this.dataGridViewExcel.SupportPaste = false;
             this.dataGridViewExcel.TabIndex = 5;
             // 
             // buttonChooseFile
@@ -121,9 +126,9 @@ namespace OldW.DataManager
             // 
             this.buttonCheckMultiple.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonCheckMultiple.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.buttonCheckMultiple.Location = new System.Drawing.Point(57, 487);
+            this.buttonCheckMultiple.Location = new System.Drawing.Point(36, 487);
             this.buttonCheckMultiple.Name = "buttonCheckMultiple";
-            this.buttonCheckMultiple.Size = new System.Drawing.Size(20, 23);
+            this.buttonCheckMultiple.Size = new System.Drawing.Size(35, 23);
             this.buttonCheckMultiple.TabIndex = 3;
             this.buttonCheckMultiple.Text = "√";
             this.toolTip1.SetToolTip(this.buttonCheckMultiple, "勾选所有表格中选中的数据行");
@@ -137,7 +142,7 @@ namespace OldW.DataManager
             this.buttonUnCheckMultiple.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.buttonUnCheckMultiple.Location = new System.Drawing.Point(77, 487);
             this.buttonUnCheckMultiple.Name = "buttonUnCheckMultiple";
-            this.buttonUnCheckMultiple.Size = new System.Drawing.Size(20, 23);
+            this.buttonUnCheckMultiple.Size = new System.Drawing.Size(35, 23);
             this.buttonUnCheckMultiple.TabIndex = 3;
             this.buttonUnCheckMultiple.Text = "×";
             this.toolTip1.SetToolTip(this.buttonUnCheckMultiple, "取消勾选所有表格中选中的数据行");
@@ -198,7 +203,7 @@ namespace OldW.DataManager
 
         internal Label Label2;
         internal Button ButtonImport;
-        private DataGridView dataGridViewExcel;
+        private eZDataGridView dataGridViewExcel;
         internal Button buttonChooseFile;
         private TextBox textBoxFilePath;
         internal Button buttonMapping;

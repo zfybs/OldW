@@ -9,8 +9,9 @@ using System.Windows.Forms;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Events;
-using stdOldW;
-using stdOldW.UserControls;
+using eZstd;
+using eZstd.Miscellaneous;
+using eZstd.UserControls;
 using Timer = System.Timers.Timer;
 using View = Autodesk.Revit.DB.View;
 
@@ -18,7 +19,8 @@ namespace OldW.DynamicStages
 {
     internal class ViewStageDynamicallyHandler : IDisposable, IExternalEventHandler
     {
-        #region ---   Properties
+        #region ---   Events
+
         /// <summary> 当前播放和进度 CurrentTime 属性改变时触发 </summary>
         public event EventHandler<DateTime> CurrentTimeChanged = delegate (object sender, DateTime time) { };
 
@@ -64,7 +66,7 @@ namespace OldW.DynamicStages
 
         /// <summary> 每一帧动画所对应的施工日期跨度 </summary>
         public double SpanValue { get; set; }
-        public TimeSpanUnit SpanUnit { get; set; }
+        public TimeSpan2.TimeSpanUnit SpanUnit { get; set; }
 
         /// <summary> 每一帧动画之间的时间间隔，单位为毫秒 </summary>
         private int _intervals;
@@ -139,7 +141,7 @@ namespace OldW.DynamicStages
             UIDocument uiDoc = uiApp.ActiveUIDocument;
             Document doc = uiDoc.Document;
             //
-            Intervals = 500;
+            PlayOptionsInitialize();
             // 
             _reviewDoc = ReviewDoc.CreateFromActiveDocument(uiApp, doc);
             // 事件绑定
@@ -147,6 +149,13 @@ namespace OldW.DynamicStages
             //' ------ 将所有的初始化工作完成后，执行外部事件的绑定 ----------------
             this._exEvent = ExternalEvent.Create(this);
         }
+
+        /// <summary> 对播放器的播放属性进行初始化 </summary>
+        private void PlayOptionsInitialize()
+        {
+            Intervals = 500;
+        }
+
 
         public string GetName()
         { return @"基坑群施工工况的动画展示"; }
@@ -227,7 +236,7 @@ namespace OldW.DynamicStages
         {
             _scollTime = currentTime;
             //
-            _playOption = PlayOption.ShowOneTime;
+            _playOption = PlayOption.PlayAndStop;
             _exEvent.Raise();
         }
 
@@ -257,7 +266,7 @@ namespace OldW.DynamicStages
                         CurrentTime = StartTime;
                         break;
                     }
-                case PlayOption.ShowOneTime:
+                case PlayOption.PlayAndStop:
                     {
                         _view = _uiApp.ActiveUIDocument.ActiveGraphicalView;
                         _uiApp.Idling -= UiAppOnIdling;
@@ -290,7 +299,7 @@ namespace OldW.DynamicStages
             //
             if (CheckIntervals())
             {
-                var desiredTime = Utils.GetTimeFromTimeSpan(_currentTime, SpanValue, SpanUnit);
+                var desiredTime = TimeSpan2.GetTimeFromTimeSpan(_currentTime, SpanValue, SpanUnit);
                 DateTime playTime;
                 if (CheckProgress(desiredTime, out playTime))
                 {
@@ -426,7 +435,7 @@ namespace OldW.DynamicStages
         Play,
         Pause,
         Stop,
-        /// <summary> 在指定的时间下显示一次，并不再关联Idling事件 </summary>
-        ShowOneTime,
+        /// <summary> 在指定的时间下显示一次，然后停止播放 </summary>
+        PlayAndStop,
     }
 }

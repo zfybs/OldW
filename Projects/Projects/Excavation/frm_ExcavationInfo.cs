@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using stdOldW;
+using eZstd;
 using Control = System.Windows.Forms.Control;
 using View = Autodesk.Revit.DB.View;
 
@@ -87,20 +87,11 @@ namespace OldW.Excavation
             /// <summary> 设置选定图元在当前视图中的可见性 </summary>
             SetVisibility,
 
-            /// <summary> 清理模型中没有实例图元的开挖土体族 </summary>
-            ClearEmpty,
-
             /// <summary>
             /// 设置列表中选择的每一行所对应的开挖土体的可见性。
             /// </summary>
             SetMultiVisibility,
 
-            /// <summary>
-            /// 修改所有开挖土体对于基坑土体的剪切关系。
-            /// 在某些情况下（比如用新的模型土体替换了旧的模型土体时），
-            /// 开挖土体可能会失去对于模型土体的剪切关系，以致于开挖土体虽然位于模型土体的组中，但是模型土体并没有被切割。
-            /// </summary>
-            ReCut,
         }
 
 
@@ -407,15 +398,6 @@ namespace OldW.Excavation
             }
         }
 
-        /// <summary>
-        /// 清理在Revit中没有实例对象的开挖土体族
-        /// </summary>
-        public void BtnClearEmpty_Click(object sender, EventArgs e)
-        {
-            this.RequestPara = new RequestParameter(Request.ClearEmpty, e, sender);
-            this.ExEvent.Raise();
-            //Me.DozeOff()
-        }
 
         public void CheckBox_MultiVisible_CheckedChanged(object sender, EventArgs e)
         {
@@ -427,12 +409,6 @@ namespace OldW.Excavation
             }
         }
 
-        private void buttonReCut_Click(object sender, EventArgs e)
-        {
-            this.RequestPara = new RequestParameter(Request.ReCut, e, sender);
-            this.ExEvent.Raise();
-            //Me.DozeOff()
-        }
         #endregion
 
         #region    ---   执行操作 IExternalEventHandler.Execute
@@ -528,41 +504,6 @@ namespace OldW.Excavation
                             }
                             tran.Commit();
                         }
-
-                        break;
-
-                    // -------------------------------------------------------------------------------------------------------------
-                    case Request.ClearEmpty:
-                        ExcavDoc.DeleteEmptySoilFamily();
-                        break;
-
-                    // ------------------------------------------------------------------------------------------------------------
-                    case Request.ReCut:
-
-                        if (DataGridView1.Rows.Count == 0) break;
-
-                        using (Transaction tran = new Transaction(Document, "重新设置土体剪切"))
-                        {
-                            try
-                            {
-                                tran.Start();
-                                List<Soil_Excav> soilsToRemove = (
-                                    from DataGridViewRow r in this.DataGridView1.Rows
-                                    select ((ExcavSoilEntity)r.DataBoundItem).Soil).ToList();
-
-
-                                SoilModel.RemoveSoils(tran, soilsToRemove);
-                                tran.Commit();
-                            }
-                            catch (Exception ex)
-                            {
-                                tran.RollBack();
-                                DebugUtils.ShowDebugCatch(ex, "重新设置土体剪切时出错");
-
-                            }
-
-                        }
-
 
                         break;
                 }

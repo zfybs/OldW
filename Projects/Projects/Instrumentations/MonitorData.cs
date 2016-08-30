@@ -6,8 +6,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using OldW.GlobalSettings;
-using stdOldW;
-using stdOldW.DAL;
+using eZstd;
+using eZstd.Data;
 
 namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关的一些接口、枚举等的定义
 {
@@ -45,10 +45,25 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
         /// <returns> 实体类集合，用来作为 Instrum_Point.SetMonitorData 的输入参数 </returns>
         public static List<MonitorData_Point> FromDataTable(DataTable table, int indexDate, int indexValue)
         {
-            return (from DataRow row in table.Rows
-                    select Convert.IsDBNull(row[indexValue])
-                    ? new MonitorData_Point(DateTime.Parse(row[indexDate].ToString()), null)
-                    : new MonitorData_Point(DateTime.Parse(row[indexDate].ToString()), Convert.ToSingle(row[indexValue]))).ToList();
+            List<MonitorData_Point> values = new List<MonitorData_Point>();
+            foreach (DataRow row in table.Rows)
+            {
+                DateTime dt = DateTime.Parse(row[indexDate].ToString());
+                object cellValue = row[indexValue];
+                // 对于 DataTable 中的单元格而言，其值 cellValue 不会为 null，如果为空，则其值为 DBNull，可以通过Convert.IsDBNull(cellValue) 来进行判断
+                // DBNull.ToString()返回一个长度为空的字符串，在正常情况下，Excel中也有可能会出现某个单元格中的值就是多个空白字符，所以这里通过 IsNullOrWhiteSpace 来对它们进行统一的判断。
+                MonitorData_Point v = string.IsNullOrWhiteSpace(cellValue.ToString())
+                    ? new MonitorData_Point(dt, null)
+                    : new MonitorData_Point(dt, Convert.ToSingle(cellValue));
+                //
+                values.Add(v);
+            }
+
+            //    return (from DataRow row in table.Rows
+            //            select string.IsNullOrWhiteSpace(cellValue.ToString())
+            //            ? new MonitorData_Point(DateTime.Parse(row[indexDate].ToString()), null)
+            //            : new MonitorData_Point(DateTime.Parse(row[indexDate].ToString()), Convert.ToSingle(row[indexValue]))).ToList();
+            return values;
         }
     }
 
@@ -112,13 +127,14 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
         /// <returns>对于测斜管这类线测点，其每一个字段都是有严格的数值意义的，即代表了此子节点距离管顶的深度。</returns>
         public float[] GetDigitalNodes()
         {
-
             if (NodesDigital)
             {
                 return _nodes.Select(Convert.ToSingle).ToArray();
             }
-
-            throw new InvalidCastException("此类监测数据的节点并不是数值类型，无法转换为数值。");
+            else
+            {
+                throw new InvalidCastException("此类监测数据的节点并不是数值类型，无法转换为数值。");
+            }
         }
 
         /// <summary> 获取线测点的子节点的名称 </summary>
@@ -177,7 +193,11 @@ namespace OldW.Instrumentations // 与 OldW.Instrumentation 命名空间相关�
                     }
                 }
                 // 添加一条记录
-                monitoredData.Add(DateTime.Parse(row[0].ToString()), values);
+                string dt = row[0].ToString();
+                if (!string.IsNullOrEmpty(dt))
+                {
+                    monitoredData.Add(DateTime.Parse(dt), values);
+                }
             }
             return new MonitorData_Line(nodes, monitoredData, convertStringToSingle);
         }

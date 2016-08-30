@@ -1,4 +1,5 @@
 using System.Windows.Forms;
+using eZstd.UserControls;
 
 namespace OldW.DynamicStages
 {
@@ -34,7 +35,7 @@ namespace OldW.DynamicStages
             this.monthCalendar1 = new System.Windows.Forms.MonthCalendar();
             this.labelConstructionTime = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.numberChanging1 = new stdOldW.UserControls.NumberChanging();
+            this.numberChanging1 = new eZstd.UserControls.NumberChanging();
             this.SuspendLayout();
             // 
             // monthCalendar1
@@ -72,7 +73,7 @@ namespace OldW.DynamicStages
             this.numberChanging1.Name = "numberChanging1";
             this.numberChanging1.Size = new System.Drawing.Size(200, 21);
             this.numberChanging1.TabIndex = 0;
-            this.numberChanging1.Unit = stdOldW.UserControls.TimeSpanUnit.Days;
+            this.numberChanging1.Unit = TimeSpan2.TimeSpanUnit.Days;
             this.numberChanging1.ValueAdded += new System.Action(this.numberChanging1_ValueAdded);
             this.numberChanging1.ValueMinused += new System.Action(this.numberChanging1_ValueMinused);
             // 
@@ -96,7 +97,7 @@ namespace OldW.DynamicStages
 
         }
 
-        private stdOldW.UserControls.NumberChanging numberChanging1;
+        private eZstd.UserControls.NumberChanging numberChanging1;
         private MonthCalendar monthCalendar1;
         private Label labelConstructionTime;
         private Label label1;

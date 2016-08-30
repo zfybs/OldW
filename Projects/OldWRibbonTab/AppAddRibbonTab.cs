@@ -68,7 +68,11 @@ namespace OldW
             RibbonPanel ribbonPanelModeling = application.CreateRibbonPanel(tabName, "开挖");
             AddPushButtonExcavation(ribbonPanelModeling);
             AddPushButtonExcavationInfo(ribbonPanelModeling);
-
+            //
+            var pbdExcavSoilReCut = AddPushButtonDataExcavSoilReCut();
+            var pbdDeleteRedundantExcavations = AddPushButtonDataDeleteRedundantExcavations();
+            var viewItem = ribbonPanelModeling.AddStackedItems(pbdExcavSoilReCut, pbdDeleteRedundantExcavations);
+            
             // -------------------------------------------------------------------------------
             // 监测数据面板
             RibbonPanel ribbonPanelData = application.CreateRibbonPanel(tabName, "监测");
@@ -82,12 +86,15 @@ namespace OldW
             // 查看面板
             RibbonPanel ribbonPanelView = application.CreateRibbonPanel(tabName, "工况展示");
             //
+            AddPushButtonShowOldWModel(ribbonPanelView);
+
+            //
             var pbdCurrentDate = AddTextBoxCurrentDate();
             var pbdViewStage = AddPushButtonDataViewStage();
             var pbdViewStageManually = AddPushButtonDataViewStageManually();
-            var viewItem = ribbonPanelView.AddStackedItems(pbdCurrentDate, pbdViewStage, pbdViewStageManually);
+            var viewItem1 = ribbonPanelView.AddStackedItems(pbdCurrentDate, pbdViewStage, pbdViewStageManually);
             // 
-            SetTextBoxViewStageStyle(viewItem.First(r => r.Name == "CurrentDate") as TextBox);
+            SetTextBoxViewStageStyle(viewItem1.First(r => r.Name == "CurrentDate") as TextBox);
             //
             AddPushButtonViewStageDynamically(ribbonPanelView);
 
@@ -112,6 +119,75 @@ namespace OldW
         }
 
         #region   ---  添加按钮  （如果LargeImage所对应的图片不能在Ribbon中显示，请尝试先下载128*128的，然后通过画图工具将其大小调整为32*32.）
+
+        #region   ---  基坑开挖
+
+        /// <summary> 添加“开挖”的按钮 </summary>
+        private void AddPushButtonExcavation(RibbonPanel panel)
+        {
+            // Create a new push button
+
+            PushButton pushButton = panel.AddItem(
+                new PushButtonData("Excavation", "开挖", Path.Combine(Path_Dlls, Dll_Projects),
+                    "OldW.Commands.cmd_Excavation")) as PushButton;
+
+            // Set ToolTip
+            pushButton.ToolTip = "基坑开挖与回筑";
+            // Set Contextual help
+            ContextualHelp contextHelp = new ContextualHelp(ContextualHelpType.Url, "http://www.autodesk.com");
+            pushButton.SetContextualHelp(contextHelp);
+            // Set Icon
+            pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "Excavation-32.png")));
+            // "Excavation-32.png"
+        }
+
+        /// <summary> 添加“开挖信息”的按钮 </summary>
+        private void AddPushButtonExcavationInfo(RibbonPanel panel)
+        {
+            // Create a new push button
+            PushButton pushButton =
+                panel.AddItem(new PushButtonData("ExcavationInfo", "开挖信息", Path.Combine(Path_Dlls, Dll_Projects),
+                    "OldW.Commands.cmd_ExcavationInfo")) as PushButton;
+            pushButton.ToolTip = "提取模型中的基坑开挖模型土体与开挖土体的信息。";
+            // Set Contextual help
+            ContextualHelp contextHelp = new ContextualHelp(ContextualHelpType.Url, "http://www.autodesk.com");
+            pushButton.SetContextualHelp(contextHelp);
+            // Set Icon
+            pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "ExcavationInfo-32.png")));
+            // "Excavation-32.png"
+        }
+
+        /// <summary> 添加“修复剪切”的按钮 </summary>
+        private PushButtonData AddPushButtonDataExcavSoilReCut()
+        {
+            PushButtonData viewStage = new PushButtonData("ExcavSoilReCut", "修复剪切", Path.Combine(Path_Dlls, Dll_Projects),
+                    "OldW.Commands.cmd_ExcavSoilReCut");
+
+            viewStage.ToolTip = "修复开挖土体对模型土体的剪切关系。在修复之前请先确保开挖土体与模型土体是位于同一个组“基坑土体”中。";
+
+            ContextualHelp contextHelp = new ContextualHelp(ContextualHelpType.Url, "http://www.autodesk.com");
+            viewStage.SetContextualHelp(contextHelp);
+            // Set Icon
+            viewStage.Image = new BitmapImage(new Uri(Path.Combine(Path_icons, "Repair1_16.png")));
+            return viewStage;
+        }
+
+        /// <summary> 添加“清理冗余”的按钮 </summary>
+        private PushButtonData AddPushButtonDataDeleteRedundantExcavations()
+        {
+            PushButtonData viewStage = new PushButtonData("DeleteRedundantExcavations", "清理冗余", Path.Combine(Path_Dlls, Dll_Projects),
+                    "OldW.Commands.cmd_DeleteRedundantExcavations");
+
+            viewStage.ToolTip = "将模型土体或者开挖土体族中，没有对应实例的那些族及对应的族类型删除。";
+
+            ContextualHelp contextHelp = new ContextualHelp(ContextualHelpType.Url, "http://www.autodesk.com");
+            viewStage.SetContextualHelp(contextHelp);
+            // Set Icon
+            viewStage.Image = new BitmapImage(new Uri(Path.Combine(Path_icons, "Repair2_16.png")));
+            return viewStage;
+        }
+
+        #endregion
 
         #region   ---  基坑监测
 
@@ -261,46 +337,23 @@ namespace OldW
 
         #endregion
 
-        #region   ---  基坑开挖
+        #region   ---  工况动态展示 ViewStage
 
-        /// <summary> 添加“开挖”的按钮 </summary>
-        private void AddPushButtonExcavation(RibbonPanel panel)
-        {
-            // Create a new push button
 
-            PushButton pushButton = panel.AddItem(
-                new PushButtonData("Excavation", "开挖", Path.Combine(Path_Dlls, Dll_Projects),
-                    "OldW.Commands.cmd_Excavation")) as PushButton;
-
-            // Set ToolTip
-            pushButton.ToolTip = "基坑开挖与回筑";
-            // Set Contextual help
-            ContextualHelp contextHelp = new ContextualHelp(ContextualHelpType.Url, "http://www.autodesk.com");
-            pushButton.SetContextualHelp(contextHelp);
-            // Set Icon
-            pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "Excavation-32.png")));
-            // "Excavation-32.png"
-        }
-
-        /// <summary> 添加“开挖信息”的按钮 </summary>
-        private void AddPushButtonExcavationInfo(RibbonPanel panel)
+        /// <summary> 添加“手动查看开挖工况”的按钮 </summary>
+        private void AddPushButtonShowOldWModel(RibbonPanel panel)
         {
             // Create a new push button
             PushButton pushButton =
-                panel.AddItem(new PushButtonData("ExcavationInfo", "开挖信息", Path.Combine(Path_Dlls, Dll_Projects),
-                    "OldW.Commands.cmd_ExcavationInfo")) as PushButton;
-            pushButton.ToolTip = "提取模型中的基坑开挖模型土体与开挖土体的信息。";
+                panel.AddItem(new PushButtonData("ShowOldWModel", "基坑展示", Path.Combine(Path_Dlls, Dll_Projects),
+                    "OldW.Commands.cmd_ShowOldWModel")) as PushButton;
+            pushButton.ToolTip = "将模型中与基坑开挖施工相关的开挖单元以及监测单元显示出来";
             // Set Contextual help
             ContextualHelp contextHelp = new ContextualHelp(ContextualHelpType.Url, "http://www.autodesk.com");
             pushButton.SetContextualHelp(contextHelp);
             // Set Icon
-            pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "ExcavationInfo-32.png")));
-            // "Excavation-32.png"
+            pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "ShowOldWModel_32.png")));
         }
-
-        #endregion
-
-        #region   ---  工况动态展示 ViewStage
 
         /// <summary> 添加“当前时间”的文本框 </summary>
         private TextBoxData AddTextBoxCurrentDate()

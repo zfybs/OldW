@@ -11,7 +11,8 @@ using OldW.DynamicStages;
 using OldW.Excavation;
 using OldW.GlobalSettings;
 using rvtTools;
-using stdOldW;
+using eZstd;
+using eZstd.Miscellaneous;
 using TextBox = Autodesk.Revit.UI.TextBox;
 
 namespace OldW.Commands
@@ -23,8 +24,7 @@ namespace OldW.Commands
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
-
-
+            
             DllActivator.DllActivator_Projects dat = new DllActivator.DllActivator_Projects();
             dat.ActivateReferences();
             //
@@ -41,8 +41,8 @@ namespace OldW.Commands
             }
 
             //
-            OldWApplication WApp = OldWApplication.Create(uiApp.Application);
-            OldWDocument oldWDoc = OldWDocument.SearchOrCreate(WApp, doc);
+            OldWApplication WApp = OldWApplication.GetUniqueApplication(uiApp);
+            OldWDocument oldWDoc = WApp.SearchOrCreateOldWDocument(doc);// OldWDocument.SearchOrCreate(WApp, doc);
             ExcavationDoc exDoc = new ExcavationDoc(oldWDoc);
             //
             // 对开挖土体按时间进行开挖状态的分类
@@ -79,7 +79,7 @@ namespace OldW.Commands
             TextBox txt = GlobalSettings.Operations.GetRibbonItem(uiApp, "工况展示", "CurrentDate") as TextBox;
             string tm = txt.Value.ToString();
 
-            return stdOldW.DateTimeHelper.String2Date(tm);
+            return eZstd.DateTimeHelper.String2Date(tm);
         }
     }
 
@@ -110,7 +110,6 @@ namespace OldW.Commands
             DllActivator.DllActivator_Projects dat = new DllActivator.DllActivator_Projects();
             dat.ActivateReferences();
             //
-
             var wpf = new ViewStageDynamically(commandData.Application);
             wpf.Show(null);
 
