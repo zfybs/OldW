@@ -14,6 +14,13 @@ namespace OldW.GlobalSettings
         /// <remarks></remarks>
         public const string AppName = "OldW";
 
+
+        /// <summary>
+        /// 基坑中的模型土体与开挖土体所在的 group 的名称
+        /// </summary>
+        /// <remarks></remarks>
+        public const string SoilGroupName = "基坑土体";
+        
         #region    ---   程序中的各种族文件的名称
 
         /// <summary>

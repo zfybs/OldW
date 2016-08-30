@@ -147,9 +147,9 @@
     <Reference Include="mscorlib" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\std\stdOldW.csproj">
-      <Project>{74d48009-1ece-4791-ba11-111ed062879c}</Project>
-      <Name>stdOldW</Name>
+    <ProjectReference Include="..\..\..\eZstd\Projects\eZstd\eZstd.csproj">
+      <Project>{fb9b6528-5424-4b7a-aeba-6733450dc44b}</Project>
+      <Name>eZstd</Name>
     </ProjectReference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

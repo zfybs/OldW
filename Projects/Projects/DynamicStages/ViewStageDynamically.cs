@@ -12,7 +12,7 @@ using System.Windows.Forms;
 using Autodesk.Revit.UI;
 using rvtTools;
 using Timer = System.Timers.Timer;
-using stdOldW.UserControls;
+using eZstd.UserControls;
 
 namespace OldW.DynamicStages
 {
@@ -66,8 +66,8 @@ namespace OldW.DynamicStages
             dateTimePicker_End.Value = DateTime.Today;
             dateTimePicker_Start.Value = DateTime.Today.AddYears(-3);
             //
-            comboBoxSpanUnit.DataSource = Enum.GetNames(typeof(TimeSpanUnit));
-            comboBoxSpanUnit.SelectedItem = Enum.GetName(typeof(TimeSpanUnit), TimeSpanUnit.Days);
+            comboBoxSpanUnit.DataSource = Enum.GetNames(typeof(TimeSpan2.TimeSpanUnit));
+            comboBoxSpanUnit.SelectedItem = Enum.GetName(typeof(TimeSpan2.TimeSpanUnit), TimeSpan2.TimeSpanUnit.Days);
             //
             checkBoxLoopPlay.Checked = false;
             checkBoxBackPlay.Checked = false;
@@ -123,7 +123,7 @@ namespace OldW.DynamicStages
         }
         private void comboBoxSpanUnit_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _VSDHandler.SpanUnit = (TimeSpanUnit)Enum.Parse(typeof(TimeSpanUnit), comboBoxSpanUnit.SelectedItem.ToString());
+            _VSDHandler.SpanUnit = (TimeSpan2.TimeSpanUnit)Enum.Parse(typeof(TimeSpan2.TimeSpanUnit), comboBoxSpanUnit.SelectedItem.ToString());
         }
 
         // _VSDHandler.Intervals

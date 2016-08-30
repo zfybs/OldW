@@ -14,6 +14,9 @@ namespace rvtTools.Tests_Templates
         [STAThread]
         public static void Main()
         {
+            string s = " 1.5 ";
+            float f = float.Parse(s);
+         
 
         }
     }

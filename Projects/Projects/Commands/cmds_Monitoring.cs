@@ -27,10 +27,9 @@ namespace OldW.Commands
             //
             UIApplication uiApp = commandData.Application;
             Document doc = uiApp.ActiveUIDocument.Document;
-            OldWApplication WApp = OldWApplication.Create(uiApp.Application);
-            OldWDocument WDoc = OldWDocument.SearchOrCreate(WApp, doc);
+            OldWApplication WApp = OldWApplication.GetUniqueApplication(uiApp);
+            OldWDocument WDoc = WApp.SearchOrCreateOldWDocument(doc);// OldWDocument.SearchOrCreate(WApp, doc);
             InstrumDoc insDoc = new InstrumDoc(WDoc);
-
 
             ICollection<Instrumentation> ins;
             //
@@ -60,8 +59,8 @@ namespace OldW.Commands
             //
             UIApplication uiApp = commandData.Application;
             Document doc = uiApp.ActiveUIDocument.Document;
-            OldWApplication WApp = OldWApplication.Create(uiApp.Application);
-            OldWDocument WDoc = OldWDocument.SearchOrCreate(WApp, doc);
+            OldWApplication WApp = OldWApplication.GetUniqueApplication(uiApp);
+            OldWDocument WDoc = WApp.SearchOrCreateOldWDocument(doc);// OldWDocument.SearchOrCreate(WApp, doc);
             InstrumDoc insDoc = new InstrumDoc(WDoc);
 
             // 
@@ -99,8 +98,8 @@ namespace OldW.Commands
             //
             UIApplication uiApp = commandData.Application;
             Document doc = uiApp.ActiveUIDocument.Document;
-            OldWApplication WApp = OldWApplication.Create(uiApp.Application);
-            OldWDocument WDoc = OldWDocument.SearchOrCreate(WApp, doc);
+            OldWApplication WApp = OldWApplication.GetUniqueApplication(uiApp);
+            OldWDocument WDoc = WApp.SearchOrCreateOldWDocument(doc);// OldWDocument.SearchOrCreate(WApp, doc);
             InstrumDoc insDoc = new InstrumDoc(WDoc);
 
             // 

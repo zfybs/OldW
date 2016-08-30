@@ -22,8 +22,8 @@ namespace OldW.Commands
 			Document doc = uiApp.ActiveUIDocument.Document;
 
 			//
-			OldWApplication WApp = OldWApplication.Create(uiApp.Application);
-			OldWDocument WDoc = OldWDocument.SearchOrCreate(WApp, doc);
+			OldWApplication WApp = OldWApplication.GetUniqueApplication(uiApp);
+		    OldWDocument WDoc = WApp.SearchOrCreateOldWDocument(doc);// OldWDocument.SearchOrCreate(WApp, doc);
 			//
 			OldW.Excavation.ExcavationDoc ExcavDoc = new OldW.Excavation.ExcavationDoc(WDoc);
 			
@@ -53,8 +53,8 @@ namespace OldW.Commands
 			Document doc = uiApp.ActiveUIDocument.Document;
 			//
             
-			OldWApplication WApp = OldWApplication.Create(uiApp.Application);
-			OldWDocument WDoc = OldWDocument.SearchOrCreate(WApp, doc);
+			OldWApplication WApp = OldWApplication.GetUniqueApplication(uiApp);
+			OldWDocument WDoc = WApp.SearchOrCreateOldWDocument(doc);// OldWDocument.SearchOrCreate(WApp, doc);
 			//
 			OldW.Excavation.ExcavationDoc ExcavDoc = new OldW.Excavation.ExcavationDoc(WDoc);
 			

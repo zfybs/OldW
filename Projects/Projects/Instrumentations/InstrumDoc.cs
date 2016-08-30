@@ -9,10 +9,11 @@ using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using OldW.GlobalSettings;
+using OldW.Instrumentations.MonitorSetterGetter;
 using rvtTools;
-using stdOldW;
-using stdOldW.DAL;
-using stdOldW.UserControls;
+using eZstd;
+using eZstd.Data;
+using eZstd.UserControls;
 using Forms = System.Windows.Forms;
 
 namespace OldW.Instrumentations
@@ -49,30 +50,50 @@ namespace OldW.Instrumentations
             ElementId foundId = null;
 
             //是否存在族
-            Boolean found = (uidoc.Document.FindFamily(monitorType.ToString()) != null);
-
-            Family family = uidoc.Document.FindFamily(monitorType.ToString());
+            string MonitorFamilyName = Enum.GetName(typeof(InstrumentationType), monitorType);  // 要放置的测点的名称
+            Family family = uidoc.Document.FindFamily(MonitorFamilyName);
             //如果存在，获得文件该族 ； 如果不存在，载入族
             if (family == null)
             {
                 using (Transaction trans = new Transaction(uidoc.Document, "trans"))
                 {
+                    string rfaPath = Path.Combine(ProjectPath.Path_family,
+                        MonitorFamilyName + ".rfa");
                     try
                     {
                         trans.Start();
-                        uidoc.Document.LoadFamily(Path.Combine(ProjectPath.Path_family,
-                            monitorType.ToString() + ".rfa"), out family);
+                        uidoc.Document.LoadFamily(rfaPath, out family);
                         trans.Commit();
                     }
                     catch (Exception ex)
                     {
-                        throw;
+                        trans.RollBack();
+                        throw new FileNotFoundException("未找到指定的测点族所对应的族样板文件：\n\r" + rfaPath);
                     }
                 }
             }
 
             //获得该族的族类型，并且放置族实例
-            FamilySymbol symbol = uidoc.Document.GetElement(family.GetFamilySymbolIds().ElementAt(0)) as FamilySymbol;
+            var symbols = family.GetFamilySymbolIds();
+            FamilySymbol symbol;
+            if (symbols.Count == 0)
+            {
+                throw new InvalidOperationException("导入的测点族中没有有效的族类型。");
+            }
+            else if (symbols.Count == 1)
+            {
+                symbol = uidoc.Document.GetElement(symbols.ElementAt(0)) as FamilySymbol;
+            }
+            else
+            {
+                // 比如测斜管族中有多种不同规格的测斜管
+
+                // 设计一个UI界面，让用户选择要放置哪一种规格的测点。
+                // 并且提示用户，可以先自行的Revit界面中复制出多个不同规格参数的族类型，以供放置测点时选择。
+                ChooseFamilySymbol formChooseFamilySymbol = new ChooseFamilySymbol(Document, symbols);
+                var rr = formChooseFamilySymbol.ShowDialog();
+                symbol = formChooseFamilySymbol.Symbol;
+            }
             uidoc.PostRequestForElementTypePlacement(symbol);
         }
 
@@ -86,15 +107,15 @@ namespace OldW.Instrumentations
         /// <returns> </returns>
         public void FillCombobox(IEnumerable<Instrumentation> elementCollection, object comboboxControl)
         {
-            LstbxValue<Instrumentation>[] arr = GetComboboxDatasource(elementCollection);
+            ListControlValue<Instrumentation>[] arr = GetComboboxDatasource(elementCollection);
 
             if (comboboxControl.GetType() == typeof(Forms.ComboBox))
             {
                 Forms.ComboBox cmb = (Forms.ComboBox)comboboxControl;
                 // ComboBox设置
                 cmb.DataSource = null;
-                cmb.DisplayMember = LstbxValue<Instrumentation>.DisplayMember;
-                cmb.ValueMember = LstbxValue<Instrumentation>.ValueMember;
+                cmb.DisplayMember = ListControlValue<Instrumentation>.DisplayMember;
+                cmb.ValueMember = ListControlValue<Instrumentation>.ValueMember;
                 cmb.DataSource = arr;
             }
 
@@ -104,8 +125,8 @@ namespace OldW.Instrumentations
 
                 // ComboBox设置
                 cmb.DataSource = null;
-                cmb.DisplayMember = LstbxValue<Instrumentation>.DisplayMember;
-                cmb.ValueMember = LstbxValue<Instrumentation>.ValueMember;
+                cmb.DisplayMember = ListControlValue<Instrumentation>.DisplayMember;
+                cmb.ValueMember = ListControlValue<Instrumentation>.ValueMember;
                 cmb.DataSource = arr;
             }
 
@@ -116,10 +137,10 @@ namespace OldW.Instrumentations
         /// </summary>
         /// <param name="elementCollection"></param>
         /// <returns> </returns>
-        public LstbxValue<Instrumentation>[] GetComboboxDatasource(IEnumerable<Instrumentation> elementCollection)
+        public ListControlValue<Instrumentation>[] GetComboboxDatasource(IEnumerable<Instrumentation> elementCollection)
         {
             return elementCollection.Select(eleid =>
-            new LstbxValue<Instrumentation>(
+            new ListControlValue<Instrumentation>(
                 DisplayedText: eleid.IdName,
                 Value: eleid)).ToArray();
         }

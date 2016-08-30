@@ -127,13 +127,13 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\eZstd\Projects\eZstd\eZstd.csproj">
+      <Project>{fb9b6528-5424-4b7a-aeba-6733450dc44b}</Project>
+      <Name>eZstd</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OldWGlobal\OldWGlobal.csproj">
       <Project>{bbd5d960-44ab-45d2-a0ac-e352094cd8e5}</Project>
       <Name>OldWGlobal</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\std\stdOldW.csproj">
-      <Project>{74d48009-1ece-4791-ba11-111ed062879c}</Project>
-      <Name>stdOldW</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

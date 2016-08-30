@@ -94,17 +94,34 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\cmd_ExcavationTools.cs" />
+    <Compile Include="Commands\cmd_FilterInstrums.cs" />
+    <Compile Include="Commands\cmd_ShowOldWModel.cs" />
     <Compile Include="Commands\cmd_ViewStage.cs" />
-    <Compile Include="Commands\ElementInitialize.cs">
+    <Compile Include="DynamicStages\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Commands\ElementInitialize.Designer.cs">
+    <Compile Include="DynamicStages\Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Instrumentations\ExcelMapping.cs" />
+    <Compile Include="Instrumentations\InstrumCollector.cs" />
+    <Compile Include="Instrumentations\MonitorSetterGetter\ChooseFamilySymbol.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Instrumentations\MonitorSetterGetter\ChooseFamilySymbol.Designer.cs">
+      <DependentUpon>ChooseFamilySymbol.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Instrumentations\MonitorSetterGetter\ElementInitialize.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Instrumentations\MonitorSetterGetter\ElementInitialize.Designer.cs">
       <DependentUpon>ElementInitialize.cs</DependentUpon>
     </Compile>
-    <Compile Include="Commands\PickInstrums.cs">
+    <Compile Include="Instrumentations\MonitorSetterGetter\PickInstrums.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Commands\PickInstrums.Designer.cs">
+    <Compile Include="Instrumentations\MonitorSetterGetter\PickInstrums.Designer.cs">
       <DependentUpon>PickInstrums.cs</DependentUpon>
     </Compile>
     <Compile Include="DllActivator_Projects.cs" />
@@ -139,10 +156,11 @@
     <Compile Include="Instrumentations\DataTransfer\DataExport.Designer.cs">
       <DependentUpon>DataExport.cs</DependentUpon>
     </Compile>
-    <Compile Include="Instrumentations\InstrumService.cs" />
+    <Compile Include="Instrumentations\InstrumentationType.cs" />
     <Compile Include="Instrumentations\InstrumDoc.cs" />
     <Compile Include="Instrumentations\IntrumType\Instrum_WallTop.cs" />
     <Compile Include="Instrumentations\MonitorData.cs" />
+    <Compile Include="Instrumentations\MonitorSetterGetter\PlaceMonitor.cs" />
     <Compile Include="SafetyWarnings\Analysis.cs" />
     <Compile Include="Commands\cmd_Analyze.cs" />
     <Compile Include="Commands\cmds_Excavation.cs" />
@@ -191,12 +209,12 @@
     <Compile Include="Instrumentations\DataManager\ElementDataManager.Designer.cs">
       <DependentUpon>ElementDataManager.cs</DependentUpon>
     </Compile>
-    <Compile Include="Instrumentations\Instrumentation.cs" />
+    <Compile Include="Instrumentations\IntrumType\Instrumentation.cs" />
     <Compile Include="Instrumentations\IntrumType\Instrum_ColumnHeave.cs" />
     <Compile Include="Instrumentations\IntrumType\Instrum_GroundSettlement.cs" />
     <Compile Include="Instrumentations\IntrumType\Instrum_Incline.cs" />
-    <Compile Include="Instrumentations\Instrum_Line.cs" />
-    <Compile Include="Instrumentations\Instrum_Point.cs" />
+    <Compile Include="Instrumentations\IntrumType\Instrum_Line.cs" />
+    <Compile Include="Instrumentations\IntrumType\Instrum_Point.cs" />
     <Compile Include="Instrumentations\IntrumType\Instrum_StrutAxialForce.cs" />
     <Compile Include="OldWApplication.cs" />
     <Compile Include="OldWDocument.cs" />
@@ -214,10 +232,13 @@
     <Compile Include="SafetyWarnings\WarningValue.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Commands\ElementInitialize.resx">
+    <EmbeddedResource Include="Instrumentations\MonitorSetterGetter\ChooseFamilySymbol.resx">
+      <DependentUpon>ChooseFamilySymbol.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Instrumentations\MonitorSetterGetter\ElementInitialize.resx">
       <DependentUpon>ElementInitialize.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Commands\PickInstrums.resx">
+    <EmbeddedResource Include="Instrumentations\MonitorSetterGetter\PickInstrums.resx">
       <DependentUpon>PickInstrums.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DynamicStages\ViewStageDynamically.resx">
@@ -252,6 +273,11 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\eZstd\Projects\eZstd\eZstd.csproj">
+      <Project>{fb9b6528-5424-4b7a-aeba-6733450dc44b}</Project>
+      <Name>eZstd</Name>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </ProjectReference>
     <ProjectReference Include="..\OldWGlobal\OldWGlobal.csproj">
       <Project>{bbd5d960-44ab-45d2-a0ac-e352094cd8e5}</Project>
       <Name>OldWGlobal</Name>
@@ -259,10 +285,6 @@
     <ProjectReference Include="..\RevitTools\RevitTools.csproj">
       <Project>{13378ff8-0b99-4a4e-8529-db04f4b8ec4d}</Project>
       <Name>RevitTools</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\std\stdOldW.csproj">
-      <Project>{74d48009-1ece-4791-ba11-111ed062879c}</Project>
-      <Name>stdOldW</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

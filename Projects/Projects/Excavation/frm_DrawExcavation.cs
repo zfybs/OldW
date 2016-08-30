@@ -6,7 +6,8 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using rvtTools;
 using rvtTools.Curves;
-using stdOldW;
+using eZstd;
+using eZstd.Miscellaneous;
 using Control = System.Windows.Forms.Control;
 
 
@@ -356,50 +357,55 @@ namespace OldW.Excavation
         /// <param name="CurveArrArr"></param>
         private void DrawSoilFromCurve(CurveArrArray CurveArrArr)
         {
-            Soil_Model soil = default(Soil_Model);
+            Soil_Model soilModel;
 
             if (this.RadioBtn_ExcavSoil.Checked) // 绘制开挖土体
             {
-                soil = this.ExcavDoc.FindSoilModel();
-                Soil_Excav exc = this.ExcavDoc.CreateExcavationSoil(soil, this.Depth, CurveArrArr, DesiredName);
-
-                // 设置开挖开始或者完成的时间
-
-                using (Transaction tran = new Transaction(Document))
+                soilModel = this.ExcavDoc.FindSoilModel();
+                if (soilModel != null)
                 {
-                    try
-                    {
-                        tran.SetName("设置开挖土体的开始或者完成的时间");
-                        tran.Start();
 
-                        if ((this.StartedDate != null) || (this.CompletedDate != null))
+
+                    Soil_Excav exc = this.ExcavDoc.CreateExcavationSoil(soilModel, this.Depth, CurveArrArr, DesiredName);
+
+                    // 设置开挖开始或者完成的时间
+
+                    using (Transaction tran = new Transaction(Document))
+                    {
+                        try
                         {
-                            if (this.StartedDate != null)
+                            tran.SetName("设置开挖土体的开始或者完成的时间");
+                            tran.Start();
+
+                            if ((this.StartedDate != null) || (this.CompletedDate != null))
                             {
-                                exc.SetExcavatedDate(tran, true, StartedDate.Value);
+                                if (this.StartedDate != null)
+                                {
+                                    exc.SetExcavatedDate(tran, true, StartedDate.Value);
+                                }
+                                if (this.CompletedDate != null)
+                                {
+                                    exc.SetExcavatedDate(tran, false, CompletedDate.Value);
+                                }
                             }
-                            if (this.CompletedDate != null)
-                            {
-                                exc.SetExcavatedDate(tran, false, CompletedDate.Value);
-                            }
+
+                            // 将开挖土体在模型土体中隐藏起来
+                            soilModel.RemoveSoil(tran, exc);
+
+                            tran.Commit();
                         }
-
-                        // 将开挖土体在模型土体中隐藏起来
-                        soil.RemoveSoil(tran, exc);
-
-                        tran.Commit();
-                    }
-                    catch (Exception ex)
-                    {
-                        tran.RollBack();
-                        DebugUtils.ShowDebugCatch(ex, $"事务“{tran.GetName()}”出错");
+                        catch (Exception ex)
+                        {
+                            tran.RollBack();
+                            DebugUtils.ShowDebugCatch(ex, $"事务“{tran.GetName()}”出错");
+                        }
                     }
                 }
             }
             else // 绘制模型土体
             {
                 // 获得用来创建实体的模型线
-                soil = this.ExcavDoc.CreateModelSoil(this.Depth, CurveArrArr);
+                soilModel = this.ExcavDoc.CreateModelSoil(this.Depth, CurveArrArr);
             }
         }
 

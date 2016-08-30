@@ -4,8 +4,9 @@ using System.Drawing;
 using System.Windows.Forms;
 using Autodesk.Revit.DB;
 using OldW.Instrumentations;
-using stdOldW;
-using stdOldW.UserControls;
+using eZstd;
+using eZstd.Miscellaneous;
+using eZstd.UserControls;
 
 namespace OldW.DataManager
 {
@@ -89,6 +90,10 @@ namespace OldW.DataManager
             {
                 checkBox.CheckedChanged += new EventHandler(this.checkBox_CheckedChanged);
             }
+
+            // 表格支持粘贴操作
+            DataGridView_pointMonitor.SupportPaste = true;
+            DataGridView_LineMonitor.SupportPaste = true;
 
             //
             Dgv_Point = new DgvPoint(document.Document, DataGridView_pointMonitor);
@@ -381,7 +386,7 @@ namespace OldW.DataManager
             this.cmbx_elements.SelectedIndexChanged -= new EventHandler(this.ComboBox1_SelectedIndexChanged);
 
             // 提取刷新前的数据
-            LstbxValue<Instrumentation>[] arr = (LstbxValue<Instrumentation>[])cmbx_elements.DataSource;
+            ListControlValue<Instrumentation>[] arr = (ListControlValue<Instrumentation>[])cmbx_elements.DataSource;
 
             // 先修改集合中的值，然后再将修改后的集合赋值给DataSource
             arr[cmbx_elements.SelectedIndex].DisplayedText = NewText;
@@ -390,8 +395,8 @@ namespace OldW.DataManager
             cmbx_elements.DataSource = null; // 这一清空操作是必须的
 
             // 2. 设置 DisplayMember 与 ValueMember。
-            this.cmbx_elements.DisplayMember = LstbxValue<Instrumentation>.DisplayMember;
-            this.cmbx_elements.ValueMember = LstbxValue<Instrumentation>.ValueMember;
+            this.cmbx_elements.DisplayMember = ListControlValue<Instrumentation>.DisplayMember;
+            this.cmbx_elements.ValueMember = ListControlValue<Instrumentation>.ValueMember;
 
             // 3. 重新设置数据源
             cmbx_elements.DataSource = arr;

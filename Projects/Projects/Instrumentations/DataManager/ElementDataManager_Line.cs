@@ -10,8 +10,9 @@ using System.Windows.Forms.DataVisualization.Charting;
 using Autodesk.Revit.DB;
 using OldW.GlobalSettings;
 using OldW.Instrumentations;
-using stdOldW;
-using stdOldW.UserControls;
+using eZstd.Miscellaneous;
+using eZstd.UserControls;
+using AssemblyCompiler = eZstd.Miscellaneous.AssemblyCompiler;
 using Form = System.Windows.Forms.Form;
 
 
@@ -145,7 +146,7 @@ namespace OldW.DataManager
 
             private readonly Document doc;
 
-            private readonly eZDataGridViewPaste dataGridViewLine;
+            private readonly eZDataGridView dataGridViewLine;
 
             /// <summary>
             /// 已经编译好的实体类对象
@@ -169,7 +170,7 @@ namespace OldW.DataManager
             /// </summary>
             /// <param name="doc"></param>
             /// <param name="dataGridViewLine"></param>
-            public DgvLine(Document doc, eZDataGridViewPaste dataGridViewLine)
+            public DgvLine(Document doc, eZDataGridView dataGridViewLine)
             {
                 this.dataGridViewLine = dataGridViewLine;
                 this.doc = doc;
@@ -797,7 +798,7 @@ namespace OldW.DataManager
         /// </summary>
         private class FormNodes : Form
         {
-            private eZDataGridViewPaste _dataGridView;
+            private eZDataGridView _dataGridView;
 
             // 设置好的节点数据
             private string[] _nodes;
@@ -814,6 +815,7 @@ namespace OldW.DataManager
             public FormNodes(string[] Nodes)
             {
                 Initialize();
+                _dataGridView.SupportPaste = true;
 
                 if (Nodes.Length > 0)
                 {
@@ -842,7 +844,7 @@ namespace OldW.DataManager
                 MinimizeBox = false;
 
                 // 添加控件与数据绑定
-                _dataGridView = new eZDataGridViewPaste();
+                _dataGridView = new eZDataGridView();
 
                 // Initialize and add a text box column.
                 // 先创建一个列，然后将列中的数据与数据源集合中的某个属性相关联即可。
