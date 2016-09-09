@@ -14,13 +14,13 @@ namespace OldW.Excavation
     {
         #region    ---   Properties
 
-        /// <summary> 土体单元所对应的族实例对象 </summary>
+        /// <summary> 模型土体或者开挖土体单元所对应的族实例对象 </summary>
         public FamilyInstance Soil { get; }
 
         /// <summary> 基坑开挖文档 </summary>
         public ExcavationDoc ExcavDoc { get; }
 
-
+        /// <summary> 土体单元所在的 Revit 文档 </summary>
         public Document Document { get; }
 
         #endregion

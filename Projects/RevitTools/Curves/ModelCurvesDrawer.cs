@@ -5,10 +5,8 @@ using System.Windows.Forms;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Events;
 using Autodesk.Revit.UI;
-using rvtTools.Curves;
 using eZstd.Windows;
 using Application = Autodesk.Revit.ApplicationServices.Application;
-
 
 namespace rvtTools.Curves
 {
@@ -60,31 +58,21 @@ namespace rvtTools.Curves
 
         #region    ---   Properties
 
-        private CurveCheckMode F_CheckMode;
-
         /// <summary>
         /// 所绘制的曲线要符合何种连续性条件
         /// </summary>
         /// <returns></returns>
-        public CurveCheckMode CheckMode
-        {
-            get { return F_CheckMode; }
-        }
-
-        private bool F_CheckInTime;
+        public CurveCheckMode CheckMode { get; }
 
         /// <summary>
         /// 是否在每一步绘制时都检测所绘制的曲线是否符合指定的要求，如果为False，则在绘制操作退出后进行统一检测。
         /// </summary>
         /// <returns></returns>
-        public bool CheckInTime
-        {
-            get { return F_CheckInTime; }
-        }
+        public bool CheckInTime { get; }
 
         /// <summary> 模型线绘制器是否正在使用中。
         /// 注意：每次只能有一个实例正在绘制曲线。</summary>
-        public static bool IsBeenUsed { get; set; }
+        public static bool IsBeenUsed { get; private set; }
 
         #endregion
 
@@ -120,8 +108,8 @@ namespace rvtTools.Curves
             // 变量初始化
             rvtUiApp = uiApp;
             rvtApp = uiApp.Application;
-            this.F_CheckMode = CheckMode;
-            this.F_CheckInTime = CheckInTime;
+            this.CheckMode = CheckMode;
+            this.CheckInTime = CheckInTime;
 
             // 处理已经添加好的基准曲线集合
             this.AddedModelCurvesId = BaseCurves;
@@ -155,6 +143,9 @@ namespace rvtTools.Curves
         /// </summary>
         public void Cancel()
         {
+            // 注意以下几步操作的先后顺序
+            rvtApp.DocumentChanged -= new EventHandler<DocumentChangedEventArgs>(app_DocumentChanged);
+
             // 最后再检测一次
             bool blnContinueDraw = false;
             CurvesState cs = ValidateCurves(out blnContinueDraw);
@@ -167,40 +158,33 @@ namespace rvtTools.Curves
             else
             {
                 // 不管是 Validating 还是 Invalid，说明在此刻都没有成功
-                this.Finish(FinishedExternally: true, Succeeded: false);
+                this.Finish(finishedExternally: true, succeeded: false);
             }
         }
 
         /// <summary>
         /// 绘制完成，并关闭绘制模式
         /// </summary>
-        /// <param name="FinishedExternally">画笔是否是由外部程序强制关闭的。如果是外部对象通过调用Cancel方法来取消绘制的，则其值为 True。</param>
-        /// <param name="Succeeded">AddedModelCurves 集合中的曲线集合是否满足指定的连续性条件</param>
-        private void Finish(bool FinishedExternally, bool Succeeded)
+        /// <param name="finishedExternally">画笔是否是由外部程序强制关闭的。如果是外部对象通过调用Cancel方法来取消绘制的，则其值为 True。</param>
+        /// <param name="succeeded">AddedModelCurves 集合中的曲线集合是否满足指定的连续性条件</param>
+        public void Finish(bool finishedExternally, bool succeeded)
         {
             // 注意以下几步操作的先后顺序
-            //
-            IsBeenUsed = false;
-            if (DrawingCompletedEvent != null)
-                DrawingCompletedEvent(AddedModelCurvesId, FinishedExternally, Succeeded);
-
-            // 数据清空
-            AddedModelCurvesId = new List<ElementId>();
-            DeactiveDraw();
-        }
-
-        public void Dispose()
-        {
-            // 注意以下几步操作的先后顺序
-            //
             rvtApp.DocumentChanged -= new EventHandler<DocumentChangedEventArgs>(app_DocumentChanged);
+
             IsBeenUsed = false;
+
+            // 触发事件
+            if (DrawingCompletedEvent != null)
+            {
+                DrawingCompletedEvent(AddedModelCurvesId, finishedExternally, succeeded);
+            }
 
             // 变量清空
             rvtUiApp = null;
             rvtApp = null;
+            //   
             AddedModelCurvesId = null;
-            //
             DeactiveDraw();
         }
 
@@ -375,7 +359,7 @@ namespace rvtTools.Curves
             }
 
             // 根据不同的模式进行不同的检测
-            if (this.F_CheckMode == CurveCheckMode.Connected) // 一条连续曲线链
+            if (this.CheckMode == CurveCheckMode.Connected) // 一条连续曲线链
             {
                 if (CurvesFormator.GetContiguousCurvesFromCurves(curves) != null)
                 {
@@ -388,13 +372,13 @@ namespace rvtTools.Curves
                     continueDraw = false;
                 }
             }
-            else if (this.F_CheckMode == CurveCheckMode.Closed)
+            else if (this.CheckMode == CurveCheckMode.Closed)
             {
                 IList<Curve> CurveChain = default(List<Curve>);
 
-              //  MessageBox.Show(GeoHelper.GetCurvesEnd(curves));
+                //  MessageBox.Show(GeoHelper.GetCurvesEnd(curves));
                 CurveChain = CurvesFormator.GetContiguousCurvesFromCurves(curves);
-               
+
                 if (CurveChain == null) // 说明根本就不连续
                 {
                     cs = CurvesState.Invalid;
@@ -417,14 +401,14 @@ namespace rvtTools.Curves
                     }
                 }
             }
-            else if (this.F_CheckMode == (CurveCheckMode.HorizontalPlan | CurveCheckMode.Closed))
+            else if (this.CheckMode == (CurveCheckMode.HorizontalPlan | CurveCheckMode.Closed))
             {
                 if (CurvesFormator.IsInOnePlan(curves, new XYZ(0, 0, 1)))
                 {
                 }
                 return CurvesState.Invalid;
             }
-            else if (this.F_CheckMode == CurveCheckMode.Seperated)
+            else if (this.CheckMode == CurveCheckMode.Seperated)
             {
                 // 不用检测，直接符合
                 cs = CurvesState.Validated;

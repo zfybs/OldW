@@ -734,13 +734,13 @@ namespace OldW.Excavation
                     if (!f.Instances(BuiltInCategory.OST_Site).Any())
                     {
                         famsToDelete.Add(f.Id);
-                        deletedFamilyName = deletedFamilyName + f.Name + "\r\n";
+                        deletedFamilyName = deletedFamilyName + f.Name + " ,";
                     }
                 }
 
                 Document.Delete(famsToDelete);
 
-                MessageBox.Show(@"删除空的土体族对象成功。删除掉的族对象有：" + "\r\n （" + deletedFamilyName + @"）", @"成功",
+                MessageBox.Show(@"删除空的土体族对象成功。删除掉的族对象有：" + "\r\n（" + deletedFamilyName + @"）", @"成功",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }

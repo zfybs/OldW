@@ -104,6 +104,9 @@
     <Compile Include="DynamicStages\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Excavation\frm_ExcavationInfo.ExcavSoilEntity.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Instrumentations\ExcelMapping.cs" />
     <Compile Include="Instrumentations\InstrumCollector.cs" />
     <Compile Include="Instrumentations\MonitorSetterGetter\ChooseFamilySymbol.cs">
