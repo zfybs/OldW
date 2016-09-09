@@ -25,12 +25,11 @@ namespace OldW.Excavation
         /// </summary>
         private class RequestParameter
         {
-            private object F_sender;
-
+            private readonly object _sender;
             /// <summary> 引发Form事件控件对象 </summary>
-            public dynamic sender
+            public object Sender
             {
-                get { return F_sender; }
+                get { return _sender; }
             }
 
             private EventArgs F_e;
@@ -41,12 +40,12 @@ namespace OldW.Excavation
                 get { return F_e; }
             }
 
-            private Request F_Id;
+            private Request _id;
 
             /// <summary> 具体的需求 </summary>
             public Request Id
             {
-                get { return F_Id; }
+                get { return _id; }
             }
 
 
@@ -59,10 +58,9 @@ namespace OldW.Excavation
             /// <remarks></remarks>
             public RequestParameter(Request RequestId, EventArgs e = null, object sender = null)
             {
-                RequestParameter with_1 = this;
-                with_1.F_sender = sender;
-                with_1.F_e = e;
-                with_1.F_Id = RequestId;
+                this._sender = sender;
+                this.F_e = e;
+                this._id = RequestId;
             }
         }
 
@@ -72,6 +70,10 @@ namespace OldW.Excavation
         /// <remarks></remarks>
         private enum Request
         {
+
+            /// <summary> 将列表中的某一个开挖土体从整个模型中删除，同时也删除其所对应的族 </summary>
+            DeleteExcavSoil,
+
             /// <summary>
             /// 从模型中提取开挖土体的信息，并显示在列表中
             /// </summary>
@@ -91,7 +93,6 @@ namespace OldW.Excavation
             /// 设置列表中选择的每一行所对应的开挖土体的可见性。
             /// </summary>
             SetMultiVisibility,
-
         }
 
 
@@ -251,72 +252,26 @@ namespace OldW.Excavation
             column.Width = 35;
             DataGridView1.Columns.Add(column);
 
-            // 事件关联
+            //Add an Unbound Column to a Data-Bound Windows Forms DataGridView Control
+            // 注意，添加此列后，DataGridView.DataSource的值并不会发生改变。
+            buttonColumn = new DataGridViewButtonColumn();
+            buttonColumn.HeaderText = @"删除";
+            buttonColumn.Name = "Delete";
+            buttonColumn.Text = "删除";
+            buttonColumn.Width = 50;
+            // Use the Text property for the button text for all cells rather
+            // than using each cell's Value as the text for its own button.
+            buttonColumn.UseColumnTextForButtonValue = true;
+            buttonColumn.ToolTipText = @"将此开挖土体单元从整个模型中删除。";
+            DataGridView1.Columns.Add(buttonColumn);
 
+            // 事件关联
             this.DataGridView1.CellContentClick += new DataGridViewCellEventHandler(this.DataGridView1_CellContentClick);
             DataGridView1.CurrentCellDirtyStateChanged += dataGridView1_CurrentCellDirtyStateChanged;
             this.DataGridView1.CellValueChanged += new DataGridViewCellEventHandler(this.dataGridView1_CellValueChanged);
             this.DataGridView1.DataError += new DataGridViewDataErrorEventHandler(this.DataGridView1_DataError);
         }
 
-        /// <summary> Datagridview 中的每一行数据所对应的实体类 </summary>
-        private class ExcavSoilEntity
-        {
-            /// <summary> 开挖土体对象 </summary>
-            [Browsable(false)]
-            public Soil_Excav Soil { get; set; }
-
-            /// <summary> 土体单元的Id值 </summary>
-            public ElementId Id { get; set; }
-
-            /// <summary> 开挖土体的名称 </summary>
-            public string Name { get; set; }
-
-            /// <summary> 开挖土体的深度 </summary>
-            public double Depth { get; set; }
-
-            /// <summary> 开挖土体开挖完成的日期 </summary>
-            public DateTime? StartedDate { get; set; }
-
-            /// <summary> 开挖土体开挖完成的日期 </summary>
-            public DateTime? CompletedDate { get; set; }
-
-            /// <summary> 开挖土体在当前视图中是否可见 </summary>
-            public bool Visible { get; set; }
-
-
-            /// <summary>
-            /// 将界面中设置的信息同步到Revit文档中
-            /// </summary>
-            /// <param name="tran"></param>
-            /// <param name="View"></param>
-            public void syncToDocument(Transaction tran, View View)
-            {
-                Soil.SetExcavatedDate(tran, true, StartedDate);
-                Soil.SetExcavatedDate(tran, false, CompletedDate);
-                Soil.SetName(tran, newName: Name);
-                Soil.SetDepth(tran, depth: Depth);
-
-            }
-
-            /// <summary>
-            /// 设置开挖土体的可见性
-            /// </summary>
-            /// <param name="tran"></param>
-            /// <param name="show"> True代表设置其为可见 </param>
-            /// <param name="view">当前视图对象</param>
-            public void SetVisibility(Transaction tran, bool show, View view)
-            {
-                if (show)
-                {
-                    view.UnhideElements(new[] { Soil.Soil.Id });
-                }
-                else
-                {
-                    view.HideElements(new[] { Soil.Soil.Id });
-                }
-            }
-        }
 
         #endregion
 
@@ -331,6 +286,14 @@ namespace OldW.Excavation
                     if (e.RowIndex >= 0) // 说明不是点击的表头位置
                     {
                         this.RequestPara = new RequestParameter(Request.SynToElement, e, sender);
+                        this.ExEvent.Raise();
+                        //  Me.DozeOff()
+                    }
+                    break;
+                case "Delete": // 将表格信息同步到Revit文档
+                    if (e.RowIndex >= 0) // 说明不是点击的表头位置
+                    {
+                        this.RequestPara = new RequestParameter(Request.DeleteExcavSoil, e, sender);
                         this.ExEvent.Raise();
                         //  Me.DozeOff()
                     }
@@ -424,6 +387,8 @@ namespace OldW.Excavation
         {
             try // 由于在通过外部程序所引发的操作中，如果出现异常，Revit并不会给出任何提示或者报错，而是直接退出函数。所以这里要将整个操作放在一个Try代码块中，以处理可能出现的任何报错。
             {
+                ExcavSoilEntity exsI;
+
                 // 开始执行具体的操作
                 switch (RequestPara.Id) // 判断具体要干什么
                 {
@@ -434,27 +399,37 @@ namespace OldW.Excavation
                     // ------------------------------------------------------------------------------------------------------------
                     case Request.SynToElement:
                         DataGridViewCellEventArgs e_1 = (DataGridViewCellEventArgs)RequestPara.e;
-                        ExcavSoilEntity exsI_1 = (ExcavSoilEntity)DataGridView1.Rows[e_1.RowIndex].DataBoundItem;
+                        exsI = (ExcavSoilEntity)DataGridView1.Rows[e_1.RowIndex].DataBoundItem;
                         using (Transaction t = new Transaction(Document, "将单个元素的信息从表格中同步到文档中"))
                         {
                             t.Start();
-                            exsI_1.syncToDocument(t, UIDoc.ActiveView);
+                            exsI.syncToDocument(t, UIDoc.ActiveView);
                             t.Commit();
                         }
 
                         break;
 
+                    // ------------------------------------------------------------------------------------------------------------
+                    case Request.DeleteExcavSoil:
+                        DataGridViewCellEventArgs e_4 = (DataGridViewCellEventArgs)RequestPara.e;
+                        exsI = (ExcavSoilEntity)DataGridView1.Rows[e_4.RowIndex].DataBoundItem;
+                        using (Transaction t = new Transaction(Document, "将单个元素的信息从表格中同步到文档中"))
+                        {
+                            t.Start();
+                            exsI.DeleteExcavSoil(t);
+                            t.Commit();
+                        }
 
+                        break;
                     // ------------------------------------------------------------------------------------------------------------
                     case Request.SynToMultipleElements:
-                        ExcavSoilEntity exsI_2 = default(ExcavSoilEntity);
                         using (Transaction t = new Transaction(Document, "将单个元素的信息从表格中同步到文档中"))
                         {
                             t.Start();
                             foreach (DataGridViewRow r in this.DataGridView1.SelectedRows)
                             {
-                                exsI_2 = (ExcavSoilEntity)r.DataBoundItem;
-                                exsI_2.syncToDocument(t, UIDoc.ActiveView);
+                                exsI = (ExcavSoilEntity)r.DataBoundItem;
+                                exsI.syncToDocument(t, UIDoc.ActiveView);
                             }
                             t.Commit();
                         }
@@ -464,13 +439,13 @@ namespace OldW.Excavation
                     // -------------------------------------------------------------------------------------------------------------
                     case Request.SetVisibility:
                         DataGridViewCellEventArgs e = (DataGridViewCellEventArgs)RequestPara.e;
-                        ExcavSoilEntity exsI_3 = (ExcavSoilEntity)DataGridView1.Rows[e.RowIndex].DataBoundItem;
+                        exsI = (ExcavSoilEntity)DataGridView1.Rows[e.RowIndex].DataBoundItem;
 
                         //
                         using (Transaction t = new Transaction(Document, "将设置单个元素的可见性"))
                         {
                             t.Start();
-                            exsI_3.SetVisibility(tran: t, show: exsI_3.Visible, view: UIDoc.ActiveView);
+                            exsI.SetVisibility(tran: t, show: exsI.Visible, view: UIDoc.ActiveView);
                             t.Commit();
                         }
 
@@ -482,8 +457,6 @@ namespace OldW.Excavation
                         using (Transaction tran = new Transaction(Document, "设置多个元素的可见性"))
                         {
                             tran.Start();
-
-                            ExcavSoilEntity exsI = default(ExcavSoilEntity);
 
                             var v = this.CheckBox_MultiVisible.CheckState;
                             DataGridViewCheckBoxCell Ch;

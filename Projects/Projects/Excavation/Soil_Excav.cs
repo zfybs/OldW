@@ -282,6 +282,15 @@ namespace OldW.Excavation
 
         #endregion
 
+        /// <summary> 将自身从整个模型文档中删除 </summary>
+        public void Delete(Transaction tranDoc)
+        {
+            tranDoc.SetName("将开挖土体从模型中删除");
+
+            // 删除实例对象、实例所对应的族、以及族类型
+            Document.Delete(new ElementId[] { Soil.Id, Soil.Symbol.Id, Soil.Symbol.Family.Id });
+        }
+
         #region    ---   根据不同的工况状态来设置开挖土体的显示样式
 
         /// <summary>
@@ -302,7 +311,7 @@ namespace OldW.Excavation
             }
         }
 
-        private void SetStyle_UnStarted(Transaction tranDoc, View view,ICollection<ElementId> excavSoils )
+        private void SetStyle_UnStarted(Transaction tranDoc, View view, ICollection<ElementId> excavSoils)
         {
             // 让其以一般土体的样式显示出来
             view.UnhideElements(excavSoils);

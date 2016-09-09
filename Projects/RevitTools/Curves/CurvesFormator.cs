@@ -88,82 +88,9 @@ namespace rvtTools.Curves
         /// 注意，curves 集合中每一条曲线都必须是有界的（IsBound），否则，其 GetEndPoint 会报错。</param>
         /// <returns>如果输入的曲线可以形成连续的多段线，则返回重新排序后的多段线集合；
         /// 如果输入的曲线不能形成连续的多段线，则返回Nothing！</returns>
-        /// <remarks>GetContiguousCurvesFromCurves2与函数GetContiguousCurvesFromCurves2的功能完全相同，只是GetContiguousCurvesFromCurves1是
-        /// 通过数值的方法来实现，而GetContiguousCurvesFromCurves2是通过类与逻辑的判断来实现。所以GetContiguousCurvesFromCurves1的执行速度可能会快一点点，
-        /// 而GetContiguousCurvesFromCurves2的扩展性会好得多。</remarks>
         public static IList<Curve> GetContiguousCurvesFromCurves(IList<Curve> curves)
         {
-            Dictionary<int, Curve> CurvesLeft = new Dictionary<int, Curve>();
-            ContiguousCurveChain cc = null;
-            //
-            if (curves.Count == 1)
-            {
-                // 只有一条曲线，不管其是否封闭，它肯定是一条连续曲线。
-                // 如果是封闭的圆或者椭圆，则将其脱开
-                Curve c = curves[0];
-                if ((!c.IsBound) && ((c is Arc) || (c is Ellipse)))
-                {
-                    c.MakeBound(0, 2 * Math.PI);
-                }
-                // 将改造后的结果直接返回
-                List<Curve> l = new List<Curve>();
-                l.Add(c);
-                return l;
-            }
-            else if (curves.Count > 1)
-            {
-                cc = new ContiguousCurveChain(curves[0]);
-                for (var i = 1; i <= curves.Count - 1; i++)
-                {
-                    // 所有曲线集合中，除了已经构造为连续曲线链的曲线外，还剩下的待进行匹配的曲线。
-                    // 其key值为曲线在所有曲线集合中的下标值。
-                    CurvesLeft.Add(i, curves[Convert.ToInt32(i)]);
-                }
-            }
-            else
-            {
-                return null;
-            }
-            //
-            int? foundedIndex = null;
-            // 先向右端延伸搜索
-            var leftCount = CurvesLeft.Count;  // 将CurvesLeft.Count值固定下来，因为在后面的匹配中，可能会执行 CurvesLeft.Remove，这样的话 CurvesLeft.Count 的值会发生变化。
-            for (var i = 0; i < leftCount; i++)
-            {
-                foundedIndex = cc.CheckForward(CurvesLeft);
-                if (foundedIndex != null) // 说明找到了相连的曲线
-                {
-                    cc.ConnectForward(CurvesLeft[foundedIndex.Value]);
-                    CurvesLeft.Remove(foundedIndex.Value);  // 此时 CurvesLeft.Count 的值变小了
-                }
-                else // 说明剩下的曲线中，没有任何一条曲线能与当前连续链的右端相连了
-                {
-                    break;
-                }
-            }
-
-            // 再向左端延伸搜索
-            leftCount = CurvesLeft.Count;  // 将CurvesLeft.Count值固定下来，因为在后面的匹配中，可能会执行 CurvesLeft.Remove，这样的话 CurvesLeft.Count 的值会发生变化。
-            for (var i = 0; i <= leftCount - 1; i++)
-            {
-                foundedIndex = cc.CheckBackward(CurvesLeft);
-                if (foundedIndex != null) // 说明找到了相连的曲线
-                {
-                    cc.ConnectBackward(CurvesLeft[foundedIndex.Value]);
-                    CurvesLeft.Remove(foundedIndex.Value);
-                }
-                else // 说明剩下的曲线中，没有任何一条曲线能与当前连续链的右端相连了
-                {
-                    break;
-                }
-            }
-
-            //
-            if (cc.Curves.Count != curves.Count)
-            {
-                return default(IList<Curve>);
-            }
-            return cc.Curves;
+            return ContiguousCurveChain.FormatChain(curves);
         }
 
         #endregion

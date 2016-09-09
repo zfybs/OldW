@@ -47,10 +47,8 @@ public
             this.Label1 = new System.Windows.Forms.Label();
             this.ToolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btnGetExcavInfo = new System.Windows.Forms.Button();
-            this.BtnClearEmpty = new System.Windows.Forms.Button();
             this.CheckBox_MultiVisible = new System.Windows.Forms.CheckBox();
             this.CheckBox1 = new System.Windows.Forms.CheckBox();
-            this.buttonReCut = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -63,13 +61,13 @@ public
             this.DataGridView1.Location = new System.Drawing.Point(12, 41);
             this.DataGridView1.Name = "DataGridView1";
             this.DataGridView1.RowTemplate.Height = 23;
-            this.DataGridView1.Size = new System.Drawing.Size(536, 459);
+            this.DataGridView1.Size = new System.Drawing.Size(563, 459);
             this.DataGridView1.TabIndex = 1;
             // 
             // btn_SyncMultiple
             // 
             this.btn_SyncMultiple.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_SyncMultiple.Location = new System.Drawing.Point(562, 477);
+            this.btn_SyncMultiple.Location = new System.Drawing.Point(589, 477);
             this.btn_SyncMultiple.Name = "btn_SyncMultiple";
             this.btn_SyncMultiple.Size = new System.Drawing.Size(75, 23);
             this.btn_SyncMultiple.TabIndex = 0;
@@ -90,7 +88,7 @@ public
             // btnGetExcavInfo
             // 
             this.btnGetExcavInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGetExcavInfo.Location = new System.Drawing.Point(562, 41);
+            this.btnGetExcavInfo.Location = new System.Drawing.Point(589, 41);
             this.btnGetExcavInfo.Name = "btnGetExcavInfo";
             this.btnGetExcavInfo.Size = new System.Drawing.Size(75, 23);
             this.btnGetExcavInfo.TabIndex = 0;
@@ -99,22 +97,11 @@ public
             this.btnGetExcavInfo.UseVisualStyleBackColor = true;
             this.btnGetExcavInfo.Click += new System.EventHandler(this.btnGetExcavInfo_Click);
             // 
-            // BtnClearEmpty
-            // 
-            this.BtnClearEmpty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnClearEmpty.Location = new System.Drawing.Point(562, 82);
-            this.BtnClearEmpty.Name = "BtnClearEmpty";
-            this.BtnClearEmpty.Size = new System.Drawing.Size(75, 23);
-            this.BtnClearEmpty.TabIndex = 4;
-            this.BtnClearEmpty.Text = "清理冗余";
-            this.ToolTip1.SetToolTip(this.BtnClearEmpty, "清理Revit模型中，没有实例对象的开挖土体族。");
-            this.BtnClearEmpty.UseVisualStyleBackColor = true;
-            // 
             // CheckBox_MultiVisible
             // 
             this.CheckBox_MultiVisible.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CheckBox_MultiVisible.AutoSize = true;
-            this.CheckBox_MultiVisible.Location = new System.Drawing.Point(563, 450);
+            this.CheckBox_MultiVisible.Location = new System.Drawing.Point(590, 450);
             this.CheckBox_MultiVisible.Name = "CheckBox_MultiVisible";
             this.CheckBox_MultiVisible.Size = new System.Drawing.Size(48, 16);
             this.CheckBox_MultiVisible.TabIndex = 5;
@@ -127,7 +114,7 @@ public
             // 
             this.CheckBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CheckBox1.AutoSize = true;
-            this.CheckBox1.Location = new System.Drawing.Point(563, 421);
+            this.CheckBox1.Location = new System.Drawing.Point(590, 421);
             this.CheckBox1.Name = "CheckBox1";
             this.CheckBox1.Size = new System.Drawing.Size(48, 16);
             this.CheckBox1.TabIndex = 3;
@@ -135,25 +122,12 @@ public
             this.CheckBox1.UseVisualStyleBackColor = true;
             this.CheckBox1.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged);
             // 
-            // buttonReCut
-            // 
-            this.buttonReCut.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonReCut.Location = new System.Drawing.Point(562, 111);
-            this.buttonReCut.Name = "buttonReCut";
-            this.buttonReCut.Size = new System.Drawing.Size(75, 23);
-            this.buttonReCut.TabIndex = 4;
-            this.buttonReCut.Text = "修复剪切";
-            this.ToolTip1.SetToolTip(this.buttonReCut, "修改所有开挖土体对于基坑土体的剪切关系。");
-            this.buttonReCut.UseVisualStyleBackColor = true;
-            // 
             // frm_ExcavationInfo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(649, 512);
+            this.ClientSize = new System.Drawing.Size(676, 512);
             this.Controls.Add(this.CheckBox_MultiVisible);
-            this.Controls.Add(this.buttonReCut);
-            this.Controls.Add(this.BtnClearEmpty);
             this.Controls.Add(this.CheckBox1);
             this.Controls.Add(this.Label1);
             this.Controls.Add(this.DataGridView1);
@@ -172,9 +146,7 @@ public
 		internal System.Windows.Forms.ToolTip ToolTip1;
 		internal System.Windows.Forms.Button btnGetExcavInfo;
 		internal System.Windows.Forms.CheckBox CheckBox1;
-		internal System.Windows.Forms.Button BtnClearEmpty;
 		internal CheckBox CheckBox_MultiVisible;
         private System.ComponentModel.IContainer components;
-        internal Button buttonReCut;
     }
 }

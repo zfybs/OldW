@@ -22,17 +22,18 @@ namespace rvtTools.Curves
         /// <param name="FinishedExternally">画笔是否是由外部程序强制关闭的。如果是外部对象通过调用Cancel方法来取消绘制的，则其值为 True。</param>
         /// <param name="Succeeded">AddedCurves集合中的曲线集合是否满足指定的连续性条件</param>
         public delegate void DrawingCompletedEventHandler(List<List<ElementId>> AddedCurves, Boolean FinishedExternally, bool Succeeded);
-        private DrawingCompletedEventHandler DrawingCompletedEvent;
+        private DrawingCompletedEventHandler _closedDrawingCompletedEvent;
 
-        public event DrawingCompletedEventHandler DrawingCompleted
+        /// <summary> 绘制封闭的模型线结束 </summary>
+        public event DrawingCompletedEventHandler ClosedDrawingCompleted
         {
             add
             {
-                DrawingCompletedEvent = (DrawingCompletedEventHandler)System.Delegate.Combine(DrawingCompletedEvent, value);
+                _closedDrawingCompletedEvent = (DrawingCompletedEventHandler)System.Delegate.Combine(_closedDrawingCompletedEvent, value);
             }
             remove
             {
-                DrawingCompletedEvent = (DrawingCompletedEventHandler)System.Delegate.Remove(DrawingCompletedEvent, value);
+                _closedDrawingCompletedEvent = (DrawingCompletedEventHandler)System.Delegate.Remove(_closedDrawingCompletedEvent, value);
             }
         }
 
@@ -89,18 +90,21 @@ namespace rvtTools.Curves
             AddedModelCurvesId = new List<List<ElementId>>();
         }
 
+        /// <summary> 在UI界面中绘制模型线。此方法为异步操作，程序并不会等待 PostDraw 方法执行完成才继续向下执行。  </summary>
         public void PostDraw()
         {
             // 绘制轮廓
             this.ClosedCurveDrawer = new ModelCurvesDrawer(this.uiApp, CurveCheckMode.Closed, this.CheckInTime);
             ClosedCurveDrawer.DrawingCompleted += Drawer_DrawingCompleted;
             this.ClosedCurveDrawer.PostDraw();
-
         }
 
-        public void cancel()
+        public void Cancel()
         {
-            this.ClosedCurveDrawer.Cancel();
+            if (ClosedCurveDrawer != null)
+            {
+                this.ClosedCurveDrawer.Cancel();
+            }
         }
 
         private void Drawer_DrawingCompleted(List<ElementId> AddedCurves, bool FinishedExternally, bool Succeeded)
@@ -112,7 +116,7 @@ namespace rvtTools.Curves
                 AddedModelCurvesId.Add(AddedCurves);
 
                 // 询问是否还要添加
-                DialogResult res = MessageBox.Show("封闭曲线绘制成功，是否还要继续绘制另一组封闭曲线？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                DialogResult res = MessageBox.Show(@"封闭曲线绘制成功，是否还要继续绘制另一组封闭曲线？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (res == DialogResult.Yes)
                 {
                     // Can not subscribe to an event during execution of that event. revit.exception.InvalidOperationException
@@ -122,22 +126,22 @@ namespace rvtTools.Curves
                 {
                     // 取消与这个绘制器的关联
                     ClosedCurveDrawer.DrawingCompleted -= Drawer_DrawingCompleted;
-                    this.ClosedCurveDrawer.Dispose();
+                    ClosedCurveDrawer.Finish(FinishedExternally, Succeeded);
                     this.ClosedCurveDrawer = null;
                     //
-                    if (DrawingCompletedEvent != null)
-                        DrawingCompletedEvent(AddedModelCurvesId, FinishedExternally, true);
+                    if (_closedDrawingCompletedEvent != null)
+                        _closedDrawingCompletedEvent(AddedModelCurvesId, FinishedExternally, true);
                 }
             }
             else
             {
                 // 取消与这个绘制器的关联
                 ClosedCurveDrawer.DrawingCompleted -= Drawer_DrawingCompleted;
-                this.ClosedCurveDrawer.Dispose();
+                this.ClosedCurveDrawer.Finish(FinishedExternally, Succeeded);
                 this.ClosedCurveDrawer = null;
 
-                if (DrawingCompletedEvent != null)
-                    DrawingCompletedEvent(AddedModelCurvesId, FinishedExternally, false);
+                if (_closedDrawingCompletedEvent != null)
+                    _closedDrawingCompletedEvent(AddedModelCurvesId, FinishedExternally, false);
             }
 
         }
