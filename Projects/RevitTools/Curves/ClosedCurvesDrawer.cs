@@ -131,7 +131,7 @@ namespace rvtTools.Curves
                     //
                     if (_closedDrawingCompletedEvent != null)
                         _closedDrawingCompletedEvent(AddedModelCurvesId, FinishedExternally, true);
-                }
+                } 
             }
             else
             {
