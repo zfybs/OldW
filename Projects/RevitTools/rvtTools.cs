@@ -29,12 +29,12 @@ namespace rvtTools
             app.SharedParametersFilename = ProjectPath.Path_SharedParametersFile;
             DefinitionFile myDefinitionFile = app.OpenSharedParameterFile(); // 如果没有找到对应的文件，则打开时不会报错，而是直接返回Nothing
 
-            // 如果原来的共享参数文件是无效文件，则将其赋值给 SharedParametersFilename 后，在 FamilyManager.AddParameter 时会出现 shared parameters can not be created 的报错。
-            if (File.Exists(OriginalSharedFileName))
+            // 如果原来的共享参数文件是无效文件，则将其赋值给 SharedParametersFilename 后，在 FamilyManager.AddParameter 时会出现 Shared parameter creation failed. 的报错。
+            // if (File.Exists(OriginalSharedFileName))
+            if (false)
             {
                 app.SharedParametersFilename = OriginalSharedFileName; // 将Revit程序中的共享文件路径还原，以隐藏插件程序中的共享文件路径
             }
-
             if (myDefinitionFile == null)
             {
                 throw (new NullReferenceException("The specified shared parameter file \"" + ProjectPath.Path_SharedParametersFile + "\" is not found!"));

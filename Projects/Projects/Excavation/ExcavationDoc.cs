@@ -366,7 +366,7 @@ namespace OldW.Excavation
 
             if (curveArrArr.IsEmpty || sp == null || !sp.IsValidObject)
             {
-                MessageBox.Show(@"创建土体模型的轮廓出错。");
+              throw new InvalidOperationException(@"创建土体模型的轮廓出错:未指定封闭的曲线轮廓，或者对应的工作平面无效。"); 
             }
 
             Extrusion extru = familyCreation.NewExtrusion(

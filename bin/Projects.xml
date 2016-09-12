@@ -647,7 +647,7 @@
             然后Revit会在会在下个闲置时间（idling time cycle）到来时调用IExternalEventHandler.Excute方法，在这个Execute方法中，
             再通过RequestId来提取对应的操作需求，</remarks>
         </member>
-        <member name="F:OldW.Excavation.frm_DrawExcavation.Depth">
+        <member name="F:OldW.Excavation.frm_DrawExcavation._soilDepth">
             <summary> 要绘制的模型的深度，单位为m </summary>
         </member>
         <member name="F:OldW.Excavation.frm_DrawExcavation.CompletedDate">
@@ -668,13 +668,14 @@
         <member name="F:OldW.Excavation.frm_DrawExcavation._forbiddenFormClosing">
             <summary> 禁止关闭窗口 </summary>
         </member>
-        <member name="M:OldW.Excavation.frm_DrawExcavation.DozeOff">
+        <member name="M:OldW.Excavation.frm_DrawExcavation.DozeOff(OldW.Excavation.frm_DrawExcavation.Request)">
             <summary> 在Revit执行相关操作时，禁用窗口中的控件 </summary>
+            <param name="req"> 当前正在执行的命令 </param>
         </member>
-        <member name="M:OldW.Excavation.frm_DrawExcavation.WarmUp">
+        <member name="M:OldW.Excavation.frm_DrawExcavation.WarmUp(OldW.Excavation.frm_DrawExcavation.Request)">
             <summary> 在外部事件RequestHandler中的Execute方法执行完成后，用来激活窗口中的控件 </summary>
         </member>
-        <member name="M:OldW.Excavation.frm_DrawExcavation.CheckUI">
+        <member name="M:OldW.Excavation.frm_DrawExcavation.CheckUiDataForDrawing">
             <summary>
             对窗口中的数据进行检测，并判断是否可以进行绘制
             </summary>
@@ -710,15 +711,17 @@
             </summary>
             <remarks></remarks>
         </member>
-        <member name="F:OldW.Excavation.frm_DrawExcavation.Request.DrawCurves">
-            <summary>
-            通过在UI界面绘制模型线来作为土体的轮廓
-            </summary>
+        <member name="F:OldW.Excavation.frm_DrawExcavation.Request.DrawCurvesInUI">
+            <summary> 通过在UI界面绘制模型线来作为土体的轮廓 </summary>
+        </member>
+        <member name="F:OldW.Excavation.frm_DrawExcavation.Request.PickCurves">
+            <summary> 通过 Selection.PickObject() 来在界面上选择出一组封闭模型线 </summary>
+        </member>
+        <member name="F:OldW.Excavation.frm_DrawExcavation.Request.DrawCurvesFromFaceEdge">
+            <summary> 通过在UI界面中选择一个水平面来绘制出对应的轮廓 </summary>
         </member>
         <member name="F:OldW.Excavation.frm_DrawExcavation.Request.DeleteCurves">
-            <summary>
-            删除绘制好的模型线并清空曲线集合数据
-            </summary>
+            <summary> 删除绘制好的模型线并清空曲线集合数据 </summary>
         </member>
         <member name="F:OldW.Excavation.frm_DrawExcavation.Request.StartModeling">
             <summary> 开始建模 </summary>
@@ -731,7 +734,7 @@
             在执行ExternalEvent.Raise()方法之前，请先将操作需求信息赋值给其RequestHandler对象的RequestId属性。
             当ExternalEvent.Raise后，Revit会在下个闲置时间（idling time cycle）到来时调用IExternalEventHandler.Execute方法的实现。
             </summary>
-            <param name="app">此属性由Revit自动提供，其值不是Nothing，而是一个真实的UIApplication对象</param>
+            <param name="uiApp">此属性由Revit自动提供，其值不是Nothing，而是一个真实的UIApplication对象</param>
             <remarks>由于在通过外部程序所引发的操作中，如果出现异常，Revit并不会给出任何提示或者报错，
             而是直接退出函数。所以要将整个操作放在一个Try代码块中，以处理可能出现的任何报错。</remarks>
         </member>
@@ -741,15 +744,24 @@
             </summary>
             <param name="curveArrArr"></param>
         </member>
-        <member name="F:OldW.Excavation.frm_DrawExcavation.ClosedCurveDrawer">
-            <summary>
-            用来绘制封闭的模型线
-            </summary>
+        <member name="F:OldW.Excavation.frm_DrawExcavation._closedCurveDrawer">
+            <summary> 用来绘制封闭的模型线 </summary>
         </member>
-        <member name="P:OldW.Excavation.frm_DrawExcavation.drawnCurveArrArr">
-            <summary>
-            通过界面绘制出来的模型线
-            </summary>
+        <member name="F:OldW.Excavation.frm_DrawExcavation._curvesToDrawSoil">
+            <summary> 绘制好的模型线所对应的Curve对象，记录下来以用来绘制土体。
+            此变量只应该在 成功地创建了封闭的模型线时为其赋值 </summary>
+        </member>
+        <member name="F:OldW.Excavation.frm_DrawExcavation._drawnCurveIds">
+            <summary> 绘制好的模型线 </summary>
+        </member>
+        <member name="P:OldW.Excavation.frm_DrawExcavation.DrawnCurveIds">
+            <summary> 通过界面绘制出来的模型线，记录下来以用来被删除 </summary>
+        </member>
+        <member name="M:OldW.Excavation.frm_DrawExcavation.ClosedCurveDrawer_DrawingCompleted(System.Collections.Generic.List{System.Collections.Generic.List{Autodesk.Revit.DB.ElementId}},System.Boolean,System.Boolean)">
+            <summary> 在UI界面中绘制完模型线后，对其结果进行处理 </summary>
+            <param name="addedCurves"></param>
+            <param name="finishedExternally"></param>
+            <param name="succeeded"></param>
         </member>
         <member name="T:OldW.Excavation.Soil_Element">
             <summary>

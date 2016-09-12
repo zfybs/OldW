@@ -5,3 +5,10 @@ F:\Software\Revit\RevitDevelop\OldW\Projects\RevitTools\obj\x64\Debug\rvtTools.T
 F:\Software\Revit\RevitDevelop\OldW\Projects\RevitTools\obj\x64\Debug\RevitTools.csproj.GenerateResource.Cache
 F:\Software\Revit\RevitDevelop\OldW\Projects\RevitTools\obj\x64\Debug\RevitTools.dll
 F:\Software\Revit\RevitDevelop\OldW\Projects\RevitTools\obj\x64\Debug\RevitTools.pdb
+F:\ProgrammingCases\GitHubProjects\OldW\bin\RevitTools.exe
+F:\ProgrammingCases\GitHubProjects\OldW\bin\RevitTools.pdb
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\RevitTools\obj\x64\Debug\RevitTools.csprojResolveAssemblyReference.cache
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\RevitTools\obj\x64\Debug\rvtTools.Tests_Templates.Template_ModelessForm.resources
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\RevitTools\obj\x64\Debug\RevitTools.csproj.GenerateResource.Cache
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\RevitTools\obj\x64\Debug\RevitTools.exe
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\RevitTools\obj\x64\Debug\RevitTools.pdb

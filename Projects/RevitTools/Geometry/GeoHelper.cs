@@ -11,6 +11,8 @@ namespace rvtTools
     /// </summary>
     public static class GeoHelper
     {
+        #region ---    Fields & Constants
+
         /// <summary>
         /// 进行点的距离比较时的容差。
         /// Revit中，Application.VertexTolerance 属性值返回的值为：0.0005233832795，
@@ -26,48 +28,7 @@ namespace rvtTools
         /// </summary>
         public const double AngleTolerance = 0.0015;
 
-        /// <summary>
-        /// Find the bottom face of a face array.
-        /// </summary>
-        /// <param name="faces">A face array.</param>
-        /// <returns>The bottom face of a face array.</returns>
-        public static Face GetBottomFace(FaceArray faces)
-        {
-            Face face = null;
-            double elevation = 0;
-            double tempElevation = 0;
-            Mesh mesh = null;
-
-            foreach (Face f in faces)
-            {
-                if (IsVerticalFace(f))
-                {
-                    // If this is a vertical face, it cannot be a bottom face to a certainty.
-                    continue;
-                }
-
-                tempElevation = 0;
-                mesh = f.Triangulate();
-
-                foreach (XYZ xyz in mesh.Vertices)
-                {
-                    tempElevation = tempElevation + xyz.Z;
-                }
-
-                tempElevation = tempElevation / mesh.Vertices.Count;
-
-                if (elevation > tempElevation || null == face)
-                {
-                    // Update the bottom face to which's elevation is the lowest.
-                    face = f;
-                    elevation = tempElevation;
-                }
-            }
-
-            // The bottom face is consider as which's average elevation is the lowest, except vertical face.
-            return face;
-        }
-
+        #endregion
         /// <summary>
         /// Find out the three points which made of a plane.
         /// </summary>
@@ -81,6 +42,65 @@ namespace rvtTools
             startPoint = mesh.Vertices[0];
             endPoint = mesh.Vertices[count / 3];
             thirdPnt = mesh.Vertices[count / 3 * 2];
+        }
+
+        /// <summary>
+        /// 判断一个三维点是否在指定的平面上
+        /// </summary>
+        /// <param name="p1"></param>
+        /// <param name="plane"></param>
+        /// <returns></returns>
+        public static bool IsPointOnPlane(XYZ p1, Plane plane)
+        {
+            // 指定点到原点法向向量的投影长度，即此点到对应平面距离
+            // 说明此点到指定平面的距离很小
+            return Convert.ToDouble(plane.Normal.DotProduct(p1 - plane.Origin)) < VertexTolerance;
+        }
+
+        /// <summary>
+        /// 判断一个三维点是否在指定的参考平面上
+        /// </summary>
+        /// <param name="p1"></param>
+        /// <param name="plane">参考平面，ReferencePlane.GetPlane方法也可以返回Plane对象。</param>
+        /// <returns></returns>
+        public static bool IsPointOnPlane(XYZ p1, ReferencePlane plane)
+        {
+            // 指定点到原点法向向量的投影长度，即此点到对应平面距离
+            // 说明此点到指定平面的距离很小
+            return Convert.ToDouble(plane.Normal.DotProduct(p1 - plane.BubbleEnd)) < VertexTolerance;
+        }
+
+        #region ---    XYZ 的操作
+
+        /// <summary> 判断两个方向向量是否指向同一个方向（不包括方向相反的情况） </summary>
+        /// <param name="vectorA">The vector A.</param>
+        /// <param name="vectorB">The vector B.</param>
+        public static bool IsSameDirection(XYZ vectorA, XYZ vectorB)
+        {
+            var angle = vectorA.AngleTo(vectorB);
+            if (angle <= AngleTolerance)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary> 比较两个点之间的距离是否小于指定的容差 </summary>
+        /// <remarks>对于Revit中的XYZ对象，其也有一个IsAlmostEqualTo函数，但是要注意，
+        /// 那个函数是用来比较两个向量的方向是否小于指定的弧度容差。</remarks>
+        public static bool IsAlmostEqualTo(XYZ Point1, XYZ Point2, double Precision)
+        {
+            double D = Math.Sqrt(Convert.ToDouble(Math.Pow(Point1.X - Point2.X, 2) + Math.Pow(
+                Point1.Y - Point2.Y, 2) + Math.Pow(
+                    Point1.Z - Point2.Z, 2)));
+            if (D <= Precision)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -119,110 +139,24 @@ namespace rvtTools
             return new XYZ(endPoint.X - startPoint.X, endPoint.Y - startPoint.Y, endPoint.Z - startPoint.Z);
         }
 
-        /// <summary>
-        /// Determines whether a face is vertical.
-        /// </summary>
-        /// <param name="face">The face to be determined.</param>
-        /// <returns>Return true if this face is vertical, or else return false.</returns>
-        private static bool IsVerticalFace(Face face)
-        {
-            foreach (EdgeArray ea in face.EdgeLoops)
-            {
-                foreach (Edge e in ea)
-                {
-                    if (IsVerticalEdge(e))
-                    {
-                        return true;
-                    }
-                }
-            }
+        #endregion
 
-            return false;
-        }
+        #region ---    Curve 的操作
 
         /// <summary>
-        /// Determines whether a edge is vertical.
+        /// 在指定的平面上绘制一组模型线
         /// </summary>
-        /// <param name="edge">The edge to be determined.</param>
-        /// <returns>Return true if this edge is vertical, or else return false.</returns>
-        private static bool IsVerticalEdge(Edge edge)
-        {
-            List<XYZ> polyline = edge.Tessellate() as List<XYZ>;
-            XYZ verticalVct = new XYZ(0, 0, 1);
-            XYZ pointBuffer = polyline[0];
-
-            for (int i = 1; i <= polyline.Count - 1; i++)
-            {
-                XYZ temp = polyline[i];
-                XYZ vector = GetVector(pointBuffer, temp);
-                if (Equal(vector, verticalVct))
-                {
-                    return true;
-                }
-                else
-                {
-                    continue;
-                }
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Determines whether two vector are equal in x and y axis.
-        /// </summary>
-        /// <param name="vectorA">The vector A.</param>
-        /// <param name="vectorB">The vector B.</param>
-        /// <returns>Return true if two vector are equals, or else return false.</returns>
-        private static bool Equal(XYZ vectorA, XYZ vectorB)
-        {
-            bool isNotEqual = (VertexTolerance < Math.Abs(vectorA.X - vectorB.X)) ||
-                              (VertexTolerance < Math.Abs(vectorA.Y - vectorB.Y));
-            return isNotEqual ? false : true;
-        }
-
-        /// <summary> 比较两个点之间的距离是否小于指定的容差 </summary>
-        /// <remarks>对于Revit中的XYZ对象，其也有一个IsAlmostEqualTo函数，但是要注意，
-        /// 那个函数是用来比较两个向量的方向是否小于指定的弧度容差。</remarks>
-        public static bool IsAlmostEqualTo(XYZ Point1, XYZ Point2, double Precision)
-        {
-            double D = Math.Sqrt(Convert.ToDouble(Math.Pow(Point1.X - Point2.X, 2) + Math.Pow(
-                Point1.Y - Point2.Y, 2) + Math.Pow(
-                    Point1.Z - Point2.Z, 2)));
-            if (D <= Precision)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        
-        /// <summary>
-        /// 判断一个三维点是否在指定的平面上
-        /// </summary>
-        /// <param name="p1"></param>
-        /// <param name="plane"></param>
+        /// <param name="tranDoc"></param>
+        /// <param name="doc"></param>
+        /// <param name="curves">请自行确保集合中的所有曲线都在同一个平面上</param>
+        /// <param name="sp"></param>
         /// <returns></returns>
-        public static bool IsPointOnPlane(XYZ p1, Plane plane)
+        public static ModelCurveArray DrawModelCurves(Transaction tranDoc, Document doc, IEnumerable<Curve> curves, SketchPlane sp)
         {
-            // 指定点到原点法向向量的投影长度，即此点到对应平面距离
-            // 说明此点到指定平面的距离很小
-            return Convert.ToDouble(plane.Normal.DotProduct(p1 - plane.Origin)) < VertexTolerance;
-        }
-
-        /// <summary>
-        /// 判断一个三维点是否在指定的参考平面上
-        /// </summary>
-        /// <param name="p1"></param>
-        /// <param name="plane">参考平面，ReferencePlane.GetPlane方法也可以返回Plane对象。</param>
-        /// <returns></returns>
-        public static bool IsPointOnPlane(XYZ p1, ReferencePlane plane)
-        {
-            // 指定点到原点法向向量的投影长度，即此点到对应平面距离
-            // 说明此点到指定平面的距离很小
-            return Convert.ToDouble(plane.Normal.DotProduct(p1 - plane.BubbleEnd)) < VertexTolerance;
+            CurveArray ca;
+            Curves.CurvesConverter.Convert(curves, out ca);
+            ModelCurveArray mca = doc.Create.NewModelCurveArray(ca, sp);
+            return mca;
         }
 
         /// <summary> 查看曲线集合中每一条曲线的端点坐标 </summary>
@@ -245,6 +179,8 @@ namespace rvtTools
             }
             return sb.ToString();
         }
+
+        #endregion
 
         #region ---   Solid  的搜索
 
@@ -465,6 +401,5 @@ namespace rvtTools
         }
 
         #endregion
-
     }
 }
