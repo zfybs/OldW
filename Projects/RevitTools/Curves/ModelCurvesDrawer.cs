@@ -19,23 +19,25 @@ namespace rvtTools.Curves
         /// <summary>
         /// 在模型线绘制完成时，触发此事件。
         /// </summary>
-        /// <param name="AddedCurves">添加的模型线</param>
-        /// <param name="FinishedExternally">画笔是否是由外部程序强制关闭的。如果是外部对象通过调用Cancel方法来取消绘制的，则其值为 True。</param>
-        /// <param name="Succeeded">AddedCurves集合中的曲线集合是否满足指定的连续性条件</param>
+        /// <param name="addedCurves">添加的模型线</param>
+        /// <param name="finishedExternally">画笔是否是由外部程序强制关闭的。如果是外部对象通过调用Cancel方法来取消绘制的，则其值为 True。</param>
+        /// <param name="succeeded">AddedCurves集合中的曲线集合是否满足指定的连续性条件</param>
         public delegate void DrawingCompletedEventHandler(
-            List<ElementId> AddedCurves, bool FinishedExternally, bool Succeeded);
+            List<ElementId> addedCurves, bool finishedExternally, bool succeeded);
 
-        private DrawingCompletedEventHandler DrawingCompletedEvent;
+        /// <summary> 在一般模型线绘制完成时触发 </summary>
+        private DrawingCompletedEventHandler _event_DrawingCompletedEvent;
 
+        /// <summary> 在一般模型线绘制完成时触发 </summary>
         public event DrawingCompletedEventHandler DrawingCompleted
         {
             add
             {
-                DrawingCompletedEvent = (DrawingCompletedEventHandler)Delegate.Combine(DrawingCompletedEvent, value);
+                _event_DrawingCompletedEvent = (DrawingCompletedEventHandler)Delegate.Combine(_event_DrawingCompletedEvent, value);
             }
             remove
             {
-                DrawingCompletedEvent = (DrawingCompletedEventHandler)Delegate.Remove(DrawingCompletedEvent, value);
+                _event_DrawingCompletedEvent = (DrawingCompletedEventHandler)Delegate.Remove(_event_DrawingCompletedEvent, value);
             }
         }
 
@@ -133,52 +135,60 @@ namespace rvtTools.Curves
             }
             else
             {
+                // 将以前绘制的结果清除
+                AddedModelCurvesId = new List<ElementId>();
+
+                //
                 ActiveDraw();
                 IsBeenUsed = true;
             }
         }
 
         /// <summary>
-        /// 取消模型线的绘制
+        /// 外部强行取消模型线的绘制，由于外部并不知道当前的模型线是否符合要求，所以要最后检查一次
         /// </summary>
-        public void Cancel()
+        public void CancelExternally()
         {
-            // 注意以下几步操作的先后顺序
-            rvtApp.DocumentChanged -= new EventHandler<DocumentChangedEventArgs>(app_DocumentChanged);
-
             // 最后再检测一次
             bool blnContinueDraw = false;
-            CurvesState cs = ValidateCurves(out blnContinueDraw);
-            RefreshUI(cs, blnContinueDraw);
-
+            CurvesState cs = ValidateCurves(AddedModelCurvesId, out blnContinueDraw);
+            RefreshUiAfterValidation(cs, continueDraw:false);
+            //
             if (cs == CurvesState.Validated)
             {
-                this.Finish(true, true);
+                this.FinishOnce(finishedExternally: true, succeeded: true);
             }
             else
             {
                 // 不管是 Validating 还是 Invalid，说明在此刻都没有成功
-                this.Finish(finishedExternally: true, succeeded: false);
+                this.FinishOnce(finishedExternally: true, succeeded: false);
             }
+            //
+            Dispose();
         }
 
         /// <summary>
-        /// 绘制完成，并关闭绘制模式
+        /// 在模型绘制过程中自行判断，判断结果为绘制完成，此时关闭绘制模式
         /// </summary>
         /// <param name="finishedExternally">画笔是否是由外部程序强制关闭的。如果是外部对象通过调用Cancel方法来取消绘制的，则其值为 True。</param>
         /// <param name="succeeded">AddedModelCurves 集合中的曲线集合是否满足指定的连续性条件</param>
-        public void Finish(bool finishedExternally, bool succeeded)
+        internal void FinishOnce(bool finishedExternally, bool succeeded)
         {
-            // 注意以下几步操作的先后顺序
-            rvtApp.DocumentChanged -= new EventHandler<DocumentChangedEventArgs>(app_DocumentChanged);
-
             IsBeenUsed = false;
 
             // 触发事件
-            if (DrawingCompletedEvent != null)
+            if (_event_DrawingCompletedEvent != null)
             {
-                DrawingCompletedEvent(AddedModelCurvesId, finishedExternally, succeeded);
+                _event_DrawingCompletedEvent(AddedModelCurvesId, finishedExternally, succeeded);
             }
+            // 此时并不一定需要关闭绘制器，而有可能继续绘制下一组曲线，或者撤消
+        }
+
+        /// <summary> 停止所有的绘制操作，并清除内存 </summary>
+        public void Dispose()
+        {
+            // 注意以下几步操作的先后顺序
+            rvtApp.DocumentChanged -= new EventHandler<DocumentChangedEventArgs>(app_DocumentChanged);
 
             // 变量清空
             rvtUiApp = null;
@@ -208,6 +218,7 @@ namespace rvtTools.Curves
                     // 先考察添加的对象：如果添加了新对象，则要么是 DrawNewLines ，要么是 DrawOtherObjects
                     int addedCount = 0;
                     Element addedElement = default(Element);
+
                     foreach (ElementId eid in e.GetAddedElementIds())
                     {
                         addedElement = doc.GetElement(eid);
@@ -223,8 +234,8 @@ namespace rvtTools.Curves
                         // 检测当前集合中的曲线是否符合指定的连续性要求
                         if (this.CheckInTime)
                         {
-                            CurvesState cs = ValidateCurves(out blnContinueDraw);
-                            RefreshUI(cs, blnContinueDraw);
+                            CurvesState cs = ValidateCurves(AddedModelCurvesId, out blnContinueDraw);
+                            RefreshUiAfterValidation(cs, blnContinueDraw);
                         }
                         else // 说明不进行实时检测，而直接继续绘制
                         {
@@ -258,8 +269,8 @@ namespace rvtTools.Curves
                         {
                             if (this.CheckInTime)
                             {
-                                CurvesState cs = ValidateCurves(out blnContinueDraw);
-                                RefreshUI(cs, blnContinueDraw);
+                                CurvesState cs = ValidateCurves(AddedModelCurvesId, out blnContinueDraw);
+                                RefreshUiAfterValidation(cs, blnContinueDraw);
                             }
                             else // 说明不进行实时检测，而直接继续绘制
                             {
@@ -288,8 +299,8 @@ namespace rvtTools.Curves
                         // 检测剔除后的集合中的曲线是否符合指定的连续性要求
                         if (this.CheckInTime)
                         {
-                            CurvesState cs = ValidateCurves(out blnContinueDraw);
-                            RefreshUI(cs, blnContinueDraw);
+                            CurvesState cs = ValidateCurves(AddedModelCurvesId, out blnContinueDraw);
+                            RefreshUiAfterValidation(cs, blnContinueDraw);
                         }
                         else // 说明不进行实时检测，而直接继续绘制
                         {
@@ -304,7 +315,7 @@ namespace rvtTools.Curves
                                     ex.Message + ex.GetType().FullName + "\r\n" +
                                     ex.StackTrace);
                     // 结束绘制
-                    this.Finish(false, false);
+                    this.FinishOnce(false, false);
                 }
             }
         }
@@ -335,6 +346,7 @@ namespace rvtTools.Curves
             // 再按一次
             WindowsUtil.keybd_event((byte)27, (byte)0, 0, ptr0);
             WindowsUtil.keybd_event((byte)27, (byte)0, 0x2, ptr0);
+
         }
 
         #endregion
@@ -344,75 +356,84 @@ namespace rvtTools.Curves
         /// <summary>
         /// 检测当前集合中的曲线是否符合指定的连续性要求
         /// </summary>
+        /// <param name="curveIds">被检验的模型线集合</param>
         /// <param name="continueDraw">在检查连续性后是否要继续绘制</param>
         /// <returns></returns>
-        private CurvesState ValidateCurves(out bool continueDraw)
+        private CurvesState ValidateCurves(List<ElementId> curveIds, out bool continueDraw)
         {
             CurvesState cs = CurvesState.Invalid;
             continueDraw = false;
-            List<Curve> curves = new List<Curve>();
 
-            //将ElementId转换为对应的 Curve 对象
-            foreach (var id in AddedModelCurvesId)
+            if (curveIds.Any())
             {
-                curves.Add(((ModelCurve)doc.GetElement(id)).GeometryCurve);
-            }
 
-            // 根据不同的模式进行不同的检测
-            if (this.CheckMode == CurveCheckMode.Connected) // 一条连续曲线链
-            {
-                if (CurvesFormator.GetContiguousCurvesFromCurves(curves) != null)
+                List<Curve> curves = new List<Curve>();
+                //将ElementId转换为对应的 Curve 对象
+                foreach (var id in curveIds)
                 {
+                    curves.Add(((ModelCurve)doc.GetElement(id)).GeometryCurve);
+                }
+
+                // 根据不同的模式进行不同的检测
+                if (this.CheckMode == CurveCheckMode.Connected) // 一条连续曲线链
+                {
+                    if (CurvesFormator.GetContiguousCurvesFromCurves(curves) != null)
+                    {
+                        cs = CurvesState.Validated;
+                        continueDraw = true;
+                    }
+                    else // 说明根本不连续
+                    {
+                        cs = CurvesState.Invalid;
+                        continueDraw = false;
+                    }
+                }
+                else if (this.CheckMode == CurveCheckMode.Closed)
+                {
+                    IList<Curve> CurveChain = default(List<Curve>);
+
+                    //  MessageBox.Show(GeoHelper.GetCurvesEnd(curves));
+                    CurveChain = CurvesFormator.GetContiguousCurvesFromCurves(curves);
+
+                    if (CurveChain == null) // 说明根本就不连续
+                    {
+                        cs = CurvesState.Invalid;
+                        continueDraw = false;
+                    }
+                    else // 说明起码是连续的
+                    {
+                        if (CurveChain.First().GetEndPoint(0).DistanceTo(CurveChain.Last().GetEndPoint(1)) <
+                            GeoHelper.VertexTolerance)
+                        {
+                            // 说明整个连续曲线是首尾相接，即是闭合的。此时就不需要再继续绘制下去了
+                            cs = CurvesState.Validated;
+                            continueDraw = false;
+                        }
+                        else
+                        {
+                            // 说明整个曲线是连续的，但是还没有闭合。此时就可以继续绘制下去
+                            cs = CurvesState.Validating;
+                            continueDraw = true;
+                        }
+                    }
+                }
+                else if (this.CheckMode == (CurveCheckMode.HorizontalPlan | CurveCheckMode.Closed))
+                {
+                    if (CurvesFormator.IsInOnePlan(curves, new XYZ(0, 0, 1)))
+                    {
+                    }
+                    return CurvesState.Invalid;
+                }
+                else if (this.CheckMode == CurveCheckMode.Seperated)
+                {
+                    // 不用检测，直接符合
                     cs = CurvesState.Validated;
                     continueDraw = true;
                 }
-                else // 说明根本不连续
-                {
-                    cs = CurvesState.Invalid;
-                    continueDraw = false;
-                }
             }
-            else if (this.CheckMode == CurveCheckMode.Closed)
+            else  // 说明当前集合中一个模型线元素都没有
             {
-                IList<Curve> CurveChain = default(List<Curve>);
 
-                //  MessageBox.Show(GeoHelper.GetCurvesEnd(curves));
-                CurveChain = CurvesFormator.GetContiguousCurvesFromCurves(curves);
-
-                if (CurveChain == null) // 说明根本就不连续
-                {
-                    cs = CurvesState.Invalid;
-                    continueDraw = false;
-                }
-                else // 说明起码是连续的
-                {
-                    if (CurveChain.First().GetEndPoint(0).DistanceTo(CurveChain.Last().GetEndPoint(1)) <
-                        GeoHelper.VertexTolerance)
-                    {
-                        // 说明整个连续曲线是首尾相接，即是闭合的。此时就不需要再继续绘制下去了
-                        cs = CurvesState.Validated;
-                        continueDraw = false;
-                    }
-                    else
-                    {
-                        // 说明整个曲线是连续的，但是还没有闭合。此时就可以继续绘制下去
-                        cs = CurvesState.Validating;
-                        continueDraw = true;
-                    }
-                }
-            }
-            else if (this.CheckMode == (CurveCheckMode.HorizontalPlan | CurveCheckMode.Closed))
-            {
-                if (CurvesFormator.IsInOnePlan(curves, new XYZ(0, 0, 1)))
-                {
-                }
-                return CurvesState.Invalid;
-            }
-            else if (this.CheckMode == CurveCheckMode.Seperated)
-            {
-                // 不用检测，直接符合
-                cs = CurvesState.Validated;
-                continueDraw = true;
             }
             return cs;
         }
@@ -421,26 +442,26 @@ namespace rvtTools.Curves
         /// 根据当前曲线的连续性状态，以及是否可以继续绘制，来作出相应的UI更新
         /// </summary>
         /// <param name="cs"></param>
-        /// <param name="ContinueDraw"></param>
-        private void RefreshUI(CurvesState cs, bool ContinueDraw)
+        /// <param name="continueDraw"></param>
+        private void RefreshUiAfterValidation(CurvesState cs, bool continueDraw)
         {
             switch (cs)
             {
                 case CurvesState.Validated:
-                    if (ContinueDraw) // 说明是绘制连续线时满足条件
+                    if (continueDraw) // 说明是绘制连续线时满足条件
                     {
                         // 继续绘制即可
                     }
                     else // 说明是绘制封闭线时终于封闭成功了
                     {
-                        // 此时直接绘制绘制就可以了，而不用考虑撤消的问题
-                        this.Finish(false, true);
+                        // 此时直接结束绘制就可以了，而不用考虑撤消的问题
+                        this.FinishOnce(false, true);
                         return;
                     }
                     break;
 
                 case CurvesState.Validating:
-                    if (ContinueDraw) // 说明是绘制封闭线时还未封闭，但是所绘制的曲线都是连续的
+                    if (continueDraw) // 说明是绘制封闭线时还未封闭，但是所绘制的曲线都是连续的
                     {
                         // 继续绘制即可
                     }
@@ -457,7 +478,7 @@ namespace rvtTools.Curves
                     else
                     {
                         // 结束绘制
-                        this.Finish(false, false);
+                        this.FinishOnce(false, false);
                     }
                     return;
             }

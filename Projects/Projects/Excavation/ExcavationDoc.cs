@@ -8,7 +8,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Structure;
 using Autodesk.Revit.UI;
 using OldW.GlobalSettings;
-using rvtTools;
+using RevitStd;
 using eZstd;
 using Application = Autodesk.Revit.ApplicationServices.Application;
 using Document = Autodesk.Revit.DB.Document;
@@ -23,7 +23,7 @@ namespace OldW.Excavation
     /// <remarks></remarks>
     public class ExcavationDoc : OldWDocument
     {
-        #region    ---   Fields
+        #region    ---   Types
 
         /// <summary> 用来创建此开挖土体族样板的类型 </summary>
         private enum Type
@@ -198,7 +198,7 @@ namespace OldW.Excavation
                     FamilyManager FM = famDoc.FamilyManager;
 
                     // 开挖开始
-                    DefinitionGroup defGroup = RvtTools.GetOldWDefinitionGroup(App);
+                    DefinitionGroup defGroup = OldWDocument.GetOldWDefinitionGroup(App);
                     ExternalDefinition ExDef =
                         defGroup.Definitions.get_Item(Constants.SP_ExcavationStarted) as ExternalDefinition;
 
@@ -366,7 +366,7 @@ namespace OldW.Excavation
 
             if (curveArrArr.IsEmpty || sp == null || !sp.IsValidObject)
             {
-                MessageBox.Show(@"创建土体模型的轮廓出错。");
+              throw new InvalidOperationException(@"创建土体模型的轮廓出错:未指定封闭的曲线轮廓，或者对应的工作平面无效。"); 
             }
 
             Extrusion extru = familyCreation.NewExtrusion(
@@ -390,7 +390,7 @@ namespace OldW.Excavation
             }
 
             // ExternalDefinition familyDefinition = null;
-            DefinitionGroup defGroup = RvtTools.GetOldWDefinitionGroup(App);
+            DefinitionGroup defGroup = OldWDocument.GetOldWDefinitionGroup(App);
             ExternalDefinition ExDef = defGroup.Definitions.get_Item(Constants.SP_SoilDepth) as ExternalDefinition;
             FamilyParameter Para_Depth = FM.AddParameter(ExDef, BuiltInParameterGroup.PG_GEOMETRY, isInstance: true);
 

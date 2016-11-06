@@ -4,6 +4,8 @@ using System.Windows.Forms;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using eZstd;
+using eZstd.Miscellaneous;
+using RevitStd.Selector;
 using Control = System.Windows.Forms.Control;
 
 namespace OldW.Excavation
@@ -32,7 +34,7 @@ namespace OldW.Excavation
         public ExcavationDoc ExcavDoc;
 
         /// <summary> 要绘制的模型的深度，单位为m </summary>
-        private double Depth;
+        private double _soilDepth;
 
         /// <summary> 开挖土体开挖完成的日期 </summary>
         private Nullable<DateTime> CompletedDate;
@@ -61,9 +63,7 @@ namespace OldW.Excavation
             // Me.TopMost = True
             this.StartPosition = FormStartPosition.CenterScreen;
 
-            // 参数绑定
-            LabelCompletedDate.DataBindings.Add("Enabled", RadioBtn_ExcavSoil, "Checked", false,
-                DataSourceUpdateMode.OnPropertyChanged);
+            // 用绘制开挖土体时 的控件参数绑定
             btn__DateCalendar.DataBindings.Add("Enabled", RadioBtn_ExcavSoil, "Checked", false,
                 DataSourceUpdateMode.OnPropertyChanged);
             TextBox_StartedDate.DataBindings.Add("Enabled", RadioBtn_ExcavSoil, "Checked", false,
@@ -72,13 +72,13 @@ namespace OldW.Excavation
                 DataSourceUpdateMode.OnPropertyChanged);
             TextBox_SoilName.DataBindings.Add("Enabled", RadioBtn_ExcavSoil, "Checked", false,
                 DataSourceUpdateMode.OnPropertyChanged);
+
+            // 用多边形模板作为土体轮廓时 的控件参数绑定
             LabelSides.DataBindings.Add("Enabled", RadioBtn_Polygon, "Checked", false,
                 DataSourceUpdateMode.OnPropertyChanged);
             ComboBox_sides.DataBindings.Add("Enabled", RadioBtn_Polygon, "Checked", false,
                 DataSourceUpdateMode.OnPropertyChanged);
-            Btn_DrawCurves.DataBindings.Add("Enabled", RadioBtn_Draw, "Checked", false,
-                DataSourceUpdateMode.OnPropertyChanged);
-            drawnCurveArrArr = null;
+
             //
             this.ExcavDoc = ExcavDoc;
             this.Document = ExcavDoc.Document;
@@ -94,12 +94,11 @@ namespace OldW.Excavation
             return "绘制基坑的模型土体与开挖土体。";
         }
 
-
         private void frm_DrawExcavation_FormClosed(object sender, FormClosedEventArgs e)
         {
             this.RequestPara = new RequestParameter(Request.CancelDraw, e, sender);
             this.ExEvent.Raise();
-            
+
             //
             this.ExEvent.Dispose();
             this.ExEvent = null;
@@ -114,7 +113,7 @@ namespace OldW.Excavation
         {
             if (_forbiddenFormClosing)
             {
-                MessageBox.Show(@"请先结束土体轮廓模型线的绘制");
+                MessageBox.Show(@"请先结束当前界面操作。");
                 e.Cancel = true;
             }
             else
@@ -131,38 +130,90 @@ namespace OldW.Excavation
         #region    ---   界面效果与事件响应
 
         /// <summary> 在Revit执行相关操作时，禁用窗口中的控件 </summary>
-        private void DozeOff()
+        /// <param name="req"> 当前正在执行的命令 </param>
+        private void DozeOff(Request req)
         {
-            this.BtnModeling.Enabled = false; // 建模按钮
-            this.Btn_DrawCurves.Enabled = false; // 绘制模型线按钮
-            this.Btn_ClearCurves.Enabled = false; // 删除模型线按钮
+            // 通用性的禁用
+            this.Btn_Modeling.Enabled = false; // 建模按钮
+            DisableCurvesGenerators();
+
+            // 
+            switch (req)
+            {
+                case Request.DrawCurvesInUI:
+                    {
+                        Btn_CancelDrawCurves.Enabled = true;
+                        break;
+                    }
+            }
+        }
+
+        private void DisableCurvesGenerators()
+        {
+            Btn_DrawCurves.Enabled = false;
+            Btn_GetEdgeFromFace.Enabled = false;
+            Btn_PickModelCurves.Enabled = false;
         }
 
         /// <summary> 在外部事件RequestHandler中的Execute方法执行完成后，用来激活窗口中的控件 </summary>
-        private void WarmUp()
+        private void WarmUp(Request req)
         {
-            foreach (Control c in this.Controls)
-            {
-                c.Enabled = true;
-            }
+            //foreach (Control c in this.Controls){c.Enabled = true;}
             // 
             Btn_DrawCurves.Enabled = true;
+            Btn_PickModelCurves.Enabled = true;
+            Btn_GetEdgeFromFace.Enabled = true;
+            //
+            switch (req)
+            {
+                case Request.DrawCurvesInUI:
+                    {
+                        Btn_CancelDrawCurves.Enabled = false;
+                        break;
+                    }
+            }
+            //
+            _forbiddenFormClosing = false;
         }
 
-        private void Btn_DrawCurves_EnabledChanged(object sender, EventArgs e)
+        private void ChangeDrawingPermission(bool canDrawSoilNow)
         {
-            Btn_CancelDraw.Enabled = !Btn_DrawCurves.Enabled;
+
+            this.CheckBox_DrawSucceeded.Checked = canDrawSoilNow;
+            Btn_Modeling.Enabled = canDrawSoilNow;
+            Btn_ClearCurves.Enabled = canDrawSoilNow;
         }
+
+        private void RadioBtn_Polygon_CheckedChanged(object sender, EventArgs e)
+        {
+            Btn_Modeling.Enabled = RadioBtn_Polygon.Checked;
+        }
+
         #endregion
 
         #region    ---   执行操作 ExternalEvent.Raise 的界面事件
 
+        // 选择一个平面以绘制对应的平面轮廓，用来作为绘制土体的轮廓
+        private void Btn_GetEdgeFromFace_Click(object sender, EventArgs e)
+        {
+            this.RequestPara = new RequestParameter(Request.DrawCurvesFromFaceEdge, e, sender);
+            this.ExEvent.Raise();
+            this.DozeOff(Request.DrawCurvesFromFaceEdge);
+        }
+
+        private void Btn_PickModelCurves_Click(object sender, EventArgs e)
+        {
+            this.RequestPara = new RequestParameter(Request.PickCurves, e, sender);
+            this.ExEvent.Raise();
+            this.DozeOff(Request.PickCurves);
+        }
+
         // 绘制模型线
         public void btn_DrawCurves_Click(object sender, EventArgs e)
         {
-            this.RequestPara = new RequestParameter(Request.DrawCurves, e, sender);
+            this.RequestPara = new RequestParameter(Request.DrawCurvesInUI, e, sender);
             this.ExEvent.Raise();
-            this.DozeOff();
+            this.DozeOff(Request.DrawCurvesInUI);
         }
 
         //删除模型线
@@ -170,19 +221,20 @@ namespace OldW.Excavation
         {
             this.RequestPara = new RequestParameter(Request.DeleteCurves, e, sender);
             this.ExEvent.Raise();
-            this.DozeOff();
+            this.DozeOff(Request.DeleteCurves);
+
         }
 
         // 建模
         public void BtnModeling_Click(object sender, EventArgs e)
         {
-            bool blnDraw = CheckUI();
-            if (blnDraw)
+            var canDraw = CheckUiDataForDrawing();
+            if (canDraw)
             {
                 this.RequestPara = new RequestParameter(Request.StartModeling, e, sender);
                 //
                 this.ExEvent.Raise();
-                this.DozeOff();
+                this.DozeOff(Request.StartModeling);
             }
             //
         }
@@ -196,17 +248,19 @@ namespace OldW.Excavation
             this.RequestPara = new RequestParameter(Request.CancelDraw, e, sender);
             //
             this.ExEvent.Raise();
-            this.DozeOff();
+            this.DozeOff(Request.CancelDraw);
         }
+
 
         /// <summary>
         /// 对窗口中的数据进行检测，并判断是否可以进行绘制
         /// </summary>
-        private bool CheckUI()
+        private bool CheckUiDataForDrawing()
         {
             bool blnDraw = true;
             // 提取开挖深度
-            if (TextBox_Depth.ValueNumber == 0)
+            _soilDepth = TextBox_Depth.ValueNumber;
+            if (_soilDepth == 0)
             {
                 MessageBox.Show("深度值不能为0。", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
@@ -254,5 +308,6 @@ namespace OldW.Excavation
         }
 
         #endregion
+
     }
 }

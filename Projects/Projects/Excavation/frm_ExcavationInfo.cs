@@ -388,7 +388,7 @@ namespace OldW.Excavation
             try // 由于在通过外部程序所引发的操作中，如果出现异常，Revit并不会给出任何提示或者报错，而是直接退出函数。所以这里要将整个操作放在一个Try代码块中，以处理可能出现的任何报错。
             {
                 ExcavSoilEntity exsI;
-
+                DataGridViewCellEventArgs e;
                 // 开始执行具体的操作
                 switch (RequestPara.Id) // 判断具体要干什么
                 {
@@ -398,8 +398,8 @@ namespace OldW.Excavation
 
                     // ------------------------------------------------------------------------------------------------------------
                     case Request.SynToElement:
-                        DataGridViewCellEventArgs e_1 = (DataGridViewCellEventArgs)RequestPara.e;
-                        exsI = (ExcavSoilEntity)DataGridView1.Rows[e_1.RowIndex].DataBoundItem;
+                        e = (DataGridViewCellEventArgs)RequestPara.e;
+                        exsI = (ExcavSoilEntity)DataGridView1.Rows[e.RowIndex].DataBoundItem;
                         using (Transaction t = new Transaction(Document, "将单个元素的信息从表格中同步到文档中"))
                         {
                             t.Start();
@@ -411,13 +411,14 @@ namespace OldW.Excavation
 
                     // ------------------------------------------------------------------------------------------------------------
                     case Request.DeleteExcavSoil:
-                        DataGridViewCellEventArgs e_4 = (DataGridViewCellEventArgs)RequestPara.e;
-                        exsI = (ExcavSoilEntity)DataGridView1.Rows[e_4.RowIndex].DataBoundItem;
+                        e = (DataGridViewCellEventArgs)RequestPara.e;
+                        exsI = (ExcavSoilEntity)DataGridView1.Rows[e.RowIndex].DataBoundItem;
                         using (Transaction t = new Transaction(Document, "将单个元素的信息从表格中同步到文档中"))
                         {
                             t.Start();
                             exsI.DeleteExcavSoil(t);
                             t.Commit();
+                            DataGridView1.Rows.RemoveAt(e.RowIndex);
                         }
 
                         break;
@@ -438,7 +439,7 @@ namespace OldW.Excavation
 
                     // -------------------------------------------------------------------------------------------------------------
                     case Request.SetVisibility:
-                        DataGridViewCellEventArgs e = (DataGridViewCellEventArgs)RequestPara.e;
+                        e = (DataGridViewCellEventArgs)RequestPara.e;
                         exsI = (ExcavSoilEntity)DataGridView1.Rows[e.RowIndex].DataBoundItem;
 
                         //

@@ -10,7 +10,7 @@ using Autodesk.Revit.UI;
 using OldW.DynamicStages;
 using OldW.Excavation;
 using OldW.GlobalSettings;
-using rvtTools;
+using RevitStd;
 using eZstd;
 using eZstd.Miscellaneous;
 using TextBox = Autodesk.Revit.UI.TextBox;
@@ -79,7 +79,7 @@ namespace OldW.Commands
             TextBox txt = GlobalSettings.Operations.GetRibbonItem(uiApp, "工况展示", "CurrentDate") as TextBox;
             string tm = txt.Value.ToString();
 
-            return eZstd.DateTimeHelper.String2Date(tm);
+            return DateTimeHelper.String2Date(tm);
         }
     }
 
@@ -110,7 +110,13 @@ namespace OldW.Commands
             DllActivator.DllActivator_Projects dat = new DllActivator.DllActivator_Projects();
             dat.ActivateReferences();
             //
-            var wpf = new ViewStageDynamically(commandData.Application);
+
+            //
+            UIApplication uiApp = commandData.Application;
+            OldWApplication WApp = OldWApplication.GetUniqueApplication(uiApp);
+            OldWDocument oldWDoc = WApp.SearchOrCreateOldWDocument(uiApp.ActiveUIDocument.Document);// OldWDocument.SearchOrCreate(WApp, doc);
+
+            var wpf = new ViewStageDynamically(oldWDoc);
             wpf.Show(null);
 
             return Result.Succeeded;

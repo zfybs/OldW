@@ -72,6 +72,9 @@
         <member name="M:OldW.AppAddRibbonTab.AddPushButtonViewStageDynamically(Autodesk.Revit.UI.RibbonPanel)">
             <summary> 添加“自动查看开挖工况”的按钮 </summary>
         </member>
+        <member name="M:OldW.AppAddRibbonTab.AddPushButtonProjectInfo(Autodesk.Revit.UI.RibbonPanel)">
+            <summary> 添加“项目信息”的按钮 </summary>
+        </member>
         <member name="M:OldW.AppAddRibbonTab.AddPushButtonSetWarning(Autodesk.Revit.UI.RibbonPanel)">
             <summary> 添加“警戒值设定”的按钮 </summary>
         </member>
