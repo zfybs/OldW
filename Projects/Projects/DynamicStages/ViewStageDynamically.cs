@@ -10,9 +10,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Autodesk.Revit.UI;
-using rvtTools;
+using RevitStd;
 using Timer = System.Timers.Timer;
 using eZstd.UserControls;
+using OldW.ProjectInfo;
 
 namespace OldW.DynamicStages
 {
@@ -31,7 +32,7 @@ namespace OldW.DynamicStages
         public const int ScrollBarMaximumValue = 91;
 
         private UIApplication _uiApplication;
-
+        private OldWDocument _oldWDoc;
         private ViewStageDynamicallyHandler _VSDHandler;
 
         #endregion
@@ -39,13 +40,14 @@ namespace OldW.DynamicStages
         #region ---   构造函数
 
         /// <summary> 构造函数 </summary>
-        public ViewStageDynamically(UIApplication uiApp)
+        public ViewStageDynamically(OldWDocument oldWDoc)
         {
             InitializeComponent();
             //
-            _uiApplication = uiApp;
-            _VSDHandler = new ViewStageDynamicallyHandler(uiApp);  // 这个值的指定一定要在靠前，因为后面的界面中的参数修改要同步到此对象中。
-                                                                   //
+            _oldWDoc = oldWDoc;
+            _uiApplication = new UIApplication(oldWDoc.Document.Application);
+            _VSDHandler = new ViewStageDynamicallyHandler(_uiApplication);  // 这个值的指定一定要在靠前，因为后面的界面中的参数修改要同步到此对象中。
+                                                                            //
             InitializeUI();
 
             // _VSDHandler 事件绑定
@@ -61,10 +63,12 @@ namespace OldW.DynamicStages
             //
             textBoxNumSpan.IntegerOnly = true;
             textBoxNumSpan.PositiveOnly = true;
-            textBoxNumSpan.Text = 2.ToString();
-            //
-            dateTimePicker_End.Value = DateTime.Today;
-            dateTimePicker_Start.Value = DateTime.Today.AddYears(-3);
+            textBoxNumSpan.Text = @"2";
+
+            // 设置开挖的起止时间
+            OldWProjectInfo pi = _oldWDoc.GetProjectInfo();
+            dateTimePicker_End.Value = pi.ExcavFinish;
+            dateTimePicker_Start.Value = pi.ExcavStart;
             //
             comboBoxSpanUnit.DataSource = Enum.GetNames(typeof(TimeSpan2.TimeSpanUnit));
             comboBoxSpanUnit.SelectedItem = Enum.GetName(typeof(TimeSpan2.TimeSpanUnit), TimeSpan2.TimeSpanUnit.Days);

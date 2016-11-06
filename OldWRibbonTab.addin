@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>ExternalApplication</Name>
+    <Assembly>F:\ProgrammingCases\GitHubProjects\OldW\bin\OldWRibbonTab.dll</Assembly>
+    <ClientId>32df6eb7-7dbc-45ff-b86e-b9c8bf0f8185</ClientId>
+    <FullClassName>OldW.AppAddRibbonTab</FullClassName>
+    <VendorId>OldW</VendorId>
+    <VendorDescription>http://naoce.sjtu.edu.cn/</VendorDescription>
+  </AddIn>
+
+</RevitAddIns>

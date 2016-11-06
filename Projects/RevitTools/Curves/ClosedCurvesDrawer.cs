@@ -18,10 +18,10 @@ namespace rvtTools.Curves
         /// <summary>
         /// 在模型线绘制完成时，触发此事件。
         /// </summary>
-        /// <param name="AddedCurves">添加的模型线</param>
-        /// <param name="FinishedExternally">画笔是否是由外部程序强制关闭的。如果是外部对象通过调用Cancel方法来取消绘制的，则其值为 True。</param>
-        /// <param name="Succeeded">AddedCurves集合中的曲线集合是否满足指定的连续性条件</param>
-        public delegate void DrawingCompletedEventHandler(List<List<ElementId>> AddedCurves, Boolean FinishedExternally, bool Succeeded);
+        /// <param name="addedCurves">添加的模型线</param>
+        /// <param name="finishedExternally">画笔是否是由外部程序强制关闭的。如果是外部对象通过调用Cancel方法来取消绘制的，则其值为 True。</param>
+        /// <param name="succeeded">AddedCurves集合中的曲线集合是否满足指定的连续性条件</param>
+        public delegate void DrawingCompletedEventHandler(List<List<ElementId>> addedCurves, Boolean finishedExternally, bool succeeded);
         private DrawingCompletedEventHandler _closedDrawingCompletedEvent;
 
         /// <summary> 绘制封闭的模型线结束 </summary>
@@ -66,12 +66,12 @@ namespace rvtTools.Curves
         /// <summary>
         /// 用来绘制封闭的模型线
         /// </summary>
-        private ModelCurvesDrawer ClosedCurveDrawer;
+        private ModelCurvesDrawer _closedCurveDrawer;
 
         /// <summary>
         /// 已经绘制的所有模型线
         /// </summary>
-        private List<List<ElementId>> AddedModelCurvesId;
+        private List<List<ElementId>> _addedModelCurvesId;
 
         #endregion
 
@@ -87,23 +87,23 @@ namespace rvtTools.Curves
         {
             this.uiApp = uiApp;
             this.checkInTime = CheckInTime;
-            AddedModelCurvesId = new List<List<ElementId>>();
+            _addedModelCurvesId = new List<List<ElementId>>();
         }
 
         /// <summary> 在UI界面中绘制模型线。此方法为异步操作，程序并不会等待 PostDraw 方法执行完成才继续向下执行。  </summary>
         public void PostDraw()
         {
             // 绘制轮廓
-            this.ClosedCurveDrawer = new ModelCurvesDrawer(this.uiApp, CurveCheckMode.Closed, this.CheckInTime);
-            ClosedCurveDrawer.DrawingCompleted += Drawer_DrawingCompleted;
-            this.ClosedCurveDrawer.PostDraw();
+            this._closedCurveDrawer = new ModelCurvesDrawer(this.uiApp, CurveCheckMode.Closed, this.CheckInTime);
+            _closedCurveDrawer.DrawingCompleted += Drawer_DrawingCompleted;
+            this._closedCurveDrawer.PostDraw();
         }
 
         public void Cancel()
         {
-            if (ClosedCurveDrawer != null)
+            if (_closedCurveDrawer != null)
             {
-                this.ClosedCurveDrawer.Cancel();
+                _closedCurveDrawer.CancelExternally();
             }
         }
 
@@ -113,38 +113,39 @@ namespace rvtTools.Curves
             {
 
                 // 将结果添加到集合中
-                AddedModelCurvesId.Add(AddedCurves);
+                _addedModelCurvesId.Add(AddedCurves);
 
                 // 询问是否还要添加
-                DialogResult res = MessageBox.Show(@"封闭曲线绘制成功，是否还要继续绘制另一组封闭曲线？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                DialogResult res = MessageBox.Show(@"封闭曲线绘制成功，是否还要继续绘制另一组封闭曲线？",
+                    @"提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (res == DialogResult.Yes)
                 {
                     // Can not subscribe to an event during execution of that event. revit.exception.InvalidOperationException
-                    this.ClosedCurveDrawer.PostDraw();
+                    this._closedCurveDrawer.PostDraw();
                 }
                 else
                 {
                     // 取消与这个绘制器的关联
-                    ClosedCurveDrawer.DrawingCompleted -= Drawer_DrawingCompleted;
-                    ClosedCurveDrawer.Finish(FinishedExternally, Succeeded);
-                    this.ClosedCurveDrawer = null;
+                    _closedCurveDrawer.DrawingCompleted -= Drawer_DrawingCompleted;
+                    _closedCurveDrawer.FinishOnce(FinishedExternally, Succeeded);
+                    _closedCurveDrawer.Dispose();
+                    this._closedCurveDrawer = null;
                     //
                     if (_closedDrawingCompletedEvent != null)
-                        _closedDrawingCompletedEvent(AddedModelCurvesId, FinishedExternally, true);
+                        _closedDrawingCompletedEvent(_addedModelCurvesId, FinishedExternally, true);
                 }
             }
             else
             {
                 // 取消与这个绘制器的关联
-                ClosedCurveDrawer.DrawingCompleted -= Drawer_DrawingCompleted;
-                this.ClosedCurveDrawer.Finish(FinishedExternally, Succeeded);
-                this.ClosedCurveDrawer = null;
+                _closedCurveDrawer.DrawingCompleted -= Drawer_DrawingCompleted;
+                this._closedCurveDrawer.FinishOnce(FinishedExternally, Succeeded);
+                _closedCurveDrawer.Dispose();
+                this._closedCurveDrawer = null;
 
                 if (_closedDrawingCompletedEvent != null)
-                    _closedDrawingCompletedEvent(AddedModelCurvesId, FinishedExternally, false);
+                    _closedDrawingCompletedEvent(_addedModelCurvesId, FinishedExternally, false);
             }
-
         }
-
     }
 }

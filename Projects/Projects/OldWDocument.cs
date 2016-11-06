@@ -3,9 +3,10 @@ using System.Windows.Forms;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using OldW.GlobalSettings;
-using rvtTools;
+using RevitStd;
 using eZstd;
 using eZstd.Data;
+using OldW.ProjectInfo;
 
 /// <summary>
 /// 将Revit中与基坑开挖相关的Document对象转换为OldW程序中的OldWDocument对象。
@@ -28,12 +29,6 @@ public class OldWDocument
 
     /// <summary> 每一个OldWDocument对象都绑定了一个Revit的 UIDocument 对象。 </summary>
     protected UIDocument uiDoc;
-
-    /// <summary>
-    /// OldWDocument中保存的与基坑开挖有关的信息
-    /// </summary>
-    /// <remarks></remarks>
-    private OldWProjectInfo ProjectInfo;
 
     #endregion
 
@@ -97,7 +92,7 @@ public class OldWDocument
     internal static OldWDocument CreateNewAndBindParameter(Document doc)
     {
         Autodesk.Revit.ApplicationServices.Application app = doc.Application;
-        DefinitionGroup myGroup = RvtTools.GetOldWDefinitionGroup(app);
+        DefinitionGroup myGroup = OldWDocument.GetOldWDefinitionGroup(app);
         ExternalDefinition OldWDefi = (ExternalDefinition)myGroup.Definitions.get_Item(Constants.SP_OldWProjectInfo);
 
         // 创建一个“项目信息”类别，用来提供给共享参数进行绑定
@@ -145,30 +140,47 @@ public class OldWDocument
 
     #region    ---    OldW项目信息 ProjectInformation 的保存与提取
 
+    /// <summary> OldWDocument中保存的与基坑开挖有关的信息 </summary>
     private OldWProjectInfo _oldWProjectInfo;
     /// <summary>
     /// 将与基坑开挖有关的信息保存到Document的相关参数中
     /// </summary>
-    /// <param name="ProjInfo"></param>
+    /// <param name="transDoc">可以设置其值为null，这种情况下函数内部会开启一个事务，以将项目信息保存到文档中。</param>
+    /// <param name="projInfo"></param>
     /// <remarks></remarks>
-    public void SetProjectInfo(OldWProjectInfo ProjInfo)
+    public void SetProjectInfo(Transaction transDoc, OldWProjectInfo projInfo)
     {
         Parameter pa = _doc.ProjectInformation.get_Parameter(Constants.SP_OldWProjectInfo_Guid);
-        string Info = StringSerializer.Encode64(this.ProjectInfo);
-        using (Transaction tran = new Transaction(_doc, "将OldW项目信息保存到Document中"))
+        string Info = StringSerializer.Encode64(projInfo);
+        //
+        if (transDoc == null)
         {
-            tran.Start();
-            pa.Set(Info);
-            tran.Commit();
-            tran.Commit();
+            using (transDoc = new Transaction(Document, "将项目信息保存到文档中"))
+            {
+                try
+                {
+                    transDoc.Start();
+                    pa.Set(Info);  // 将项目信息保存到文档中
+                    transDoc.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transDoc.RollBack();
+                }
+            }
         }
-        _oldWProjectInfo = ProjInfo;
+        else
+        {
+            pa.Set(Info); // 将项目信息保存到文档中
+        }
+
+        _oldWProjectInfo = projInfo;
     }
 
     /// <summary>
     /// 从Document中提取OldWDocument中保存的与基坑开挖有关的信息
     /// </summary>
-    /// <returns></returns>
+    /// <returns>返回值不可能会是 null </returns>
     /// <remarks></remarks>
     public OldWProjectInfo GetProjectInfo()
     {
@@ -179,9 +191,15 @@ public class OldWDocument
         else
         {
             Parameter pa = this._doc.ProjectInformation.get_Parameter(Constants.SP_OldWProjectInfo_Guid);
-            string info = Convert.ToString(pa.AsString());
-            OldWProjectInfo proinfo = (OldWProjectInfo)StringSerializer.Decode64(info);
-            return proinfo;
+            string info = pa.AsString();
+            if (info == null)
+            {
+                return new OldWProjectInfo();
+            }
+            else
+            {
+                return (OldWProjectInfo)StringSerializer.Decode64(info);
+            }
         }
     }
 
@@ -230,5 +248,39 @@ public class OldWDocument
         return IsEqual;
     }
 
+    #endregion
+
+    #region    ---    与共享参数相关的方法
+
+    /// <summary>
+    /// 获取外部共享参数文件中的参数组“OldW”，然后可以通过DefinitionGroup.Definitions.Item(name As String)来索引其中的共享参数，
+    /// 也可以通过DefinitionGroup.Definitions.Create(name As String)来创建新的共享参数。
+    /// </summary>
+    /// <param name="app"></param>
+    public static DefinitionGroup GetOldWDefinitionGroup(Autodesk.Revit.ApplicationServices.Application app)
+    {
+        // 打开共享文件
+        string OriginalSharedFileName = app.SharedParametersFilename; // Revit程序中，原来的共享文件路径
+
+        // 将新共享文件赋值给Revit
+        app.SharedParametersFilename = ProjectPath.Path_SharedParametersFile;
+        DefinitionFile myDefinitionFile = app.OpenSharedParameterFile(); // 如果没有找到对应的文件，则打开时不会报错，而是直接返回Nothing
+
+        // 如果原来的共享参数文件是无效文件，则将其赋值给 SharedParametersFilename 后，在 FamilyManager.AddParameter 时会出现 Shared parameter creation failed. 的报错。
+        // if (File.Exists(OriginalSharedFileName))
+        if (false)
+        {
+            app.SharedParametersFilename = OriginalSharedFileName; // 将Revit程序中的共享文件路径还原，以隐藏插件程序中的共享文件路径
+        }
+        if (myDefinitionFile == null)
+        {
+            throw (new NullReferenceException("The specified shared parameter file \"" + ProjectPath.Path_SharedParametersFile + "\" is not found!"));
+        }
+
+        // 索引到共享文件中的指定共享参数
+        DefinitionGroups myGroups = myDefinitionFile.Groups;
+        DefinitionGroup myGroup = myGroups.get_Item(Constants.SP_GroupName);
+        return myGroup;
+    }
     #endregion
 }

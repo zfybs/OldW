@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using OldW.DllActivator;
+using DllActivator;
 using OldW.Instrumentations;
 using OldW.Instrumentations.MonitorSetterGetter;
 

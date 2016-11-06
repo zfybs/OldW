@@ -36,3 +36,4 @@ F:\ProgrammingCases\GitHubProjects\OldW\Projects\Projects\obj\Debug\OldW.Dynamic
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\Projects\obj\Debug\OldW.Instrumentations.MonitorSetterGetter.ElementInitializer.resources
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\Projects\obj\Debug\OldW.Instrumentations.MonitorSetterGetter.PickInstrums.resources
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\Projects\obj\Debug\OldW.Instrumentations.MonitorSetterGetter.ChooseFamilySymbol.resources
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\Projects\obj\Debug\OldW.ProjectInfo.frm_ProjectInfo.resources

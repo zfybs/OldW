@@ -20,6 +20,9 @@
             监测数据管理系统
             </summary>
         </member>
+        <member name="T:OldW.Commands.cmd_ProjectInfo">
+            <summary> 对项目信息进行设置与刷新 </summary>
+        </member>
         <member name="T:OldW.Commands.cmd_ShowOldWModel">
             <summary> 查看Revit的Panel中指定的某一天的开挖工况 </summary>
         </member>
@@ -99,277 +102,6 @@
             <summary>
             test command
             </summary>
-        </member>
-        <member name="F:OldW.DynamicStages.Form1.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.Form1.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="M:OldW.DynamicStages.Form1.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="E:OldW.DynamicStages.ViewStageDynamicallyHandler1.CurrentTimeChanged">
-            <summary> 当前播放和进度 CurrentTime 属性改变时触发 </summary>
-        </member>
-        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.SpanValue">
-            <summary> 每一帧动画所对应的施工日期跨度 </summary>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler1._intervals">
-            <summary> 每一帧动画之间的时间间隔，单位为毫秒 </summary>
-        </member>
-        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.Intervals">
-            <summary> 每一帧动画之间的时间间隔，单位为毫秒 </summary>
-        </member>
-        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.CurrentTime">
-            <summary> 当前动画正在展示的时间 </summary>
-        </member>
-        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.LoopPlay">
-            <summary> 循环播放，在播放到结尾时，再转到开始时间继续播放 </summary>
-        </member>
-        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.BackPlay">
-            <summary> 倒退播放，从最后面的时间向最开始的时间播放 </summary>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler1._timer">
-            <summary> 用来展示动画的计时器 </summary>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler1._exEvent">
-            <summary> 用来在Revit中进行施工工况的动画刷新的外部事件 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.#ctor(Autodesk.Revit.UI.UIApplication)">
-            <summary> 构造函数 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.Finalize">
-            <summary> 析构函数 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.SetBackPlay">
-            <summary> 设置为倒退播放 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.GetTimeBasedOnRatio(System.Int32)">
-            <summary> 根据指定的比例返回对应的施工日期 </summary>
-            <param name="ratio">输入的值范围为[0,100]，0代表开始时间，100代表结束时间</param>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.GetRatioBasedOnTime(System.DateTime)">
-            <summary> 根据指定的日期返回其在 StartTime 与 EndTime 之间的比例 </summary>
-            <param name="time"> 某一个施工日期 </param>
-            <returns>返回一个位于[0,100]的整数值</returns>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.Play">
-            <summary> 开始播放 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.Pause">
-            <summary> 暂停播放 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.Stop">
-            <summary> 停止播放 </summary>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler1._isPlaying">
-            <summary> 当前正在执行Revit动画展示，此时不能再次进行触发。 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.TimerOnTick(System.Object,System.EventArgs)">
-            <summary> 在每一次计时器脉冲时，进行动画的刷新。 </summary>
-            <param name="sender"></param>
-            <param name="e"></param> 
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.CheckProgress(System.DateTime,System.DateTime@)">
-            <summary> 检查当前播放进度，并按需要（是否超出指定的起止界限）调整实际播放的工况日期 </summary>
-            <param name="desiredTime"> 想要播放的工况日期，但是此日期有可能超出了指定的起止界限 </param>
-            <param name="playTime"> 实际要播放的工况日期 </param>
-            <returns>如果返回true，则继续播放，如果返回false，则表示可以停止播放了。</returns>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.ExternalRefreshView(System.DateTime)">
-            <summary> 根据指定的施工日期来刷新 Revit 界面 </summary>
-            <param name="currentTime"> 此 currentTime 必须是位于 StartTime 与 EndTime 之间的一个有效日期 </param>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.RefreshView(System.DateTime)">
-            <summary> 根据指定的施工日期来刷新 Revit 界面 </summary>
-        </member>
-        <member name="E:OldW.DynamicStages.ViewStageDynamicallyHandler.CurrentTimeChanged">
-            <summary> 当前播放和进度 CurrentTime 属性改变时触发 </summary>
-        </member>
-        <member name="E:OldW.DynamicStages.ViewStageDynamicallyHandler.PlayerStopped">
-            <summary> 播放器停止播放 </summary>
-        </member>
-        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.SpanValue">
-            <summary> 每一帧动画所对应的施工日期跨度 </summary>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._intervals">
-            <summary> 每一帧动画之间的时间间隔，单位为毫秒 </summary>
-        </member>
-        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.Intervals">
-            <summary> 每一帧动画之间的时间间隔，单位为毫秒 </summary>
-        </member>
-        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.CurrentTime">
-            <summary> 当前动画正在展示的时间 </summary>
-        </member>
-        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.LoopPlay">
-            <summary> 循环播放，在播放到结尾时，再转到开始时间继续播放 </summary>
-        </member>
-        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.BackPlay">
-            <summary> 倒退播放，从最后面的时间向最开始的时间播放 </summary>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._exEvent">
-            <summary> 用来在Revit中进行施工工况的动画刷新的外部事件 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.#ctor(Autodesk.Revit.UI.UIApplication)">
-            <summary> 构造函数 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.PlayOptionsInitialize">
-            <summary> 对播放器的播放属性进行初始化 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.Finalize">
-            <summary> 析构函数 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.GetTimeBasedOnRatio(System.Int32)">
-            <summary> 根据指定的比例返回对应的施工日期 </summary>
-            <param name="ratio">输入的值范围为[0,100]，0代表开始时间，100代表结束时间</param>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.GetRatioBasedOnTime(System.DateTime)">
-            <summary> 根据指定的日期返回其在 StartTime 与 EndTime 之间的比例 </summary>
-            <param name="time"> 某一个施工日期 </param>
-            <returns>返回一个位于[0,100]的整数值</returns>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.Play">
-            <summary> 开始播放 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.Pause">
-            <summary> 暂停播放 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.Stop">
-            <summary> 停止播放 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.StopFromScroll(System.DateTime)">
-            <summary>  </summary>
-            <param name="currentTime"> 此 currentTime 必须是位于 StartTime 与 EndTime 之间的一个有效日期 </param>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._isPlaying">
-            <summary> 当前正在执行Revit动画展示，此时不能再次进行触发。 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.UiAppOnIdling(System.Object,Autodesk.Revit.UI.Events.IdlingEventArgs)">
-            <summary> 在每一次 Iding 事件时，进行动画的刷新。 </summary>
-            <param name="sender"></param>
-            <param name="idlingEventArgs"></param>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._lastPulseTime">
-            <summary>上一次成功发出Idling脉冲以及进行动画显示的时间 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.CheckIntervals">
-            <summary>
-            检查两次 Idling 事件之间的时间间隔是否满足指定的速度Interval的要求。
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.CheckProgress(System.DateTime,System.DateTime@)">
-            <summary> 检查当前播放进度，并按需要（是否超出指定的起止界限）调整实际播放的工况日期 </summary>
-            <param name="desiredTime"> 想要播放的工况日期，但是此日期有可能超出了指定的起止界限 </param>
-            <param name="playTime"> 实际要播放的工况日期 </param>
-            <returns>如果返回true，则继续播放，如果返回false，则表示可以停止播放了。</returns>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.RefreshView(System.DateTime)">
-            <summary> 根据指定的施工日期来刷新 Revit 界面 </summary>
-            <param name="currentTime"> 此 currentTime 必须是位于 StartTime 与 EndTime 之间的一个有效日期 </param>
-        </member>
-        <member name="T:OldW.DynamicStages.PlayOption">
-            <summary> 控件播放器的播放选项 </summary>
-        </member>
-        <member name="F:OldW.DynamicStages.PlayOption.PlayAndStop">
-            <summary> 在指定的时间下显示一次，然后停止播放 </summary>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageManuallyHandler.ExternalEventArgs">
-            <summary> Execute 的参数 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageManuallyHandler.OnConstructionDateChanged(Autodesk.Revit.DB.Transaction,Autodesk.Revit.DB.View,System.DateTime)">
-            <summary> 根据施工日期刷新模型 </summary>
-            <param name="tranDoc"></param>
-            <param name="uiApp"></param>
-            <param name="constructionTime"></param>
-        </member>
-        <member name="T:OldW.DynamicStages.ReviewDoc">
-            <summary> 在基坑开挖模拟中，对 指定的开挖土体集合 进行不同时间下的动态开挖展示 </summary>
-            <remarks></remarks>
-        </member>
-        <member name="F:OldW.DynamicStages.ReviewDoc._excavSoils">
-            <summary> 用来进行开挖预览的开挖土体单元 </summary>
-        </member>
-        <member name="F:OldW.DynamicStages.ReviewDoc._excavDoc">
-            <summary> 用来进行开挖模拟 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ReviewDoc.#ctor(OldWDocument,System.Collections.Generic.ICollection{OldW.Excavation.Soil_Excav})">
-            <summary> 构造函数 </summary>
-            <param name="oldWDoc"></param>
-            <param name="excavSoils">用来进行开挖预览的开挖土体单元</param>
-        </member>
-        <member name="M:OldW.DynamicStages.ReviewDoc.CreateFromActiveDocument(Autodesk.Revit.UI.UIApplication,Autodesk.Revit.DB.Document)">
-            <summary> 将指定的文档中的 所有开挖土体 都进行开挖工况的动画展示 </summary>
-            <param name="uiApp"></param>
-            <param name="doc">将会提取此文档中的所有开挖土体所组成的集合，来进行开挖工况的动画展示</param>
-            <returns></returns>
-        </member>
-        <member name="M:OldW.DynamicStages.ReviewDoc.ShowExcavation(Autodesk.Revit.DB.Transaction,System.DateTime,Autodesk.Revit.DB.View)">
-            <summary>
-            根据指定的时间在Revit视图中显示出每一个开挖分块的开挖状态
-            </summary>
-            <param name="constructionTime"></param>
-            <param name="view"></param>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageDynamically.ScrollBarMaximumValue">
-            <summary>
-            正常情况下，这个值应该是和 hScrollBar1.Maximum 相等的，但是的 Win 10 系统下，
-            即使设置Maximum = 100，而不论滚动条的UI尺寸大小如何，在界面上可能滚动出来的最大值却竟然都是只有91。
-            </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamically.#ctor(Autodesk.Revit.UI.UIApplication)">
-            <summary> 构造函数 </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamically.InitializeUI">
-            <summary> 在构造完成 _VSDHandler 之后进行其他的界面设置 </summary>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageDynamically.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamically.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageDynamically.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="T:OldW.DynamicStages.ViewStageManually">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageManually._exEvent">
-            <summary>用来触发外部事件（通过其Raise方法） </summary>
-            <remarks>ExEvent属性是必须有的，它用来执行Raise方法以触发事件。</remarks>
-        </member>
-        <member name="F:OldW.DynamicStages.ViewStageManually.ReqHandler">
-            <summary> 用来响应外部事件中的不同需求（通过其Execute方法）。 </summary>
-            <remarks>由于RequestHandler 对象是在构造ExternalEvent对象时就已经保存在ExternalEvent中的了，
-            所以，如果Execute方法中并不需要判断到底要实现哪一个需求，则此属性是不必要的。</remarks>
-        </member>
-        <member name="P:OldW.DynamicStages.ViewStageManually.ActiveTime">
-            <summary>
-            当前的施工日期。通过指定此属性，即可以自动执行Revit中视图的刷新。
-            </summary>
-        </member>
-        <member name="M:OldW.DynamicStages.ViewStageManually.#ctor(Autodesk.Revit.UI.UIApplication)">
-            <summary> 构造函数 </summary>
         </member>
         <member name="T:OldW.Excavation.frm_ExcavationInfo">
             <summary>
@@ -647,7 +379,7 @@
             然后Revit会在会在下个闲置时间（idling time cycle）到来时调用IExternalEventHandler.Excute方法，在这个Execute方法中，
             再通过RequestId来提取对应的操作需求，</remarks>
         </member>
-        <member name="F:OldW.Excavation.frm_DrawExcavation.Depth">
+        <member name="F:OldW.Excavation.frm_DrawExcavation._soilDepth">
             <summary> 要绘制的模型的深度，单位为m </summary>
         </member>
         <member name="F:OldW.Excavation.frm_DrawExcavation.CompletedDate">
@@ -668,13 +400,14 @@
         <member name="F:OldW.Excavation.frm_DrawExcavation._forbiddenFormClosing">
             <summary> 禁止关闭窗口 </summary>
         </member>
-        <member name="M:OldW.Excavation.frm_DrawExcavation.DozeOff">
+        <member name="M:OldW.Excavation.frm_DrawExcavation.DozeOff(OldW.Excavation.frm_DrawExcavation.Request)">
             <summary> 在Revit执行相关操作时，禁用窗口中的控件 </summary>
+            <param name="req"> 当前正在执行的命令 </param>
         </member>
-        <member name="M:OldW.Excavation.frm_DrawExcavation.WarmUp">
+        <member name="M:OldW.Excavation.frm_DrawExcavation.WarmUp(OldW.Excavation.frm_DrawExcavation.Request)">
             <summary> 在外部事件RequestHandler中的Execute方法执行完成后，用来激活窗口中的控件 </summary>
         </member>
-        <member name="M:OldW.Excavation.frm_DrawExcavation.CheckUI">
+        <member name="M:OldW.Excavation.frm_DrawExcavation.CheckUiDataForDrawing">
             <summary>
             对窗口中的数据进行检测，并判断是否可以进行绘制
             </summary>
@@ -710,15 +443,17 @@
             </summary>
             <remarks></remarks>
         </member>
-        <member name="F:OldW.Excavation.frm_DrawExcavation.Request.DrawCurves">
-            <summary>
-            通过在UI界面绘制模型线来作为土体的轮廓
-            </summary>
+        <member name="F:OldW.Excavation.frm_DrawExcavation.Request.DrawCurvesInUI">
+            <summary> 通过在UI界面绘制模型线来作为土体的轮廓 </summary>
+        </member>
+        <member name="F:OldW.Excavation.frm_DrawExcavation.Request.PickCurves">
+            <summary> 通过 Selection.PickObject() 来在界面上选择出一组封闭模型线 </summary>
+        </member>
+        <member name="F:OldW.Excavation.frm_DrawExcavation.Request.DrawCurvesFromFaceEdge">
+            <summary> 通过在UI界面中选择一个水平面来绘制出对应的轮廓 </summary>
         </member>
         <member name="F:OldW.Excavation.frm_DrawExcavation.Request.DeleteCurves">
-            <summary>
-            删除绘制好的模型线并清空曲线集合数据
-            </summary>
+            <summary> 删除绘制好的模型线并清空曲线集合数据 </summary>
         </member>
         <member name="F:OldW.Excavation.frm_DrawExcavation.Request.StartModeling">
             <summary> 开始建模 </summary>
@@ -731,7 +466,7 @@
             在执行ExternalEvent.Raise()方法之前，请先将操作需求信息赋值给其RequestHandler对象的RequestId属性。
             当ExternalEvent.Raise后，Revit会在下个闲置时间（idling time cycle）到来时调用IExternalEventHandler.Execute方法的实现。
             </summary>
-            <param name="app">此属性由Revit自动提供，其值不是Nothing，而是一个真实的UIApplication对象</param>
+            <param name="uiApp">此属性由Revit自动提供，其值不是Nothing，而是一个真实的UIApplication对象</param>
             <remarks>由于在通过外部程序所引发的操作中，如果出现异常，Revit并不会给出任何提示或者报错，
             而是直接退出函数。所以要将整个操作放在一个Try代码块中，以处理可能出现的任何报错。</remarks>
         </member>
@@ -741,15 +476,24 @@
             </summary>
             <param name="curveArrArr"></param>
         </member>
-        <member name="F:OldW.Excavation.frm_DrawExcavation.ClosedCurveDrawer">
-            <summary>
-            用来绘制封闭的模型线
-            </summary>
+        <member name="F:OldW.Excavation.frm_DrawExcavation._closedCurveDrawer">
+            <summary> 用来绘制封闭的模型线 </summary>
         </member>
-        <member name="P:OldW.Excavation.frm_DrawExcavation.drawnCurveArrArr">
-            <summary>
-            通过界面绘制出来的模型线
-            </summary>
+        <member name="F:OldW.Excavation.frm_DrawExcavation._curvesToDrawSoil">
+            <summary> 绘制好的模型线所对应的Curve对象，记录下来以用来绘制土体。
+            此变量只应该在 成功地创建了封闭的模型线时为其赋值 </summary>
+        </member>
+        <member name="F:OldW.Excavation.frm_DrawExcavation._drawnCurveIds">
+            <summary> 绘制好的模型线 </summary>
+        </member>
+        <member name="P:OldW.Excavation.frm_DrawExcavation.DrawnCurveIds">
+            <summary> 通过界面绘制出来的模型线，记录下来以用来被删除 </summary>
+        </member>
+        <member name="M:OldW.Excavation.frm_DrawExcavation.ClosedCurveDrawer_DrawingCompleted(System.Collections.Generic.List{System.Collections.Generic.List{Autodesk.Revit.DB.ElementId}},System.Boolean,System.Boolean)">
+            <summary> 在UI界面中绘制完模型线后，对其结果进行处理 </summary>
+            <param name="addedCurves"></param>
+            <param name="finishedExternally"></param>
+            <param name="succeeded"></param>
         </member>
         <member name="T:OldW.Excavation.Soil_Element">
             <summary>
@@ -1764,10 +1508,259 @@
             <summary> 构造函数 </summary>
             <param name="StrutAxialForceElement"> 支撑轴力测点所对应的图元</param>
         </member>
-        <member name="M:OldW.DllActivator.DllActivator_Projects.ActivateReferences">
+        <member name="E:OldW.DynamicStages.ViewStageDynamicallyHandler1.CurrentTimeChanged">
+            <summary> 当前播放和进度 CurrentTime 属性改变时触发 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.SpanValue">
+            <summary> 每一帧动画所对应的施工日期跨度 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler1._intervals">
+            <summary> 每一帧动画之间的时间间隔，单位为毫秒 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.Intervals">
+            <summary> 每一帧动画之间的时间间隔，单位为毫秒 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.CurrentTime">
+            <summary> 当前动画正在展示的时间 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.LoopPlay">
+            <summary> 循环播放，在播放到结尾时，再转到开始时间继续播放 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler1.BackPlay">
+            <summary> 倒退播放，从最后面的时间向最开始的时间播放 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler1._timer">
+            <summary> 用来展示动画的计时器 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler1._exEvent">
+            <summary> 用来在Revit中进行施工工况的动画刷新的外部事件 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.#ctor(Autodesk.Revit.UI.UIApplication)">
+            <summary> 构造函数 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.Finalize">
+            <summary> 析构函数 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.SetBackPlay">
+            <summary> 设置为倒退播放 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.GetTimeBasedOnRatio(System.Int32)">
+            <summary> 根据指定的比例返回对应的施工日期 </summary>
+            <param name="ratio">输入的值范围为[0,100]，0代表开始时间，100代表结束时间</param>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.GetRatioBasedOnTime(System.DateTime)">
+            <summary> 根据指定的日期返回其在 StartTime 与 EndTime 之间的比例 </summary>
+            <param name="time"> 某一个施工日期 </param>
+            <returns>返回一个位于[0,100]的整数值</returns>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.Play">
+            <summary> 开始播放 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.Pause">
+            <summary> 暂停播放 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.Stop">
+            <summary> 停止播放 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler1._isPlaying">
+            <summary> 当前正在执行Revit动画展示，此时不能再次进行触发。 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.TimerOnTick(System.Object,System.EventArgs)">
+            <summary> 在每一次计时器脉冲时，进行动画的刷新。 </summary>
+            <param name="sender"></param>
+            <param name="e"></param> 
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.CheckProgress(System.DateTime,System.DateTime@)">
+            <summary> 检查当前播放进度，并按需要（是否超出指定的起止界限）调整实际播放的工况日期 </summary>
+            <param name="desiredTime"> 想要播放的工况日期，但是此日期有可能超出了指定的起止界限 </param>
+            <param name="playTime"> 实际要播放的工况日期 </param>
+            <returns>如果返回true，则继续播放，如果返回false，则表示可以停止播放了。</returns>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.ExternalRefreshView(System.DateTime)">
+            <summary> 根据指定的施工日期来刷新 Revit 界面 </summary>
+            <param name="currentTime"> 此 currentTime 必须是位于 StartTime 与 EndTime 之间的一个有效日期 </param>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler1.RefreshView(System.DateTime)">
+            <summary> 根据指定的施工日期来刷新 Revit 界面 </summary>
+        </member>
+        <member name="E:OldW.DynamicStages.ViewStageDynamicallyHandler.CurrentTimeChanged">
+            <summary> 当前播放和进度 CurrentTime 属性改变时触发 </summary>
+        </member>
+        <member name="E:OldW.DynamicStages.ViewStageDynamicallyHandler.PlayerStopped">
+            <summary> 播放器停止播放 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.SpanValue">
+            <summary> 每一帧动画所对应的施工日期跨度 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._intervals">
+            <summary> 每一帧动画之间的时间间隔，单位为毫秒 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.Intervals">
+            <summary> 每一帧动画之间的时间间隔，单位为毫秒 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.CurrentTime">
+            <summary> 当前动画正在展示的时间 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.LoopPlay">
+            <summary> 循环播放，在播放到结尾时，再转到开始时间继续播放 </summary>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageDynamicallyHandler.BackPlay">
+            <summary> 倒退播放，从最后面的时间向最开始的时间播放 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._exEvent">
+            <summary> 用来在Revit中进行施工工况的动画刷新的外部事件 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.#ctor(Autodesk.Revit.UI.UIApplication)">
+            <summary> 构造函数 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.PlayOptionsInitialize">
+            <summary> 对播放器的播放属性进行初始化 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.Finalize">
+            <summary> 析构函数 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.GetTimeBasedOnRatio(System.Int32)">
+            <summary> 根据指定的比例返回对应的施工日期 </summary>
+            <param name="ratio">输入的值范围为[0,100]，0代表开始时间，100代表结束时间</param>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.GetRatioBasedOnTime(System.DateTime)">
+            <summary> 根据指定的日期返回其在 StartTime 与 EndTime 之间的比例 </summary>
+            <param name="time"> 某一个施工日期 </param>
+            <returns>返回一个位于[0,100]的整数值</returns>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.Play">
+            <summary> 开始播放 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.Pause">
+            <summary> 暂停播放 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.Stop">
+            <summary> 停止播放 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.StopFromScroll(System.DateTime)">
+            <summary>  </summary>
+            <param name="currentTime"> 此 currentTime 必须是位于 StartTime 与 EndTime 之间的一个有效日期 </param>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._isPlaying">
+            <summary> 当前正在执行Revit动画展示，此时不能再次进行触发。 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.UiAppOnIdling(System.Object,Autodesk.Revit.UI.Events.IdlingEventArgs)">
+            <summary> 在每一次 Iding 事件时，进行动画的刷新。 </summary>
+            <param name="sender"></param>
+            <param name="idlingEventArgs"></param>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamicallyHandler._lastPulseTime">
+            <summary>上一次成功发出Idling脉冲以及进行动画显示的时间 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.CheckIntervals">
             <summary>
-            激活本DLL所引用的那些DLLs
+            检查两次 Idling 事件之间的时间间隔是否满足指定的速度Interval的要求。
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.CheckProgress(System.DateTime,System.DateTime@)">
+            <summary> 检查当前播放进度，并按需要（是否超出指定的起止界限）调整实际播放的工况日期 </summary>
+            <param name="desiredTime"> 想要播放的工况日期，但是此日期有可能超出了指定的起止界限 </param>
+            <param name="playTime"> 实际要播放的工况日期 </param>
+            <returns>如果返回true，则继续播放，如果返回false，则表示可以停止播放了。</returns>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamicallyHandler.RefreshView(System.DateTime)">
+            <summary> 根据指定的施工日期来刷新 Revit 界面 </summary>
+            <param name="currentTime"> 此 currentTime 必须是位于 StartTime 与 EndTime 之间的一个有效日期 </param>
+        </member>
+        <member name="T:OldW.DynamicStages.PlayOption">
+            <summary> 控件播放器的播放选项 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.PlayOption.PlayAndStop">
+            <summary> 在指定的时间下显示一次，然后停止播放 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageManuallyHandler.ExternalEventArgs">
+            <summary> Execute 的参数 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageManuallyHandler.OnConstructionDateChanged(Autodesk.Revit.DB.Transaction,Autodesk.Revit.DB.View,System.DateTime)">
+            <summary> 根据施工日期刷新模型 </summary>
+            <param name="tranDoc"></param>
+            <param name="uiApp"></param>
+            <param name="constructionTime"></param>
+        </member>
+        <member name="T:OldW.DynamicStages.ReviewDoc">
+            <summary> 在基坑开挖模拟中，对 指定的开挖土体集合 进行不同时间下的动态开挖展示 </summary>
+            <remarks></remarks>
+        </member>
+        <member name="F:OldW.DynamicStages.ReviewDoc._excavSoils">
+            <summary> 用来进行开挖预览的开挖土体单元 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ReviewDoc._excavDoc">
+            <summary> 用来进行开挖模拟 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ReviewDoc.#ctor(OldWDocument,System.Collections.Generic.ICollection{OldW.Excavation.Soil_Excav})">
+            <summary> 构造函数 </summary>
+            <param name="oldWDoc"></param>
+            <param name="excavSoils">用来进行开挖预览的开挖土体单元</param>
+        </member>
+        <member name="M:OldW.DynamicStages.ReviewDoc.CreateFromActiveDocument(Autodesk.Revit.UI.UIApplication,Autodesk.Revit.DB.Document)">
+            <summary> 将指定的文档中的 所有开挖土体 都进行开挖工况的动画展示 </summary>
+            <param name="uiApp"></param>
+            <param name="doc">将会提取此文档中的所有开挖土体所组成的集合，来进行开挖工况的动画展示</param>
+            <returns></returns>
+        </member>
+        <member name="M:OldW.DynamicStages.ReviewDoc.ShowExcavation(Autodesk.Revit.DB.Transaction,System.DateTime,Autodesk.Revit.DB.View)">
+            <summary>
+            根据指定的时间在Revit视图中显示出每一个开挖分块的开挖状态
+            </summary>
+            <param name="constructionTime"></param>
+            <param name="view"></param>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamically.ScrollBarMaximumValue">
+            <summary>
+            正常情况下，这个值应该是和 hScrollBar1.Maximum 相等的，但是的 Win 10 系统下，
+            即使设置Maximum = 100，而不论滚动条的UI尺寸大小如何，在界面上可能滚动出来的最大值却竟然都是只有91。
+            </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamically.#ctor(OldWDocument)">
+            <summary> 构造函数 </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamically.InitializeUI">
+            <summary> 在构造完成 _VSDHandler 之后进行其他的界面设置 </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageDynamically.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamically.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageDynamically.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:OldW.DynamicStages.ViewStageManually">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageManually._exEvent">
+            <summary>用来触发外部事件（通过其Raise方法） </summary>
+            <remarks>ExEvent属性是必须有的，它用来执行Raise方法以触发事件。</remarks>
+        </member>
+        <member name="F:OldW.DynamicStages.ViewStageManually.ReqHandler">
+            <summary> 用来响应外部事件中的不同需求（通过其Execute方法）。 </summary>
+            <remarks>由于RequestHandler 对象是在构造ExternalEvent对象时就已经保存在ExternalEvent中的了，
+            所以，如果Execute方法中并不需要判断到底要实现哪一个需求，则此属性是不必要的。</remarks>
+        </member>
+        <member name="P:OldW.DynamicStages.ViewStageManually.ActiveTime">
+            <summary>
+            当前的施工日期。通过指定此属性，即可以自动执行Revit中视图的刷新。
+            </summary>
+        </member>
+        <member name="M:OldW.DynamicStages.ViewStageManually.#ctor(Autodesk.Revit.UI.UIApplication)">
+            <summary> 构造函数 </summary>
         </member>
         <member name="T:OldW.DataManager.ElementDataManager">
             <summary>
@@ -2285,6 +2278,49 @@
             <param name="chartAreaName"></param>
             <returns></returns>
         </member>
+        <member name="T:OldW.ProjectInfo.frm_ProjectInfo">
+            <summary>
+            与整个基坑相关的信息设置
+            </summary>
+        </member>
+        <member name="M:OldW.ProjectInfo.frm_ProjectInfo.#ctor(OldWDocument)">
+            <summary> 构造函数 </summary>
+        </member>
+        <member name="M:OldW.ProjectInfo.frm_ProjectInfo.LoadProjectInfo(OldW.ProjectInfo.OldWProjectInfo)">
+            <summary> 将Revit文档中保存的项目信息加载到UI界面中 </summary>
+        </member>
+        <member name="F:OldW.ProjectInfo.frm_ProjectInfo.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OldW.ProjectInfo.frm_ProjectInfo.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OldW.ProjectInfo.frm_ProjectInfo.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:OldW.ProjectInfo.OldWProjectInfo">
+            <summary>
+            一个OldWDocument的模型中，与基坑相关的一些信息，这些信息是被序列化到模型的项目信息中的参数“OldW_Project”中的。
+            </summary>
+            <remarks></remarks>
+        </member>
+        <member name="F:OldW.ProjectInfo.OldWProjectInfo.ExcavStart">
+            <summary> 基坑开挖的开始日期 </summary>
+        </member>
+        <member name="F:OldW.ProjectInfo.OldWProjectInfo.ExcavFinish">
+            <summary> 基坑开挖的结束日期 </summary>
+        </member>
+        <member name="M:OldW.ProjectInfo.OldWProjectInfo.#ctor">
+            <summary> 构造函数 </summary>
+        </member>
         <member name="M:OldW.SafetyWarning.FormSetWarning.getFormValve">
             <summary>
             读取界面上的值，创建WarningValue对象
@@ -2335,7 +2371,7 @@
             测斜警戒值
             </summary>
         </member>
-        <member name="T:OldW.SafetyWarning.WarningGSetle">
+        <member name="T:OldW.SafetyWarning.WarningGSettle">
             <summary>
             地表沉降警戒值
             </summary>
@@ -2385,6 +2421,11 @@
             返回该警戒值设定的ID
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:DllActivator.DllActivator_Projects.ActivateReferences">
+            <summary>
+            激活本DLL所引用的那些DLLs
+            </summary>
         </member>
         <member name="T:OldWApplication">
             <summary>
@@ -2468,12 +2509,6 @@
         <member name="F:OldWDocument.uiDoc">
             <summary> 每一个OldWDocument对象都绑定了一个Revit的 UIDocument 对象。 </summary>
         </member>
-        <member name="F:OldWDocument.ProjectInfo">
-            <summary>
-            OldWDocument中保存的与基坑开挖有关的信息
-            </summary>
-            <remarks></remarks>
-        </member>
         <member name="M:OldWDocument.#ctor(Autodesk.Revit.DB.Document)">
             <summary> 直接构造 OldWDocument 对象，但是不保证此文档的有效性，即是否有对应的项目参数。
             推荐使用  OldWApplication.SearchOrCreateOldWDocument(doc) 来获取有效的 OldWDocument 对象 </summary>
@@ -2503,18 +2538,22 @@
             <param name="doc">要进行判断的Revit的Document文档</param>
             <returns></returns>
         </member>
-        <member name="M:OldWDocument.SetProjectInfo(OldWProjectInfo)">
+        <member name="F:OldWDocument._oldWProjectInfo">
+            <summary> OldWDocument中保存的与基坑开挖有关的信息 </summary>
+        </member>
+        <member name="M:OldWDocument.SetProjectInfo(Autodesk.Revit.DB.Transaction,OldW.ProjectInfo.OldWProjectInfo)">
             <summary>
             将与基坑开挖有关的信息保存到Document的相关参数中
             </summary>
-            <param name="ProjInfo"></param>
+            <param name="transDoc">可以设置其值为null，这种情况下函数内部会开启一个事务，以将项目信息保存到文档中。</param>
+            <param name="projInfo"></param>
             <remarks></remarks>
         </member>
         <member name="M:OldWDocument.GetProjectInfo">
             <summary>
             从Document中提取OldWDocument中保存的与基坑开挖有关的信息
             </summary>
-            <returns></returns>
+            <returns>返回值不可能会是 null </returns>
             <remarks></remarks>
         </member>
         <member name="M:OldWDocument.Equals(Autodesk.Revit.DB.Document)">
@@ -2531,11 +2570,12 @@
             <returns></returns>
             <remarks></remarks>
         </member>
-        <member name="T:OldWProjectInfo">
+        <member name="M:OldWDocument.GetOldWDefinitionGroup(Autodesk.Revit.ApplicationServices.Application)">
             <summary>
-            一个OldWDocument的模型中，与基坑相关的一些信息，这些信息是被序列化到模型的项目信息中的参数“OldW_Project”中的。
+            获取外部共享参数文件中的参数组“OldW”，然后可以通过DefinitionGroup.Definitions.Item(name As String)来索引其中的共享参数，
+            也可以通过DefinitionGroup.Definitions.Create(name As String)来创建新的共享参数。
             </summary>
-            <remarks></remarks>
+            <param name="app"></param>
         </member>
     </members>
 </doc>

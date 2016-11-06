@@ -1,7 +1,8 @@
 using System.Windows.Forms;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using rvtTools;
+using RevitStd;
+using DllActivator;
 
 namespace OldW.Commands
 {
@@ -15,7 +16,7 @@ namespace OldW.Commands
 		public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
 		{
 			
-			DllActivator.DllActivator_Projects dat = new DllActivator.DllActivator_Projects();
+			DllActivator_Projects dat = new DllActivator_Projects();
 			dat.ActivateReferences();
 			
 			UIApplication uiApp = commandData.Application;
