@@ -4,7 +4,7 @@
         <name>OldWGlobal</name>
     </assembly>
     <members>
-        <member name="M:OldW.DllActivator.DllActivator_OldWGlobal.ActivateReferences">
+        <member name="M:DllActivator.DllActivator_OldWGlobal.ActivateReferences">
             <summary>
             激活本DLL所引用的那些DLLs
             </summary>

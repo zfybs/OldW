@@ -2798,19 +2798,6 @@
             <returns>此二进制流文件所对应的可序列化对象</returns>
             <remarks></remarks>
         </member>
-        <!-- Badly formed XML comment ignored for member "T:eZstd.Data.XmlList0`1" -->
-        <member name="F:eZstd.Data.XmlList0`1._sourceList">
-            <summary> 集合内部维护的 IList 集合</summary>
-        </member>
-        <member name="M:eZstd.Data.XmlList0`1.#ctor(System.Collections.Generic.IList{`0})">
-            <summary> 构造函数（不推荐，因为通过此方法构造出来的 XmlList 内部维护的IList集合
-            与这里的输入参数 wrapped 集合代表同一个地址） </summary>
-            <param name="wrapped">在外部继续对此集合元素的增加、插入、移除会同步到 SourceList 属性中，
-            因为这二者引用的是内存中同一个集合的地址。</param>
-        </member>
-        <member name="M:eZstd.Data.XmlList0`1.Clone">
-            <summary> 将内部维护的集合进行复制 </summary>
-        </member>
         <member name="T:eZstd.Data.ExcelDbHelper">
             <summary>
             利用ADO.NET连接Excel数据库，并执行相应的操作：
@@ -3158,7 +3145,20 @@
         <member name="M:eZstd.Data.XmlList`1.#ctor">
             <summary> 构造函数 </summary>
         </member>
-        <member name="M:eZstd.Dll.AssemblyHelper.DynamicDebugClass(System.String,System.String,System.Object[])">
+        <!-- Badly formed XML comment ignored for member "T:eZstd.Data.XmlListTest`1" -->
+        <member name="F:eZstd.Data.XmlListTest`1._sourceList">
+            <summary> 集合内部维护的 IList 集合</summary>
+        </member>
+        <member name="M:eZstd.Data.XmlListTest`1.#ctor(System.Collections.Generic.IList{`0})">
+            <summary> 构造函数（不推荐，因为通过此方法构造出来的 XmlList 内部维护的IList集合
+            与这里的输入参数 wrapped 集合代表同一个地址） </summary>
+            <param name="wrapped">在外部继续对此集合元素的增加、插入、移除会同步到 SourceList 属性中，
+            因为这二者引用的是内存中同一个集合的地址。</param>
+        </member>
+        <member name="M:eZstd.Data.XmlListTest`1.Clone">
+            <summary> 将内部维护的集合进行复制 </summary>
+        </member>
+        <member name="M:eZstd.MarshalReflection.AssemblyHelper.DynamicDebugClass(System.String,System.String,System.Object[])">
             <summary>
             将一个程序集插件进行动态加载，并可以在不关闭主程序的情况下进行调试。
             类似于Autodesk Revit中的插件 AddinManager 所起的作用。
@@ -3169,6 +3169,80 @@
             <returns></returns>
             <remarks>将此程序集作为动态插件加载到某程序中去后（比如将某Excel或者CAD的插件功能加载到对应的程序进程中），
             可以在不关闭对应的主程序的情况下，对插件dll进行调试，然后在主程序中重新调用调试更新后的插件功能。</remarks>
+        </member>
+        <member name="T:eZstd.MarshalReflection.Interaction">
+            <summary>
+            在多种不同的进程或者 COM 对象之间进行交互
+            </summary>
+        </member>
+        <member name="M:eZstd.MarshalReflection.Interaction.test(System.String)">
+            <summary> 根据程序名字符创建对应的COM对象 </summary>
+            <param name="progId">比如 Excel.Application 或 Word.Application。</param>
+            <returns></returns>
+        </member>
+        <member name="M:eZstd.MarshalReflection.Interaction.GetObjectFromProgId(System.String)">
+            <summary> 根据程序名字符创建对应的COM对象 </summary>
+            <param name="progId">比如 Excel.Application 或 Word.Application。</param>
+            <returns></returns>
+        </member>
+        <member name="M:eZstd.MarshalReflection.Interaction.GetObjectFromFile(System.String)">
+            <summary>
+            打开某文件（不管是否已经打开）所对应的COM对象。
+            </summary>
+            <param name="monikerName">某个文件的名称，比如“C:\\tempData.xlsx”。
+            注意，当此文件已经被打开时，则此方法会直接返回打开了的那个文件所在的COM对象；
+            而如果此文件还未打开，则此方法会将此文件打开，然后再返回对应的COM对象。</param>
+            <returns></returns>
+        </member>
+        <member name="T:eZstd.MarshalReflection.AssemblyCompiler">
+            <summary> 动态编译程序集。在程序运行的过程中动态地编译出一个程序集 .dll 或者 .exe。 </summary>
+        </member>
+        <member name="F:eZstd.MarshalReflection.AssemblyCompiler.CodeUnit">
+            <summary>
+            源代码的架构
+            </summary>
+        </member>
+        <member name="F:eZstd.MarshalReflection.AssemblyCompiler.ReferenceDlls">
+            <summary>
+            要引用的Dll的路径名称，比如"System.dll"
+            </summary>
+        </member>
+        <member name="F:eZstd.MarshalReflection.AssemblyCompiler.AssemblyFullName">
+            <summary>
+            编译生成的Assembly的绝对路径
+            </summary>
+        </member>
+        <member name="F:eZstd.MarshalReflection.AssemblyCompiler._compilerResults">
+            <summary> 在执行了CompileAssembly方法后所得到的编译结果 </summary>
+        </member>
+        <member name="P:eZstd.MarshalReflection.AssemblyCompiler.CompilerResults">
+            <summary> 在执行了CompileAssembly方法后所得到的编译结果 </summary>
+        </member>
+        <member name="M:eZstd.MarshalReflection.AssemblyCompiler.#ctor(System.CodeDom.CodeCompileUnit,System.String[])">
+            <summary>
+            编译出对应的 CompilerResults 对象，可以通过CompilerResults.CompiledAssembly属性来返回编译成功的Assembly对象。
+            </summary>
+            <param name="codeUnit">源代码的架构。 codeUnit 对象的创建可以参考<see cref="M:eZstd.MarshalReflection.AssemblyCompiler.CompileUnit"/>示例方法。</param>
+            <param name="referenceDlls">要引用的Dll的路径名称，比如"System.dll"</param>
+            <returns></returns>
+        </member>
+        <member name="M:eZstd.MarshalReflection.AssemblyCompiler.CompileAssembly(System.String)">
+            <summary>
+            编译出对应的 CompilerResults 对象，可以通过CompilerResults.CompiledAssembly属性来返回编译成功的Assembly对象。
+            </summary>
+            <param name="dllFileName">最后要编译成的程序集的路径，比如"MyAssembly.dll"或者"MyAssembly.exe"</param>
+            <returns></returns>
+        </member>
+        <member name="M:eZstd.MarshalReflection.AssemblyCompiler.CompileUnit">
+            <summary>
+            示例代码：生成CodeDOM图，这一步是最复杂的部分，后面生成代码与编译都是以这里的东西为蓝本
+            </summary>
+            <returns> 创建好的 CodeCompileUnit 中，包含了要生成的程序集中的全部代码，
+            后面只需要将通过 ICodeGenerator.GenerateCodeFromCompileUnit()方法即可以将这些代码编译为程序集。 </returns>
+            <remarks>此函数仅为示例，并不在此类中执行。外部代码可以参数本函数来创建出对应的 CodeCompileUnit 源代码结构 </remarks>
+        </member>
+        <member name="M:eZstd.MarshalReflection.AssemblyCompiler.DeleteAssembly">
+            <summary> 删除编译生成的程序集文件 </summary>
         </member>
         <member name="T:eZstd.Drawing.ColorUtils">
             <summary>
@@ -3282,72 +3356,49 @@
               gr.Transform = mY;  // 将变换应用到绘图面板中
             </remarks>
         </member>
-        <member name="F:eZstd.Form1.components">
+        <member name="F:eZstd.Test.Form1.components">
             <summary>
             Required designer variable.
             </summary>
         </member>
-        <member name="M:eZstd.Form1.Dispose(System.Boolean)">
+        <member name="M:eZstd.Test.Form1.Dispose(System.Boolean)">
             <summary>
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="M:eZstd.Form1.InitializeComponent">
+        <member name="M:eZstd.Test.Form1.InitializeComponent">
             <summary>
             Required method for Designer support - do not modify
             the contents of this method with the code editor.
             </summary>
         </member>
-        <member name="T:eZstd.Miscellaneous.AssemblyCompiler">
-            <summary> 动态编译程序集。在程序运行的过程中动态地编译出一个程序集 .dll 或者 .exe。 </summary>
-        </member>
-        <member name="F:eZstd.Miscellaneous.AssemblyCompiler.CodeUnit">
+        <member name="T:eZstd.Miscellaneous.DateTimeHelper">
             <summary>
-            源代码的架构
+            与时间数据相关的操作，比如日期与字符、整数之间的相互转换等。
             </summary>
         </member>
-        <member name="F:eZstd.Miscellaneous.AssemblyCompiler.ReferenceDlls">
-            <summary>
-            要引用的Dll的路径名称，比如"System.dll"
-            </summary>
-        </member>
-        <member name="F:eZstd.Miscellaneous.AssemblyCompiler.AssemblyFullName">
-            <summary>
-            编译生成的Assembly的绝对路径
-            </summary>
-        </member>
-        <member name="F:eZstd.Miscellaneous.AssemblyCompiler._compilerResults">
-            <summary> 在执行了CompileAssembly方法后所得到的编译结果 </summary>
-        </member>
-        <member name="P:eZstd.Miscellaneous.AssemblyCompiler.CompilerResults">
-            <summary> 在执行了CompileAssembly方法后所得到的编译结果 </summary>
-        </member>
-        <member name="M:eZstd.Miscellaneous.AssemblyCompiler.#ctor(System.CodeDom.CodeCompileUnit,System.String[])">
-            <summary>
-            编译出对应的 CompilerResults 对象，可以通过CompilerResults.CompiledAssembly属性来返回编译成功的Assembly对象。
-            </summary>
-            <param name="codeUnit">源代码的架构。 codeUnit 对象的创建可以参考<see cref="M:eZstd.Miscellaneous.AssemblyCompiler.CompileUnit"/>示例方法。</param>
-            <param name="referenceDlls">要引用的Dll的路径名称，比如"System.dll"</param>
+        <member name="M:eZstd.Miscellaneous.DateTimeHelper.Time2Int(System.DateTime)">
+            <summary> 将精确到分钟的时间数据保存为对应的32位整数 </summary>
+            <param name="dt">精确度为分钟，更精细的数据将被忽略。
+            由于32位数值的限制，能够识别的最大日期为4770年11月24日(23时59分)。即（2^20-1）所对应的日期。</param>
             <returns></returns>
         </member>
-        <member name="M:eZstd.Miscellaneous.AssemblyCompiler.CompileAssembly(System.String)">
+        <member name="M:eZstd.Miscellaneous.DateTimeHelper.Int2Time(System.Int32)">
             <summary>
-            编译出对应的 CompilerResults 对象，可以通过CompilerResults.CompiledAssembly属性来返回编译成功的Assembly对象。
+            将由 Time2Int 函数生成的整数值再转换回日期数据。返回的最大日期为4770年11月24日(23时59分) ，精度为分钟。
             </summary>
-            <param name="dllFileName">最后要编译成的程序集的路径，比如"MyAssembly.dll"或者"MyAssembly.exe"</param>
-            <returns></returns>
+            <param name="intValue">输入的整数值并没有明显的物理含义，
+            请确保这个值是通过<see cref="M:eZstd.Miscellaneous.DateTimeHelper.Time2Int(System.DateTime)"/>函数生成的。否则给出的结果不可预知，因为其中涉及到复杂的位运算操作。</param>
+            <returns>返回的最大日期为4770年11月24日(23时59分) </returns>
         </member>
-        <member name="M:eZstd.Miscellaneous.AssemblyCompiler.CompileUnit">
+        <member name="M:eZstd.Miscellaneous.DateTimeHelper.String2Date(System.String)">
             <summary>
-            示例代码：生成CodeDOM图，这一步是最复杂的部分，后面生成代码与编译都是以这里的东西为蓝本
+            将字符转换为日期。除了.NET能够识别的日期格式外，
+            还增加了20160406（ 即 2016/04/06），以及 201604061330（即 2016/04/06 13:30）
             </summary>
-            <returns> 创建好的 CodeCompileUnit 中，包含了要生成的程序集中的全部代码，
-            后面只需要将通过 ICodeGenerator.GenerateCodeFromCompileUnit()方法即可以将这些代码编译为程序集。 </returns>
-            <remarks>此函数仅为示例，并不在此类中执行。外部代码可以参数本函数来创建出对应的 CodeCompileUnit 源代码结构 </remarks>
-        </member>
-        <member name="M:eZstd.Miscellaneous.AssemblyCompiler.DeleteAssembly">
-            <summary> 删除编译生成的程序集文件 </summary>
+            <param name="text">要转换为日期的字符。</param>
+            <returns> 字符所对应的日期。如果不能转换为日期，则返回Null</returns>
         </member>
         <member name="T:eZstd.Miscellaneous.DebugUtils">
             <summary>
@@ -3399,6 +3450,46 @@
             <param name="message">报错信息提示</param>
             <returns></returns>
         </member>
+        <member name="M:eZstd.Miscellaneous.DebugUtils.PrintEnumerable(System.Collections.IEnumerable,System.Boolean)">
+            <summary> 打印任意一个集合，以显示在一列或者一行中 </summary>
+            <param name="e">任意一个集合</param>
+            <param name="showInOneColumn"> 默认为 true，即打印为一列，如果为false，则打印为一行 </param>
+            <returns></returns>
+        </member>
+        <member name="M:eZstd.Miscellaneous.DebugUtils.PrintArray``1(``0[0:,0:])">
+            <summary>
+            打印二维表格
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="array2D">一个二维表格</param>
+            <returns></returns>
+        </member>
+        <member name="M:eZstd.Miscellaneous.ExtensionMethods.AddRange``1(System.Collections.Generic.ICollection{``0},System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            将某集合中的元素添加到另一个集合中去
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="collection"></param>
+            <param name="items"></param>
+        </member>
+        <member name="M:eZstd.Miscellaneous.ExtensionMethods.Clone``1(``0)">
+            <summary>
+            Strong-typed object cloning for objects that implement <see cref="T:System.ICloneable"/>
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:eZstd.Miscellaneous.ExtensionMethods.IndexOf``2(``0,``1)">
+            <summary>
+            从集合中搜索指定项的下标位置（第一个元素的下标值为0），如果没有匹配项，则返回-1。
+            </summary>
+            <typeparam name="TCol"></typeparam>
+            <param name="collection"> 匹配的数据源集合 </param>
+            <typeparam name="TVal"></typeparam>
+            <param name="value"> 要进行匹配的值 </param>
+            <returns> 从集合中搜索指定项的下标位置（第一个元素的下标值为0），如果没有匹配项，则返回-1。 </returns>
+        </member>
         <member name="T:eZstd.Miscellaneous.Utils">
             <summary>
             提供一些基础性的操作工具
@@ -3411,59 +3502,6 @@
             </summary>
             <param name="typeIn"></param>
             <returns></returns>
-        </member>
-        <member name="T:eZstd.DateTimeHelper">
-            <summary>
-            与时间数据相关的操作，比如日期与字符、整数之间的相互转换等。
-            </summary>
-        </member>
-        <member name="M:eZstd.DateTimeHelper.Time2Int(System.DateTime)">
-            <summary> 将精确到分钟的时间数据保存为对应的32位整数 </summary>
-            <param name="dt">精确度为分钟，更精细的数据将被忽略。
-            由于32位数值的限制，能够识别的最大日期为4770年11月24日(23时59分)。即（2^20-1）所对应的日期。</param>
-            <returns></returns>
-        </member>
-        <member name="M:eZstd.DateTimeHelper.Int2Time(System.Int32)">
-            <summary>
-            将由 Time2Int 函数生成的整数值再转换回日期数据。返回的最大日期为4770年11月24日(23时59分) ，精度为分钟。
-            </summary>
-            <param name="intValue">输入的整数值并没有明显的物理含义，
-            请确保这个值是通过<see cref="M:eZstd.DateTimeHelper.Time2Int(System.DateTime)"/>函数生成的。否则给出的结果不可预知，因为其中涉及到复杂的位运算操作。</param>
-            <returns>返回的最大日期为4770年11月24日(23时59分) </returns>
-        </member>
-        <member name="M:eZstd.DateTimeHelper.String2Date(System.String)">
-            <summary>
-            将字符转换为日期。除了.NET能够识别的日期格式外，
-            还增加了20160406（ 即 2016/04/06），以及 201604061330（即 2016/04/06 13:30）
-            </summary>
-            <param name="text">要转换为日期的字符。</param>
-            <returns> 字符所对应的日期。如果不能转换为日期，则返回Null</returns>
-        </member>
-        <member name="M:eZstd.ExtensionMethods.AddRange``1(System.Collections.Generic.ICollection{``0},System.Collections.Generic.IEnumerable{``0})">
-            <summary>
-            将某集合中的元素添加到另一个集合中去
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="collection"></param>
-            <param name="items"></param>
-        </member>
-        <member name="M:eZstd.ExtensionMethods.Clone``1(``0)">
-            <summary>
-            Strong-typed object cloning for objects that implement <see cref="T:System.ICloneable"/>
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="obj"></param>
-            <returns></returns>
-        </member>
-        <member name="M:eZstd.ExtensionMethods.IndexOf``2(``0,``1)">
-            <summary>
-            从集合中搜索指定项的下标位置（第一个元素的下标值为0），如果没有匹配项，则返回-1。
-            </summary>
-            <typeparam name="TCol"></typeparam>
-            <param name="collection"> 匹配的数据源集合 </param>
-            <typeparam name="TVal"></typeparam>
-            <param name="value"> 要进行匹配的值 </param>
-            <returns> 从集合中搜索指定项的下标位置（第一个元素的下标值为0），如果没有匹配项，则返回-1。 </returns>
         </member>
         <member name="T:eZstd.UserControls.eZDataGridViewUIAdd">
             <summary> 通过设计界面中的弹出菜单，来执行表格中记录行的插入、增加或删除等操作 </summary>
@@ -4805,7 +4843,7 @@
         <member name="P:eZstd.MatrixPack.SingularValueDecomposition.Diagonal">
             <summary>Return the one-dimensional array of singular values.</summary>		
         </member>
-        <member name="T:OldW.DllActivator.IDllActivator">
+        <member name="T:DllActivator.IDllActivator_std">
             <summary>
             用于在IExternalCommand.Execute方法中，将整个项目的所有dll加载到进程中。
             以避免出现在后面出现无法加载文件或者程序集的问题。
@@ -4816,13 +4854,13 @@
             dat.ActivateReferences();
             </remarks>
         </member>
-        <member name="M:OldW.DllActivator.IDllActivator.ActivateReferences">
+        <member name="M:DllActivator.IDllActivator_std.ActivateReferences">
             <summary> 激活本DLL所引用的那些DLLs </summary>
         </member>
-        <member name="T:OldW.DllActivator.DllActivator_std">
+        <member name="T:DllActivator.DllActivator_std">
             <summary> 用于 OldW Revit 插件中多个dll之前的AddinManager调试 </summary>
         </member>
-        <member name="M:OldW.DllActivator.DllActivator_std.ActivateReferences">
+        <member name="M:DllActivator.DllActivator_std.ActivateReferences">
             <summary>
             激活本DLL所引用的那些DLLs
             </summary>

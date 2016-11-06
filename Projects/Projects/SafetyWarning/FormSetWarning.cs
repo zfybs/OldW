@@ -84,7 +84,7 @@ namespace OldW
                 double.TryParse(tbGSetlSum.Text, out setlSum);
                 double setlVelo;
                 double.TryParse(tbGSetlVelo.Text, out setlVelo);
-                WarningGSetle setle = new WarningGSetle(setlSum, setlVelo);
+                WarningGSettle setle = new WarningGSettle(setlSum, setlVelo);
 
                 double forceRate;
                 double.TryParse(tbForceRatio.Text, out forceRate);

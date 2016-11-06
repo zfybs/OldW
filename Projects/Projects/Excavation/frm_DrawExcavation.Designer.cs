@@ -43,7 +43,9 @@ namespace OldW.Excavation
 		[System.Diagnostics.DebuggerStepThrough()]private void InitializeComponent()
 		{
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frm_DrawExcavation));
             this.GroupBox1 = new System.Windows.Forms.GroupBox();
+            this.RadioBtn_PickSolid = new System.Windows.Forms.RadioButton();
             this.Btn_PickModelCurves = new System.Windows.Forms.Button();
             this.Btn_GetEdgeFromFace = new System.Windows.Forms.Button();
             this.Btn_CancelDrawCurves = new System.Windows.Forms.Button();
@@ -57,6 +59,8 @@ namespace OldW.Excavation
             this.Label2 = new System.Windows.Forms.Label();
             this.Btn_Modeling = new System.Windows.Forms.Button();
             this.GroupBox2 = new System.Windows.Forms.GroupBox();
+            this.RadioBtn_ExcavSoil = new System.Windows.Forms.RadioButton();
+            this.RadioBtn_ModelSoil = new System.Windows.Forms.RadioButton();
             this.TextBox_StartedDate = new System.Windows.Forms.TextBox();
             this.TextBox_SoilName = new System.Windows.Forms.TextBox();
             this.TextBox_CompletedDate = new System.Windows.Forms.TextBox();
@@ -64,8 +68,6 @@ namespace OldW.Excavation
             this.btn__DateCalendar = new System.Windows.Forms.Button();
             this.Label3 = new System.Windows.Forms.Label();
             this.Label1 = new System.Windows.Forms.Label();
-            this.RadioBtn_ExcavSoil = new System.Windows.Forms.RadioButton();
-            this.RadioBtn_ModelSoil = new System.Windows.Forms.RadioButton();
             this.ToolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.TextBox_Depth = new eZstd.UserControls.TextBoxNum();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -76,6 +78,7 @@ namespace OldW.Excavation
             // 
             // GroupBox1
             // 
+            this.GroupBox1.Controls.Add(this.RadioBtn_PickSolid);
             this.GroupBox1.Controls.Add(this.Btn_PickModelCurves);
             this.GroupBox1.Controls.Add(this.Btn_GetEdgeFromFace);
             this.GroupBox1.Controls.Add(this.Btn_CancelDrawCurves);
@@ -86,14 +89,25 @@ namespace OldW.Excavation
             this.GroupBox1.Controls.Add(this.RadioBtn_UserDrawShape);
             this.GroupBox1.Location = new System.Drawing.Point(195, 12);
             this.GroupBox1.Name = "GroupBox1";
-            this.GroupBox1.Size = new System.Drawing.Size(214, 192);
+            this.GroupBox1.Size = new System.Drawing.Size(214, 212);
             this.GroupBox1.TabIndex = 0;
             this.GroupBox1.TabStop = false;
-            this.GroupBox1.Text = "轮廓形状";
+            this.GroupBox1.Text = "土体几何构造";
+            // 
+            // RadioBtn_PickSolid
+            // 
+            this.RadioBtn_PickSolid.AutoSize = true;
+            this.RadioBtn_PickSolid.Location = new System.Drawing.Point(6, 59);
+            this.RadioBtn_PickSolid.Name = "RadioBtn_PickSolid";
+            this.RadioBtn_PickSolid.Size = new System.Drawing.Size(71, 16);
+            this.RadioBtn_PickSolid.TabIndex = 9;
+            this.RadioBtn_PickSolid.TabStop = true;
+            this.RadioBtn_PickSolid.Text = "选择实体";
+            this.RadioBtn_PickSolid.UseVisualStyleBackColor = true;
             // 
             // Btn_PickModelCurves
             // 
-            this.Btn_PickModelCurves.Location = new System.Drawing.Point(11, 118);
+            this.Btn_PickModelCurves.Location = new System.Drawing.Point(11, 145);
             this.Btn_PickModelCurves.Name = "Btn_PickModelCurves";
             this.Btn_PickModelCurves.Size = new System.Drawing.Size(75, 23);
             this.Btn_PickModelCurves.TabIndex = 8;
@@ -103,7 +117,7 @@ namespace OldW.Excavation
             // 
             // Btn_GetEdgeFromFace
             // 
-            this.Btn_GetEdgeFromFace.Location = new System.Drawing.Point(11, 84);
+            this.Btn_GetEdgeFromFace.Location = new System.Drawing.Point(11, 111);
             this.Btn_GetEdgeFromFace.Name = "Btn_GetEdgeFromFace";
             this.Btn_GetEdgeFromFace.Size = new System.Drawing.Size(75, 23);
             this.Btn_GetEdgeFromFace.TabIndex = 7;
@@ -115,7 +129,7 @@ namespace OldW.Excavation
             // Btn_CancelDrawCurves
             // 
             this.Btn_CancelDrawCurves.Enabled = false;
-            this.Btn_CancelDrawCurves.Location = new System.Drawing.Point(96, 152);
+            this.Btn_CancelDrawCurves.Location = new System.Drawing.Point(96, 179);
             this.Btn_CancelDrawCurves.Name = "Btn_CancelDrawCurves";
             this.Btn_CancelDrawCurves.Size = new System.Drawing.Size(59, 23);
             this.Btn_CancelDrawCurves.TabIndex = 6;
@@ -126,7 +140,7 @@ namespace OldW.Excavation
             // 
             // Btn_DrawCurves
             // 
-            this.Btn_DrawCurves.Location = new System.Drawing.Point(11, 152);
+            this.Btn_DrawCurves.Location = new System.Drawing.Point(11, 179);
             this.Btn_DrawCurves.Name = "Btn_DrawCurves";
             this.Btn_DrawCurves.Size = new System.Drawing.Size(75, 23);
             this.Btn_DrawCurves.TabIndex = 4;
@@ -172,7 +186,7 @@ namespace OldW.Excavation
             // 
             this.RadioBtn_UserDrawShape.AutoSize = true;
             this.RadioBtn_UserDrawShape.Checked = true;
-            this.RadioBtn_UserDrawShape.Location = new System.Drawing.Point(6, 59);
+            this.RadioBtn_UserDrawShape.Location = new System.Drawing.Point(6, 86);
             this.RadioBtn_UserDrawShape.Name = "RadioBtn_UserDrawShape";
             this.RadioBtn_UserDrawShape.Size = new System.Drawing.Size(71, 16);
             this.RadioBtn_UserDrawShape.TabIndex = 0;
@@ -182,9 +196,10 @@ namespace OldW.Excavation
             // 
             // CheckBox_DrawSucceeded
             // 
+            this.CheckBox_DrawSucceeded.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CheckBox_DrawSucceeded.AutoSize = true;
             this.CheckBox_DrawSucceeded.Enabled = false;
-            this.CheckBox_DrawSucceeded.Location = new System.Drawing.Point(280, 217);
+            this.CheckBox_DrawSucceeded.Location = new System.Drawing.Point(280, 241);
             this.CheckBox_DrawSucceeded.Name = "CheckBox_DrawSucceeded";
             this.CheckBox_DrawSucceeded.Size = new System.Drawing.Size(48, 16);
             this.CheckBox_DrawSucceeded.TabIndex = 5;
@@ -193,8 +208,9 @@ namespace OldW.Excavation
             // 
             // Btn_ClearCurves
             // 
+            this.Btn_ClearCurves.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.Btn_ClearCurves.Enabled = false;
-            this.Btn_ClearCurves.Location = new System.Drawing.Point(215, 213);
+            this.Btn_ClearCurves.Location = new System.Drawing.Point(215, 237);
             this.Btn_ClearCurves.Name = "Btn_ClearCurves";
             this.Btn_ClearCurves.Size = new System.Drawing.Size(59, 23);
             this.Btn_ClearCurves.TabIndex = 4;
@@ -205,7 +221,7 @@ namespace OldW.Excavation
             // Label2
             // 
             this.Label2.AutoSize = true;
-            this.Label2.Location = new System.Drawing.Point(17, 218);
+            this.Label2.Location = new System.Drawing.Point(11, 191);
             this.Label2.Name = "Label2";
             this.Label2.Size = new System.Drawing.Size(53, 12);
             this.Label2.TabIndex = 1;
@@ -213,8 +229,9 @@ namespace OldW.Excavation
             // 
             // Btn_Modeling
             // 
+            this.Btn_Modeling.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.Btn_Modeling.Enabled = false;
-            this.Btn_Modeling.Location = new System.Drawing.Point(334, 213);
+            this.Btn_Modeling.Location = new System.Drawing.Point(334, 237);
             this.Btn_Modeling.Name = "Btn_Modeling";
             this.Btn_Modeling.Size = new System.Drawing.Size(75, 23);
             this.Btn_Modeling.TabIndex = 3;
@@ -233,16 +250,38 @@ namespace OldW.Excavation
             this.GroupBox2.TabStop = false;
             this.GroupBox2.Text = "土体类型";
             // 
+            // RadioBtn_ExcavSoil
+            // 
+            this.RadioBtn_ExcavSoil.AutoSize = true;
+            this.RadioBtn_ExcavSoil.Checked = true;
+            this.RadioBtn_ExcavSoil.Location = new System.Drawing.Point(6, 26);
+            this.RadioBtn_ExcavSoil.Name = "RadioBtn_ExcavSoil";
+            this.RadioBtn_ExcavSoil.Size = new System.Drawing.Size(71, 16);
+            this.RadioBtn_ExcavSoil.TabIndex = 1;
+            this.RadioBtn_ExcavSoil.TabStop = true;
+            this.RadioBtn_ExcavSoil.Text = "开挖土体";
+            this.RadioBtn_ExcavSoil.UseVisualStyleBackColor = true;
+            // 
+            // RadioBtn_ModelSoil
+            // 
+            this.RadioBtn_ModelSoil.AutoSize = true;
+            this.RadioBtn_ModelSoil.Location = new System.Drawing.Point(100, 28);
+            this.RadioBtn_ModelSoil.Name = "RadioBtn_ModelSoil";
+            this.RadioBtn_ModelSoil.Size = new System.Drawing.Size(71, 16);
+            this.RadioBtn_ModelSoil.TabIndex = 2;
+            this.RadioBtn_ModelSoil.Text = "模型土体";
+            this.RadioBtn_ModelSoil.UseVisualStyleBackColor = true;
+            // 
             // TextBox_StartedDate
             // 
-            this.TextBox_StartedDate.Location = new System.Drawing.Point(47, 22);
+            this.TextBox_StartedDate.Location = new System.Drawing.Point(39, 22);
             this.TextBox_StartedDate.Name = "TextBox_StartedDate";
-            this.TextBox_StartedDate.Size = new System.Drawing.Size(87, 21);
+            this.TextBox_StartedDate.Size = new System.Drawing.Size(95, 21);
             this.TextBox_StartedDate.TabIndex = 5;
             // 
             // TextBox_SoilName
             // 
-            this.TextBox_SoilName.Location = new System.Drawing.Point(76, 188);
+            this.TextBox_SoilName.Location = new System.Drawing.Point(70, 161);
             this.TextBox_SoilName.Name = "TextBox_SoilName";
             this.TextBox_SoilName.Size = new System.Drawing.Size(92, 21);
             this.TextBox_SoilName.TabIndex = 2;
@@ -250,16 +289,16 @@ namespace OldW.Excavation
             // 
             // TextBox_CompletedDate
             // 
-            this.TextBox_CompletedDate.Location = new System.Drawing.Point(47, 49);
+            this.TextBox_CompletedDate.Location = new System.Drawing.Point(39, 49);
             this.TextBox_CompletedDate.Name = "TextBox_CompletedDate";
-            this.TextBox_CompletedDate.Size = new System.Drawing.Size(87, 21);
+            this.TextBox_CompletedDate.Size = new System.Drawing.Size(95, 21);
             this.TextBox_CompletedDate.TabIndex = 6;
             this.ToolTip1.SetToolTip(this.TextBox_CompletedDate, "精确到分钟，推荐的格式为\"2016/04/04 16:30\"");
             // 
             // Label4
             // 
             this.Label4.AutoSize = true;
-            this.Label4.Location = new System.Drawing.Point(16, 191);
+            this.Label4.Location = new System.Drawing.Point(10, 164);
             this.Label4.Name = "Label4";
             this.Label4.Size = new System.Drawing.Size(29, 12);
             this.Label4.TabIndex = 1;
@@ -292,31 +331,9 @@ namespace OldW.Excavation
             this.Label1.TabIndex = 3;
             this.Label1.Text = "From";
             // 
-            // RadioBtn_ExcavSoil
-            // 
-            this.RadioBtn_ExcavSoil.AutoSize = true;
-            this.RadioBtn_ExcavSoil.Checked = true;
-            this.RadioBtn_ExcavSoil.Location = new System.Drawing.Point(6, 26);
-            this.RadioBtn_ExcavSoil.Name = "RadioBtn_ExcavSoil";
-            this.RadioBtn_ExcavSoil.Size = new System.Drawing.Size(71, 16);
-            this.RadioBtn_ExcavSoil.TabIndex = 1;
-            this.RadioBtn_ExcavSoil.TabStop = true;
-            this.RadioBtn_ExcavSoil.Text = "开挖土体";
-            this.RadioBtn_ExcavSoil.UseVisualStyleBackColor = true;
-            // 
-            // RadioBtn_ModelSoil
-            // 
-            this.RadioBtn_ModelSoil.AutoSize = true;
-            this.RadioBtn_ModelSoil.Location = new System.Drawing.Point(100, 28);
-            this.RadioBtn_ModelSoil.Name = "RadioBtn_ModelSoil";
-            this.RadioBtn_ModelSoil.Size = new System.Drawing.Size(71, 16);
-            this.RadioBtn_ModelSoil.TabIndex = 2;
-            this.RadioBtn_ModelSoil.Text = "模型土体";
-            this.RadioBtn_ModelSoil.UseVisualStyleBackColor = true;
-            // 
             // TextBox_Depth
             // 
-            this.TextBox_Depth.Location = new System.Drawing.Point(76, 215);
+            this.TextBox_Depth.Location = new System.Drawing.Point(70, 188);
             this.TextBox_Depth.Name = "TextBox_Depth";
             this.TextBox_Depth.PositiveOnly = true;
             this.TextBox_Depth.Size = new System.Drawing.Size(92, 21);
@@ -342,7 +359,7 @@ namespace OldW.Excavation
             this.AcceptButton = this.Btn_Modeling;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(421, 250);
+            this.ClientSize = new System.Drawing.Size(421, 272);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.Btn_Modeling);
             this.Controls.Add(this.TextBox_SoilName);
@@ -354,6 +371,7 @@ namespace OldW.Excavation
             this.Controls.Add(this.GroupBox2);
             this.Controls.Add(this.GroupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "frm_DrawExcavation";
@@ -397,5 +415,6 @@ namespace OldW.Excavation
         private Button Btn_GetEdgeFromFace;
         private Button Btn_PickModelCurves;
         private GroupBox groupBox3;
+        private RadioButton RadioBtn_PickSolid;
     }
 }

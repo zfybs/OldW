@@ -100,13 +100,14 @@ namespace OldW
 
             // -------------------------------------------------------------------------------
             // 分析面板
-            RibbonPanel ribbonPanelAnalysis = application.CreateRibbonPanel(tabName, "分析");
-            AddPushButtonSetWarning(ribbonPanelAnalysis);
-            AddPushButtonAnalysis(ribbonPanelAnalysis);
+            //RibbonPanel ribbonPanelAnalysis = application.CreateRibbonPanel(tabName, "分析");
+            //AddPushButtonSetWarning(ribbonPanelAnalysis);
+            //AddPushButtonAnalysis(ribbonPanelAnalysis);
 
             // -------------------------------------------------------------------------------
             // 关于面板
             RibbonPanel ribbonPanelAbout = application.CreateRibbonPanel(tabName, "关于");
+            AddPushButtonProjectInfo(ribbonPanelAbout);
             AddPushButtonAbout(ribbonPanelAbout); //添加关于
             //
 
@@ -430,6 +431,24 @@ namespace OldW
         #endregion
 
         #region   ---  警戒与分析
+
+        /// <summary> 添加“项目信息”的按钮 </summary>
+        private void AddPushButtonProjectInfo(RibbonPanel panel)
+        {
+            // Create a new push button
+            string str = Path.Combine(Path_Dlls, Dll_Projects);
+            PushButton pushButton =
+                panel.AddItem(new PushButtonData("ProjectInfo", "项目信息", str, "OldW.Commands.cmd_ProjectInfo")) as
+                    PushButton;
+            // Set ToolTip
+            pushButton.ToolTip = "与基坑项目相关的信息";
+            // Set Contextual help
+            ContextualHelp contextHelp = new ContextualHelp(ContextualHelpType.Url, "http://www.autodesk.com");
+            pushButton.SetContextualHelp(contextHelp);
+            // Set Icon
+            pushButton.LargeImage = new BitmapImage(new Uri(Path.Combine(Path_icons, "ProjectInfo_32.png")));
+        }
+
 
         /// <summary> 添加“警戒值设定”的按钮 </summary>
         private void AddPushButtonSetWarning(RibbonPanel panel)

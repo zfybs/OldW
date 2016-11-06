@@ -8,11 +8,11 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using Autodesk.Revit.DB;
+using eZstd.MarshalReflection;
 using OldW.GlobalSettings;
 using OldW.Instrumentations;
 using eZstd.Miscellaneous;
 using eZstd.UserControls;
-using AssemblyCompiler = eZstd.Miscellaneous.AssemblyCompiler;
 using Form = System.Windows.Forms.Form;
 
 
@@ -227,8 +227,7 @@ namespace OldW.DataManager
             public void ShiftToNewElement(Instrum_Line ele)
             {
                 // ------------------------ 刷新到新测点 ----------------------------
-
-
+                
                 ElementId eid = ele.Monitor.Id;
                 TableBindedData tbd;
                 if (OpenedTableSet.ContainsKey(eid))

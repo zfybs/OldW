@@ -8,3 +8,4 @@ F:\ProgrammingCases\GitHubProjects\OldW\bin\OldWRibbonTab.pdb
 F:\ProgrammingCases\GitHubProjects\OldW\bin\OldWRibbonTab.xml
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\OldWRibbonTab\obj\Debug\OldWRibbonTab.dll
 F:\ProgrammingCases\GitHubProjects\OldW\Projects\OldWRibbonTab\obj\Debug\OldWRibbonTab.pdb
+F:\ProgrammingCases\GitHubProjects\OldW\Projects\OldWRibbonTab\obj\Debug\OldWRibbonTab.csprojResolveAssemblyReference.cache

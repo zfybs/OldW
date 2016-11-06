@@ -29,13 +29,13 @@ namespace OldW
             /// <summary>
             /// 地表沉降警戒值
             /// </summary>
-            public WarningGSetle warningGSetle;
+            public WarningGSettle warningGSetle;
             /// <summary>
             /// 测斜警戒值
             /// </summary>
             public WarningIncli warningIncli;
 
-            public WarningValue(String name,String rate,WarningIncli warningIncli, WarningGSetle warningGSetle, WarningForce warningForc)
+            public WarningValue(String name,String rate,WarningIncli warningIncli, WarningGSettle warningGSetle, WarningForce warningForc)
             {
                 this.name = name;
                 this.rate = rate;
